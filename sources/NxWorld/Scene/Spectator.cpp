@@ -15,14 +15,16 @@
 namespace NX
 {
 
-    ECS_IMPL(Spectator);
+    ECS_IMPL(BaseSpectator);
+    ECS_IMPL(Spectator2D);
+    ECS_IMPL(Spectator3D);
 
-    Core::StringAtom Spectator::getCacheHash() const
+    Core::StringAtom BaseSpectator::getCacheHash() const
     {
         return "EditorsRootSpectator";
     }
 
-    void Spectator::onTick(float delta)
+    void BaseSpectator::onTick(float delta)
     {
         Actor::onTick(delta);
 
@@ -30,58 +32,60 @@ namespace NX
         mouseInput.update();
     }
 
-    void Spectator::onInitialize()
+    void BaseSpectator::onInitialize()
     {
         Actor::onInitialize();
+    }
 
-        // ==== 3D ====
-        // const auto getSpeed = [this](Platform::Keyboard::KeyState leftShift)
-        // { return speed / (leftShift == Platform::Keyboard::KeyState::Pressed ? 8.f : 1.f); };
-        // const auto bindMovement = [this, &getSpeed](const char* name, Platform::Keyboard::Key
-        // key,
-        //                                             auto movement, float direction)
-        // {
-        //     _subscriptionPool << keyboardInput.getOrCreate(name,
-        //     key)->onPress->subscribeAndGetID(
-        //         [=](KeyboardIA::SpecKeysState state)
-        //         {
-        //             movement(direction * getSpeed(state.leftShift)
-        //                      * gGameInstance->world.getTimeDelta());
-        //         });
-        // };
-        //
-        // bindMovement(
-        //     "Move forward", Platform::Keyboard::Key::W, [this](float v) { moveForward(v); },
-        //     -1.f);
-        // bindMovement(
-        //     "Move backward", Platform::Keyboard::Key::S, [this](float v) { moveForward(v);
-        //     }, 1.f);
-        // bindMovement(
-        //     "Move right", Platform::Keyboard::Key::D, [this](float v) { moveRight(v); }, 1.f);
-        // bindMovement(
-        //     "Move left", Platform::Keyboard::Key::A, [this](float v) { moveRight(v); }, -1.f);
-        // bindMovement("Move up", Platform::Keyboard::Key::R, [this](float v) { moveUp(v); }, 1.f);
-        // bindMovement("Move down", Platform::Keyboard::Key::F, [this](float v) { moveUp(v); },
-        // -1.f);
-        // _subscriptionPool << Platform::GetWindow().onMouseWheel->subscribeAndGetID(
-        //     [s = Core::WeakPtr(this)](glm::vec2 offset)
-        //     {
-        //     if (gGameInstance->isApplicationViewportFocused())
-        //     {
-        //         auto mlt
-        //             = speed
-        //               / (Platform::Keyboard::IsKeyPressed(Platform::Keyboard::Key::Left_Shift)
-        //                      ? 8.f
-        //                      : 1.f);
-        //         moveForward(-offset.y * mlt * gGameInstance->world.getTimeDelta());
-        //     }
-        //     });
-        // _subscriptionPool << mouseInput.getOrCreate("mouseRotation", Platform::Mouse::Key::Right)
-        //                          ->onDrag->subscribeAndGetID(
-        //                              [this](glm::vec2 delta, auto)
-        //                              { yawAndPitch(delta * mouseSensitivity); });
+    void Spectator3D::onInitialize()
+    {
+        BaseSpectator::onInitialize();
+        const auto getSpeed = [this](Platform::Keyboard::KeyState leftShift)
+        { return speed / (leftShift == Platform::Keyboard::KeyState::Pressed ? 8.f : 1.f); };
+        const auto bindMovement = [this, &getSpeed](const char* name, Platform::Keyboard::Key key,
+                                                    auto movement, float direction)
+        {
+            _subscriptionPool << keyboardInput.getOrCreate(name, key)->onPress->subscribeAndGetID(
+                [=](KeyboardIA::SpecKeysState state)
+                {
+                    movement(direction * getSpeed(state.leftShift)
+                             * gGameInstance->world.getTimeDelta());
+                });
+        };
 
-        // ==== 2D ====
+        bindMovement(
+            "Move forward", Platform::Keyboard::Key::W, [this](float v) { moveForward(v); }, -1.f);
+        bindMovement(
+            "Move backward", Platform::Keyboard::Key::S, [this](float v) { moveForward(v); }, 1.f);
+        bindMovement(
+            "Move right", Platform::Keyboard::Key::D, [this](float v) { moveRight(v); }, 1.f);
+        bindMovement(
+            "Move left", Platform::Keyboard::Key::A, [this](float v) { moveRight(v); }, -1.f);
+        bindMovement("Move up", Platform::Keyboard::Key::R, [this](float v) { moveUp(v); }, 1.f);
+        bindMovement("Move down", Platform::Keyboard::Key::F, [this](float v) { moveUp(v); }, -1.f);
+        _subscriptionPool << Platform::GetWindow().onMouseWheel->subscribeAndGetID(
+            [this](glm::vec2 offset)
+            {
+                if (gGameInstance->isApplicationViewportFocused())
+                {
+                    auto mlt
+                        = speed
+                          / (Platform::Keyboard::IsKeyPressed(Platform::Keyboard::Key::Left_Shift)
+                                 ? 8.f
+                                 : 1.f);
+                    moveForward(-offset.y * mlt * gGameInstance->world.getTimeDelta());
+                }
+            });
+        _subscriptionPool << mouseInput.getOrCreate("mouseRotation", Platform::Mouse::Key::Right)
+                                 ->onDrag->subscribeAndGetID(
+                                     [this](glm::vec2 delta, auto)
+                                     { yawAndPitch(delta * mouseSensitivity); });
+    }
+
+    void Spectator2D::onInitialize()
+    {
+        BaseSpectator::onInitialize();
+
         auto mouseMove = [this](glm::vec2 delta, MouseIA::SpecKeysState state)
         {
             auto mlt

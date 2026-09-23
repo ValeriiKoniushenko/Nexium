@@ -16,9 +16,9 @@ namespace NX
 {
 
     CLASS();
-    class Spectator : public Actor
+    class BaseSpectator : public Actor
     {
-        ECS_DECL(Spectator, NX::Actor);
+        ECS_DECL(BaseSpectator, NX::Actor);
 
     public:
         // TODO: Move it to Controller
@@ -40,6 +40,43 @@ namespace NX
 
         void onInitialize() override;
     };
+
+    CLASS();
+    class Spectator2D : public BaseSpectator
+    {
+        ECS_DECL(Spectator2D, NX::BaseSpectator);
+
+    public:
+        // TODO: Move it to Controller
+        FIELD();
+        float baseMlt = 2.f;
+        FIELD();
+        float leftShiftMlt = 8.f;
+        FIELD();
+        float leftCtrlMlt = 0.4f;
+
+    protected:
+        void onInitialize() override;
+    };
+
+    CLASS();
+    class Spectator3D : public BaseSpectator
+    {
+        ECS_DECL(Spectator3D, NX::BaseSpectator);
+
+    public:
+        // TODO: Move it to Controller
+        FIELD();
+        float baseMlt = 2.f;
+        FIELD();
+        float leftShiftMlt = 8.f;
+        FIELD();
+        float leftCtrlMlt = 0.4f;
+
+    protected:
+        void onInitialize() override;
+    };
+
 } // namespace NX
 
 #include "Spectator.generated.h" // added by the code generator. Better don't move it.

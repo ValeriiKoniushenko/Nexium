@@ -237,7 +237,7 @@ namespace NX
                 R<Keyboard::Key>::ToString(Widget::Input::editorImGuiShowRect).data());
         }
 
-        if (auto spectator = gGameInstance->gameScene.gerFirstOf<Spectator>())
+        if (auto spectator = gGameInstance->gameScene.gerFirstOf<BaseSpectator>())
         {
             layout.addChildComponent<Spacer>();
             layout.addChildComponent<Label>()->setText("Spectator");
