@@ -23,7 +23,7 @@
 #include "NxWorld/Entities/Camera/Camera.h"
 #include "NxWorld/Framework/GameInstanceAccess.h"
 #include "NxWorld/Framework/World.h"
-#include "SceneTreeWindow.h"
+#include "Scenes/SceneTreeWindow.h"
 
 using namespace NX;
 

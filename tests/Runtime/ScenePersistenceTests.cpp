@@ -144,3 +144,47 @@ TEST_F(ScenePersistenceTest, EmptyDocumentReplacesSceneAndMalformedDocumentDoesN
     scene.deserialize(data);
     EXPECT_TRUE(scene.getObjects().empty());
 }
+
+TEST_F(ScenePersistenceTest, SceneLibraryPreservesObjectsInClosedScenes)
+{
+    NX::SceneManager manager;
+    auto* initial = manager.getCurrentScene();
+    auto object = NX::SceneObject::Create();
+    object->setComponentName("Retained"_atom);
+    object->setPosition({ 12.f, 34.f, 0.f });
+    initial->addObjectToScene(object);
+    auto& added = manager.createNewScene();
+    manager.setCurrentScene(&added);
+    ASSERT_TRUE(manager.closeScene(initial));
+    auto data = RResourceStream<RJsonResourceStream>(manager.serialize());
+    NX::SceneManager restored;
+    restored.deserialize(data);
+    auto* closed = restored.getScene("Default"_atom);
+    ASSERT_NE(closed, nullptr);
+    EXPECT_FALSE(restored.isSceneOpen(closed));
+    ASSERT_EQ(closed->getObjects().size(), 1);
+    EXPECT_EQ(closed->getObjects()[0]->getComponentName(), "Retained"_atom);
+    EXPECT_EQ(closed->getObjects()[0]->getPosition(), glm::vec3(12.f, 34.f, 0.f));
+    ASSERT_TRUE(restored.setCurrentScene(closed));
+    EXPECT_EQ(restored.getCurrentScene(), closed);
+}
+
+TEST_F(ScenePersistenceTest, SceneLibraryImportsExistingFilesWithoutDeletingThem)
+{
+    NX::Scene first;
+    NX::Scene second;
+    second.setSceneName("Another"_atom);
+    std::ofstream(root / "Default.json") << first.serialize().dump();
+    std::ofstream(root / "Another.json") << second.serialize().dump();
+    NX::SceneManager manager;
+    manager.importScenes(root);
+    EXPECT_EQ(manager.getScenes().size(), 2);
+    EXPECT_NE(manager.getScene("Default"_atom), nullptr);
+    EXPECT_NE(manager.getScene("Another"_atom), nullptr);
+    EXPECT_TRUE(std::filesystem::exists(root / "Default.json"));
+    EXPECT_TRUE(std::filesystem::exists(root / "Another.json"));
+    auto* current = manager.getCurrentScene();
+    std::ofstream(root / "Broken.json") << "invalid JSON";
+    EXPECT_THROW(manager.importScenes(root), std::exception);
+    EXPECT_EQ(manager.getCurrentScene(), current);
+}

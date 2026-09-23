@@ -15,6 +15,7 @@
 #include "NxWorld/Entities/Camera/Camera.h"
 #include "NxWorld/Framework/GameInstanceAccess.h"
 #include "NxWorld/Framework/World.h"
+#include "Scenes/SceneTabs/SceneTabs.h"
 
 using namespace NX;
 
@@ -39,6 +40,7 @@ namespace NX
     void GameViewportEWC::onInitialize()
     {
         BaseFloatEWC::onInitialize();
+        _sceneTabs.initialize(*GetSceneManager());
     }
 
     void GameViewportEWC::onOpen()
@@ -68,6 +70,22 @@ namespace NX
         if (!IsEditorMode())
         {
             return;
+        }
+
+        _sceneTabs.draw(*GetSceneManager());
+
+        // Picking and rendering use the image area below the scene tabs.
+        _innerPosition = ImGui::GetCursorScreenPos();
+        const auto available = ImGui::GetContentRegionAvail();
+        if (available.x < 1.f || available.y < 1.f)
+        {
+            return;
+        }
+        const FSize2 imageSize{ available.x, available.y };
+        if (_innerSize != imageSize)
+        {
+            _innerSize = imageSize;
+            onSizeChanged->trigger(_size, _innerSize);
         }
 
         const auto& r = GetEditor()->gameViewport;
