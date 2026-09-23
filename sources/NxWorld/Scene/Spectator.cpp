@@ -91,7 +91,8 @@ namespace NX
             moveRight(-delta.x * mlt);
             moveUp(delta.y * mlt);
         };
-        _subscriptionPool << mouseInput.getOrCreate("mouseRotation", Platform::Mouse::Key::Right)
+        _subscriptionPool << mouseInput
+                                 .getOrCreate("spectatorMovement", Platform::Mouse::Key::Middle)
                                  ->onDrag->subscribeAndGetID(mouseMove);
 
         _subscriptionPool << mouseInput.onWheel->subscribeAndGetID(
