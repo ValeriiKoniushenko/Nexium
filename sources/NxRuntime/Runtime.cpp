@@ -79,7 +79,8 @@ namespace NX
                 auto* integration = _gameInstance.getApplicationIntegration();
                 if (integration->isViewportFocused())
                 {
-                     _gameInstance.scenes.getCurrentScene()->tick(_gameInstance.world.getTimeDelta());
+                    _gameInstance.scenes.getCurrentScene()->tick(
+                        _gameInstance.world.getTimeDelta());
                 }
 
                 glClear(clearBits);
