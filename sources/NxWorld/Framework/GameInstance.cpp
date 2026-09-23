@@ -177,11 +177,10 @@ namespace NX
         }
 
         NX_LATENCY_POINT("ECS - inited");
-
-        scenes.getCurrentScene()->initialize();
-        _subscriptionPool << scenes.getCurrentScene()->onObjectAdded->subscribeAndGetID(
-            [this](SceneObject* obj) { internal_onAddObjectToScene(obj); });
-
+        gGameInstance->scenes.getCurrentScene()->initialize();
+        _subscriptionPool << scenes.onCurrentSceneChanged->subscribeAndGetID(
+            [this](Scene* scene) { bindCurrentScene(scene); });
+        bindCurrentScene(scenes.getCurrentScene());
         NX_LATENCY_POINT("Scene - inited");
 
         startUpReadCache();
@@ -192,6 +191,18 @@ namespace NX
         NX_LATENCY_POINT("end");
     }
 
+    void GameInstance::bindCurrentScene(Scene* scene)
+    {
+        _sceneSubscriptionPool.clearAndReleaseAll();
+        resetCamera();
+        _sceneSubscriptionPool << scene->onObjectAdded->subscribeAndGetID(
+            [this](SceneObject* obj) { internal_onAddObjectToScene(obj); });
+        for (const auto& object : scene->getObjects())
+        {
+            internal_onAddObjectToScene(object.get());
+        }
+    }
+
     void GameInstance::startUpReadCache()
     {
         if (_applicationIntegration)
@@ -199,7 +210,18 @@ namespace NX
             _applicationIntegration->readFromCache();
         }
         GetCacheSystem().tryRead(Platform::GetWindow());
-        GetCacheSystem().tryRead(*gGameInstance->scenes.getCurrentScene());
+        if (!GetCacheSystem().tryRead(scenes))
+        {
+            try
+            {
+                scenes.importScenes(Foundation::Config::Path::data / "scenes");
+            }
+            catch (const std::exception& error)
+            {
+                _canSaveSceneLibrary = false;
+                errorLog("Cannot import scene library: {}"_f << error.what());
+            }
+        }
         GetCacheSystem().tryRead(*GetWorld());
         onInitializeReadCache();
     }
@@ -212,7 +234,14 @@ namespace NX
         }
 
         GetCacheSystem().write(*GetWorld());
-        GetCacheSystem().write(*gGameInstance->scenes.getCurrentScene());
+        if (_canSaveSceneLibrary)
+        {
+            GetCacheSystem().write(scenes);
+            for (const auto& scene : scenes.getScenes())
+            {
+                GetCacheSystem().write(*scene);
+            }
+        }
         GetCacheSystem().write(Platform::GetWindow());
 
         onSaveAll();

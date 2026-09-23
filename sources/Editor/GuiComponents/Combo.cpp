@@ -125,8 +125,22 @@ namespace NX::Gui
 
         if (ImGui::BeginCombo("", preview))
         {
+            if (_drawPopupHeader)
+            {
+                _drawPopupHeader();
+            }
             for (std::size_t i = 0; i < _cache.size(); ++i)
             {
+                if (_itemFilter && !_itemFilter(_cache[i].second))
+                {
+                    continue;
+                }
+                ImGui::PushID(static_cast<int>(i));
+                if (_drawItemAction)
+                {
+                    _drawItemAction(_cache[i].first);
+                    ImGui::SameLine();
+                }
                 const bool isSelected = (_currentIndex == i);
                 if (ImGui::Selectable(_cache.at(i).second.c_str(), isSelected))
                 {
@@ -138,6 +152,7 @@ namespace NX::Gui
                 {
                     ImGui::SetItemDefaultFocus();
                 }
+                ImGui::PopID();
             }
             ImGui::EndCombo();
         }

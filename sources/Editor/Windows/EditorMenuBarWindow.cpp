@@ -16,7 +16,7 @@
 #include "Editor/Windows/GameViewport.h"
 #include "Editor/Windows/LogsWindow.h"
 #include "Editor/Windows/ObjectPropertiesWindow.h"
-#include "Editor/Windows/SceneTreeWindow.h"
+#include "Editor/Windows/Scenes/SceneTreeWindow.h"
 #include "Editors/TextEditor.h"
 #include "ImageViewer.h"
 #include "NxECSBasedEditor.h"
