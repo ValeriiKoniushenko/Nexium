@@ -11,6 +11,7 @@
 
 #include "BaseWindow.h"
 #include "Editor/SceneGizmo.h"
+#include "Scenes/SceneTabs/SceneTabs.h"
 
 namespace NX
 {
@@ -31,6 +32,7 @@ namespace NX
     private:
         SceneGizmo _gizmo;
         bool _blocksPicking = false;
+        SceneTabs _sceneTabs;
     };
 } // namespace NX
 

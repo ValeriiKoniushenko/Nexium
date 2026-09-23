@@ -59,6 +59,7 @@ target_sources(Nexium_World PRIVATE
     Scene/SceneObjects/SceneObject.cpp
     Scene/SceneObjects/Spectator/Spectator.cpp
     Scene/Scene/SceneManager.cpp
+    Scene/Scene/SceneManagerPersistence.cpp
 )
 nexium_add_public_headers(Nexium_World
     NxWorld/Animations/FrameByFrame/FrameByFrameAnimator.h

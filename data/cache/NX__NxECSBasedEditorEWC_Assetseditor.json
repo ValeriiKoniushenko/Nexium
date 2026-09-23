@@ -9,7 +9,7 @@
         },
         {
             "_children": null,
-            "_isEnabled": true,
+            "_isEnabled": false,
             "_name": "",
             "_noTick": false,
             "_type": "NX::ECSEditorActorAdapter"
@@ -23,15 +23,15 @@
         },
         {
             "_children": null,
-            "_isEnabled": false,
+            "_isEnabled": true,
             "_name": "",
             "_noTick": false,
             "_type": "NX::ECSEditorFrameByFrameAnimationAdapter"
         }
     ],
     "_innerPosition": [
-        547.0,
-        191.0
+        549.0,
+        197.0
     ],
     "_innerSize": {
         "height": 666.0,

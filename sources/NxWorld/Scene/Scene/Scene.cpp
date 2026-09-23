@@ -141,7 +141,7 @@ namespace NX
 
     void Scene::setSceneName(Core::StringAtom name)
     {
-        if (Verify(!name.isEmpty()))
+        if (!name.isEmpty())
         {
             _sceneName = std::move(name);
         }

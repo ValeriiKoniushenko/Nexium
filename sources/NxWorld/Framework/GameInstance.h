@@ -88,11 +88,15 @@ namespace NX
         Core::DelegateSubscriberPoolGuard _subscriptionPool;
 
     private:
+        void bindCurrentScene(Scene* scene);
         void loadCoreResources();
         void startUpReadCache();
         void initializeShaders();
 
     private:
+        Core::DelegateSubscriberPoolGuard _sceneSubscriptionPool;
+        bool _canSaveSceneLibrary = true;
+
         ApplicationIntegration* _applicationIntegration = nullptr;
 
         // Timeout in seconds. 0 - no timeout

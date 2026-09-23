@@ -18,9 +18,9 @@
 #include "Editor/GuiComponents/Misc.h"
 #include "Editor/GuiComponents/VecInput.h"
 #include "Editor/IconsFontAwesome.h"
+#include "Editor/Windows/Scenes/SceneTreeWindow.h"
 #include "NxWorld/Entities/Camera/Camera.h"
 #include "NxWorld/Framework/GameInstance.h"
-#include "SceneTreeWindow.h"
 
 using namespace NX;
 
