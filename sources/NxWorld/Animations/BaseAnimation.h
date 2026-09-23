@@ -28,54 +28,40 @@ namespace NX::Animation
         BaseAnimation& operator=(BaseAnimation&&) noexcept = default;
         ~BaseAnimation() override = default;
 
-        /**
-         * Stops playback without resetting the current playback position.
-         * State transition: Running/Paused -> Stopped.
-         */
+        /// Stops playback without resetting the current playback position.
+        /// State transition: Running/Paused -> Stopped.
         virtual void stop();
 
-        /**
-         * Starts playback from the current playback position.
-         *
-         * State transition: Idle/Stopped -> Running.
-         */
+        /// Starts playback from the current playback position.
+        ///
+        /// State transition: Idle/Stopped -> Running.
         virtual void start();
 
-        /**
-         * Restores the animation to its initial playback position without starting it.
-         *
-         * State transition: Stopped/Finished -> Idle.
-         */
+        /// Restores the animation to its initial playback position without starting it.
+        ///
+        /// State transition: Stopped/Finished -> Idle.
         virtual void reset();
 
-        /**
-         * Suspends a running animation at its current playback position.
-         *
-         * State transition: Running -> Paused.
-         * Has no effect unless the animation is running.
-         */
+        /// Suspends a running animation at its current playback position.
+        ///
+        /// State transition: Running -> Paused.
+        /// Has no effect unless the animation is running.
         virtual void pause();
 
-        /**
-         * Continues playback from the position at which the animation was paused.
-         *
-         * State transition: Paused -> Running.
-         * Has no effect unless the animation is paused.
-         */
+        /// Continues playback from the position at which the animation was paused.
+        ///
+        /// State transition: Paused -> Running.
+        /// Has no effect unless the animation is paused.
         virtual void resume();
 
-        /**
-         * Completes the animation immediately and moves it to its final playback position.
-         *
-         * State transition: Running/Paused -> Finished.
-         */
+        /// Completes the animation immediately and moves it to its final playback position.
+        ///
+        /// State transition: Running/Paused -> Finished.
         virtual void finish();
 
-        /**
-         * Resets the animation and starts it again from its initial playback position.
-         *
-         * State transition: Any state -> Running.
-         */
+        /// Resets the animation and starts it again from its initial playback position.
+        ///
+        /// State transition: Any state -> Running.
         virtual void restart();
 
         void setLoop(bool value) noexcept { _isLooping = value; }
