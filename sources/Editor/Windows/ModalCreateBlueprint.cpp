@@ -157,6 +157,11 @@ namespace NX
         {
             closeWindow();
         }
+
+        if (ImGui::IsKeyPressed(ImGuiKey_Enter, false))
+        {
+            okButtonClicked();
+        }
     }
 
     void ModalCreateBlueprintEWC::onClose()
