@@ -63,6 +63,12 @@ namespace NX
                          .leftCtrl
                          = Platform::Keyboard::getKeyState(Platform::Keyboard::Key::Left_Control) };
             }
+
+            [[nodiscard]] bool isNothingPressed() const noexcept
+            {
+                using KS = Platform::Keyboard::KeyState;
+                return leftAlt == KS::None && leftShift == KS::None && leftCtrl == KS::None;
+            }
         };
 
     public:

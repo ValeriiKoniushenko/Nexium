@@ -575,6 +575,25 @@ namespace NX
                 }
             });
 
+        auto deleteObjectFromSceneKey
+            = keyboardInput.getOrCreate("Del object from scene", Keyboard::Key::Delete);
+        deleteObjectFromSceneKey->setIsRepeatable(false);
+        _subscriptionPool << deleteObjectFromSceneKey->onPress->subscribeAndGetID(
+            [&](const KeyboardIA::SpecKeysState& spec)
+            {
+                if (spec.isNothingPressed() && gGameInstance->isApplicationViewportFocused())
+                {
+                    for (auto&& obj :
+                         GetObjectSelectorManager()->getSelectedObjects() | std::views::values)
+                    {
+                        if (auto* comp = dynamic_cast<BaseComponent*>(obj.get()))
+                        {
+                            gGameInstance->gameScene.deleteFromSceneOrFromObject(comp);
+                        }
+                    }
+                }
+            });
+
         auto toggleRenderMode = keyboardInput.getOrCreate("Toggle render mode", Keyboard::Key::F1);
         toggleRenderMode->setIsRepeatable(false);
         _subscriptionPool << toggleRenderMode->onPress->subscribeAndGetID(
