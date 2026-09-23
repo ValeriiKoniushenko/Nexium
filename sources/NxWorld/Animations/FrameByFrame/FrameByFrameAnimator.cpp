@@ -176,7 +176,7 @@ namespace NX::Animation
     void FrameByFrameAnimator::onTick(float delta)
     {
         BaseComponent::onTick(delta);
-        updateCurrentAnimation(delta);  
+        updateCurrentAnimation(delta);
         applyCurrentFrameToRectangle();
     }
     // end::animator_tick[]
@@ -184,8 +184,16 @@ namespace NX::Animation
     void FrameByFrameAnimator::applyCurrentFrameToRectangle()
     {
         auto* rectangle = getParentAs<SceneObj::RectangleAnimated>();
+        if (!rectangle)
+        {
+            LOG_ASSERT_ERROR_ONCE(("Only '{}' type is supported for animations."_f
+                                   << R<SceneObj::RectangleAnimated>::FullName())
+                                      .c_str());
+            return;
+        }
+
         const auto* animation = getActiveAnimation();
-        if (!rectangle || !animation)
+        if (!animation)
         {
             return;
         }
