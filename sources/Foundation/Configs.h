@@ -54,6 +54,7 @@ namespace Foundation::Config
     static constexpr float defaultEmojiScale = 0.8f;
 
     inline static const char* spdlogPattern = "%D [%L] [%n] %v";
+    inline static constexpr const char* applicationId = "nexium";
     inline static const char* defaultWindowName = "Nexium Engine";
     static constexpr Core::ISize2 defaultWindowSize = Core::ISize2{ 1200, 800 };
 

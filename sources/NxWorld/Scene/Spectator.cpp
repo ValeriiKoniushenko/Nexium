@@ -9,6 +9,7 @@
 
 #include "Spectator.h"
 
+#include "Core/Math.h"
 #include "NxWorld/Entities/Camera/Camera.h"
 #include "NxWorld/Framework/GameInstance.h"
 
@@ -117,12 +118,16 @@ namespace NX
                         {
                             const auto zoomStep = (maxZoom - minZoom) / 100.f;
                             const auto scrollStep = std::clamp(offset.y, -1.f, 1.f);
-                            const auto finalStep = zoomStep * scrollStep;
+                            auto finalStep = zoomStep * scrollStep;
 
-                            if (camera->getZoom() + finalStep < minZoom
-                                || camera->getZoom() + finalStep > maxZoom)
+                            const auto expectedZoom = camera->getZoom() + finalStep;
+                            if (expectedZoom < minZoom)
                             {
-                                return;
+                                camera->setZoom(minZoom);
+                            }
+                            if (expectedZoom > maxZoom)
+                            {
+                                camera->setZoom(maxZoom);
                             }
 
                             camera->adjustZoom(finalStep);

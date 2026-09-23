@@ -53,6 +53,7 @@ target_link_libraries(Nexium_Platform_Input
     glm
     PRIVATE
     Nexium::Platform::Graphics
+    Core::Stb
     ${MODULE_PRIVATE_TARGET}
 )
 

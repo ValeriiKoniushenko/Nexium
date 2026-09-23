@@ -9,8 +9,10 @@
 
 #include "Window.h"
 
+#include "Foundation/Configs.h"
 #include "Graphics.h"
 #include "Platform/PrivateModuleInfo.h"
+#include "Stb/Image.h"
 
 #include <cstdlib>
 
@@ -67,6 +69,24 @@ namespace
     {
         GetWindow().onResize->trigger(ISize2(width, height));
     }
+
+#ifndef _WIN32
+    void SetWindowIcon(GLFWwindow* window)
+    {
+        const auto path = Foundation::Config::Path::data / "internal/logo_192.png";
+        GLFWimage icon{};
+        int channels = 0;
+        icon.pixels = stbi_load(path.string().c_str(), &icon.width, &icon.height, &channels, 4);
+        if (!icon.pixels)
+        {
+            gGlobalLog.errorLog("Can't load application's icon: {}"_f << path.string());
+            return;
+        }
+
+        glfwSetWindowIcon(window, 1, &icon);
+        stbi_image_free(icon.pixels);
+    }
+#endif
 } // namespace
 
 namespace Platform
@@ -98,6 +118,9 @@ namespace Platform
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, contextMinor);
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
         glfwWindowHint(GLFW_MAXIMIZED, _isMaximized ? GLFW_TRUE : GLFW_FALSE);
+        glfwWindowHintString(GLFW_WAYLAND_APP_ID, Foundation::Config::applicationId);
+        glfwWindowHintString(GLFW_X11_CLASS_NAME, Foundation::Config::applicationId);
+        glfwWindowHintString(GLFW_X11_INSTANCE_NAME, Foundation::Config::applicationId);
 
         _window = glfwCreateWindow(_size.width, _size.height, title.c_str(), nullptr, nullptr);
         if (!_window)
@@ -105,6 +128,13 @@ namespace Platform
             destroy();
             criticalLogAndThrow("Failed to create GLFW window");
         }
+
+#ifndef _WIN32
+        if (glfwGetPlatform() != GLFW_PLATFORM_WAYLAND)
+        {
+            SetWindowIcon(_window);
+        }
+#endif
 
         debugLog("The window was created");
 

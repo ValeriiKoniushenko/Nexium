@@ -52,3 +52,56 @@ endfunction()
 function(nexium_enable_debug_api target)
     target_compile_definitions(${target} PUBLIC "$<$<CONFIG:Debug>:NEXIUM_DEBUG=1>")
 endfunction()
+
+function(nexium_configure_application target)
+    cmake_parse_arguments(ARG "" "APPLICATION_ID;DISPLAY_NAME" "" ${ARGN})
+
+    if(NOT ARG_DISPLAY_NAME)
+        set(ARG_DISPLAY_NAME "${target}")
+    endif()
+    if(NOT ARG_APPLICATION_ID)
+        set(ARG_APPLICATION_ID "${target}")
+    endif()
+
+    set(nexium_root "${CMAKE_CURRENT_FUNCTION_LIST_DIR}/..")
+
+    if(WIN32)
+        target_sources(${target} PRIVATE
+            "${nexium_root}/sources/Platform/Resources/app.rc"
+        )
+    elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+        set(icon_source "${nexium_root}/data/internal/logo_192.png")
+        set(icon_output "$<TARGET_FILE_DIR:${target}>/${ARG_APPLICATION_ID}.png")
+        set(desktop_output "$<TARGET_FILE_DIR:${target}>/${ARG_APPLICATION_ID}.desktop")
+
+        add_custom_target(${target}_DesktopLauncher ALL
+            COMMAND "${CMAKE_COMMAND}" -E copy_if_different
+                "${icon_source}" "${icon_output}"
+            COMMAND "${CMAKE_COMMAND}"
+                "-DNEXIUM_DESKTOP_FILE=${desktop_output}"
+                "-DNEXIUM_DESKTOP_EXECUTABLE=$<TARGET_FILE:${target}>"
+                "-DNEXIUM_DESKTOP_ICON=${icon_output}"
+                "-DNEXIUM_DESKTOP_NAME=${ARG_DISPLAY_NAME}"
+                "-DNEXIUM_DESKTOP_WM_CLASS=${ARG_APPLICATION_ID}"
+                "-DNEXIUM_DESKTOP_WORKING_DIRECTORY=${PROJECT_SOURCE_DIR}"
+                -P "${CMAKE_CURRENT_FUNCTION_LIST_DIR}/WriteDesktopEntry.cmake"
+            DEPENDS
+                ${target}
+                "${icon_source}"
+                "${CMAKE_CURRENT_FUNCTION_LIST_DIR}/WriteDesktopEntry.cmake"
+            COMMENT "Creating ${ARG_DISPLAY_NAME} desktop launcher"
+            VERBATIM
+        )
+
+        find_program(xdg_desktop_menu xdg-desktop-menu)
+        if(xdg_desktop_menu)
+            add_custom_target(${target}_RegisterDesktopLauncher
+                COMMAND "${xdg_desktop_menu}" install --mode user --novendor
+                    "${desktop_output}"
+                DEPENDS ${target}_DesktopLauncher
+                COMMENT "Registering ${ARG_DISPLAY_NAME} with the desktop environment"
+                VERBATIM
+            )
+        endif()
+    endif()
+endfunction()
