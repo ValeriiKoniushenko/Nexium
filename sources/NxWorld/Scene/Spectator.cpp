@@ -101,7 +101,6 @@ namespace NX
                 if (gGameInstance->isApplicationViewportFocused())
                 {
                     float mlt = 2.f;
-
                     if (Platform::Keyboard::IsKeyPressed(Platform::Keyboard::Key::Left_Shift))
                     {
                         mlt = 8.f;
@@ -111,11 +110,23 @@ namespace NX
                     {
                         mlt = .4f;
                     }
+                    offset *= mlt;
 
-                    if (auto* camera = findFirstChildOf<OrthographicCamera>())
+                    if (Platform::Keyboard::IsKeyPressed(Platform::Keyboard::Key::Left_Alt))
                     {
-                        camera->adjustZoom(offset.y * mlt * gGameInstance->world.getTimeDelta());
+                        if (auto* camera = findFirstChildOf<OrthographicCamera>())
+                        {
+                            camera->adjustZoom(offset.y * gGameInstance->world.getTimeDelta());
+                        }
                     }
+
+                    // 20 it's just a fake value to make touchpad moving closer to the Mouse
+                    // feelings.
+                    const float adjustedSpeed = speed * 10.f;
+                    const float panSpeed = adjustedSpeed * gGameInstance->world.getTimeDelta();
+
+                    moveRight(-offset.x * panSpeed);
+                    moveUp(offset.y * panSpeed);
                 }
             });
     }
