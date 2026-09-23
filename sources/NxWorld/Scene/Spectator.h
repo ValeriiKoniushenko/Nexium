@@ -53,7 +53,9 @@ namespace NX
         FIELD();
         float leftShiftMlt = 8.f;
         FIELD();
-        float leftCtrlMlt = 0.4f;
+        float minZoom = 0.15f;
+        FIELD();
+        float maxZoom = 5.f;
 
     protected:
         void onInitialize() override;

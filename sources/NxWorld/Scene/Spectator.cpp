@@ -104,23 +104,29 @@ namespace NX
             {
                 if (gGameInstance->isApplicationViewportFocused())
                 {
-                    float mlt = 2.f;
+                    float mlt = baseMlt;
                     if (Platform::Keyboard::IsKeyPressed(Platform::Keyboard::Key::Left_Shift))
                     {
-                        mlt = 8.f;
-                    }
-                    else if (Platform::Keyboard::IsKeyPressed(
-                                 Platform::Keyboard::Key::Left_Control))
-                    {
-                        mlt = .4f;
+                        mlt = leftShiftMlt;
                     }
                     offset *= mlt;
 
-                    if (Platform::Keyboard::IsKeyPressed(Platform::Keyboard::Key::Left_Alt))
+                    if (Platform::Keyboard::IsKeyPressed(Platform::Keyboard::Key::Left_Control))
                     {
                         if (auto* camera = findFirstChildOf<OrthographicCamera>())
                         {
-                            camera->adjustZoom(offset.y * gGameInstance->world.getTimeDelta());
+                            const auto zoomStep = (maxZoom - minZoom) / 100.f;
+                            const auto scrollStep = std::clamp(offset.y, -1.f, 1.f);
+                            const auto finalStep = zoomStep * scrollStep;
+
+                            if (camera->getZoom() + finalStep < minZoom
+                                || camera->getZoom() + finalStep > maxZoom)
+                            {
+                                return;
+                            }
+
+                            camera->adjustZoom(finalStep);
+                            return;
                         }
                     }
 
