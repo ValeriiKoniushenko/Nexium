@@ -1,11 +1,11 @@
 {
     "_children": null,
     "_innerPosition": [
-        1393.0,
+        1190.0,
         72.0
     ],
     "_innerSize": {
-        "height": 919.0,
+        "height": 808.0,
         "width": 507.0
     },
     "_isEnabled": true,
@@ -17,15 +17,15 @@
     "_name": " Shader manager",
     "_noTick": false,
     "_oldSize": {
-        "height": 965.0,
+        "height": 854.0,
         "width": 527.0
     },
     "_position": [
-        1383.0,
+        1180.0,
         36.0
     ],
     "_size": {
-        "height": 965.0,
+        "height": 854.0,
         "width": 527.0
     },
     "_type": "NX::ShaderManagerEWC"

@@ -14,6 +14,7 @@
 #include "Editor/IconsFontAwesome.h"
 #include "Editor/Windows/Editors/TextEditor.h"
 #include "Editor/Windows/ModalPopUp.h"
+#include "ImGui/imgui.h"
 #include "NxWorld/Framework/GameInstance.h"
 
 #include <array>
@@ -78,6 +79,14 @@ namespace NX
             requestOpenSelectedPath();
 
             drawContextMenu();
+
+            if (ImGui::IsWindowFocused())
+            {
+                if (ImGui::IsKeyPressed(ImGuiKey_Delete, false))
+                {
+                    deleteSelectedFileOrFiles();
+                }
+            }
 
             const auto labelStartX = ImGui::GetCursorPosX();
             const auto labelSize = ImGui::CalcTextSize(_fileName.c_str(), nullptr, false, _size.x);
@@ -201,6 +210,40 @@ namespace NX
         _size += ImGui::GetStyle().FramePadding * 2.f;
     }
 
+    void ThumbnailFile::deleteSelectedFileOrFiles()
+    {
+        const bool deleteMultiple = _actions.isMultiSelection && _actions.isMultiSelection(_path);
+        if (deleteMultiple)
+        {
+            const auto removeSelected = _actions.removeSelected;
+
+            ModalPopUp::Open("Do you really want to delete selected files?",
+                             [removeSelected](bool isOk)
+                             {
+                                 if (isOk && removeSelected)
+                                 {
+                                     removeSelected();
+                                 }
+                             });
+        }
+        else
+        {
+            const auto pathCopy = _path;
+            const auto remove = _actions.remove;
+            const auto isDirectory = _isDirectory;
+            ModalPopUp::Open("Do you really want to delete the {}: {}?"_f
+                                 << (isDirectory ? "directory" : "file")
+                                 << pathCopy.generic_string(),
+                             [remove, pathCopy](const bool isOk)
+                             {
+                                 if (isOk && remove)
+                                 {
+                                     remove(pathCopy);
+                                 }
+                             });
+        }
+    }
+
     void ThumbnailFile::drawContextMenu()
     {
         if (ImGui::IsItemClicked(ImGuiMouseButton_Right))
@@ -239,43 +282,10 @@ namespace NX
             {
                 _actions.rename(_path);
             }
-            const bool deleteMultiple
-                = _actions.isMultiSelection && _actions.isMultiSelection(_path);
 
-            if (deleteMultiple)
+            if (ImGui::MenuItem(ICON_FA_TRASH " Delete selected file[s]"))
             {
-                if (ImGui::MenuItem(ICON_FA_TRASH " Delete selected files"))
-                {
-                    const auto removeSelected = _actions.removeSelected;
-
-                    ModalPopUp::Open("Do you really want to delete selected files?",
-                                     [removeSelected](bool isOk)
-                                     {
-                                         if (isOk && removeSelected)
-                                         {
-                                             removeSelected();
-                                         }
-                                     });
-                }
-            }
-            else
-            {
-                if (ImGui::MenuItem(ICON_FA_TRASH " Delete"))
-                {
-                    const auto pathCopy = _path;
-                    const auto remove = _actions.remove;
-                    const auto isDirectory = _isDirectory;
-                    ModalPopUp::Open("Do you really want to delete the {}: {}?"_f
-                                         << (isDirectory ? "directory" : "file")
-                                         << pathCopy.generic_string(),
-                                     [remove, pathCopy](const bool isOk)
-                                     {
-                                         if (isOk && remove)
-                                         {
-                                             remove(pathCopy);
-                                         }
-                                     });
-                }
+                deleteSelectedFileOrFiles();
             }
 
             ImGui::Separator();

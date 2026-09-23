@@ -48,6 +48,7 @@ namespace NX
         void drawToolTip();
         void drawImageButton();
         void drawContextMenu();
+        void deleteSelectedFileOrFiles();
 
     private:
         std::filesystem::path _path;

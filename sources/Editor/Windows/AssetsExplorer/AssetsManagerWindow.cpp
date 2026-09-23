@@ -21,6 +21,7 @@
 #include "Editor/Windows/ModalPopUp.h"
 #include "Editor/Windows/NxECSBasedEditor.h"
 #include "Foundation/Configs.h"
+#include "ImGui/imgui.h"
 #include "NxWorld/Framework/GameInstance.h"
 #include "RenamePopUpWindow.h"
 #include "ThumbnailFile.h"

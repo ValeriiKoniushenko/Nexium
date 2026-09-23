@@ -2,11 +2,11 @@
     "_children": null,
     "_innerPosition": [
         20.0,
-        798.0
+        687.0
     ],
     "_innerSize": {
         "height": 193.0,
-        "width": 1880.0
+        "width": 1677.0
     },
     "_isEnabled": true,
     "_isFitContent": false,
@@ -45,15 +45,15 @@
     "_noTick": false,
     "_oldSize": {
         "height": 239.0,
-        "width": 1900.0
+        "width": 1697.0
     },
     "_position": [
         10.0,
-        762.0
+        651.0
     ],
     "_size": {
         "height": 239.0,
-        "width": 1900.0
+        "width": 1697.0
     },
     "_type": "NX::LogsWindowEWC"
 }
