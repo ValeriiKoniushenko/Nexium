@@ -340,7 +340,7 @@ namespace NX
 
     void ShaderManagerEWC::openEditor(const std::string& path)
     {
-        GetEditor()->showWindow<TextEditorEWC>(".*", path.data());
+        GetEditor()->showWindow<TextEditorEWC>("", path.data());
     }
 
     void ShaderManagerEWC::recompileSelectedShader()

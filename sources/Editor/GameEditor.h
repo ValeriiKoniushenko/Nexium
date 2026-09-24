@@ -65,7 +65,7 @@ namespace NX
         /// @param regexName Regular expression to match the window title.
         /// @return Pointer to the first matching window or nullptr if none found.
         template<IsEditorWindowComponentOrBase WindowT>
-        [[nodiscard]] WindowT* getWindow(const StringAtom& regexName = ".*")
+        [[nodiscard]] WindowT* getWindow(const StringAtom& regexName = "")
         {
             for (auto&& windowIntrusive : _windows)
             {
@@ -77,10 +77,16 @@ namespace NX
 
                 if (auto* casted = dynamic_cast<WindowT*>(wnd))
                 {
-                    if (casted->getWindowTitle().regexMatch(regexName))
+                    if (!regexName.isEmpty())
                     {
-                        return casted;
+                        if (casted->getWindowTitle().regexMatch(regexName))
+                        {
+                            return casted;
+                        }
+                        continue;
                     }
+
+                    return casted;
                 }
             }
 
@@ -88,18 +94,18 @@ namespace NX
         }
 
         template<IsEditorWindowComponentOrBase WindowT>
-        [[nodiscard]] const WindowT* getWindow(const StringAtom& regexName = ".*") const
+        [[nodiscard]] const WindowT* getWindow(const StringAtom& regexName = "") const
         {
             return const_cast<GameEditor*>(this)->getWindow<WindowT>(regexName);
         }
 
         template<IsEditorWindowComponentOrBase WindowT, class... ArgsT>
-        void tryToOpenWindow(const StringAtom& regexName = ".*", ArgsT&&... args)
+        void tryToOpenWindow(const StringAtom& regexName = "", ArgsT&&... args)
         {
             auto* wnd = dynamic_cast<WindowT*>(getWindow<WindowT>(regexName));
             if (!wnd)
             {
-                criticalLog(
+                criticalLogAndAssert(
                     "Can't get a window '{}'. Probably, this window type wasn't registered"_f
                     << WindowT::componentType);
                 return;
@@ -113,7 +119,7 @@ namespace NX
         /// @param regexName Regular expression to match the window title.
         /// @param args Optional arguments to pass to the window.
         template<IsEditorWindowComponentOrBase WindowT = BaseEWC>
-        void showWindow(const StringAtom& regexName = ".*", const StringAtom& args = ""_atom)
+        void showWindow(const StringAtom& regexName = "", const StringAtom& args = ""_atom)
         {
             if (auto* wnd = getWindow<WindowT>(regexName))
             {

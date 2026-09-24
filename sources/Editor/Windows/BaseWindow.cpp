@@ -192,12 +192,13 @@ namespace NX
         ImGui::EndMainMenuBar();
     }
 
-    BaseModalPopUp::BaseModalPopUp(const Core::StringAtom& name /*  = ""_atom */)
+    BaseModalPopUp::BaseModalPopUp(Core::StringAtom name /*  = ""_atom */)
+        : _caption(std::move(name))
     {
     }
 
     void BaseModalPopUp::open(StringAtom text,
-                              const BaseModalPopUp::ButtonCallbackT& okOrCancelCallback)
+                              BaseModalPopUp::ButtonCallbackT buttonCallback /* = nullptr */)
     {
         initialize();
         enable();
@@ -209,25 +210,18 @@ namespace NX
         _caption = std::move(text);
         _hasOpenRequest = true;
 
-        onOpen();
-    }
+        _buttonCallback = buttonCallback;
 
-    void BaseModalPopUp::Open(StringAtom text,
-                              const BaseModalPopUp::ButtonCallbackT& okOrCancelCallback)
-    {
+        onOpen();
     }
 
     void BaseModalPopUp::onInitialize()
     {
+        BaseFloatEWC::onInitialize();
     }
 
     void BaseModalPopUp::onDraw()
     {
-    }
-
-    void BaseModalPopUp::preOpenedEndWindowDraw()
-    {
-        ImGui::EndPopup();
     }
 
     bool BaseModalPopUp::beginWindowDraw()
@@ -253,7 +247,9 @@ namespace NX
 
     void BaseModalPopUp::endWindowDraw()
     {
-        BaseFloatEWC::endWindowDraw();
+        // BaseFloatEWC::endWindowDraw(); // - don't call it.
+
+        ImGui::EndPopup();
     }
 
 } // namespace NX

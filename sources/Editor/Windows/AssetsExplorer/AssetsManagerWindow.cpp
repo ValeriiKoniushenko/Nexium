@@ -71,11 +71,11 @@ namespace NX
         const auto path = Core::StringAtom::Intern(entry.path().generic_string());
         if (type == NodeType::Code || type == NodeType::Default)
         {
-            editor->showWindow<TextEditorEWC>(".*"_atom, path);
+            editor->showWindow<TextEditorEWC>("", path);
         }
         else if (type == NodeType::Image)
         {
-            editor->showWindow<ImageViewerEWC>(".*"_atom, path);
+            editor->showWindow<ImageViewerEWC>("", path);
         }
         else if (type == NodeType::NxFile)
         {
@@ -100,11 +100,11 @@ namespace NX
         const auto ext = entry.path().extension().generic_string();
         if (ext == ECSAsset::fileExtension)
         {
-            editor->showWindow<NxECSBasedEditorEWC>(".*"_atom, path);
+            editor->showWindow<NxECSBasedEditorEWC>("", path);
         }
         else if (ext == NXTexture::AssetT::fileExtension)
         {
-            editor->showWindow<NxTextureEditorEWC>(".*"_atom, path);
+            editor->showWindow<NxTextureEditorEWC>("", path);
         }
     }
 

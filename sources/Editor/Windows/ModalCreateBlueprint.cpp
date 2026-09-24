@@ -46,7 +46,7 @@ namespace NX
 
     void ModalCreateBlueprintEWC::Open(StringAtom text)
     {
-        GetEditor()->tryToOpenWindow<ModalCreateBlueprintEWC>(".*", std::move(text));
+        GetEditor()->tryToOpenWindow<ModalCreateBlueprintEWC>("", std::move(text));
     }
 
     void ModalCreateBlueprintEWC::onInitialize()

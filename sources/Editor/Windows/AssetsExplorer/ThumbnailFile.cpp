@@ -261,7 +261,7 @@ namespace NX
             {
                 if (ImGui::MenuItem(ICON_FA_FILE_CODE_O " Open with text editor"))
                 {
-                    GetEditor()->showWindow<TextEditorEWC>(".*", _path.generic_string().data());
+                    GetEditor()->showWindow<TextEditorEWC>("", _path.generic_string().data());
                 }
             }
 

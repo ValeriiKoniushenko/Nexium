@@ -108,6 +108,8 @@ namespace NX
         }
         added->setComponentName(std::move(name));
 
+        traceLog("The window '{}' was registered."_f << added->getComponentName());
+
         if (isEnabled)
         {
             added->openWindow();

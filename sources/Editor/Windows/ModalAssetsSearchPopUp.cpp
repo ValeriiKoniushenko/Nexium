@@ -25,31 +25,97 @@ namespace NX
 {
     ECS_IMPL(ModalAssetsSearchPopUpEWC);
 
-    void ModalAssetsSearchPopUpEWC::open(StringAtom text)
-    {
-        initialize();
-        enable();
-        if (_hasOpenRequest)
-        {
-            warnLog(
-                "Can't open second time ModalAssetsSearchPopUpEWC. It's already processing the "
-                "request.");
-            return;
-        }
-        _caption = std::move(text);
-        _hasOpenRequest = true;
-
-        onOpen();
-    }
-
     void ModalAssetsSearchPopUpEWC::Open(StringAtom text)
     {
-        GetEditor()->tryToOpenWindow<ModalAssetsSearchPopUpEWC>(".*", std::move(text));
+        GetEditor()->tryToOpenWindow<ModalAssetsSearchPopUpEWC>("", std::move(text));
     }
 
     void ModalAssetsSearchPopUpEWC::onInitialize()
     {
-        BaseEWC::onInitialize();
+        BaseModalPopUp::onInitialize();
+    }
+
+    void ModalAssetsSearchPopUpEWC::onDraw()
+    {
+        BaseModalPopUp::onDraw();
+
+        _layout.tick(GetWorld()->getTimeDelta());
+
+        ImGui::Dummy({});
+
+        if (ImGui::IsKeyPressed(ImGuiKey_Escape, false))
+        {
+            cancelButtonClicked();
+        }
+
+        if (ImGui::IsKeyPressed(ImGuiKey_Enter, false))
+        {
+            okButtonClicked();
+        }
+    }
+
+    void ModalAssetsSearchPopUpEWC::okButtonClicked()
+    {
+        StringAtom name = _nameField->input->getInputtedData().c_str();
+        name.trim(' ');
+
+        _nameField->input->resetBorderColor();
+        if (name.isEmpty())
+        {
+            _nameField->input->setBorderColor(Color4_Red);
+            return;
+        }
+
+        auto weakAsset
+            = GetAssetsManager()->getWeakEcsAssetAt(_list->getCurrentIndex(), Tag_WorldObject);
+
+        if (!weakAsset)
+        {
+            criticalLog("Impossible to create a scene object. The asset '{}' is inaccessible."_f
+                        << _list->tryGetCurrentDataAsString());
+            closeWindow();
+            return;
+        }
+
+        auto loadedAsset = weakAsset.tryLoad();
+        if (!loadedAsset)
+        {
+            criticalLog(
+                "Impossible to create a scene object. The asset '{}' can't load it's own data."_f
+                << _list->tryGetCurrentDataAsString());
+            closeWindow();
+            return;
+        }
+
+        gGameInstance->gameScene.addBlueprintObjectToScene(loadedAsset, name);
+
+        closeWindow();
+    }
+
+    void ModalAssetsSearchPopUpEWC::cancelButtonClicked()
+    {
+        closeWindow();
+    }
+
+    void ModalAssetsSearchPopUpEWC::onClose()
+    {
+        BaseModalPopUp::onClose();
+
+        _wasManuallyEdited = false;
+        if (_nameField)
+        {
+            _nameField->input->setInputtedData("");
+        }
+
+        if (_list)
+        {
+            _list->resetListNavigation();
+        }
+    }
+
+    void ModalAssetsSearchPopUpEWC::onOpen()
+    {
+        BaseModalPopUp::onOpen();
 
         setComponentName("Assets searcher"_atom);
 
@@ -125,107 +191,6 @@ namespace NX
             _subscriptionPool << _cancelButton->onClick->subscribeAndGetID(
                 [this]() { cancelButtonClicked(); });
         }
-    }
-
-    void ModalAssetsSearchPopUpEWC::onDraw()
-    {
-        _layout.tick(GetWorld()->getTimeDelta());
-
-        ImGui::Dummy({});
-
-        if (ImGui::IsKeyPressed(ImGuiKey_Escape, false))
-        {
-            cancelButtonClicked();
-        }
-
-        if (ImGui::IsKeyPressed(ImGuiKey_Enter, false))
-        {
-            okButtonClicked();
-        }
-    }
-
-    void ModalAssetsSearchPopUpEWC::preOpenedEndWindowDraw()
-    {
-        ImGui::EndPopup();
-    }
-
-    bool ModalAssetsSearchPopUpEWC::beginWindowDraw()
-    {
-        if (_hasOpenRequest)
-        {
-            ImGui::OpenPopup(_caption.c_str());
-            ImGui::SetNextWindowSize(glm::vec2(500, 600), ImGuiCond_Appearing);
-            _hasOpenRequest = false;
-        }
-        return ImGui::BeginPopupModal(_caption.c_str(), nullptr, ImGuiWindowFlags_NoCollapse);
-    }
-
-    void ModalAssetsSearchPopUpEWC::endWindowDraw()
-    {
-    }
-
-    void ModalAssetsSearchPopUpEWC::okButtonClicked()
-    {
-        StringAtom name = _nameField->input->getInputtedData().c_str();
-        name.trim(' ');
-
-        _nameField->input->resetBorderColor();
-        if (name.isEmpty())
-        {
-            _nameField->input->setBorderColor(Color4_Red);
-            return;
-        }
-
-        auto weakAsset
-            = GetAssetsManager()->getWeakEcsAssetAt(_list->getCurrentIndex(), Tag_WorldObject);
-
-        if (!weakAsset)
-        {
-            criticalLog("Impossible to create a scene object. The asset '{}' is inaccessible."_f
-                        << _list->tryGetCurrentDataAsString());
-            closeWindow();
-            return;
-        }
-
-        auto loadedAsset = weakAsset.tryLoad();
-        if (!loadedAsset)
-        {
-            criticalLog(
-                "Impossible to create a scene object. The asset '{}' can't load it's own data."_f
-                << _list->tryGetCurrentDataAsString());
-            closeWindow();
-            return;
-        }
-
-        gGameInstance->gameScene.addBlueprintObjectToScene(loadedAsset, name);
-
-        closeWindow();
-    }
-
-    void ModalAssetsSearchPopUpEWC::cancelButtonClicked()
-    {
-        closeWindow();
-    }
-
-    void ModalAssetsSearchPopUpEWC::onClose()
-    {
-        BaseEWC::onClose();
-
-        _wasManuallyEdited = false;
-        if (_nameField)
-        {
-            _nameField->input->setInputtedData("");
-        }
-
-        if (_list)
-        {
-            _list->resetListNavigation();
-        }
-    }
-
-    void ModalAssetsSearchPopUpEWC::onOpen()
-    {
-        BaseEWC::onOpen();
 
         if (_list)
         {

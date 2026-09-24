@@ -36,7 +36,7 @@ namespace NX
 
     void ModalPopUp::Open(StringAtom text, const std::function<void(bool)>& okOrCancelCallback)
     {
-        GetEditor()->tryToOpenWindow<ModalPopUp>(".*", std::move(text), okOrCancelCallback);
+        GetEditor()->tryToOpenWindow<ModalPopUp>("", std::move(text), okOrCancelCallback);
     }
 
     void ModalPopUp::onInitialize()

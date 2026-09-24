@@ -31,20 +31,16 @@ namespace NX
     } // namespace Gui
 
     CLASS();
-    class ModalAssetsSearchPopUpEWC : public BaseEWC
+    class ModalAssetsSearchPopUpEWC : public BaseModalPopUp
     {
-        ECS_DECL(ModalAssetsSearchPopUpEWC, NX::BaseEWC);
+        ECS_DECL(ModalAssetsSearchPopUpEWC, NX::BaseModalPopUp);
 
     public:
-        void open(StringAtom text);
         static void Open(StringAtom text);
 
     protected:
         void onInitialize() override;
         void onDraw() override;
-        void preOpenedEndWindowDraw() override;
-        [[nodiscard]] bool beginWindowDraw() override;
-        void endWindowDraw() override;
 
         void okButtonClicked();
         void cancelButtonClicked();

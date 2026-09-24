@@ -76,7 +76,7 @@ namespace NX
                                                     const std::filesystem::path& newPath)>
                                      onRenameCallback)
     {
-        GetEditor()->tryToOpenWindow<RenamePopUpWindow>(".*", std::move(text), path,
+        GetEditor()->tryToOpenWindow<RenamePopUpWindow>("", std::move(text), path,
                                                         onRenameCallback);
     }
 
