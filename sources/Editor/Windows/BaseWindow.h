@@ -160,12 +160,9 @@ namespace NX
         ECS_DECL_NO_CNSTR(BaseModalPopUp, NX::BaseFloatEWC);
 
     public:
-        using ButtonCallbackT = std::function<void(Core::StringAtom)>;
-
-    public:
         explicit BaseModalPopUp(Core::StringAtom name = ""_atom);
 
-        void open(StringAtom text, ButtonCallbackT buttonCallback = nullptr);
+        void open(StringAtom text);
 
     protected:
         void onInitialize() override;
@@ -179,7 +176,6 @@ namespace NX
     protected:
         DelegateSubscriberPoolGuard _subscriptionPool;
 
-        ButtonCallbackT _buttonCallback;
         StringAtom _caption;
 
         bool _hasOpenRequest = false;

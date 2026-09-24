@@ -33,90 +33,6 @@ namespace NX
     void ModalAssetsSearchPopUpEWC::onInitialize()
     {
         BaseModalPopUp::onInitialize();
-    }
-
-    void ModalAssetsSearchPopUpEWC::onDraw()
-    {
-        BaseModalPopUp::onDraw();
-
-        _layout.tick(GetWorld()->getTimeDelta());
-
-        ImGui::Dummy({});
-
-        if (ImGui::IsKeyPressed(ImGuiKey_Escape, false))
-        {
-            cancelButtonClicked();
-        }
-
-        if (ImGui::IsKeyPressed(ImGuiKey_Enter, false))
-        {
-            okButtonClicked();
-        }
-    }
-
-    void ModalAssetsSearchPopUpEWC::okButtonClicked()
-    {
-        StringAtom name = _nameField->input->getInputtedData().c_str();
-        name.trim(' ');
-
-        _nameField->input->resetBorderColor();
-        if (name.isEmpty())
-        {
-            _nameField->input->setBorderColor(Color4_Red);
-            return;
-        }
-
-        auto weakAsset
-            = GetAssetsManager()->getWeakEcsAssetAt(_list->getCurrentIndex(), Tag_WorldObject);
-
-        if (!weakAsset)
-        {
-            criticalLog("Impossible to create a scene object. The asset '{}' is inaccessible."_f
-                        << _list->tryGetCurrentDataAsString());
-            closeWindow();
-            return;
-        }
-
-        auto loadedAsset = weakAsset.tryLoad();
-        if (!loadedAsset)
-        {
-            criticalLog(
-                "Impossible to create a scene object. The asset '{}' can't load it's own data."_f
-                << _list->tryGetCurrentDataAsString());
-            closeWindow();
-            return;
-        }
-
-        gGameInstance->gameScene.addBlueprintObjectToScene(loadedAsset, name);
-
-        closeWindow();
-    }
-
-    void ModalAssetsSearchPopUpEWC::cancelButtonClicked()
-    {
-        closeWindow();
-    }
-
-    void ModalAssetsSearchPopUpEWC::onClose()
-    {
-        BaseModalPopUp::onClose();
-
-        _wasManuallyEdited = false;
-        if (_nameField)
-        {
-            _nameField->input->setInputtedData("");
-        }
-
-        if (_list)
-        {
-            _list->resetListNavigation();
-        }
-    }
-
-    void ModalAssetsSearchPopUpEWC::onOpen()
-    {
-        BaseModalPopUp::onOpen();
-
         setComponentName("Assets searcher"_atom);
 
         _layout.setHorizontalAlign(Gui::Align::Center);
@@ -195,6 +111,84 @@ namespace NX
         if (_list)
         {
             _list->setKeyboardFocusAtStart();
+        }
+    }
+
+    void ModalAssetsSearchPopUpEWC::onDraw()
+    {
+        BaseModalPopUp::onDraw();
+
+        _layout.tick(GetWorld()->getTimeDelta());
+
+        ImGui::Dummy({});
+
+        if (ImGui::IsKeyPressed(ImGuiKey_Escape, false))
+        {
+            cancelButtonClicked();
+        }
+
+        if (ImGui::IsKeyPressed(ImGuiKey_Enter, false))
+        {
+            okButtonClicked();
+        }
+    }
+
+    void ModalAssetsSearchPopUpEWC::okButtonClicked()
+    {
+        StringAtom name = _nameField->input->getInputtedData().c_str();
+        name.trim(' ');
+
+        _nameField->input->resetBorderColor();
+        if (name.isEmpty())
+        {
+            _nameField->input->setBorderColor(Color4_Red);
+            return;
+        }
+
+        auto weakAsset
+            = GetAssetsManager()->getWeakEcsAssetAt(_list->getCurrentIndex(), Tag_WorldObject);
+
+        if (!weakAsset)
+        {
+            criticalLog("Impossible to create a scene object. The asset '{}' is inaccessible."_f
+                        << _list->tryGetCurrentDataAsString());
+            closeWindow();
+            return;
+        }
+
+        auto loadedAsset = weakAsset.tryLoad();
+        if (!loadedAsset)
+        {
+            criticalLog(
+                "Impossible to create a scene object. The asset '{}' can't load it's own data."_f
+                << _list->tryGetCurrentDataAsString());
+            closeWindow();
+            return;
+        }
+
+        gGameInstance->gameScene.addBlueprintObjectToScene(loadedAsset, name);
+
+        closeWindow();
+    }
+
+    void ModalAssetsSearchPopUpEWC::cancelButtonClicked()
+    {
+        closeWindow();
+    }
+
+    void ModalAssetsSearchPopUpEWC::onClose()
+    {
+        BaseModalPopUp::onClose();
+
+        _wasManuallyEdited = false;
+        if (_nameField)
+        {
+            _nameField->input->setInputtedData("");
+        }
+
+        if (_list)
+        {
+            _list->resetListNavigation();
         }
     }
 } // namespace NX

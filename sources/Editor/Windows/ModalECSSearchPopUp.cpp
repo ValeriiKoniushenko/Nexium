@@ -27,20 +27,8 @@ namespace NX
     void ModalECSSearchPopUpEWC::open(StringAtom text,
                                       const std::function<void(BaseComponent::Ptr)>& callback)
     {
-        initialize();
-        enable();
-        if (_hasOpenRequest)
-        {
-            warnLog(
-                "Can't open second time ModalECSSearchPopUpEWC. It's already processing the "
-                "request.");
-            return;
-        }
-        _caption = std::move(text);
-        _hasOpenRequest = true;
+        BaseModalPopUp::open(std::move(text));
         _callback = callback;
-
-        onOpen();
     }
 
     void ModalECSSearchPopUpEWC::Open(StringAtom text,
@@ -51,8 +39,7 @@ namespace NX
 
     void ModalECSSearchPopUpEWC::onInitialize()
     {
-        BaseEWC::onInitialize();
-
+        BaseModalPopUp::onInitialize();
         setComponentName("ECS searcher"_atom);
 
         _layout.setHorizontalAlign(Gui::Align::Center);
@@ -139,6 +126,11 @@ namespace NX
             _subscriptionPool << _cancelButton->onClick->subscribeAndGetID([this]()
                                                                            { closeWindow(); });
         }
+
+        if (_list)
+        {
+            _list->setKeyboardFocusAtStart();
+        }
     }
 
     void ModalECSSearchPopUpEWC::onDraw()
@@ -158,29 +150,9 @@ namespace NX
         }
     }
 
-    void ModalECSSearchPopUpEWC::preOpenedEndWindowDraw()
-    {
-        ImGui::EndPopup();
-    }
-
-    bool ModalECSSearchPopUpEWC::beginWindowDraw()
-    {
-        if (_hasOpenRequest)
-        {
-            ImGui::OpenPopup(_caption.c_str());
-            ImGui::SetNextWindowSize(glm::vec2(500, 600), ImGuiCond_Appearing);
-            _hasOpenRequest = false;
-        }
-        return ImGui::BeginPopupModal(_caption.c_str(), nullptr, ImGuiWindowFlags_NoCollapse);
-    }
-
-    void ModalECSSearchPopUpEWC::endWindowDraw()
-    {
-    }
-
     void ModalECSSearchPopUpEWC::onClose()
     {
-        BaseEWC::onClose();
+        BaseModalPopUp::onClose();
 
         _wasManuallyEdited = false;
         if (_nameInput)
@@ -191,16 +163,6 @@ namespace NX
         if (_list)
         {
             _list->resetListNavigation();
-        }
-    }
-
-    void ModalECSSearchPopUpEWC::onOpen()
-    {
-        BaseEWC::onOpen();
-
-        if (_list)
-        {
-            _list->setKeyboardFocusAtStart();
         }
     }
 
@@ -217,7 +179,7 @@ namespace NX
             return;
         }
 
-        auto comp = GlobalComponentFactory::Instance().create(_list->tryGetCurrentDataAsString());
+        auto* comp = GlobalComponentFactory::Instance().create(_list->tryGetCurrentDataAsString());
         if (!Verify(comp))
         {
             criticalLog("Can't create component: {}"_f << _list->tryGetCurrentDataAsString());

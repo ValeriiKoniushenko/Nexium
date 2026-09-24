@@ -213,7 +213,7 @@ namespace NX
         }
 
         obj->_setReferencedAsset(meta.logicPath);
-        if (obj->getComponentName().isEmpty())
+        if (!name.isEmpty())
         {
             obj->setComponentName(name);
         }

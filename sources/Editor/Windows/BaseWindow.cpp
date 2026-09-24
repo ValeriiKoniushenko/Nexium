@@ -197,8 +197,7 @@ namespace NX
     {
     }
 
-    void BaseModalPopUp::open(StringAtom text,
-                              BaseModalPopUp::ButtonCallbackT buttonCallback /* = nullptr */)
+    void BaseModalPopUp::open(StringAtom text)
     {
         initialize();
         enable();
@@ -209,8 +208,6 @@ namespace NX
         }
         _caption = std::move(text);
         _hasOpenRequest = true;
-
-        _buttonCallback = buttonCallback;
 
         onOpen();
     }

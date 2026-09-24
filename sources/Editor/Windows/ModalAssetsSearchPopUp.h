@@ -39,14 +39,13 @@ namespace NX
         static void Open(StringAtom text);
 
     protected:
-        void onInitialize() override;
         void onDraw() override;
+        void onInitialize() override;
 
         void okButtonClicked();
         void cancelButtonClicked();
 
         void onClose() override;
-        void onOpen() override;
 
     protected:
         DelegateSubscriberPoolGuard _subscriptionPool;

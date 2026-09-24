@@ -749,6 +749,8 @@ namespace NX
 
         bool removeChild(const BaseComponent* child);
 
+        void removeAllChildren();
+
         bool removeChild(const Core::IntrusivePtr<const BaseComponent>& child)
         {
             return removeChild(child.get());

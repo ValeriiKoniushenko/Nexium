@@ -26,9 +26,9 @@ namespace NX
     } // namespace Gui
 
     CLASS();
-    class ModalECSSearchPopUpEWC : public BaseEWC
+    class ModalECSSearchPopUpEWC : public BaseModalPopUp
     {
-        ECS_DECL(ModalECSSearchPopUpEWC, NX::BaseEWC);
+        ECS_DECL(ModalECSSearchPopUpEWC, NX::BaseModalPopUp);
 
     public:
         void open(StringAtom text, const std::function<void(BaseComponent::Ptr)>& callback);
@@ -37,17 +37,13 @@ namespace NX
     protected:
         void onInitialize() override;
         void onDraw() override;
-        void preOpenedEndWindowDraw() override;
-        [[nodiscard]] bool beginWindowDraw() override;
-        void endWindowDraw() override;
+
         void onClose() override;
-        void onOpen() override;
 
         void okButtonClicked();
         void cancelButtonClicked();
 
     protected:
-        DelegateSubscriberPoolGuard _subscriptionPool;
         std::function<void(BaseComponent::Ptr)> _callback;
 
         StringAtom _caption = "ModalECSSearchPopUpEWC";

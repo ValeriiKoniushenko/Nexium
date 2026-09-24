@@ -221,7 +221,7 @@ namespace NX::Gui
                 }
                 space -= child->unsafeCastTo<Widget>()->getHeight();
             }
-            space /= _children.size() - 1ll;
+            space /= static_cast<float>(_children.size() - 1ll);
         }
 
         if (_paddings.z != 0.f)

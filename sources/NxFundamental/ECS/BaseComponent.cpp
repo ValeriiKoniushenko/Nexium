@@ -247,6 +247,11 @@ namespace NX
         return attachChild(child);
     }
 
+    void BaseComponent::removeAllChildren()
+    {
+        _children.clear();
+    }
+
     void BaseComponent::detachChild(BaseComponent* child)
     {
         if (const auto it = std::ranges::find(_children, IntrusivePtr(child));
