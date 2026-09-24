@@ -192,11 +192,6 @@ namespace NX
         ImGui::EndMainMenuBar();
     }
 
-    BaseModalPopUp::BaseModalPopUp(Core::StringAtom name /*  = ""_atom */)
-        : _caption(std::move(name))
-    {
-    }
-
     void BaseModalPopUp::open(StringAtom text)
     {
         initialize();

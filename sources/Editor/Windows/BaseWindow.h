@@ -71,6 +71,8 @@ namespace NX
         [[nodiscard]] bool canBeShown() const { return _isEnabled; }
 
     protected:
+        DelegateSubscriberPoolGuard _subscriptionPool;
+
         StringAtom _windowTitle;
         int /*ImGuiWindowFlags*/ _windowFlags = 0;
         bool _wasFocusRequested = false;
@@ -159,11 +161,9 @@ namespace NX
     CLASS();
     class BaseModalPopUp : public BaseFloatEWC
     {
-        ECS_DECL_NO_CNSTR(BaseModalPopUp, NX::BaseFloatEWC);
+        ECS_DECL(BaseModalPopUp, NX::BaseFloatEWC);
 
     public:
-        explicit BaseModalPopUp(Core::StringAtom name = ""_atom);
-
         void open(StringAtom text);
 
     protected:
@@ -176,8 +176,6 @@ namespace NX
         [[nodiscard]] bool beginWindowDraw() override;
 
     protected:
-        DelegateSubscriberPoolGuard _subscriptionPool;
-
         StringAtom _caption;
 
         bool _hasOpenRequest = false;

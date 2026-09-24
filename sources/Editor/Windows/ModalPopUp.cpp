@@ -21,17 +21,11 @@ namespace NX
 {
     ECS_IMPL(ModalPopUp);
 
-    ModalPopUp::ModalPopUp(const Core::StringAtom& name)
-        : BaseEWC(name),
-          _caption(ICON_FA_TIMES " Warning!")
-    {
-    }
-
     void ModalPopUp::open(StringAtom text, const std::function<void(bool)>& okOrCancelCallback)
     {
-        _text = std::move(text);
+        BaseModalPopUp::open(std::move(text));
         _okOrCancelCallback = okOrCancelCallback;
-        _hasOpenRequest = true;
+        _caption = ICON_FA_TIMES " Warning!";
     }
 
     void ModalPopUp::Open(StringAtom text, const std::function<void(bool)>& okOrCancelCallback)
@@ -41,7 +35,7 @@ namespace NX
 
     void ModalPopUp::onInitialize()
     {
-        BaseEWC::onInitialize();
+        BaseModalPopUp::onInitialize();
 
         setComponentName("PopUp"_atom);
 
@@ -78,6 +72,8 @@ namespace NX
 
     void ModalPopUp::onDraw()
     {
+        BaseModalPopUp::onDraw();
+
         if (!Verify(!_text.isEmpty() && _okOrCancelCallback))
         {
             return;
@@ -108,22 +104,4 @@ namespace NX
         ImGui::Dummy({});
     }
 
-    void ModalPopUp::preOpenedEndWindowDraw()
-    {
-        ImGui::EndPopup();
-    }
-
-    bool ModalPopUp::beginWindowDraw()
-    {
-        if (_hasOpenRequest)
-        {
-            ImGui::OpenPopup(_caption.c_str());
-            _hasOpenRequest = false;
-        }
-        return ImGui::BeginPopupModal(_caption.c_str(), nullptr, ImGuiWindowFlags_AlwaysAutoResize);
-    }
-
-    void ModalPopUp::endWindowDraw()
-    {
-    }
 } // namespace NX

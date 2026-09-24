@@ -12,22 +12,11 @@
 #pragma once
 
 #include "BaseWindow.h"
+#include "Editor/ForwardDeclarations.h"
 #include "Editor/GuiComponents/VerticalLayout.h"
 
 namespace NX
 {
-
-    namespace Gui
-    {
-        template<class T>
-        class LabelRow;
-
-        class ListModelBased;
-        class Button;
-        class TextInput;
-        class Label;
-    } // namespace Gui
-
     CLASS();
     class ModalCreateBlueprintEWC : public BaseModalPopUp
     {

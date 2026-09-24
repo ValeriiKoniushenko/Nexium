@@ -12,27 +12,13 @@
 #pragma once
 
 #include "BaseWindow.h"
+#include "Editor/ForwardDeclarations.h"
 #include "Editor/GuiComponents/VerticalLayout.h"
 #include "NxSubsystems/Graphics/ShaderProgram.h"
 
 namespace NX
 {
     class ShaderProgramMeta;
-}
-
-namespace NX
-{
-    namespace Gui
-    {
-        template<Utils::IsArithmetic T>
-        class NumInput;
-
-        using IntInput = NumInput<int>;
-
-        class TextInput;
-        class ComboView;
-        class Label;
-    } // namespace Gui
 
     CLASS();
     class ShaderManagerEWC : public BaseFloatEWC
@@ -65,8 +51,6 @@ namespace NX
         void selectShader(const StringAtom& name);
 
     protected:
-        DelegateSubscriberPoolGuard _subscriptionPool;
-
         Gui::VerticalLayout _headLayout;
         Gui::VerticalLayout _selectedShaderLayout;
 

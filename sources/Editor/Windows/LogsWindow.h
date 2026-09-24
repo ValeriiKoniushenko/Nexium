@@ -12,17 +12,11 @@
 #pragma once
 
 #include "BaseWindow.h"
+#include "Editor/ForwardDeclarations.h"
 #include "Editor/GuiComponents/HorizontalLayout.h"
 
 namespace NX
 {
-    namespace Gui
-    {
-        class ToggleButton;
-        class Button;
-        class TextInput;
-    } // namespace Gui
-
     CLASS();
     class LogsWindowEWC : public BaseFloatEWC
     {
@@ -65,8 +59,6 @@ namespace NX
         [[nodiscard]] bool canBeFiltered(const StringAtom& msg);
 
     private:
-        DelegateSubscriberPoolGuard _subscriptionPool;
-
         // ========= Toolbar ==========
         Gui::HorizontalLayout _toolbar;
 

@@ -12,23 +12,11 @@
 #pragma once
 
 #include "../NxECSBasedEditor.h"
+#include "Editor/ForwardDeclarations.h"
 #include "Editor/GuiComponents/VerticalLayout.h"
 
 namespace NX
 {
-    namespace Gui
-    {
-        template<class T>
-        class LabelRow;
-
-        class CheckBox;
-
-        template<std::size_t Size, Utils::IsArithmetic Type>
-        class VecNumInput;
-
-        using Float3Input = VecNumInput<3, float>;
-    } // namespace Gui
-
     CLASS();
     class ECSEditorActorAdapter : public ECSEditorMimeAdapter
     {
@@ -44,8 +32,6 @@ namespace NX
         void onDraw(float dt) override;
 
     protected:
-        DelegateSubscriberPoolGuard _subscriptionPool;
-
         Gui::VerticalLayout _actorLayout;
 
         Gui::LabelRow<Gui::CheckBox>* _actorPostDraw = nullptr;

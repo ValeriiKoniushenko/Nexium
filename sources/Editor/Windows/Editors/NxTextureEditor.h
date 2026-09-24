@@ -11,27 +11,13 @@
 
 #pragma once
 
+#include "Editor/ForwardDeclarations.h"
 #include "Editor/GuiComponents/VerticalLayout.h"
 #include "Editor/Windows/Editors/NxEditorBaseEditor.h"
 #include "NxSubsystems/AssetsManager/TextureAsset.h"
 
 namespace NX
 {
-    namespace Gui
-    {
-        template<typename T>
-        class LabelRow;
-
-        template<std::size_t Size, Utils::IsArithmetic Type>
-        class VecNumInput;
-
-        class TextInput;
-        class CheckBox;
-
-        using Int2Input = VecNumInput<2, int>;
-
-    } // namespace Gui
-
     CLASS();
     class NxTextureEditorEWC : public NxEditorBaseEditorEWC
     {
@@ -50,8 +36,6 @@ namespace NX
         bool onOpenFromPath(const std::filesystem::path& path) override;
 
     protected:
-        DelegateSubscriberPoolGuard _subscriptionPool;
-
         Gui::VerticalLayout _layout;
 
         Gui::LabelRow<Gui::Int2Input>* _imageSize = nullptr;

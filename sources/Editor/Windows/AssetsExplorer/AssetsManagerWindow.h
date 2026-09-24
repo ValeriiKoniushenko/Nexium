@@ -12,6 +12,7 @@
 #pragma once
 
 #include "../BaseWindow.h"
+#include "Editor/ForwardDeclarations.h"
 #include "Editor/GuiComponents/HorizontalLayout.h"
 #include "NxSubsystems/AssetsManager/AssetsManager.h"
 #include "NxSubsystems/AssetsManager/TextureAsset.h"
@@ -20,17 +21,6 @@
 
 namespace NX
 {
-    namespace Gui
-    {
-        template<Utils::IsArithmetic T>
-        class NumInput;
-
-        using IntInput = NumInput<int>;
-
-        class TextInput;
-        class Button;
-    } // namespace Gui
-
     CLASS();
     class AssetsManagerWindowEWC : public BaseFloatEWC
     {
@@ -79,8 +69,6 @@ namespace NX
         };
 
     protected:
-        DelegateSubscriberPoolGuard _subscriptionPool;
-
         std::unordered_map<NX::AssetsManager::NodeType, NX::NXTexture> _nodeTypesData;
 
         Gui::HorizontalLayout _toolbarLayout;

@@ -11,6 +11,7 @@
 
 #pragma once
 #include "Core/Delegate.h"
+#include "Editor/ForwardDeclarations.h"
 #include "Editor/GuiComponents/VerticalLayout.h"
 #include "Editor/Windows/NxECSBasedEditor.h"
 #include "FrameByFrameAnimationEditor.h"
@@ -19,11 +20,6 @@
 
 namespace NX
 {
-    namespace Gui
-    {
-        class Button;
-    }
-
     CLASS();
     class ECSEditorFrameByFrameAnimationAdapter : public ECSEditorMimeAdapter
     {
@@ -43,7 +39,6 @@ namespace NX
 
         Gui::VerticalLayout _layout;
         Gui::Button* _addAnimButton = nullptr;
-        DelegateSubscriberPoolGuard _subscriptionPool;
         FrameByFrameAnimationEditor _animationEditor;
         std::unordered_map<StringAtom, FrameByFrameAnimationEditor::PreviewState> _previewStates;
     };

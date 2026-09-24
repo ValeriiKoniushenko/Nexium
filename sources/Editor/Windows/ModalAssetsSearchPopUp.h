@@ -12,6 +12,7 @@
 #pragma once
 
 #include "BaseWindow.h"
+#include "Editor/ForwardDeclarations.h"
 #include "Editor/GuiComponents/Input.h"
 #include "Editor/GuiComponents/LabelRow.h"
 #include "Editor/GuiComponents/VerticalLayout.h"
@@ -19,19 +20,6 @@
 
 namespace NX
 {
-
-    namespace Gui
-    {
-        class ListModelBased;
-        class Button;
-
-        template<class T>
-        class LabelRow;
-
-        class TextInput;
-
-    } // namespace Gui
-
     CLASS();
     class ModalAssetsSearchPopUpEWC : public BaseModalPopUp
     {
@@ -50,10 +38,6 @@ namespace NX
         void onClose() override;
 
     protected:
-        DelegateSubscriberPoolGuard _subscriptionPool;
-
-        StringAtom _caption = "ModalAssetsSearchPopUpEWC";
-
         Gui::LabelRow<Gui::TextInput>* _nameField = nullptr;
         Gui::VerticalLayout _layout;
         Gui::ListModelBased* _list = nullptr;

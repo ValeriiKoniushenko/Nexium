@@ -11,6 +11,7 @@
 
 #pragma once
 
+#include "Editor/ForwardDeclarations.h"
 #include "Editor/GuiComponents/VerticalLayout.h"
 #include "Editors/NxEditorBaseEditor.h"
 #include "NxFundamental/Assets/ECSAsset.h"
@@ -21,15 +22,6 @@ namespace NX
     using NX::BaseComponent;
     using NX::KeyboardInputManger;
     using NX::NXECSAsset;
-
-    namespace Gui
-    {
-        template<typename T>
-        class LabelRow;
-
-        class TextInput;
-
-    } // namespace Gui
 
     CLASS();
     class ECSEditorMimeAdapter : public NX::BaseComponent
@@ -52,6 +44,9 @@ namespace NX
         [[nodiscard]] BaseComponent* getTargetComponent();
         [[nodiscard]] const BaseComponent* getTargetComponent() const;
         [[nodiscard]] NXECSAsset getTargetAsset();
+
+    protected:
+        DelegateSubscriberPoolGuard _subscriptionPool;
     };
 
     CLASS();
@@ -92,7 +87,6 @@ namespace NX
 
     protected:
         KeyboardInputManger _keyboardManager;
-        DelegateSubscriberPoolGuard _subscriptionPool;
 
         Gui::VerticalLayout _headerLayout;
         Gui::LabelRow<Gui::TextInput>* _logicalPath = nullptr;

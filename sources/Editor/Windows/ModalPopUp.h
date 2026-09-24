@@ -12,44 +12,29 @@
 #pragma once
 
 #include "BaseWindow.h"
+#include "Editor/ForwardDeclarations.h"
 #include "Editor/GuiComponents/HorizontalLayout.h"
 
 namespace NX
 {
-    namespace Gui
-    {
-        class Button;
-    }
-
     CLASS();
-    class ModalPopUp : public BaseEWC
+    class ModalPopUp : public BaseModalPopUp
     {
-        ECS_DECL_NO_CNSTR(ModalPopUp, NX::BaseEWC);
+        ECS_DECL(ModalPopUp, NX::BaseModalPopUp);
 
     public:
-        explicit ModalPopUp(const Core::StringAtom& name = ""_atom);
-
         void open(StringAtom text, const std::function<void(bool)>& okOrCancelCallback);
 
         static void Open(StringAtom text, const std::function<void(bool)>& okOrCancelCallback);
 
     protected:
         void onInitialize() override;
-
         void onDraw() override;
-
-        void preOpenedEndWindowDraw() override;
-
-        [[nodiscard]] bool beginWindowDraw() override;
-
-        void endWindowDraw() override;
 
         void okButton();
         void cancelButton();
 
     protected:
-        DelegateSubscriberPoolGuard _subscriptionPool;
-
         Gui::HorizontalLayout _layout;
         Gui::Button* _okButton = nullptr;
         Gui::Button* _cancelButton = nullptr;

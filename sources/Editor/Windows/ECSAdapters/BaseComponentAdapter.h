@@ -12,44 +12,18 @@
 #pragma once
 
 #include "../NxECSBasedEditor.h"
+#include "Editor/ForwardDeclarations.h"
 #include "Editor/GuiComponents/VerticalLayout.h"
 #include "NxFundamental/ECS/BaseComponent.h"
 
 namespace NX
 {
-    namespace Gui
-    {
-        template<class T>
-        class LabelRow;
-
-        class TextInput;
-
-        class ListView;
-        class CheckBox;
-
-        template<class T, class ArrayCellViewerFunc, class ViewFetchFunc>
-        class BaseArray;
-
-        struct _StringArray_ArrayCellViewerFunc;
-        struct _StringArray_ViewFetchFunc;
-
-        using StringArray
-            = BaseArray<StringAtom, _StringArray_ArrayCellViewerFunc, _StringArray_ViewFetchFunc>;
-    } // namespace Gui
-
     CLASS();
     class ECSBaseComponentAdapter : public ECSEditorMimeAdapter
     {
-        ECS_DECL_NO_CNSTR(ECSBaseComponentAdapter, NX::ECSEditorMimeAdapter);
+        ECS_DECL(ECSBaseComponentAdapter, NX::ECSEditorMimeAdapter);
 
     public:
-        explicit ECSBaseComponentAdapter(const Core ::StringAtom& name = ""_atom)
-            : NX ::ECSEditorMimeAdapter(componentType, name)
-        {
-            int i = 123;
-            ///
-        }
-
         [[nodiscard]] bool canWorkWith(BaseComponent* component) const override { return true; }
         [[nodiscard]] StringAtom getProcessedAssetType() const override
         {
@@ -62,8 +36,6 @@ namespace NX
         void onDraw(float dt) override;
 
     protected:
-        DelegateSubscriberPoolGuard _subscriptionPool;
-
         Gui::VerticalLayout _baseEcsLayout;
         Gui::LabelRow<Gui::TextInput>* _ecsName = nullptr;
         Gui::LabelRow<Gui::TextInput>* _ecsType = nullptr;

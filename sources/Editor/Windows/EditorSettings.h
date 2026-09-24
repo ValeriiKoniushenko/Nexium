@@ -12,6 +12,7 @@
 #pragma once
 
 #include "BaseWindow.h"
+#include "Editor/ForwardDeclarations.h"
 #include "Editor/GuiComponents/HorizontalLayout.h"
 #include "Editor/GuiComponents/VerticalLayout.h"
 
@@ -19,13 +20,6 @@
 
 namespace NX
 {
-    namespace Gui
-    {
-        class Label;
-        class TextInput;
-        class Button;
-    } // namespace Gui
-
     namespace Internal
     {
 

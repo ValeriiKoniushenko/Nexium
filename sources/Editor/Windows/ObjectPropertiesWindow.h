@@ -12,6 +12,7 @@
 #pragma once
 
 #include "BaseWindow.h"
+#include "Editor/ForwardDeclarations.h"
 #include "Editor/GuiComponents/HorizontalLayout.h"
 #include "Editor/GuiComponents/VerticalLayout.h"
 #include "NxSubsystems/Graphics/GraphicsComponents.h"
@@ -30,38 +31,6 @@ namespace NX
     {
         class RectangleAnimated;
     }
-} // namespace NX
-
-namespace NX
-{
-    namespace Gui
-    {
-        class ComboModelBased;
-        class CheckBox;
-        class TextInput;
-
-        template<Utils::IsArithmetic T>
-        class NumInput;
-
-        using IntInput = NumInput<int>;
-        using FloatInput = NumInput<float>;
-
-        template<class T, class ArrayCellViewerFunc, class ViewFetchFunc>
-        class BaseArray;
-
-        struct _StringArray_ArrayCellViewerFunc;
-        struct _StringArray_ViewFetchFunc;
-
-        using StringArray
-            = BaseArray<StringAtom, _StringArray_ArrayCellViewerFunc, _StringArray_ViewFetchFunc>;
-
-        template<std::size_t Size, Utils::IsArithmetic Type>
-        class VecNumInput;
-
-        using Float3Input = VecNumInput<3, float>;
-        using Float2Input = VecNumInput<2, float>;
-
-    } // namespace Gui
 
     struct _GraphicsModifiersArray_ArrayCellViewerFunc
     {
@@ -121,8 +90,6 @@ namespace NX
         void tryDrawRectangleComponent(NX::SceneObj::RectangleAnimated* comp);
 
     private:
-        DelegateSubscriberPoolGuard _subscriptionPool;
-
         // ============= GUI =============
         // General section:
         Gui::VerticalLayout _generalInfoLayout;

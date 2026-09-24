@@ -12,6 +12,7 @@
 #pragma once
 
 #include "Core/Delegate.h"
+#include "Editor/ForwardDeclarations.h"
 #include "Editor/GuiComponents/VerticalLayout.h"
 #include "Editor/Windows/BaseWindow.h"
 #include "JustReflectMe/Adapter.h"
@@ -23,13 +24,6 @@
 
 namespace NX
 {
-    namespace Gui
-    {
-        class Label;
-        class Button;
-        class TextInput;
-    } // namespace Gui
-
     CLASS();
     class RenamePopUpWindow : public BaseEWC
     {
@@ -70,8 +64,6 @@ namespace NX
         [[nodiscard]] bool renamePath(const std::string& newName);
 
     private:
-        DelegateSubscriberPoolGuard _subscriptionPool;
-
         Gui::VerticalLayout _layout;
 
         Gui::Label* _label{ nullptr };

@@ -19,15 +19,11 @@
 namespace NX
 {
     class BaseCamera;
+    class GameViewportEWC;
     class Scene;
     class StaticMesh;
     class StaticMeshBundle;
     class Transformable;
-} // namespace NX
-
-namespace NX
-{
-    class GameViewportEWC;
 
     class BaseObjectPicker
     {

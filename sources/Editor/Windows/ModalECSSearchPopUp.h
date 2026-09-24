@@ -12,21 +12,11 @@
 #pragma once
 
 #include "BaseWindow.h"
+#include "Editor/ForwardDeclarations.h"
 #include "Editor/GuiComponents/VerticalLayout.h"
 
 namespace NX
 {
-    namespace Gui
-    {
-        class ListModelBased;
-        template<class T>
-        class LabelRow;
-
-        class TextInput;
-
-        class Button;
-    } // namespace Gui
-
     CLASS();
     class ModalECSSearchPopUpEWC : public BaseModalPopUp
     {

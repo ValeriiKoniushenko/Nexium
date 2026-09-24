@@ -15,13 +15,9 @@
 
 namespace NX
 {
-    class SceneObject;
-    class Scene;
     class Actor;
-} // namespace NX
-
-namespace NX
-{
+    class Scene;
+    class SceneObject;
 
     CLASS();
     class SceneTreeWindowEWC : public BaseFloatEWC
@@ -51,8 +47,6 @@ namespace NX
         void processAddNewComponentButton();
 
     protected:
-        DelegateSubscriberPoolGuard _subscriptionPool;
-
         NX::Scene* _scene = nullptr;
         int _commonTreeFlags = 0;
         NX::BaseComponent* _lastSelectedObject = nullptr;

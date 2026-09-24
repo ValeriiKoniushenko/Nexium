@@ -11,6 +11,7 @@
 
 #pragma once
 
+#include "Editor/ForwardDeclarations.h"
 #include "Editor/GuiComponents/HorizontalLayout.h"
 #include "Editor/GuiComponents/VerticalLayout.h"
 #include "Editor/Windows/NxECSBasedEditor.h"
@@ -18,28 +19,6 @@
 
 namespace NX
 {
-    namespace Gui
-    {
-        template<class T>
-        class LabelRow;
-
-        class TextInput;
-
-        class ListView;
-        class CheckBox;
-
-        template<class T, class ArrayCellViewerFunc, class ViewFetchFunc>
-        class BaseArray;
-
-        template<Utils::IsArithmetic T>
-        class NumInput;
-
-        using FloatInput = NumInput<float>;
-
-        class ComboModelBased;
-
-    } // namespace Gui
-
     struct _AssimpPostProcessArray_ArrayCellViewerFunc
     {
         Gui::HorizontalLayout::Ptr operator()(aiPostProcessSteps data) const;
@@ -84,7 +63,6 @@ namespace NX
         void onDraw(float dt) override;
 
     protected:
-        DelegateSubscriberPoolGuard _subscriptionPool;
         Gui::VerticalLayout _layout;
 
         Gui::LabelRow<Gui::TextInput>* _logicalPath = nullptr;

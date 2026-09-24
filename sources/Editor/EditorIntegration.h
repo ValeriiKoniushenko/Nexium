@@ -19,10 +19,7 @@
 namespace NX
 {
     class Runtime;
-}
 
-namespace NX
-{
     class EditorIntegration final : public NX::ApplicationIntegration
     {
     public:

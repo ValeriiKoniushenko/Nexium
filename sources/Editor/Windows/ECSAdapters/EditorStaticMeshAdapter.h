@@ -32,7 +32,6 @@ namespace NX
         void onDraw(float dt) override;
 
     protected:
-        DelegateSubscriberPoolGuard _subscriptionPool;
         Gui::VerticalLayout _layout;
     };
 

@@ -38,8 +38,6 @@ namespace NX
         Gui::VerticalLayout _layout;
 
         Gui::LabelRow<GraphicsModifiersArray>* _modifiers = nullptr;
-
-        DelegateSubscriberPoolGuard _subscriptionPool;
     };
 
 } // namespace NX

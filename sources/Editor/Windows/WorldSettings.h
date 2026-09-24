@@ -12,29 +12,11 @@
 #pragma once
 
 #include "BaseWindow.h"
+#include "Editor/ForwardDeclarations.h"
 #include "Editor/GuiComponents/VerticalLayout.h"
 
 namespace NX
 {
-    namespace Gui
-    {
-        class Button;
-        class TextInput;
-
-        template<Utils::IsArithmetic T>
-        class NumInput;
-
-        using IntInput = NumInput<int>;
-        using FloatInput = NumInput<float>;
-
-        class Color3Input;
-
-        template<std::size_t Size, Utils::IsArithmetic Type>
-        class VecNumInput;
-
-        using Float3Input = VecNumInput<3, float>;
-    } // namespace Gui
-
     CLASS();
     class WorldSettingsEWC : public BaseFloatEWC
     {
@@ -51,7 +33,6 @@ namespace NX
         void onDraw() override;
 
     protected:
-        DelegateSubscriberPoolGuard _subscriptionPool;
         // Global
         Gui::VerticalLayout _globalLayout;
         Gui::TextInput* _cameraInputField = nullptr;
