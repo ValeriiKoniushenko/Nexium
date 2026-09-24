@@ -54,9 +54,6 @@ namespace NX
         void onOpen() override;
 
     protected:
-        DelegateSubscriberPoolGuard _subscriptionPool;
-
-        StringAtom _caption = "ModalCreateBlueprintEWC";
         Gui::VerticalLayout _layout;
         Gui::ListModelBased* _list = nullptr;
         Gui::LabelRow<Gui::TextInput>* _nameField = nullptr;
