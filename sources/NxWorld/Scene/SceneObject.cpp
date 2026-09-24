@@ -9,6 +9,7 @@
 
 #include "SceneObject.h"
 
+#include "NxFundamental/Utils/Stringifier.h"
 #include "NxWorld/PrivateModuleInfo.h"
 
 namespace NX
@@ -24,7 +25,7 @@ namespace NX
     SceneState SceneObject::getSceneState() const
     {
         auto&& name = getComponentName().toStdString();
-        return { .name = (name.empty() ? "None" : name),
+        return { .name = (name.empty() ? Stringify::gcDefaultNoneString.data() : name),
                  .trans = static_cast<const Transformable&>(*this),
                  .assetType = getComponentType(),
                  .referenceAsset = _referencedAsset,

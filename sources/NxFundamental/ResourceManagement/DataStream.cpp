@@ -130,7 +130,8 @@ namespace NX
     {
         if (!key)
         {
-            _data->errors.emplace_back(Result::InvalidPassedData, "nullptr");
+            _data->errors.emplace_back(Result::InvalidPassedData,
+                                       Stringify::gcDefaultNoneString.data());
             return Result::InvalidPassedData;
         }
 
@@ -175,7 +176,8 @@ namespace NX
     {
         if (!key)
         {
-            _data->errors.emplace_back(Result::InvalidPassedData, "nullptr");
+            _data->errors.emplace_back(Result::InvalidPassedData,
+                                       Stringify::gcDefaultNoneString.data());
             return Result::InvalidPassedData;
         }
 

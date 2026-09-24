@@ -17,6 +17,7 @@
 #include "Editor/GuiComponents/Separator.h"
 #include "Editor/GuiComponents/Spacer.h"
 #include "Editor/IconsFontAwesome.h"
+#include "NxFundamental/Utils/Stringifier.h"
 #include "NxWorld/Framework/GameInstance.h"
 #include "NxWorld/Scene/Spectator.h"
 
@@ -73,7 +74,7 @@ namespace NX
         setComponentName("ListItem");
         setFlex(Flex::FlexWidth);
         setHorizontalAlign(Align::SpaceBetween);
-        _label = addChildComponent<Label>("Undefined");
+        _label = addChildComponent<Label>(Stringify::gcDefaultNoneString.data());
     }
 
     void Internal::KeymapItem::setReadOnly(bool value)
@@ -117,7 +118,7 @@ namespace NX
 
         auto* holder = addChildComponent<HorizontalLayout>();
         holder->setFlex(Flex::Fixed);
-        _button = holder->addChildComponent<Button>("None");
+        _button = holder->addChildComponent<Button>(Stringify::gcDefaultNoneString.data());
         _button->setMinWidth(80.f);
 
         _resetButton = holder->addChildComponent<Button>(ICON_FA_SHARE);

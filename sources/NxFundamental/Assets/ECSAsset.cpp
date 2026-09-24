@@ -12,6 +12,7 @@
 #include "../PrivateModuleInfo.h"
 #include "Factory.h"
 #include "NxFundamental/ResourceManagement/AtomicFile.h"
+#include "NxFundamental/Utils/Stringifier.h"
 #include "Utils/Functions.h"
 #include "nlohmann/json.hpp"
 
@@ -256,8 +257,10 @@ namespace NX
         try
         {
             WriteFileAtomically(_meta.pathToSource, json.dump(4));
-            traceLog("Asset: {} was updated successfully. Patch: {}"_f
-                     << _meta.logicPath << (patchedOutput.empty() ? "None" : patchedOutput));
+            traceLog(
+                "Asset: {} was updated successfully. Patch: {}"_f
+                << _meta.logicPath
+                << (patchedOutput.empty() ? Stringify::gcDefaultNoneString.data() : patchedOutput));
         }
         catch (const std::filesystem::filesystem_error& error)
         {

@@ -13,6 +13,7 @@
 #include "ImGui/imgui.h"
 #include "NxFundamental/ITagHolder.h"
 #include "NxFundamental/ResourceManagement/DataStream.h"
+#include "NxFundamental/Utils/Stringifier.h"
 
 using namespace NX;
 
@@ -70,7 +71,7 @@ namespace NX
 
         if (normName.isEmpty())
         {
-            normName = "None";
+            normName = Stringify::gcDefaultNoneString.data();
         }
 
         return getComponentType() + "_" + normName;

@@ -385,7 +385,8 @@ namespace NX
             {
                 errorLog(
                     "It seems that the registered asset/object '{}' on the scene was corrupted in the refrenced file. Absense of the vital information. Referenced asset path: '{}'"_f
-                    << (state.name.empty() ? "<none>" : state.name) << state.referenceAsset);
+                    << (state.name.empty() ? Stringify::gcDefaultNoneString.data() : state.name)
+                    << state.referenceAsset);
             }
             const auto name = Core::StringAtom::MakeFrom(state.name);
             if (name.isEmpty() || nameExists(replacement._sceneObjects, name))

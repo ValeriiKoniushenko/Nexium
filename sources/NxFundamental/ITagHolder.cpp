@@ -9,6 +9,8 @@
 
 #include "ITagHolder.h"
 
+#include "NxFundamental/Utils/Stringifier.h"
+
 #include <algorithm>
 #include <array>
 #include <cstring>
@@ -46,7 +48,7 @@ namespace NX
 
         if (value == 0) [[unlikely]]
         {
-            return "None";
+            return Stringify::gcDefaultNoneString.data();
         }
 
         std::string result;
@@ -106,7 +108,7 @@ namespace NX
 
         if (tags == 0)
         {
-            result.emplace_back("None");
+            result.emplace_back(Stringify::gcDefaultNoneString.data());
             return result;
         }
 

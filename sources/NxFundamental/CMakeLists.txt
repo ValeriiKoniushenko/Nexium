@@ -9,6 +9,17 @@ target_compile_definitions(Nexium_Fundamental_PrivateModule
     PRIVATE PRIVATE_MODULE_NAME="NxFundamental"
 )
 
+# ================ Utils =================
+
+add_library(Nexium_Fundamental_Utils STATIC)
+add_library(Nexium::Fundamental::Utils ALIAS Nexium_Fundamental_Utils)
+target_sources(Nexium_Fundamental_Utils PRIVATE
+    Utils/Stringifier.cpp
+)
+nexium_add_public_headers(Nexium_Fundamental_Utils
+    NxFundamental/Utils/Stringifier.h
+)
+
 # ================ Fundamental base =================
 
 add_library(Nexium_Fundamental_Base STATIC)
@@ -21,7 +32,11 @@ nexium_add_public_headers(Nexium_Fundamental_Base
     NxFundamental/ITagHolder.h
     NxFundamental/Transformable.h
 )
-target_link_libraries(Nexium_Fundamental_Base PUBLIC Nexium::Foundation)
+target_link_libraries(Nexium_Fundamental_Base
+    PUBLIC
+    Nexium::Foundation
+    Nexium::Fundamental::Utils
+)
 
 # ================ Resource management =================
 
@@ -60,21 +75,6 @@ target_link_libraries(Nexium_Fundamental_ECS
     Nexium::Fundamental::Base
     Nexium::Fundamental::ResourceManagement
     PRIVATE Nexium_Fundamental_PrivateModule
-)
-
-# ================ Utils =================
-
-add_library(Nexium_Fundamental_Utils STATIC)
-add_library(Nexium::Fundamental::Utils ALIAS Nexium_Fundamental_Utils)
-target_sources(Nexium_Fundamental_Utils PRIVATE
-    Utils/Stringifier.cpp
-)
-nexium_add_public_headers(Nexium_Fundamental_Utils
-    NxFundamental/Utils/Stringifier.h
-)
-target_link_libraries(Nexium_Fundamental_Utils
-    PUBLIC
-    Nexium::Fundamental::Base
 )
 
 # ================ Assets =================
@@ -133,12 +133,14 @@ target_link_libraries(Nexium_Fundamental INTERFACE
     Nexium::Fundamental::ECS
     Nexium::Fundamental::Assets
     Nexium::Fundamental::TextureAtlas
+    Nexium::Fundamental::Utils
 )
 
 # =========================================
 
 foreach(TARGET_NAME IN ITEMS
     Nexium_Fundamental_PrivateModule
+    Nexium_Fundamental_Utils
     Nexium_Fundamental_Base
     Nexium_Fundamental_ResourceManagement
     Nexium_Fundamental_ECS

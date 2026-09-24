@@ -14,6 +14,7 @@
 #include "Foundation/BaseLog.h"
 #include "Foundation/Interfaces/DataStream.h"
 #include "JustReflectMe/Adapter.h"
+#include "NxFundamental/Utils/Stringifier.h"
 #include "nlohmann/json.hpp"
 
 #include <fstream>
@@ -204,7 +205,8 @@ namespace NX
         {
             if (!key)
             {
-                _data->errors.emplace_back(Result::InvalidPassedData, "nullptr");
+                _data->errors.emplace_back(Result::InvalidPassedData,
+                                           Stringify::gcDefaultNoneString.data());
                 return Result::InvalidPassedData;
             }
 
@@ -243,7 +245,8 @@ namespace NX
         {
             if (!key)
             {
-                _data->errors.emplace_back(Result::InvalidPassedData, "nullptr");
+                _data->errors.emplace_back(Result::InvalidPassedData,
+                                           Stringify::gcDefaultNoneString.data());
                 return Result::InvalidPassedData;
             }
 

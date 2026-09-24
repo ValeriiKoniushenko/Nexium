@@ -19,6 +19,7 @@
 #include "Editor/GuiComponents/Misc.h"
 #include "Editor/GuiComponents/VecInput.h"
 #include "NxFundamental/Transformable.h"
+#include "NxFundamental/Utils/Stringifier.h"
 #include "NxWorld/Animations/FrameByFrame/FrameByFrameAnimator.h"
 #include "NxWorld/Entities/Camera/Camera.h"
 #ifdef NEXIUM_ENABLE_3D_MODULE
@@ -131,7 +132,7 @@ namespace NX
 
                 std::vector<std::string> out(m.begin(), m.end());
                 std::ranges::sort(out);
-                auto r = std::ranges::remove(out, std::string{ "None" });
+                auto r = std::ranges::remove(out, Stringify::gcDefaultNoneString.data());
                 out.erase(r.begin(), r.end());
                 return out;
             }();
@@ -155,7 +156,7 @@ namespace NX
 
                 std::vector<std::string> out(m.begin(), m.end());
                 std::ranges::sort(out);
-                auto r = std::ranges::remove(out, std::string{ "None" });
+                auto r = std::ranges::remove(out, Stringify::gcDefaultNoneString.data());
                 out.erase(r.begin(), r.end());
                 return out;
             }();
@@ -192,7 +193,7 @@ namespace NX
 
                 std::vector<std::string> out(m.begin(), m.end());
                 std::ranges::sort(out);
-                auto r = std::ranges::remove(out, std::string{ "None" });
+                auto r = std::ranges::remove(out, Stringify::gcDefaultNoneString.data());
                 out.erase(r.begin(), r.end());
                 return out;
             }();
@@ -215,7 +216,7 @@ namespace NX
 
                 std::vector<std::string> out(m.begin(), m.end());
                 std::ranges::sort(out);
-                auto r = std::ranges::remove(out, std::string{ "None" });
+                auto r = std::ranges::remove(out, Stringify::gcDefaultNoneString.data());
                 out.erase(r.begin(), r.end());
                 return out;
             }();
@@ -1006,7 +1007,7 @@ namespace NX
             }
             if (_parentName)
             {
-                std::string str = "None";
+                std::string str = Stringify::gcDefaultNoneString.data();
                 if (comp->hasParent())
                 {
                     str = comp->getParent()->getComponentName().toStdString();
@@ -1030,7 +1031,7 @@ namespace NX
 
             if (_outlineShader)
             {
-                std::string shader = "None";
+                std::string shader = Stringify::gcDefaultNoneString.data();
                 if (comp->getOutlineShader())
                 {
                     shader = comp->getOutlineShader()->getName().toStdString();

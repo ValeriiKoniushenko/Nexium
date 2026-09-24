@@ -81,7 +81,7 @@ namespace NX
         }
         catch (...)
         {
-            criticalLog("Can't read file: {}. Reason is undefined."_f << _assetPath);
+            criticalLog("Can't read file: {}. The reason is undefined."_f << _assetPath);
         }
     }
 
