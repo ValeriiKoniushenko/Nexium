@@ -18,22 +18,11 @@ namespace NX
     nlohmann::json SceneManager::serialize() const
     {
         auto data = nlohmann::json{ { "formatVersion", 1 },
-                                    { "scenes", nlohmann::json::array() },
                                     { "open", nlohmann::json::array() },
-                                    { "current", 0 } };
-        for (std::size_t i = 0; i < _scenes.size(); ++i)
-        {
-            data["scenes"].push_back(_scenes[i]->serialize());
-            if (_scenes[i].get() == _currentScene)
-            {
-                data["current"] = i;
-            }
-        }
+                                    { "current", _currentScene->getSceneName().c_str() } };
         for (const auto* scene : _openScenes)
         {
-            const auto it = std::ranges::find_if(_scenes, [scene](const auto& owned)
-                                                 { return owned.get() == scene; });
-            data["open"].push_back(it - _scenes.begin());
+            data["open"].push_back(scene->getSceneName().c_str());
         }
         return data;
     }
@@ -41,37 +30,28 @@ namespace NX
     void SceneManager::deserialize(RResourceStream<RJsonResourceStream>& stream)
     {
         const auto& data = stream.getData();
-        if (data.at("formatVersion") != 1 || !data.at("scenes").is_array()
-            || data.at("scenes").empty() || !data.at("open").is_array())
+        if (data.at("formatVersion") != 1 || !data.at("open").is_array())
         {
-            throw std::runtime_error("Invalid scene library format.");
+            throw std::runtime_error("Invalid scene tabs format.");
         }
-        std::vector<std::unique_ptr<Scene>> replacement;
-        for (const auto& entry : data.at("scenes"))
-        {
-            auto scene = std::make_unique<Scene>();
-            auto sceneData = RResourceStream<RJsonResourceStream>(entry);
-            scene->deserialize(sceneData);
-            scene->initialize();
-            replacement.push_back(std::move(scene));
-        }
-        const auto current = data.at("current").get<std::size_t>();
-        auto* selected = replacement.at(current).get();
+        auto* selected = getScene(Core::StringAtom::Intern(data.at("current").get<std::string>()));
         std::vector<Scene*> opened;
-        for (const auto& index : data.at("open"))
+        for (const auto& name : data.at("open"))
         {
-            auto* scene = replacement.at(index.get<std::size_t>()).get();
-            if (std::ranges::find(opened, scene) != opened.end())
+            auto* scene = getScene(Core::StringAtom::Intern(name.get<std::string>()));
+            if (scene && std::ranges::find(opened, scene) == opened.end())
             {
-                throw std::runtime_error("Duplicate open scene in library.");
+                opened.push_back(scene);
             }
-            opened.push_back(scene);
+        }
+        if (!selected)
+        {
+            selected = opened.empty() ? _scenes.front().get() : opened.front();
         }
         if (std::ranges::find(opened, selected) == opened.end())
         {
-            throw std::runtime_error("Current scene must have an open tab.");
+            opened.push_back(selected);
         }
-        _scenes.swap(replacement);
         _openScenes = std::move(opened);
         _currentScene = selected;
         onCurrentSceneChanged->trigger(_currentScene);
@@ -92,19 +72,29 @@ namespace NX
             }
         }
         std::ranges::sort(paths);
-        auto data = nlohmann::json{ { "formatVersion", 1 },
-                                    { "scenes", nlohmann::json::array() },
-                                    { "open", { 0 } },
-                                    { "current", 0 } };
+        std::vector<std::unique_ptr<Scene>> replacement;
         for (const auto& path : paths)
         {
             std::ifstream file(path);
-            data["scenes"].push_back(nlohmann::json::parse(file));
+            auto stream = RResourceStream<RJsonResourceStream>(nlohmann::json::parse(file));
+            auto scene = std::make_unique<Scene>();
+            scene->deserialize(stream);
+            const auto name = scene->getSceneName();
+            if (name.isEmpty()
+                || std::ranges::any_of(replacement, [&name](const auto& existing)
+                                       { return existing->getSceneName() == name; }))
+            {
+                throw std::runtime_error("Empty or duplicate scene name.");
+            }
+            scene->initialize();
+            replacement.push_back(std::move(scene));
         }
-        if (!paths.empty())
+        if (!replacement.empty())
         {
-            auto stream = RResourceStream<RJsonResourceStream>(data);
-            deserialize(stream);
+            _scenes.swap(replacement);
+            _currentScene = _scenes.front().get();
+            _openScenes = { _currentScene };
+            onCurrentSceneChanged->trigger(_currentScene);
         }
     }
 } // namespace NX
