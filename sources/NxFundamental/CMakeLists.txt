@@ -20,7 +20,6 @@ target_sources(Nexium_Fundamental_Base PRIVATE
 nexium_add_public_headers(Nexium_Fundamental_Base
     NxFundamental/ITagHolder.h
     NxFundamental/Transformable.h
-    NxFundamental/Transformable.generated.h
 )
 target_link_libraries(Nexium_Fundamental_Base PUBLIC Nexium::Foundation)
 
@@ -55,13 +54,27 @@ target_sources(Nexium_Fundamental_ECS PRIVATE
 )
 nexium_add_public_headers(Nexium_Fundamental_ECS
     NxFundamental/ECS/BaseComponent.h
-    NxFundamental/ECS/BaseComponent.generated.h
 )
 target_link_libraries(Nexium_Fundamental_ECS
     PUBLIC
-        Nexium::Fundamental::Base
-        Nexium::Fundamental::ResourceManagement
+    Nexium::Fundamental::Base
+    Nexium::Fundamental::ResourceManagement
     PRIVATE Nexium_Fundamental_PrivateModule
+)
+
+# ================ Utils =================
+
+add_library(Nexium_Fundamental_Utils STATIC)
+add_library(Nexium::Fundamental::Utils ALIAS Nexium_Fundamental_Utils)
+target_sources(Nexium_Fundamental_Utils PRIVATE
+    Utils/Stringifier.cpp
+)
+nexium_add_public_headers(Nexium_Fundamental_Utils
+    NxFundamental/Utils/Stringifier.h
+)
+target_link_libraries(Nexium_Fundamental_Utils
+    PUBLIC
+    Nexium::Fundamental::Base
 )
 
 # ================ Assets =================
@@ -82,10 +95,10 @@ nexium_add_public_headers(Nexium_Fundamental_Assets
 )
 target_link_libraries(Nexium_Fundamental_Assets
     PUBLIC
-        Nexium::Fundamental::ECS
-        Nexium::Fundamental::ResourceManagement
-        Nexium::Platform::Graphics
-        Core::Rectpack2D
+    Nexium::Fundamental::ECS
+    Nexium::Fundamental::ResourceManagement
+    Nexium::Platform::Graphics
+    Core::Rectpack2D
     PRIVATE Nexium_Fundamental_PrivateModule
 )
 
@@ -101,9 +114,9 @@ nexium_add_public_headers(Nexium_Fundamental_TextureAtlas
 )
 target_link_libraries(Nexium_Fundamental_TextureAtlas
     PUBLIC
-        Nexium::Foundation
-        Nexium::RawBackend
-        Core::Rectpack2D
+    Nexium::Foundation
+    Nexium::RawBackend
+    Core::Rectpack2D
     PRIVATE Nexium_Fundamental_PrivateModule
 )
 
