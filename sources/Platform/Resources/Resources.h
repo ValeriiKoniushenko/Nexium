@@ -7,6 +7,8 @@
 //
 //     http://www.apache.org/licenses/LICENSE-2.0
 
+// Module: Nexium::Platform::Input (private)
+
 #pragma once
 
 #define IDI_ICON_SMALL 101

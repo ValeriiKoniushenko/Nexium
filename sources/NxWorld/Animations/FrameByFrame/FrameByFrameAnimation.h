@@ -7,6 +7,8 @@
 //
 //     http://www.apache.org/licenses/LICENSE-2.0
 
+// Module: Nexium::World::Animation
+
 #pragma once
 
 #include "../BaseAnimation.h"

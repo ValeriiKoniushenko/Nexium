@@ -7,6 +7,8 @@
 //
 //     http://www.apache.org/licenses/LICENSE-2.0
 
+// Module: Nexium::Subsystem::AssetsManager
+
 #pragma once
 
 #include "NxFundamental/Assets/BaseAsset.h"

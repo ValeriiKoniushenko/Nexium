@@ -7,6 +7,8 @@
 //
 //     http://www.apache.org/licenses/LICENSE-2.0
 
+// Module: Nexium::Subsystem::AssimpImporter (3D only)
+
 #pragma once
 
 #include "NxSubsystems/Graphics/GraphicsComponents.h"

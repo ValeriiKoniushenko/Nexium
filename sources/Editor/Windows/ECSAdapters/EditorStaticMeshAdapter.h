@@ -7,6 +7,8 @@
 //
 //     http://www.apache.org/licenses/LICENSE-2.0
 
+// Module: Nexium::Editor (3D only)
+
 #pragma once
 
 #include "../NxECSBasedEditor.h"

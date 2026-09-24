@@ -7,6 +7,8 @@
 //
 //     http://www.apache.org/licenses/LICENSE-2.0
 
+// Module: Nexium::Platform::Graphics
+
 #pragma once
 
 #include "glad/glad.h"

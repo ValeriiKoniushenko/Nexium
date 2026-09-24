@@ -7,6 +7,8 @@
 //
 //     http://www.apache.org/licenses/LICENSE-2.0
 
+// Module: TemplateGame
+
 #pragma once
 
 #include "NxWorld/Framework/GameInstance.h"

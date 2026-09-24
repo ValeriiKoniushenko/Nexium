@@ -7,6 +7,8 @@
 //
 //     http://www.apache.org/licenses/LICENSE-2.0
 
+// Module: Nexium_NxSubsystems_PrivateModule (private)
+
 #pragma once
 
 #include <string_view>

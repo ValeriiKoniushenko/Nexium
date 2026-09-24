@@ -7,6 +7,8 @@
 //
 //     http://www.apache.org/licenses/LICENSE-2.0
 
+// Module: Nexium::World
+
 #pragma once
 
 #include "Core/Color.h"

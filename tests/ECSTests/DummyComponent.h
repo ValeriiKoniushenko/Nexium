@@ -7,6 +7,8 @@
 //
 //     http://www.apache.org/licenses/LICENSE-2.0
 
+// Module: Nexium_Tests
+
 #pragma once
 
 #include "NxFundamental/ECS/BaseComponent.h"

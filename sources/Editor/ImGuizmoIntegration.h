@@ -7,6 +7,8 @@
 //
 //     http://www.apache.org/licenses/LICENSE-2.0
 
+// Module: Nexium::Editor (private)
+
 #pragma once
 
 #include "ImGui/imgui.h"

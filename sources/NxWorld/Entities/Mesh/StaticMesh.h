@@ -7,6 +7,8 @@
 //
 //     http://www.apache.org/licenses/LICENSE-2.0
 
+// Module: Nexium::World (3D only)
+
 #pragma once
 
 #include "Foundation/Interfaces/IOutliner.h"
