@@ -145,7 +145,7 @@ TEST_F(ScenePersistenceTest, EmptyDocumentReplacesSceneAndMalformedDocumentDoesN
     EXPECT_TRUE(scene.getObjects().empty());
 }
 
-TEST_F(ScenePersistenceTest, SceneLibraryPreservesObjectsInClosedScenes)
+TEST_F(ScenePersistenceTest, SceneFilesPreserveObjectsInClosedScenes)
 {
     NX::SceneManager manager;
     auto* initial = manager.getCurrentScene();
@@ -156,8 +156,17 @@ TEST_F(ScenePersistenceTest, SceneLibraryPreservesObjectsInClosedScenes)
     auto& added = manager.createNewScene();
     manager.setCurrentScene(&added);
     ASSERT_TRUE(manager.closeScene(initial));
-    auto data = RResourceStream<RJsonResourceStream>(manager.serialize());
+    const auto tabs = manager.serialize();
+    EXPECT_FALSE(tabs.contains("scenes"));
+    EXPECT_EQ(tabs.at("current"), added.getSceneName().c_str());
+    for (const auto& scene : manager.getScenes())
+    {
+        std::ofstream(root / (std::string(scene->getSceneName().c_str()) + ".json"))
+            << scene->serialize().dump();
+    }
+    auto data = RResourceStream<RJsonResourceStream>(tabs);
     NX::SceneManager restored;
+    restored.importScenes(root);
     restored.deserialize(data);
     auto* closed = restored.getScene("Default"_atom);
     ASSERT_NE(closed, nullptr);
@@ -169,7 +178,7 @@ TEST_F(ScenePersistenceTest, SceneLibraryPreservesObjectsInClosedScenes)
     EXPECT_EQ(restored.getCurrentScene(), closed);
 }
 
-TEST_F(ScenePersistenceTest, SceneLibraryImportsExistingFilesWithoutDeletingThem)
+TEST_F(ScenePersistenceTest, ImportsExistingSceneFilesWithoutDeletingThem)
 {
     NX::Scene first;
     NX::Scene second;
@@ -187,4 +196,30 @@ TEST_F(ScenePersistenceTest, SceneLibraryImportsExistingFilesWithoutDeletingThem
     std::ofstream(root / "Broken.json") << "invalid JSON";
     EXPECT_THROW(manager.importScenes(root), std::exception);
     EXPECT_EQ(manager.getCurrentScene(), current);
+}
+
+TEST_F(ScenePersistenceTest, MissingSceneReferencesDoNotDiscardLoadedScenes)
+{
+    NX::SceneManager manager;
+    auto* initial = manager.getCurrentScene();
+    const nlohmann::json tabs = { { "formatVersion", 1 },
+                                  { "open", { "DeletedScene", "Default" } },
+                                  { "current", "DeletedScene" } };
+    auto data = RResourceStream<RJsonResourceStream>(tabs);
+    manager.deserialize(data);
+    EXPECT_EQ(manager.getCurrentScene(), initial);
+    ASSERT_EQ(manager.getOpenScenes().size(), 1u);
+    EXPECT_EQ(manager.getOpenScenes().front(), initial);
+}
+
+TEST_F(ScenePersistenceTest, MalformedTabsPreserveCurrentSession)
+{
+    NX::SceneManager manager;
+    auto* initial = manager.getCurrentScene();
+    const nlohmann::json tabs
+        = { { "formatVersion", 1 }, { "open", { "Default", 42 } }, { "current", "Default" } };
+    auto data = RResourceStream<RJsonResourceStream>(tabs);
+    EXPECT_THROW(manager.deserialize(data), std::exception);
+    EXPECT_EQ(manager.getCurrentScene(), initial);
+    EXPECT_EQ(manager.getOpenScenes().size(), 1u);
 }
