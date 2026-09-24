@@ -22,6 +22,7 @@ namespace NX
     ECS_IMPL(BaseEWC);
     ECS_IMPL(BaseFloatEWC);
     ECS_IMPL(BaseMenuBarEWC);
+    ECS_IMPL(BaseModalPopUp);
 
     void BaseEWC::openWindow(const StringAtom& args)
     {
@@ -190,4 +191,69 @@ namespace NX
     {
         ImGui::EndMainMenuBar();
     }
+
+    BaseModalPopUp::BaseModalPopUp(const Core::StringAtom& name /*  = ""_atom */)
+    {
+    }
+
+    void BaseModalPopUp::open(StringAtom text,
+                              const BaseModalPopUp::ButtonCallbackT& okOrCancelCallback)
+    {
+        initialize();
+        enable();
+        if (_hasOpenRequest)
+        {
+            warnLog("Can't open second time BaseModalPopUp. It's already processing the request.");
+            return;
+        }
+        _caption = std::move(text);
+        _hasOpenRequest = true;
+
+        onOpen();
+    }
+
+    void BaseModalPopUp::Open(StringAtom text,
+                              const BaseModalPopUp::ButtonCallbackT& okOrCancelCallback)
+    {
+    }
+
+    void BaseModalPopUp::onInitialize()
+    {
+    }
+
+    void BaseModalPopUp::onDraw()
+    {
+    }
+
+    void BaseModalPopUp::preOpenedEndWindowDraw()
+    {
+        ImGui::EndPopup();
+    }
+
+    bool BaseModalPopUp::beginWindowDraw()
+    {
+        if (_hasOpenRequest)
+        {
+            ImGui::OpenPopup(_caption.c_str());
+            ImGui::SetNextWindowSize(glm::vec2(500, 600), ImGuiCond_Appearing);
+            _hasOpenRequest = false;
+        }
+        return ImGui::BeginPopupModal(_caption.c_str(), nullptr, ImGuiWindowFlags_NoCollapse);
+    }
+
+    void BaseModalPopUp::onClose()
+    {
+        BaseFloatEWC::onClose();
+    }
+
+    void BaseModalPopUp::onOpen()
+    {
+        BaseFloatEWC::onOpen();
+    }
+
+    void BaseModalPopUp::endWindowDraw()
+    {
+        BaseFloatEWC::endWindowDraw();
+    }
+
 } // namespace NX

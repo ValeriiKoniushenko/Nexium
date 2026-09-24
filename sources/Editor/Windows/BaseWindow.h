@@ -153,6 +153,40 @@ namespace NX
 
         void endWindowDraw() override;
     };
+
+    CLASS();
+    class BaseModalPopUp : public BaseFloatEWC
+    {
+        ECS_DECL_NO_CNSTR(BaseModalPopUp, NX::BaseFloatEWC);
+
+    public:
+        using ButtonCallbackT = std::function<void(Core::StringAtom)>;
+
+    public:
+        explicit BaseModalPopUp(const Core::StringAtom& name = ""_atom);
+
+        void open(StringAtom text, const ButtonCallbackT& okOrCancelCallback);
+        static void Open(StringAtom text, const ButtonCallbackT& okOrCancelCallback);
+
+    protected:
+        void onInitialize() override;
+        void onDraw() override;
+        void onOpen() override;
+        void onClose() override;
+        void preOpenedEndWindowDraw() override;
+
+        [[nodiscard]] bool beginWindowDraw() override;
+        void endWindowDraw() override;
+
+    protected:
+        DelegateSubscriberPoolGuard _subscriptionPool;
+
+        ButtonCallbackT _okOrCancelCallback;
+        StringAtom _caption;
+
+        bool _hasOpenRequest = false;
+    };
+
 } // namespace NX
 
 #include "BaseWindow.generated.h" // added by the code generator. Better don't move it.
