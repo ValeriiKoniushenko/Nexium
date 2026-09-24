@@ -18,16 +18,30 @@
 
 namespace NX::Gui
 {
+    enum class Align;
+    enum class Flex;
+
+    class ArrayCell;
+    class BaseCombo;
+    class BaseInput;
+    class BaseList;
     class Button;
     class CheckBox;
     class Color3Input;
     class ComboModelBased;
     class ComboView;
+    class HorizontalLayout;
+    class ImageButton;
     class Label;
+    class Layout;
     class ListModelBased;
     class ListView;
+    class Separator;
+    class Spacer;
     class TextInput;
     class ToggleButton;
+    class VerticalLayout;
+    class Widget;
 
     template<class T>
     class LabelRow;
@@ -44,11 +58,21 @@ namespace NX::Gui
     struct _StringArray_ArrayCellViewerFunc;
     struct _StringArray_ViewFetchFunc;
 
-    using IntInput = NumInput<int>;
+    using DoubleInput = NumInput<double>;
     using FloatInput = NumInput<float>;
+    using IntInput = NumInput<int>;
     using StringArray
         = BaseArray<Core::StringAtom, _StringArray_ArrayCellViewerFunc, _StringArray_ViewFetchFunc>;
+
+    using Int4Input = VecNumInput<4, int>;
+    using Float4Input = VecNumInput<4, float>;
+    using Double4Input = VecNumInput<4, double>;
+
+    using Int3Input = VecNumInput<3, int>;
+    using Float3Input = VecNumInput<3, float>;
+    using Double3Input = VecNumInput<3, double>;
+
     using Int2Input = VecNumInput<2, int>;
     using Float2Input = VecNumInput<2, float>;
-    using Float3Input = VecNumInput<3, float>;
+    using Double2Input = VecNumInput<2, double>;
 } // namespace NX::Gui

@@ -13,8 +13,6 @@
 
 #include "BaseWindow.h"
 #include "Editor/ForwardDeclarations.h"
-#include "Editor/GuiComponents/Input.h"
-#include "Editor/GuiComponents/LabelRow.h"
 #include "Editor/GuiComponents/VerticalLayout.h"
 #include "NxFundamental/Assets/ECSAsset.h"
 

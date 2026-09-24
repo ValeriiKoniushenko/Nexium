@@ -13,7 +13,6 @@
 
 #include "Button.h"
 #include "Core/Delegate.h"
-#include "Editor/ForwardDeclarations.h"
 #include "Editor/IconsFontAwesome.h"
 #include "HorizontalLayout.h"
 #include "Label.h"

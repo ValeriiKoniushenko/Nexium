@@ -13,6 +13,7 @@
 #include "Editor/GuiComponents/Button.h"
 #include "Editor/GuiComponents/HorizontalLayout.h"
 #include "Editor/GuiComponents/Input.h"
+#include "Editor/GuiComponents/LabelRow.h"
 #include "Editor/GuiComponents/List.h"
 #include "Editor/GuiComponents/Separator.h"
 #include "Editor/GuiComponents/Spacer.h"
