@@ -588,7 +588,7 @@ namespace NX
                     {
                         if (auto* comp = dynamic_cast<BaseComponent*>(obj.get()))
                         {
-                            gGameInstance->gameScene.deleteFromSceneOrFromObject(comp);
+                            gGameInstance->scenes.getCurrentScene()->deleteFromSceneOrFromObject(comp);
                         }
                     }
                 }
