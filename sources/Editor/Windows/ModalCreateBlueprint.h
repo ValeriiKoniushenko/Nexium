@@ -36,22 +36,17 @@ namespace NX
 
     protected:
         void onInitialize() override;
-
         void onDraw() override;
-
         void onClose() override;
+        void onOpen() override;
 
         void resetGUI();
-
         void performBlueprintCreation(const std::string& type, const std::string& name,
                                       const std::string& path);
-
         void tryToDetectReplacingOfExistingFile();
 
         void okButtonClicked();
         void cancelButtonClicked();
-
-        void onOpen() override;
 
     protected:
         Gui::VerticalLayout _layout;

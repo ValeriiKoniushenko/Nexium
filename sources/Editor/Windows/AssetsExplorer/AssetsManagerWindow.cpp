@@ -798,10 +798,10 @@ namespace NX
 
         _toolbarLayout.tick(GetWorld()->getTimeDelta());
 
-        const auto availX = ImGui::GetContentRegionAvail().x - (padding * 2.f);
+        const auto availX = ImGui::GetContentRegionAvail().x;
 
         const int maxCountPerWidth
-            = static_cast<int>(availX / (_thumbnailSize.x + (defaultSpace.x * 2.f)));
+            = static_cast<int>(std::round(availX / (_thumbnailSize.x + defaultSpace.x * 2.f)));
 
         drawExplorerContextMenu();
 
