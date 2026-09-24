@@ -109,11 +109,11 @@
                         "_atlasName": "santa_walk",
                         "_blendingEnabled": true,
                         "_isEnabled": true,
-                        "_textureName": "Walk _1.png"
+                        "_textureName": "Walk_11.png"
                     }
                 },
                 {
-                    "assetType": "NX::Spectator",
+                    "assetType": "NX::Spectator2D",
                     "name": "2D_Spectator",
                     "referenceAsset": "data/assets/2D_Spectator.nx",
                     "trans": {

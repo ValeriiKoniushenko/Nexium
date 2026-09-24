@@ -1,0 +1,172 @@
+{
+    "_sceneName": "GameScene",
+    "formatVersion": 1,
+    "sceneObjects": [
+        {
+            "assetType": "NX::SceneObj::Rectangle",
+            "name": "BaseRectangle",
+            "referenceAsset": "data/assets/BaseRectangle.nx",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    200.0,
+                    200.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    0.4000000059604645,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_atlasName": "player_walk",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "MPlayer_walk.png"
+            }
+        },
+        {
+            "assetType": "NX::SceneObj::Rectangle",
+            "name": "BaseRectangle_0",
+            "referenceAsset": "data/assets/BaseRectangle.nx",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    200.0,
+                    0.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_atlasName": "santa_walk",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "Walk_11.png"
+            }
+        },
+        {
+            "assetType": "NX::SceneObj::RectangleAnimated",
+            "name": "AnimatedPlayersa",
+            "referenceAsset": "data/assets/AnimatedPlayer.nx",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_animationFPS": 70.5,
+                "_animationName": "New animation",
+                "_atlasName": "santa_walk",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "Walk_11.png"
+            }
+        },
+        {
+            "assetType": "NX::Spectator2D",
+            "name": "2D_Spectator",
+            "referenceAsset": "data/assets/2D_Spectator.nx",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    -300.11749267578125,
+                    -300.2021179199219,
+                    1452.102783203125
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_isEnabled": true
+            }
+        },
+        {
+            "assetType": "NX::SceneObj::RectangleAnimated",
+            "name": "AnimatedPlayersa_0",
+            "referenceAsset": "data/assets/AnimatedPlayer.nx",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    336.1000061035156,
+                    0.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_atlasName": "default",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "red.png"
+            }
+        }
+    ]
+}
