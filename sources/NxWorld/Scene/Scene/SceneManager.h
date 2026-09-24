@@ -44,8 +44,8 @@ namespace NX
         void deserialize(RResourceStream<RJsonResourceStream>& stream);
         void importScenes(const std::filesystem::path& directory);
 
-        [[nodiscard]] std::filesystem::path getCacheDir() const override { return "scene-library"; }
-        [[nodiscard]] StringAtom getCacheHash() const override { return "Library"_atom; }
+        [[nodiscard]] std::filesystem::path getCacheDir() const override { return "cache"; }
+        [[nodiscard]] StringAtom getCacheHash() const override { return "SceneTabs"_atom; }
 
         void removeAllScenes();
         void removeScene(StringAtom sceneName);
