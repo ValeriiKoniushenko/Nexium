@@ -240,7 +240,13 @@ namespace NX
         }
 
         _openedPath = finalPath;
-        _pathInput->setInputtedData(finalPath.generic_string());
+        auto str = finalPath.generic_string();
+        if (!str.empty() && (str.back() == '/' || str.back() == '\\'))
+        {
+            str.pop_back();
+        }
+
+        _pathInput->setInputtedData(str);
     }
 
     void AssetsManagerWindowEWC::copyFrom(const std::filesystem::path& path)
