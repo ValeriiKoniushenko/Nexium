@@ -5,7 +5,7 @@
         72.0
     ],
     "_innerSize": {
-        "height": 689.0,
+        "height": 721.0,
         "width": 303.0
     },
     "_isEnabled": true,
@@ -17,7 +17,7 @@
     "_name": " Scene",
     "_noTick": false,
     "_oldSize": {
-        "height": 735.0,
+        "height": 767.0,
         "width": 323.0
     },
     "_position": [
@@ -25,7 +25,7 @@
         36.0
     ],
     "_size": {
-        "height": 735.0,
+        "height": 767.0,
         "width": 323.0
     },
     "_type": "NX::SceneTreeWindowEWC"
