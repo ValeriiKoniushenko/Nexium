@@ -27,12 +27,11 @@ namespace NX
     } // namespace Gui
 
     CLASS();
-    class ModalCreateBlueprintEWC : public BaseEWC
+    class ModalCreateBlueprintEWC : public BaseModalPopUp
     {
-        ECS_DECL(ModalCreateBlueprintEWC, NX::BaseEWC);
+        ECS_DECL(ModalCreateBlueprintEWC, NX::BaseModalPopUp);
 
     public:
-        void open(StringAtom text);
         static void Open(StringAtom text);
 
     protected:
@@ -43,12 +42,6 @@ namespace NX
         void onClose() override;
 
         void resetGUI();
-
-        void preOpenedEndWindowDraw() override;
-
-        [[nodiscard]] bool beginWindowDraw() override;
-
-        void endWindowDraw() override;
 
         void performBlueprintCreation(const std::string& type, const std::string& name,
                                       const std::string& path);

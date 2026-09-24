@@ -27,23 +27,6 @@ namespace NX
 {
     ECS_IMPL(ModalCreateBlueprintEWC);
 
-    void ModalCreateBlueprintEWC::open(StringAtom text)
-    {
-        initialize();
-        enable();
-        if (_hasOpenRequest)
-        {
-            warnLog(
-                "Can't open second time ModalCreateBlueprintEWC. It's already processing the "
-                "request.");
-            return;
-        }
-        _caption = std::move(text);
-        _hasOpenRequest = true;
-
-        onOpen();
-    }
-
     void ModalCreateBlueprintEWC::Open(StringAtom text)
     {
         GetEditor()->tryToOpenWindow<ModalCreateBlueprintEWC>("", std::move(text));
@@ -205,26 +188,6 @@ namespace NX
         {
             _list->resetListNavigation();
         }
-    }
-
-    void ModalCreateBlueprintEWC::preOpenedEndWindowDraw()
-    {
-        ImGui::EndPopup();
-    }
-
-    bool ModalCreateBlueprintEWC::beginWindowDraw()
-    {
-        if (_hasOpenRequest)
-        {
-            ImGui::OpenPopup(_caption.c_str());
-            ImGui::SetNextWindowSize(glm::vec2(500, 600), ImGuiCond_Appearing);
-            _hasOpenRequest = false;
-        }
-        return ImGui::BeginPopupModal(_caption.c_str(), nullptr, ImGuiWindowFlags_NoCollapse);
-    }
-
-    void ModalCreateBlueprintEWC::endWindowDraw()
-    {
     }
 
     void ModalCreateBlueprintEWC::performBlueprintCreation(const std::string& type,
