@@ -226,6 +226,8 @@ namespace NX
         if (_hasOpenRequest)
         {
             ImGui::OpenPopup(_caption.c_str());
+            ImGui::SetNextWindowPos(ImGui::GetMainViewport()->GetCenter(), ImGuiCond_Appearing,
+                                    glm::vec2(0.5f, 0.5f));
             ImGui::SetNextWindowSize(glm::vec2(500, 600), ImGuiCond_Appearing);
             _hasOpenRequest = false;
         }
