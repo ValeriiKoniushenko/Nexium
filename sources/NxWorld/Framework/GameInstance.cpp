@@ -174,17 +174,15 @@ namespace NX
             _applicationIntegration->readFromCache();
         }
         GetCacheSystem().tryRead(Platform::GetWindow());
-        if (!GetCacheSystem().tryRead(scenes))
+        try
         {
-            try
-            {
-                scenes.importScenes(Foundation::Config::Path::data / "scenes");
-            }
-            catch (const std::exception& error)
-            {
-                _canSaveSceneLibrary = false;
-                errorLog("Cannot import scene library: {}"_f << error.what());
-            }
+            scenes.importScenes(Foundation::Config::Path::data / "scenes");
+            GetCacheSystem().tryRead(scenes);
+        }
+        catch (const std::exception& error)
+        {
+            _canSaveSceneLibrary = false;
+            errorLog("Cannot load scene files: {}"_f << error.what());
         }
         GetCacheSystem().tryRead(*GetWorld());
         onInitializeReadCache();
@@ -200,11 +198,11 @@ namespace NX
         GetCacheSystem().write(*GetWorld());
         if (_canSaveSceneLibrary)
         {
-            GetCacheSystem().write(scenes);
             for (const auto& scene : scenes.getScenes())
             {
                 GetCacheSystem().write(*scene);
             }
+            GetCacheSystem().write(scenes);
         }
         GetCacheSystem().write(Platform::GetWindow());
 
