@@ -97,6 +97,10 @@ namespace NX
             {
                 cancelButton();
             }
+            if (ImGui::IsKeyPressed(ImGuiKey_Enter, false))
+            {
+                okButton();
+            }
         }
 
         _layout.tick(GetWorld()->getTimeDelta());

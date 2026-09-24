@@ -21,7 +21,19 @@
 #include "Foundation/Configs.h"
 #include "NxWorld/Framework/GameInstance.h"
 
+#include <algorithm>
+#include <string_view>
+
 using namespace NX;
+
+namespace
+{
+    [[nodiscard]] bool hasUnsupportedFileNameCharacters(std::string_view name)
+    {
+        return name.find_first_of(R"(<>:"/\\|?*#$%^&![]{}();',@)") != std::string_view::npos
+               || std::ranges::any_of(name, [](unsigned char character) { return character < 32; });
+    }
+} // namespace
 
 namespace NX
 {
@@ -34,7 +46,7 @@ namespace NX
 
     void ModalCreateBlueprintEWC::onInitialize()
     {
-        BaseEWC::onInitialize();
+        BaseModalPopUp::onInitialize();
 
         setComponentName("Create blueprint"_atom);
 
@@ -156,7 +168,7 @@ namespace NX
 
     void ModalCreateBlueprintEWC::onClose()
     {
-        BaseEWC::onClose();
+        BaseModalPopUp::onClose();
         resetGUI();
     }
 
@@ -191,7 +203,7 @@ namespace NX
     }
 
     void ModalCreateBlueprintEWC::performBlueprintCreation(const std::string& type,
-                                                           const std::string& name,
+                                                           const std::string& _name,
                                                            const std::string& path)
     {
         namespace fs = std::filesystem;
@@ -203,14 +215,17 @@ namespace NX
             return;
         }
 
-        tmp->setComponentName(StringAtom(name));
+        auto name = StringAtom(_name);
+        name.trim();
+
+        tmp->setComponentName(name);
 
         ECSAsset asset(""_atom);
         ECSAsset::PackObjectToAsset(asset, tmp);
         auto&& j = asset.toJson().dump(4);
 
-        auto namePath = fs::path(_nameField->input->getInputtedData() + ".nx");
-        auto pathPath = fs::path(_pathField->input->getInputtedData());
+        auto namePath = fs::path(name.toStdString() + ".nx");
+        auto pathPath = fs::path(path);
         auto finalPath = pathPath / namePath;
 
         std::ofstream file(finalPath);
@@ -235,6 +250,10 @@ namespace NX
         {
             _errorOutput->setText("Such file already exists! After creation it will be replaced!");
         }
+        else if (hasUnsupportedFileNameCharacters(name.generic_string()))
+        {
+            _errorOutput->setText("Filename is not valid. Don't use spec. characters");
+        }
         else
         {
             _errorOutput->setText("");
@@ -248,7 +267,7 @@ namespace NX
 
     void ModalCreateBlueprintEWC::onOpen()
     {
-        BaseEWC::onOpen();
+        BaseModalPopUp::onOpen();
 
         if (_pathField)
         {
@@ -270,6 +289,11 @@ namespace NX
         {
             _nameField->input->setBorderColor(Color4_Red);
             error = "Name is empty";
+        }
+        else if (hasUnsupportedFileNameCharacters(_nameField->input->getInputtedData()))
+        {
+            _nameField->input->setBorderColor(Color4_Red);
+            error = "Name contains symbols not supported by Linux or Windows filenames";
         }
 
         if (_typeField->input->getInputtedData().empty())

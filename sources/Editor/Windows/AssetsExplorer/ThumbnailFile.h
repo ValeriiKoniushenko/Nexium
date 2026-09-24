@@ -44,13 +44,13 @@ namespace NX
         void draw();
 
     private:
+        void deleteSelectedFileOrFiles();
         void openSelectedPath();
         void requestOpenSelectedPath();
 
         void drawToolTip();
         void drawImageButton();
         void drawContextMenu();
-        void deleteSelectedFileOrFiles();
 
     private:
         std::filesystem::path _path;

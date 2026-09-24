@@ -418,7 +418,7 @@ namespace NX
             return false;
         }
 
-        std::string filter = _filterInput->getInputtedData().c_str();
+        std::string filter = _filterInput->getInputtedData();
         if (filter.empty())
         {
             return false;
@@ -815,6 +815,14 @@ namespace NX
 
         ImGui::PopStyleVar();
 
+        if (ImGui::IsWindowFocused())
+        {
+            if (ImGui::IsKeyPressed(ImGuiKey_Delete, false))
+            {
+                deleteSelectedFilesWithPopUp();
+            }
+        }
+
         if (ImGui::IsMouseClicked(ImGuiMouseButton_Left)
             && ImGui::IsWindowHovered(ImGuiHoveredFlags_ChildWindows) && !ImGui::IsAnyItemHovered())
         {
@@ -907,6 +915,18 @@ namespace NX
                 ImGui::TreePop();
             }
         }
+    }
+
+    void AssetsManagerWindowEWC::deleteSelectedFilesWithPopUp()
+    {
+        ModalPopUp::Open("Do you really want to delete selected files?",
+                         [this](bool isOk)
+                         {
+                             if (isOk)
+                             {
+                                 deleteSelectedFiles();
+                             }
+                         });
     }
 
     void AssetsManagerWindowEWC::deleteSelectedFiles()

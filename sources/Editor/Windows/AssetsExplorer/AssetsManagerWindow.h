@@ -111,6 +111,7 @@ namespace NX
         ThumbnailActions buildThumbnailActions();
 
         void deleteSelectedFiles();
+        void deleteSelectedFilesWithPopUp();
         void toggleSelection(const std::filesystem::path& path);
         void selectPath(const std::filesystem::path& path, bool additive);
 

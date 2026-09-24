@@ -80,14 +80,6 @@ namespace NX
 
             drawContextMenu();
 
-            if (ImGui::IsWindowFocused())
-            {
-                if (ImGui::IsKeyPressed(ImGuiKey_Delete, false))
-                {
-                    deleteSelectedFileOrFiles();
-                }
-            }
-
             const auto labelStartX = ImGui::GetCursorPosX();
             const auto labelSize = ImGui::CalcTextSize(_fileName.c_str(), nullptr, false, _size.x);
             if (labelSize.x < _size.x)
