@@ -12,6 +12,7 @@
 #include "../PrivateModuleInfo.h"
 #include "Core/Rect.h"
 #include "Core/String.h"
+#include "RawBackend/Utils.h"
 #include "Rectpack2D/finders_interface.h"
 
 #include <filesystem>
@@ -24,24 +25,6 @@ using namespace RawBackend;
 
 using spaces_type = empty_spaces<true>;
 using rect_type = output_rect_t<spaces_type>;
-
-namespace
-{
-    GLenum GetChannelAsOpenGLType(const RawBackend::Image& data) noexcept
-    {
-        if (static_cast<int>(data.getChannel()) == 3)
-        {
-            return GL_RGB;
-        }
-
-        if (static_cast<int>(data.getChannel()) == 4)
-        {
-            return GL_RGBA;
-        }
-
-        return GL_RED;
-    }
-} // namespace
 
 namespace NX
 {
@@ -93,10 +76,10 @@ namespace NX
         }
 
         // validation for data consistency
-        const auto firstChannel = GetChannelAsOpenGLType(images.front());
+        const auto firstChannel = RawBackend::GetChannelAsOpenGLType(images.front());
         for (const auto& img : images)
         {
-            if (GetChannelAsOpenGLType(img) != firstChannel)
+            if (RawBackend::GetChannelAsOpenGLType(img) != firstChannel)
             {
                 criticalLog(
                     "All images in the atlas folder must have the same number of channels. Image '{}' has {} channels, while the first(anchored) image has {} channels."_f

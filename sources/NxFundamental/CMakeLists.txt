@@ -19,6 +19,9 @@ target_sources(Nexium_Fundamental_Utils PRIVATE
 nexium_add_public_headers(Nexium_Fundamental_Utils
     NxFundamental/Utils/Stringifier.h
 )
+target_link_libraries(Nexium_Fundamental_Utils PUBLIC
+    Nexium::Platform::Graphics
+)
 
 # ================ Fundamental base =================
 

@@ -1,7 +1,5 @@
 get_filename_component(MODULE_NAME ${CMAKE_CURRENT_SOURCE_DIR} NAME)
-set(MODULE_TARGET Nexium_${MODULE_NAME})
-set(MODULE_PRIVATE_TARGET ${MODULE_TARGET}_PrivateModule)
-set(MODULE_ALIAS Nexium::${MODULE_NAME})
+set(MODULE_PRIVATE_TARGET Nexium_${MODULE_NAME}_PrivateModule)
 
 # ============== Per Module Private Info ===============
 
@@ -13,24 +11,26 @@ target_link_libraries(${MODULE_PRIVATE_TARGET} PRIVATE spdlog::spdlog)
 target_compile_definitions(${MODULE_PRIVATE_TARGET} PRIVATE PRIVATE_MODULE_NAME="${MODULE_NAME}")
 
 # ================ RawBackend =================
-add_library(${MODULE_TARGET} STATIC)
-add_library(${MODULE_ALIAS} ALIAS ${MODULE_TARGET})
-target_sources(${MODULE_TARGET} PRIVATE
+add_library(Nexium_RawBackend STATIC)
+add_library(Nexium::RawBackend ALIAS Nexium_RawBackend)
+target_sources(Nexium_RawBackend PRIVATE
     Graphics/Texture.cpp
     Graphics/RenderTargetToTexture.cpp
     IDrawable.cpp
     Image.cpp
+    Utils.cpp
 )
-nexium_add_public_headers(${MODULE_TARGET}
+nexium_add_public_headers(Nexium_RawBackend
     RawBackend/Graphics/Texture.h
     RawBackend/Graphics/RenderTargetToTexture.h
     RawBackend/IDrawable.h
     RawBackend/IDrawable.generated.h
     RawBackend/Image.h
     RawBackend/Image.generated.h
+    RawBackend/Utils.h
 )
 
-target_link_libraries(${MODULE_TARGET}
+target_link_libraries(Nexium_RawBackend
     PUBLIC
     Nexium::Foundation
     Nexium::Platform::Graphics
@@ -42,6 +42,6 @@ target_link_libraries(${MODULE_TARGET}
 # =========================================
 
 nexium_configure_target(${MODULE_PRIVATE_TARGET})
-nexium_configure_target(${MODULE_TARGET})
+nexium_configure_target(Nexium_RawBackend)
 
-add_dependencies(${MODULE_TARGET} CodeGenerator)
+add_dependencies(Nexium_RawBackend CodeGenerator)

@@ -9,23 +9,7 @@
 
 #include "Texture.h"
 
-namespace
-{
-    GLenum GetChannelAsOpenGLType(const RawBackend::Image& data) noexcept
-    {
-        if (static_cast<int>(data.getChannel()) == 3)
-        {
-            return GL_RGB;
-        }
-
-        if (static_cast<int>(data.getChannel()) == 4)
-        {
-            return GL_RGBA;
-        }
-
-        return GL_RED;
-    }
-} // namespace
+#include "RawBackend/Utils.h"
 
 namespace RawBackend
 {
@@ -72,7 +56,7 @@ namespace RawBackend
         bind();
 
         putImage(0, GL_RGBA, img.getSize().width, img.getSize().height, 0,
-                 GetChannelAsOpenGLType(img), GL_UNSIGNED_BYTE, img.data());
+                 RawBackend::GetChannelAsOpenGLType(img), GL_UNSIGNED_BYTE, img.data());
 
         generateMipmap(GL_LINEAR, GL_LINEAR);
 
@@ -87,7 +71,7 @@ namespace RawBackend
         bind();
 
         putImage(0, GL_RGBA, data.getSize().width, data.getSize().height, 0,
-                 GetChannelAsOpenGLType(data), GL_UNSIGNED_BYTE, data.data());
+                 RawBackend::GetChannelAsOpenGLType(data), GL_UNSIGNED_BYTE, data.data());
 
         generateMipmap(GL_LINEAR, GL_LINEAR);
         unbind();

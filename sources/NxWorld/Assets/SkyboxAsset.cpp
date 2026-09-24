@@ -12,27 +12,10 @@
 #include "Foundation/Configs.h"
 #include "NxWorld/Entities/Camera/Camera.h"
 #include "RawBackend/Image.h"
+#include "RawBackend/Utils.h"
 
 using namespace RawBackend;
 using namespace Foundation;
-
-namespace
-{
-    GLenum GetChannelAsOpenGLType(const RawBackend::Image& data) noexcept
-    {
-        if (static_cast<int>(data.getChannel()) == 3)
-        {
-            return GL_RGB;
-        }
-
-        if (static_cast<int>(data.getChannel()) == 4)
-        {
-            return GL_RGBA;
-        }
-
-        return GL_RED;
-    }
-} // namespace
 
 namespace NX
 {
@@ -138,9 +121,9 @@ namespace NX
                 }
 
                 glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0,
-                             static_cast<GLint>(GetChannelAsOpenGLType(img)), img.getSize().width,
-                             img.getSize().height, 0, GetChannelAsOpenGLType(img), GL_UNSIGNED_BYTE,
-                             img.data());
+                             static_cast<GLint>(RawBackend::GetChannelAsOpenGLType(img)),
+                             img.getSize().width, img.getSize().height, 0,
+                             RawBackend::GetChannelAsOpenGLType(img), GL_UNSIGNED_BYTE, img.data());
             }
         }
 
