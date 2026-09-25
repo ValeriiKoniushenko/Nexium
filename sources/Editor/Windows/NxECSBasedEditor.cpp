@@ -265,8 +265,22 @@ namespace NX
 #endif
 
         assetData = _targetAsset->getData()->serialize();
-        _targetAsset->syncAssetWithMemory(assetData);
+        _targetAsset->syncWithFilesystem(assetData);
         _targetComponent = _targetAsset->getData().get();
+
+        for (auto& obj : gGameInstance->gameScene.getObjects())
+        {
+            Assert(obj);
+            if (!obj)
+            {
+                continue;
+            }
+
+            if (obj->getReferencedAsset() == _targetAsset->getLogicPath())
+            {
+                int i = 123;
+            }
+        }
     }
 
     void NxECSBasedEditorEWC::updateGuiBasedOnAsset()

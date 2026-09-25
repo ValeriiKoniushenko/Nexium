@@ -64,6 +64,9 @@
             1.0
         ],
         "_type": "NX::Spectator3D",
+        "baseMlt": 2.0,
+        "leftCtrlMlt": 0.4000000059604645,
+        "leftShiftMlt": 8.0,
         "mouseSensitivity": 0.5,
         "speed": 600.0
     },

@@ -60,11 +60,32 @@ namespace
     // Finds a unique name for `obj` given existing `objects`, and sets it.
     void unifyObjectName(const ObjectContainerT& objects, SceneObject* obj)
     {
-        const auto baseName = obj->getComponentName();
+        auto baseName = obj->getComponentName();
 
         if (!nameExists(objects, baseName))
         {
             return; // already unique, nothing to do
+        }
+
+        bool isCounterAtEnd = false;
+        {
+            int i = static_cast<int>(baseName.size() - 1);
+            bool isDigit = false;
+            while (i > 0 && std::isdigit(baseName.at(i)))
+            {
+                isDigit = true;
+                --i;
+            }
+
+            if (isDigit && i > 0 && baseName.at(i) == '_')
+            {
+                isCounterAtEnd = true;
+            }
+
+            if (isCounterAtEnd)
+            {
+                baseName.erase(i, baseName.size() - 1);
+            }
         }
 
         // baseName is taken -> find next free suffix N in "baseName_N"

@@ -126,7 +126,7 @@ namespace NX
 
         [[nodiscard]] nlohmann::json getAssetData() const;
 
-        void syncAssetWithMemory(const nlohmann::json& assetData);
+        void syncWithFilesystem(const nlohmann::json& assetData);
 
         [[nodiscard]] int getAdapterIndex() const noexcept { return _adapterIndex; }
 

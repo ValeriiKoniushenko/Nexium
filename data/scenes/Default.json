@@ -69,42 +69,6 @@
             }
         },
         {
-            "assetType": "NX::SceneObj::RectangleAnimated",
-            "name": "AnimatedPlayersa",
-            "referenceAsset": "data/assets/AnimatedPlayer.nx",
-            "trans": {
-                "_origin": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "_position": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "_rotation": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "_scale": [
-                    1.0,
-                    1.0,
-                    1.0
-                ]
-            },
-            "typeSpecificData": {
-                "_animationEnabled": true,
-                "_animationFPS": 70.5,
-                "_animationName": "New animation",
-                "_atlasName": "santa_walk",
-                "_blendingEnabled": true,
-                "_isEnabled": true,
-                "_textureName": "Walk_8.png"
-            }
-        },
-        {
             "assetType": "NX::Spectator2D",
             "name": "2D_Spectator",
             "referenceAsset": "data/assets/2D_Spectator.nx",
@@ -115,8 +79,8 @@
                     0.0
                 ],
                 "_position": [
-                    -337.3643798828125,
-                    -179.77122497558594,
+                    -391.1083984375,
+                    -211.71786499023438,
                     1005.0285034179688
                 ],
                 "_rotation": [
@@ -132,6 +96,42 @@
             },
             "typeSpecificData": {
                 "_isEnabled": true
+            }
+        },
+        {
+            "assetType": "NX::SceneObj::RectangleAnimated",
+            "name": "AnimatedPlayersa_3",
+            "referenceAsset": "data/assets/AnimatedPlayer.nx",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    42.10978317260742,
+                    34.4027214050293,
+                    0.0
+                ],
+                "_rotation": [
+                    -0.0,
+                    0.0,
+                    0.32733339071273804
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": true,
+                "_animationFPS": 70.5,
+                "_animationName": "New animation",
+                "_atlasName": "santa_walk",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "Walk_9.png"
             }
         }
     ]

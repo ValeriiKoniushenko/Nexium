@@ -60,6 +60,10 @@
             1.0
         ],
         "_type": "NX::Spectator2D",
+        "baseMlt": 2.0,
+        "leftShiftMlt": 8.0,
+        "maxZoom": 5.0,
+        "minZoom": 0.15000000596046448,
         "mouseSensitivity": 0.5,
         "speed": 100.0
     },

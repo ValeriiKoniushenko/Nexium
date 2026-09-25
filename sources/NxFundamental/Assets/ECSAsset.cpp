@@ -195,7 +195,7 @@ namespace NX
         return {};
     }
 
-    void ECSAsset::syncAssetWithMemory(const nlohmann::json& assetData)
+    void ECSAsset::syncWithFilesystem(const nlohmann::json& assetData)
     {
         if (!Verify(_data))
         {

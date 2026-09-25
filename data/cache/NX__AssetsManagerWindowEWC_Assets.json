@@ -2,11 +2,11 @@
     "_children": null,
     "_innerPosition": [
         20.0,
-        687.0
+        798.0
     ],
     "_innerSize": {
         "height": 193.0,
-        "width": 1148.0
+        "width": 1351.0
     },
     "_isEnabled": true,
     "_isFitContent": false,
@@ -18,15 +18,15 @@
     "_noTick": false,
     "_oldSize": {
         "height": 239.0,
-        "width": 1168.0
+        "width": 1371.0
     },
     "_position": [
         10.0,
-        651.0
+        762.0
     ],
     "_size": {
         "height": 239.0,
-        "width": 1168.0
+        "width": 1371.0
     },
     "_type": "NX::AssetsManagerWindowEWC"
 }

@@ -9,6 +9,7 @@
 
 #include "WorldSettings.h"
 
+#include "Core/String.h"
 #include "Editor/EditorIntegration.h"
 #include "Editor/GuiComponents/Button.h"
 #include "Editor/GuiComponents/HorizontalLayout.h"
@@ -24,6 +25,25 @@
 
 using namespace NX;
 
+namespace
+{
+
+    class GuiGenerator final
+    {
+    public:
+        void spawn(const Core::StringAtom& label, int& value)
+        {
+            auto* input = _root.addChildComponent<Gui::LabelRow<Gui::IntInput>>();
+            input->label->setText(label);
+            input->label->setWidth(100.f);
+        }
+
+    private:
+        Gui::VerticalLayout _root;
+    };
+
+} // namespace
+
 namespace NX
 {
     ECS_IMPL(WorldSettingsEWC);
@@ -31,6 +51,13 @@ namespace NX
     const char* WorldSettingsEWC::getIcon()
     {
         return ICON_FA_SUN_O;
+    }
+
+    void WorldSettingsEWC::createExtraGui()
+    {
+        GuiGenerator gg;
+        static int i = 1;
+        gg.spawn("Hello", i);
     }
 
     void WorldSettingsEWC::onInitialize()
@@ -157,7 +184,10 @@ namespace NX
             _subscriptionPool << _sunDirection->onInput->subscribeAndGetID(
                 [](glm::vec3 value) { GetWorld()->lightning.sunDirection = value; });
         }
+
+        createExtraGui();
     }
+
     void WorldSettingsEWC::onOpen()
     {
         BaseFloatEWC::onOpen();
@@ -186,10 +216,6 @@ namespace NX
         {
             _sunDirection->setInputtedData(GetWorld()->lightning.sunDirection);
         }
-    }
-
-    void WorldSettingsEWC::onUpdate()
-    {
     }
 
     void WorldSettingsEWC::onDraw()

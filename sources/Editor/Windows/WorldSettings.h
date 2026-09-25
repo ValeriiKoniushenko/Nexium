@@ -28,9 +28,10 @@ namespace NX
     protected:
         void onInitialize() override;
         void onOpen() override;
-        void onUpdate() override;
-
         void onDraw() override;
+
+    private:
+        void createExtraGui();
 
     protected:
         // Global

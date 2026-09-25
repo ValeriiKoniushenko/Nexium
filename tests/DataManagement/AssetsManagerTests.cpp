@@ -405,7 +405,7 @@ TEST_F(AssetsManagerTest, SyncEcsAssetPreservesAdapterSpecificData)
     auto asset = manager.getEcsAsset(logicPath(path));
     ASSERT_TRUE(asset.isValid());
 
-    asset->syncAssetWithMemory(asset->getData()->serialize());
+    asset->syncWithFilesystem(asset->getData()->serialize());
 
     std::ifstream input(path);
     ASSERT_TRUE(input.is_open());
