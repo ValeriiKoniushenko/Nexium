@@ -67,8 +67,24 @@ namespace NX
             if (auto* object = dynamic_cast<SceneObject*>(selected.begin()->second.get());
                 object && object != camera && object->isEnabled())
             {
-                _gizmo.draw(*object, *camera, p, renderSize);
-                _blocksPicking = _gizmo.blocksPicking();
+                // TODO: Slow, optimize it
+                bool containCameraOwner = false;
+                object->forEach(
+                    [&containCameraOwner, camera](const BaseComponent* c)
+                    {
+                        if (c == camera)
+                        {
+                            containCameraOwner = true;
+                            return false;
+                        }
+                        return true;
+                    });
+
+                if (!containCameraOwner)
+                {
+                    _gizmo.draw(*object, *camera, p, renderSize);
+                    _blocksPicking = _gizmo.blocksPicking();
+                }
             }
         }
 

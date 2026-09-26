@@ -124,10 +124,12 @@ namespace NX
                             if (expectedZoom < minZoom)
                             {
                                 camera->setZoom(minZoom);
+                                return;
                             }
                             if (expectedZoom > maxZoom)
                             {
                                 camera->setZoom(maxZoom);
+                                return;
                             }
 
                             camera->adjustZoom(finalStep);
