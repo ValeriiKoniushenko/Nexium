@@ -118,9 +118,11 @@ namespace NX
                         {
                             const auto zoomStep = (maxZoom - minZoom) / 100.f;
                             const auto scrollStep = std::clamp(offset.y, -1.f, 1.f);
-                            auto finalStep = zoomStep * scrollStep;
+                            auto z = camera->getZoom();
 
-                            const auto expectedZoom = camera->getZoom() + finalStep;
+                            auto finalStep = zoomStep * scrollStep * std::max(1.f, sqrtf(z));
+                            const auto expectedZoom = z + finalStep;
+
                             if (expectedZoom < minZoom)
                             {
                                 camera->setZoom(minZoom);

@@ -19,6 +19,39 @@
 
 namespace NX
 {
+    namespace
+    {
+        void SetupGizmoStyle()
+        {
+            const float scale = ImGui::GetFontSize() / 16.f;
+            auto& style = ImGuizmo::GetStyle();
+            style.TranslationLineThickness = 3.f * scale;
+            style.TranslationLineArrowSize = 9.f * scale;
+            style.RotationLineThickness = 2.5f * scale;
+            style.RotationOuterLineThickness = 3.5f * scale;
+            style.ScaleLineThickness = 3.f * scale;
+            style.ScaleLineCircleSize = 7.f * scale;
+            style.HatchedAxisLineThickness = 4.f * scale;
+            style.CenterCircleSize = 7.5f * scale;
+
+            style.Colors[ImGuizmo::DIRECTION_X] = { 0.95f, 0.28f, 0.32f, 1.f };
+            style.Colors[ImGuizmo::DIRECTION_Y] = { 0.35f, 0.82f, 0.47f, 1.f };
+            style.Colors[ImGuizmo::DIRECTION_Z] = { 0.30f, 0.58f, 0.95f, 1.f };
+            style.Colors[ImGuizmo::PLANE_X] = { 0.95f, 0.28f, 0.32f, 0.24f };
+            style.Colors[ImGuizmo::PLANE_Y] = { 0.35f, 0.82f, 0.47f, 0.24f };
+            style.Colors[ImGuizmo::PLANE_Z] = { 0.30f, 0.58f, 0.95f, 0.24f };
+            style.Colors[ImGuizmo::SELECTION] = { 0.f, 0.88f, 0.77f, 1.f };
+            style.Colors[ImGuizmo::INACTIVE] = { 0.5f, 0.52f, 0.62f, 0.65f };
+            style.Colors[ImGuizmo::TRANSLATION_LINE] = { 0.82f, 0.84f, 0.9f, 0.85f };
+            style.Colors[ImGuizmo::SCALE_LINE] = { 0.5f, 0.52f, 0.62f, 1.f };
+            style.Colors[ImGuizmo::ROTATION_USING_BORDER] = { 0.f, 0.88f, 0.77f, 1.f };
+            style.Colors[ImGuizmo::ROTATION_USING_FILL] = { 0.f, 0.88f, 0.77f, 0.18f };
+            style.Colors[ImGuizmo::HATCHED_AXIS_LINES] = { 0.08f, 0.09f, 0.12f, 0.55f };
+            style.Colors[ImGuizmo::TEXT] = { 0.9f, 0.9f, 0.95f, 1.f };
+            style.Colors[ImGuizmo::TEXT_SHADOW] = { 0.f, 0.f, 0.f, 0.8f };
+        }
+    } // namespace
+
     bool SceneGizmo::ApplyTransform(Transformable& object, const glm::mat4& worldPivot,
                                     const glm::mat4& parent, bool rotate)
     {
@@ -83,12 +116,7 @@ namespace NX
         ImGuizmo::SetRect(position.x, position.y, size.x, size.y);
         ImGuizmo::SetOrthographic(camera.getType() == CameraType::Orthographic);
         ImGuizmo::SetGizmoSizeClipSpace(0.15f);
-        auto& style = ImGuizmo::GetStyle();
-        style.TranslationLineThickness = 5.f;
-        style.TranslationLineArrowSize = 10.f;
-        style.RotationLineThickness = 4.f;
-        style.RotationOuterLineThickness = 5.f;
-        style.CenterCircleSize = 9.f;
+        SetupGizmoStyle();
         ImGuizmo::Enable(true);
         // ImGuizmo unprojects depth in [0, 1]; the renderer uses OpenGL's [-1, 1].
         auto gizmoProjection = camera.getCachedProjectionMatrix();
