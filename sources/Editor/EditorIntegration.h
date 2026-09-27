@@ -55,6 +55,7 @@ namespace NX
         GameEditor _editor;
         ObjectSelectorManager _objectSelectorManager;
         ObjectPickerAggregator _objectPicker;
+        Core::DelegateSubscriberPoolGuard _subscriptions;
     };
 
     [[nodiscard]] EditorIntegration* GetEditorIntegration();

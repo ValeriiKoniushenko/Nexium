@@ -64,7 +64,6 @@ namespace NX
         _subscriptionPool << GetSceneManager()->onCurrentSceneChanged->subscribeAndGetID(
             [this](Scene* scene)
             {
-                GetObjectSelectorManager()->deselectAllAndClear();
                 selectedObject = nullptr;
                 _lastSelectedObject = nullptr;
                 _highlightTracerObject = nullptr;
