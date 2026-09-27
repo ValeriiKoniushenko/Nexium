@@ -23,7 +23,8 @@ using namespace rectpack2D;
 using namespace Core;
 using namespace RawBackend;
 
-using spaces_type = empty_spaces<true>;
+// Pixel uploads and frame UVs preserve the source image orientation.
+using spaces_type = empty_spaces<false>;
 using rect_type = output_rect_t<spaces_type>;
 
 namespace NX

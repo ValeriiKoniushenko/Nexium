@@ -14,6 +14,7 @@
 #include "../SceneObjects/Grid/Grid.h"
 #include "../SceneObjects/SceneObject.h"
 #include "Core/Delegate.h"
+#include "Core/IntrusivePtr.h"
 #include "NxFundamental/Assets/ECSAsset.h"
 #include "NxSubsystems/Graphics/Font.h"
 #include "NxWorld/Assets/SkyboxAsset.h"
@@ -25,7 +26,10 @@ namespace NX
     class Actor;
 
     CLASS();
-    class Scene : public Foundation::IDataIO, public Foundation::BaseLog
+    class Scene :
+        public Foundation::IDataIO,
+        public Foundation::BaseLog,
+        public Core::IntrusiveRefCounter<Scene>
     {
         R_FRIEND(Scene);
 

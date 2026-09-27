@@ -12,6 +12,7 @@
 #include "Editor/GuiComponents/Button.h"
 #include "Editor/GuiComponents/HorizontalLayout.h"
 #include "Editor/GuiComponents/Label.h"
+#include "NxWorld/Scene/Scene/Scene.h"
 
 namespace NX
 {
@@ -22,7 +23,7 @@ namespace NX
     {
     public:
         void initialize(SceneManager& scenes);
-        void request(Scene* scene) noexcept { _pendingScene = scene; }
+        void request(Scene* scene) { _pendingScene = scene; }
         void draw(SceneManager& scenes);
 
     private:
@@ -31,7 +32,7 @@ namespace NX
         Gui::Button* _cancelButton = nullptr;
         Gui::Label _message;
         Gui::Label _warning;
-        Core::DelegateSubscriberPoolGuard _subscriptions;
-        Scene* _pendingScene = nullptr;
+        DelegateSubscriberPoolGuard _subscriptions;
+        Core::WeakPtr<Scene> _pendingScene;
     };
 } // namespace NX

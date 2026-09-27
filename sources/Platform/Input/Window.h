@@ -114,6 +114,8 @@ namespace Platform
 
         void destroy();
 
+        void updateViewport();
+
         void clear(int code);
 
         [[nodiscard]] bool shouldClose() const;

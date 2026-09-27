@@ -144,6 +144,8 @@ namespace NX
         GetInputSystem().initialize(*window);
         _subscriptionPool << window->onResize->subscribeAndGetID([this](Core::ISize2 newSize)
                                                                  { updateViewport(); });
+        glfwSetFramebufferSizeCallback(window->getRawWindow(), [](GLFWwindow*, int, int)
+                                       { gGameInstance->updateViewport(); });
 
         NX_LATENCY_POINT("Window - inited");
 
@@ -258,8 +260,7 @@ namespace NX
     {
         if (!isEditorMode())
         {
-            const auto size = window->getSize();
-            glViewport(0, 0, size.width, size.height);
+            window->updateViewport();
         }
         else
         {

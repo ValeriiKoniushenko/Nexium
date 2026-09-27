@@ -11,6 +11,30 @@
 
 #include "gtest/gtest.h"
 
+TEST(SceneManagerTests, WeakSceneReferenceExpiresAfterRemoval)
+{
+    NX::SceneManager manager;
+    Core::WeakPtr<NX::Scene> pending = &manager.createNewScene();
+    ASSERT_TRUE(pending.tryLoad());
+    manager.removeScene(pending.get());
+    EXPECT_FALSE(pending);
+    EXPECT_FALSE(pending.tryLoad());
+}
+
+TEST(SceneManagerTests, LoadedSceneSurvivesRemovalUntilReleased)
+{
+    NX::SceneManager manager;
+    Core::WeakPtr<NX::Scene> pending = &manager.createNewScene();
+    {
+        auto scene = pending.tryLoad();
+        ASSERT_TRUE(scene);
+        manager.removeScene(scene.get());
+        EXPECT_TRUE(pending);
+        EXPECT_EQ(manager.getScene(scene->getSceneName()), nullptr);
+    }
+    EXPECT_FALSE(pending);
+}
+
 TEST(SceneManagerTests, KeepsCurrentSceneStableWhenAddingScenes)
 {
     NX::SceneManager manager;

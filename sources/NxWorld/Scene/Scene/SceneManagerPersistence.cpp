@@ -72,12 +72,12 @@ namespace NX
             }
         }
         std::ranges::sort(paths);
-        std::vector<std::unique_ptr<Scene>> replacement;
+        std::vector<Core::IntrusivePtr<Scene>> replacement;
         for (const auto& path : paths)
         {
             std::ifstream file(path);
             auto stream = RResourceStream<RJsonResourceStream>(nlohmann::json::parse(file));
-            auto scene = std::make_unique<Scene>();
+            auto scene = Core::IntrusivePtr<Scene>(new Scene());
             scene->deserialize(stream);
             const auto name = scene->getSceneName();
             if (name.isEmpty()

@@ -1,7 +1,8 @@
 {
-    "current": "GameScene",
+    "current": "MenuScene",
     "formatVersion": 1,
     "open": [
-        "GameScene"
+        "GameScene",
+        "MenuScene"
     ]
 }

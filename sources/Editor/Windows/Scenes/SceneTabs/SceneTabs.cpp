@@ -9,6 +9,7 @@
 
 #include "SceneTabs.h"
 
+#include "Editor/GuiComponents/Combo.h"
 #include "Editor/IconsFontAwesome.h"
 #include "ImGui/imgui_internal.h"
 #include "NxWorld/Scene/Scene/SceneManager.h"
@@ -69,14 +70,20 @@ namespace NX
         _trashButton.setTextColor(Core::Color4(235, 150, 150, 255));
         _trashButton.initialize();
         _subscriptions << _trashButton.onClick->subscribeAndGetID(
-            [this] { _deleteConfirmation.request(const_cast<Scene*>(_actionScene)); });
+            [this]
+            {
+                if (auto scene = _actionScene.tryLoad())
+                {
+                    _deleteConfirmation.request(const_cast<Scene*>(scene.get()));
+                }
+            });
         _scenePicker->setItemActionDrawer(
             [this, &scenes](const void* data)
             {
                 _actionScene = static_cast<const Scene*>(data);
                 _trashButton.disableWidget(scenes.getScenes().size() == 1);
                 _trashButton.tick(0.f);
-                _actionScene = nullptr;
+                _actionScene.reset();
             });
         _subscriptions << _scenePicker->onSelect->subscribeAndGetID(
             [&scenes](const void* data)
