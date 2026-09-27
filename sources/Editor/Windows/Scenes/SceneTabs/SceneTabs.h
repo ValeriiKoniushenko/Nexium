@@ -12,7 +12,6 @@
 #include "Editor/GuiComponents/Button.h"
 #include "Editor/GuiComponents/Combo.h"
 #include "Editor/GuiComponents/HorizontalLayout.h"
-#include "Editor/GuiComponents/Input.h"
 #include "Editor/GuiComponents/Label.h"
 #include "SceneDeleteConfirmation.h"
 
@@ -33,8 +32,7 @@ namespace NX
 
         Gui::HorizontalLayout _toolbar;
         Gui::Label* _sceneLabel = nullptr;
-        Gui::ComboModelBased* _scenePicker = nullptr;
-        Gui::TextInput _filter;
+        Gui::SearchableComboBox* _scenePicker = nullptr;
         Gui::Button _trashButton;
         SceneDeleteConfirmation _deleteConfirmation;
         DelegateSubscriberPoolGuard _subscriptions;
