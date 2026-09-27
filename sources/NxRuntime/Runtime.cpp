@@ -63,6 +63,7 @@ namespace NX
             if (!_gameInstance.isEditorMode())
             {
                 _gameInstance.scenes.getCurrentScene()->tick(_gameInstance.world.getTimeDelta());
+                _gameInstance.window->updateViewport();
 
                 glClear(clearBits);
 

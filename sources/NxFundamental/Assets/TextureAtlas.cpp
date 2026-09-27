@@ -23,7 +23,8 @@ using namespace rectpack2D;
 using namespace Core;
 using namespace RawBackend;
 
-using spaces_type = empty_spaces<true>;
+// Pixel uploads and frame UVs preserve the source image orientation.
+using spaces_type = empty_spaces<false>;
 using rect_type = output_rect_t<spaces_type>;
 
 namespace NX
@@ -109,7 +110,7 @@ namespace NX
         const auto result_size = find_best_packing_dont_sort<spaces_type>(
             rectangles,
             make_finder_input(max_side, discard_step, report_successful, report_unsuccessful,
-                              rectpack2D::flipping_option::ENABLED));
+                              rectpack2D::flipping_option::DISABLED));
 
         if (discarded)
         {
