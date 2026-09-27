@@ -7,6 +7,7 @@
 //
 //     http://www.apache.org/licenses/LICENSE-2.0
 
+#include "Editor/EditorIntegration.h"
 #include "NxFundamental/ECS/BaseComponent.h"
 #include "NxRuntime/Runtime.h"
 #include "NxSubsystems/Input/InputManager.h"
@@ -48,6 +49,34 @@ TEST(RuntimeTests, KeepsBoundGameInstance)
     NX::Runtime runtime{ gameInstance };
 
     EXPECT_EQ(&runtime.getGameInstance(), &gameInstance);
+}
+
+TEST(RuntimeTests, SceneChangesClearSelectionWithoutEditorWindows)
+{
+    auto executableName = std::to_array("Nexium_Tests");
+    std::array<char*, 1> arguments{ executableName.data() };
+    NX::GameInstance gameInstance{ 1, arguments.data() };
+    NX::Runtime runtime{ gameInstance };
+    NX::EditorIntegration editor{ runtime };
+    auto& selector = editor.getObjectSelectorManager();
+    auto object = NX::SceneObject::Create();
+    auto& scenes = gameInstance.scenes;
+    auto& next = scenes.createNewScene();
+
+    selector.selectSingleObject(object.get());
+    ASSERT_TRUE(selector.isSelected(object.get()));
+    EXPECT_TRUE(scenes.setCurrentScene(scenes.getCurrentScene()));
+    EXPECT_TRUE(selector.isSelected(object.get()));
+    EXPECT_TRUE(scenes.setCurrentScene(&next));
+    EXPECT_TRUE(selector.getSelectedObjects().empty());
+
+    selector.selectSingleObject(object.get());
+    scenes.removeScene(&next);
+    EXPECT_TRUE(selector.getSelectedObjects().empty());
+
+    selector.selectSingleObject(object.get());
+    scenes.removeAllScenes();
+    EXPECT_TRUE(selector.getSelectedObjects().empty());
 }
 
 TEST(RuntimeTests, LinksWorldComponentRegistrars)

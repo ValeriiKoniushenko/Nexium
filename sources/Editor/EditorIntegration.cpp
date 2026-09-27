@@ -28,6 +28,9 @@ namespace NX
         Assert(!gEditorIntegration, "Only one editor integration can be active.");
         gEditorIntegration = this;
         _runtime.getGameInstance().setApplicationIntegration(this);
+        _subscriptions
+            << _runtime.getGameInstance().scenes.onCurrentSceneChanged->subscribeAndGetID(
+                   [this](Scene*) { _objectSelectorManager.deselectAllAndClear(); });
     }
 
     EditorIntegration::~EditorIntegration()
