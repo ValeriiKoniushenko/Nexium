@@ -12,6 +12,7 @@
 #pragma once
 
 #include "Core/Delegate.h"
+#include "Input.h"
 #include "Widget.h"
 
 namespace NX::Gui
@@ -120,6 +121,9 @@ namespace NX::Gui
     protected:
         void onDraw() override;
 
+        virtual void drawPopupHeader();
+        [[nodiscard]] virtual bool matchesItem(const StringAtom& label) const;
+
     protected:
         std::function<const void*(std::size_t, StringAtom&)> _dataProvider;
         std::function<std::size_t()> _sizeProvider;
@@ -129,6 +133,31 @@ namespace NX::Gui
         std::function<bool(const StringAtom&)> _itemFilter;
         const void* _currentData = nullptr;
         std::size_t _currentIndex = 0;
+    };
+    
+    CLASS();
+    class SearchableComboBox : public ComboModelBased
+    {
+        ECS_DECL(SearchableComboBox, NX::Gui::ComboModelBased);
+
+    public:
+        void setSearchText(std::string text) { _search.setInputtedData(std::move(text)); }
+        [[nodiscard]] const std::string& getSearchText() const noexcept
+        {
+            return _search.getInputtedData();
+        }
+        void setSearchPlaceholder(StringAtom placeholder)
+        {
+            _search.setPlaceholder(std::move(placeholder));
+        }
+
+    protected:
+        void onInitialize() override;
+        void drawPopupHeader() override;
+        [[nodiscard]] bool matchesItem(const StringAtom& label) const override;
+
+    private:
+        TextInput _search;
     };
 } // namespace NX::Gui
 
