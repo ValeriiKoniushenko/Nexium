@@ -15,6 +15,7 @@
 namespace NX::Gui
 {
     ECS_IMPL(BaseCombo);
+    ECS_IMPL(SearchableComboBox);
     ECS_IMPL(ComboModelBased);
 
     ECS_IMPL(ComboView);
@@ -125,13 +126,10 @@ namespace NX::Gui
 
         if (ImGui::BeginCombo("", preview))
         {
-            if (_drawPopupHeader)
-            {
-                _drawPopupHeader();
-            }
+            drawPopupHeader();
             for (std::size_t i = 0; i < _cache.size(); ++i)
             {
-                if (_itemFilter && !_itemFilter(_cache[i].second))
+                if (!matchesItem(_cache[i].second))
                 {
                     continue;
                 }
@@ -157,5 +155,47 @@ namespace NX::Gui
             ImGui::EndCombo();
         }
         ImGui::PopItemWidth();
+    }
+    void ComboModelBased::drawPopupHeader()
+    {
+        if (_drawPopupHeader)
+        {
+            _drawPopupHeader();
+        }
+    }
+
+    bool ComboModelBased::matchesItem(const StringAtom& label) const
+    {
+        return !_itemFilter || _itemFilter(label);
+    }
+
+    void SearchableComboBox::onInitialize()
+    {
+        ComboModelBased::onInitialize();
+        if (_search.getPlaceholder().isEmpty())
+        {
+            _search.setPlaceholder("Search..."_atom);
+        }
+        _search.initialize();
+    }
+
+    void SearchableComboBox::drawPopupHeader()
+    {
+        if (ImGui::IsWindowAppearing())
+        {
+            _search.requestFocus();
+            _search.requestSelectAll();
+        }
+        _search.setWidth(ImGui::GetContentRegionAvail().x);
+        _search.tick(0.f);
+        ComboModelBased::drawPopupHeader();
+    }
+
+    bool SearchableComboBox::matchesItem(const StringAtom& label) const
+    {
+        const auto& query = getSearchText();
+        return ComboModelBased::matchesItem(label)
+               && (query.empty()
+                   || ImStristr(label.c_str(), nullptr, query.c_str(), nullptr) != nullptr);
     }
 } // namespace NX::Gui

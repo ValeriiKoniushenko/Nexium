@@ -51,7 +51,7 @@ namespace NX
         _sceneLabel = _toolbar.addChildComponent<Gui::Label>("Scenes"_atom);
         _sceneLabel->setTextColor(Core::Color4_LightGray);
         _sceneLabel->setWidth(54.f);
-        _scenePicker = _toolbar.addChildComponent<Gui::ComboModelBased>("Scenes"_atom);
+        _scenePicker = _toolbar.addChildComponent<Gui::SearchableComboBox>("Scenes"_atom);
         _scenePicker->setWidth(220.f);
         _scenePicker->setSizeProvider([&scenes] { return scenes.getScenes().size(); });
         _scenePicker->setDataProvider(
@@ -61,17 +61,7 @@ namespace NX
                 label = scene->getSceneName();
                 return scene;
             });
-        _filter.setPlaceholder("Filter scenes..."_atom);
-        _filter.setWidth(240.f);
-        _filter.initialize();
-        _scenePicker->setPopupHeaderDrawer([this] { _filter.tick(0.f); });
-        _scenePicker->setItemFilter(
-            [this](const StringAtom& name)
-            {
-                const auto& filter = _filter.getInputtedData();
-                return filter.empty()
-                       || ImStristr(name.c_str(), nullptr, filter.c_str(), nullptr) != nullptr;
-            });
+        _scenePicker->setSearchPlaceholder("Filter scenes..."_atom);
         _trashButton.setText(ICON_FA_TRASH ""_atom);
         _trashButton.setWidth(28.f);
         _trashButton.setButtonColor(Core::Color4(72, 52, 56, 255));
