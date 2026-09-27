@@ -1,5 +1,138 @@
 {
     "_sceneName": "MenuScene",
     "formatVersion": 1,
-    "sceneObjects": []
+    "sceneObjects": [
+        {
+            "assetType": "NX::Spectator2D",
+            "name": "2D_Spectator",
+            "referenceAsset": "data/assets/2D_Spectator.nx",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    -3.4608912467956543,
+                    -3.093538522720337,
+                    -1.3521623998258292e-07
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_isEnabled": true
+            }
+        },
+        {
+            "assetType": "NX::SceneObj::RectangleAnimated",
+            "name": "AnimatedPlayersa",
+            "referenceAsset": "data/assets/AnimatedPlayer.nx",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    802.9999389648438,
+                    603.0,
+                    -2.5999999046325684
+                ],
+                "_rotation": [
+                    -0.0,
+                    0.0,
+                    -0.0
+                ],
+                "_scale": [
+                    2.9000000953674316,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": false,
+                "_atlasName": "default",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "StartButton.png"
+            }
+        },
+        {
+            "assetType": "NX::SceneObj::RectangleAnimated",
+            "name": "AnimatedPlayersa_0",
+            "referenceAsset": "data/assets/AnimatedPlayer.nx",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    805.0001831054688,
+                    406.7999572753906,
+                    -2.5999999046325684
+                ],
+                "_rotation": [
+                    -0.0,
+                    0.0,
+                    -0.0
+                ],
+                "_scale": [
+                    2.9000000953674316,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": false,
+                "_atlasName": "default",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "StartButton.png"
+            }
+        },
+        {
+            "assetType": "NX::SceneObj::RectangleAnimated",
+            "name": "AnimatedPlayersa_0_0",
+            "referenceAsset": "data/assets/AnimatedPlayer.nx",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    801.000244140625,
+                    205.79995727539063,
+                    -2.5999999046325684
+                ],
+                "_rotation": [
+                    -0.0,
+                    0.0,
+                    -0.0
+                ],
+                "_scale": [
+                    2.9000000953674316,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": false,
+                "_atlasName": "default",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "StartButton.png"
+            }
+        }
+    ]
 }

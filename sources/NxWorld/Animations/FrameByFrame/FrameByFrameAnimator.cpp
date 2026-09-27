@@ -9,8 +9,8 @@
 
 #include "FrameByFrameAnimator.h"
 
-#include "../../Scene/SceneObjects/Rectangle/RectangleAnimated.h"
 #include "FrameByFrameAnimation.h"
+#include "NxWorld/Scene/SceneObjects/Rectangle/RectangleAnimated.h"
 
 namespace NX::Animation
 {

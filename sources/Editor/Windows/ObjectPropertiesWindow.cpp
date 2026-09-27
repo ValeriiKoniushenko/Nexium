@@ -30,6 +30,7 @@
 #include "NxWorld/Framework/GameInstanceAccess.h"
 #include "NxWorld/Framework/World.h"
 #include "NxWorld/Scene/SceneObjects/Rectangle/Rectangle.h"
+#include "NxWorld/Scene/SceneObjects/Rectangle/RectangleAnimated.h"
 
 using namespace Core;
 using namespace NX;

@@ -9,16 +9,20 @@
 
 #pragma once
 
-#include "Editor/GuiComponents/Button.h"
-#include "Editor/GuiComponents/Combo.h"
-#include "Editor/GuiComponents/HorizontalLayout.h"
-#include "Editor/GuiComponents/Label.h"
 #include "SceneDeleteConfirmation.h"
 
 namespace NX
 {
     class SceneManager;
     class Scene;
+
+    namespace Gui
+    {
+        class Label;
+        class HorizontalLayout;
+        class Button;
+        class SearchableComboBox;
+    } // namespace Gui
 
     class SceneTabs final
     {
@@ -36,6 +40,6 @@ namespace NX
         Gui::Button _trashButton;
         SceneDeleteConfirmation _deleteConfirmation;
         DelegateSubscriberPoolGuard _subscriptions;
-        const Scene* _actionScene = nullptr;
+        WeakPtr<const Scene> _actionScene;
     };
 } // namespace NX

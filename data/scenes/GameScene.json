@@ -101,7 +101,7 @@
                 "_atlasName": "santa_walk",
                 "_blendingEnabled": true,
                 "_isEnabled": true,
-                "_textureName": "Walk_3.png"
+                "_textureName": "Walk_13.png"
             }
         },
         {
@@ -115,8 +115,8 @@
                     0.0
                 ],
                 "_position": [
-                    -300.11749267578125,
-                    -300.2021179199219,
+                    1.867333173751831,
+                    -197.5286407470703,
                     1452.102783203125
                 ],
                 "_rotation": [
@@ -166,6 +166,40 @@
                 "_blendingEnabled": true,
                 "_isEnabled": true,
                 "_textureName": "red.png"
+            }
+        },
+        {
+            "assetType": "NX::SceneObj::RectangleAnimated",
+            "name": "AnimatedPlayersa_1",
+            "referenceAsset": "data/assets/AnimatedPlayer.nx",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    507.927001953125,
+                    1.1577911376953125,
+                    0.0
+                ],
+                "_rotation": [
+                    -0.0,
+                    0.0,
+                    -0.0
+                ],
+                "_scale": [
+                    2.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_animationEnabled": false,
+                "_atlasName": "default",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "StartButton.png"
             }
         }
     ]

@@ -51,7 +51,7 @@ namespace NX
         void removeScene(StringAtom sceneName);
         void removeScene(Scene* scene);
 
-        [[nodiscard]] const std::vector<std::unique_ptr<Scene>>& getScenes() const noexcept
+        [[nodiscard]] const std::vector<Core::IntrusivePtr<Scene>>& getScenes() const noexcept
         {
             return _scenes;
         }
@@ -65,7 +65,7 @@ namespace NX
         [[nodiscard]] spdlog::logger* getLogger() const override;
 
     private:
-        std::vector<std::unique_ptr<Scene>> _scenes;
+        std::vector<Core::IntrusivePtr<Scene>> _scenes;
         std::vector<Scene*> _openScenes;
         Scene* _currentScene = nullptr;
     };

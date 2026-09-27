@@ -38,8 +38,11 @@ namespace NX
         _subscriptions << _deleteButton->onClick->subscribeAndGetID(
             [this, &scenes]
             {
-                scenes.removeScene(_pendingScene);
-                _pendingScene = nullptr;
+                if (auto scene = _pendingScene.tryLoad())
+                {
+                    scenes.removeScene(scene.get());
+                }
+                _pendingScene.reset();
                 ImGui::CloseCurrentPopup();
             });
 
@@ -48,7 +51,7 @@ namespace NX
         _subscriptions << _cancelButton->onClick->subscribeAndGetID(
             [this]
             {
-                _pendingScene = nullptr;
+                _pendingScene.reset();
                 ImGui::CloseCurrentPopup();
             });
         _buttons.initialize();
@@ -58,9 +61,9 @@ namespace NX
     {
         if (_pendingScene
             && !std::ranges::any_of(scenes.getScenes(), [this](const auto& scene)
-                                    { return scene.get() == _pendingScene; }))
+                                    { return scene.get() == _pendingScene.get(); }))
         {
-            _pendingScene = nullptr;
+            _pendingScene.reset();
         }
         if (_pendingScene && !ImGui::IsPopupOpen("Delete scene?"_atom.c_str()))
         {
@@ -73,14 +76,15 @@ namespace NX
         {
             return;
         }
-        if (!_pendingScene)
+        auto pendingScene = _pendingScene.tryLoad();
+        if (!pendingScene)
         {
             ImGui::CloseCurrentPopup();
             ImGui::EndPopup();
             return;
         }
 
-        _message.setText("Delete scene '"_atom + _pendingScene->getSceneName()
+        _message.setText("Delete scene '"_atom + pendingScene->getSceneName()
                          + "' and all its objects?"_atom);
         _message.tick(0.f);
         ImGui::Dummy(glm::vec2(0.f, 8.f));

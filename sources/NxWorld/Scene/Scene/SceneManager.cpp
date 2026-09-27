@@ -24,7 +24,7 @@ namespace NX
 
     Scene& SceneManager::createNewScene()
     {
-        auto scene = std::make_unique<Scene>();
+        auto scene = Core::IntrusivePtr<Scene>(new Scene());
         std::size_t suffix = 1;
         Core::StringAtom name;
         do
@@ -147,8 +147,8 @@ namespace NX
 
     void SceneManager::removeAllScenes()
     {
-        std::vector<std::unique_ptr<Scene>> replacement;
-        auto scene = std::make_unique<Scene>();
+        std::vector<Core::IntrusivePtr<Scene>> replacement;
+        auto scene = Core::IntrusivePtr<Scene>(new Scene());
         replacement.push_back(std::move(scene));
         _scenes.swap(replacement);
         _currentScene = _scenes.front().get();
