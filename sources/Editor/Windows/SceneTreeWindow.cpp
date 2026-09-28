@@ -104,9 +104,11 @@ namespace NX
         }
 
         int32_t internalId = 0;
-        for (auto object : _scene->getObjects())
+
+        auto&& sceneObjects = _scene->getObjects();
+        for (std::size_t i = 0; i < sceneObjects.size(); ++i)
         {
-            drawTreeNode(object.get(), internalId++);
+            drawTreeNode(sceneObjects[i].get(), internalId++);
         }
 
         if (ImGui::IsWindowHovered(ImGuiHoveredFlags_ChildWindows)
