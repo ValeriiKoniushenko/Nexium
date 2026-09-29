@@ -80,8 +80,8 @@ WarningsAsErrors: "modernize-avoid-c-arrays,
   clang-analyzer-deadcode.DeadStores,
   cppcoreguidelines-pro-type-cstyle-cast,
   cppcoreguidelines-pro-bounds-array-to-pointer-decay,
-  misc-override-with-different-visibility,
-  cppcoreguidelines-special-member-functions"
+  cppcoreguidelines-special-member-functions,
+  misc-override-with-different-visibility"
 
 HeaderFilterRegex: '.*Nexium/sources/.*'
 ExcludeHeaderFilterRegex: '.*\.generated\..*'

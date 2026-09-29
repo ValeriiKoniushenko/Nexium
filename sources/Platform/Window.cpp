@@ -70,6 +70,16 @@ namespace
         GetWindow().onResize->trigger(ISize2(width, height));
     }
 
+    void WindowFocusCallback(GLFWwindow*, int focused)
+    {
+        GetWindow().onFocusChanged->trigger(focused == GLFW_TRUE);
+    }
+
+    void WindowIconifyCallback(GLFWwindow*, int iconified)
+    {
+        GetWindow().onIconifyChanged->trigger(iconified == GLFW_TRUE);
+    }
+
 #ifndef _WIN32
     void SetWindowIcon(GLFWwindow* window)
     {
@@ -172,6 +182,10 @@ namespace Platform
         glfwSetCursorEnterCallback(_window, CursorEnterHandler);
         glfwSetScrollCallback(_window, MouseScrollHandler);
         glfwSetWindowSizeCallback(_window, WindowSizeCallback);
+        glfwSetWindowFocusCallback(_window, WindowFocusCallback);
+        glfwSetWindowIconifyCallback(_window, WindowIconifyCallback);
+        _isFocused = glfwGetWindowAttrib(_window, GLFW_FOCUSED) == GLFW_TRUE;
+        _isIconified = glfwGetWindowAttrib(_window, GLFW_ICONIFIED) == GLFW_TRUE;
         glfwSwapInterval(_swapInterval);
 
         debugLog("OpenGL version: {}"_f << reinterpret_cast<const char*>(glGetString(GL_VERSION)));
@@ -217,6 +231,8 @@ namespace Platform
 
     void Window::destroy()
     {
+        _isFocused = false;
+        _isIconified = false;
         glfwDestroyWindow(_window);
         glfwTerminate();
     }
@@ -281,6 +297,10 @@ namespace Platform
     void Window::registerEvents()
     {
         _subscriptionPool << onResize->subscribeAndGetID([this](ISize2 size) { _size = size; });
+        _subscriptionPool << onFocusChanged->subscribeAndGetID([this](bool focused)
+                                                               { _isFocused = focused; });
+        _subscriptionPool << onIconifyChanged->subscribeAndGetID([this](bool iconified)
+                                                                 { _isIconified = iconified; });
 
         _subscriptionPool << onMouseMove->subscribeAndGetID(
             [](glm::vec2 pos)

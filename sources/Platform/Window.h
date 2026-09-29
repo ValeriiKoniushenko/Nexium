@@ -117,6 +117,8 @@ namespace Platform
         void clear(int code);
 
         [[nodiscard]] bool shouldClose() const;
+        [[nodiscard]] bool isFocused() const noexcept { return _isFocused; }
+        [[nodiscard]] bool isIconified() const noexcept { return _isIconified; }
 
         void swapBuffers();
 
@@ -171,6 +173,10 @@ namespace Platform
         /// @param bool is Entered the cursor or no
         Core::Delegate<void(bool)>::Ptr onCursorEntered = Core::Delegate<void(bool)>::Create();
 
+        Core::Delegate<void(bool)>::Ptr onFocusChanged = Core::Delegate<void(bool)>::Create();
+
+        Core::Delegate<void(bool)>::Ptr onIconifyChanged = Core::Delegate<void(bool)>::Create();
+
         /// @param ISize2 new window size
         Core::Delegate<void(Core::ISize2)>::Ptr onResize
             = Core::Delegate<void(Core::ISize2)>::Create();
@@ -193,6 +199,8 @@ namespace Platform
 
     private:
         void registerEvents();
+        bool _isFocused = false;
+        bool _isIconified = false;
     };
 
     Window& GetWindow();

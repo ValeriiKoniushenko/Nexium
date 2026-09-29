@@ -19,6 +19,7 @@ namespace NX
     {
     public:
         explicit Runtime(GameInstance& gameInstance) noexcept;
+        ~Runtime() = default;
         Runtime(const Runtime&) = delete;
         Runtime(Runtime&&) = delete;
         Runtime& operator=(const Runtime&) = delete;

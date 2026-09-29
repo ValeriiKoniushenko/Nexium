@@ -13,6 +13,7 @@
 
 #include "NxSubsystems/Input/InputManager.h"
 #include "NxWorld/Entities/Actor.h"
+#include "NxWorld/Framework/InputController.h"
 
 namespace NX
 {
@@ -79,6 +80,9 @@ namespace NX
 
     protected:
         void onInitialize() override;
+        void onTick(float delta) override;
+
+        InputController::Ptr _inputController;
     };
 
 } // namespace NX

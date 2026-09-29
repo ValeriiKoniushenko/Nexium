@@ -41,29 +41,15 @@ namespace NX
     void Spectator3D::onInitialize()
     {
         BaseSpectator::onInitialize();
-        const auto getSpeed = [this](Platform::Keyboard::KeyState leftShift)
-        { return speed / (leftShift == Platform::Keyboard::KeyState::Pressed ? 8.f : 1.f); };
-        const auto bindMovement = [this, &getSpeed](const char* name, Platform::Keyboard::Key key,
-                                                    auto movement, float direction)
-        {
-            _subscriptionPool << keyboardInput.getOrCreate(name, key)->onPress->subscribeAndGetID(
-                [=](KeyboardIA::SpecKeysState state)
-                {
-                    movement(direction * getSpeed(state.leftShift)
-                             * gGameInstance->world.getTimeDelta());
-                });
-        };
-
-        bindMovement(
-            "Move forward", Platform::Keyboard::Key::W, [this](float v) { moveForward(v); }, -1.f);
-        bindMovement(
-            "Move backward", Platform::Keyboard::Key::S, [this](float v) { moveForward(v); }, 1.f);
-        bindMovement(
-            "Move right", Platform::Keyboard::Key::D, [this](float v) { moveRight(v); }, 1.f);
-        bindMovement(
-            "Move left", Platform::Keyboard::Key::A, [this](float v) { moveRight(v); }, -1.f);
-        bindMovement("Move up", Platform::Keyboard::Key::R, [this](float v) { moveUp(v); }, 1.f);
-        bindMovement("Move down", Platform::Keyboard::Key::F, [this](float v) { moveUp(v); }, -1.f);
+        _inputController = InputController::Create("Spectator input"_atom, InputContext::Gameplay);
+        const auto bindMovement = [this](const Core::StringAtom& name, Platform::Keyboard::Key key)
+        { _inputController->bind(name, KeyChord::Exact(key), InputActionTrigger::WhileHeld); };
+        bindMovement("Move forward"_atom, Platform::Keyboard::Key::W);
+        bindMovement("Move backward"_atom, Platform::Keyboard::Key::S);
+        bindMovement("Move right"_atom, Platform::Keyboard::Key::D);
+        bindMovement("Move left"_atom, Platform::Keyboard::Key::A);
+        bindMovement("Move up"_atom, Platform::Keyboard::Key::R);
+        bindMovement("Move down"_atom, Platform::Keyboard::Key::F);
         _subscriptionPool << Platform::GetWindow().onMouseWheel->subscribeAndGetID(
             [this](glm::vec2 offset)
             {
@@ -81,6 +67,27 @@ namespace NX
                                  ->onDrag->subscribeAndGetID(
                                      [this](glm::vec2 delta, auto)
                                      { yawAndPitch(delta * mouseSensitivity); });
+    }
+
+    void Spectator3D::onTick(float delta)
+    {
+        BaseSpectator::onTick(delta);
+        if (!_inputController)
+        {
+            return;
+        }
+        // const float step
+        //     = speed * delta
+        //       / (Platform::Keyboard::IsKeyPressed(Platform::Keyboard::Key::Left_Shift)
+        //                  ||
+        //                  Platform::Keyboard::IsKeyPressed(Platform::Keyboard::Key::Right_Shift)
+        //              ? 8.f
+        //              : 1.f);
+        // const auto pressed = [this](const Core::StringAtom& action)
+        // { return static_cast<float>(_inputController->isActionPressed(action)); };
+        // moveForward(step * (pressed("Move backward"_atom) - pressed("Move forward"_atom)));
+        // moveRight(step * (pressed("Move right"_atom) - pressed("Move left"_atom)));
+        // moveUp(step * (pressed("Move up"_atom) - pressed("Move down"_atom)));
     }
 
     void Spectator2D::onInitialize()

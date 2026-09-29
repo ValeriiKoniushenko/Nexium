@@ -11,6 +11,7 @@
 
 #include "Core/Size.h"
 #include "Foundation/Configs.h"
+#include "InputSystem.h"
 #include "NxWorld/Animations/FrameByFrame/FrameByFrameAnimation.h"
 #include "NxWorld/Animations/FrameByFrame/FrameByFrameAnimator.h"
 #include "NxWorld/Entities/Camera/Camera.h"
@@ -109,6 +110,7 @@ namespace NX
         window = &Platform::GetWindow();
         window->create(Foundation::Config::defaultWindowName,
                        Foundation::Config::defaultWindowSize);
+        GetInputSystem().initialize(*window);
         _subscriptionPool << window->onResize->subscribeAndGetID([this](Core::ISize2 newSize)
                                                                  { updateViewport(); });
 

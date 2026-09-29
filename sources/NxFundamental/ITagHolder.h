@@ -28,6 +28,7 @@ namespace NX
         Tag_EditorInternal      = 1 << 2,
         Tag_AnimationController = 1 << 3,
         Tag_EditorWindow        = (1 << 4) | Tag_EditorInternal,
+        Tag_InputController     = 1 << 5,
         Tag_Any                 = 0xFFFFFFFF
         // clang-format on
     };

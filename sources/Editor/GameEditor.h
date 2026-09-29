@@ -15,6 +15,7 @@
 #include "Core/IntrusivePtr.h"
 #include "Foundation/BaseLog.h"
 #include "NxSubsystems/Input/InputManager.h"
+#include "NxWorld/Framework/InputController.h"
 #include "ObjectPicker.h"
 #include "ToastNotifications.h"
 #include "Windows/BaseWindow.h"
@@ -151,6 +152,8 @@ namespace NX
         void setupImGuiStyles();
         [[nodiscard]] bool needToDraw();
         void setupShortcuts();
+
+        InputController::Ptr _inputController;
 
     private:
         void handleMouseDrag(glm::vec2 delta, NX::MouseInputAction::SpecKeysState state);

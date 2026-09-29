@@ -12,6 +12,7 @@
 #include "Core/Timer.h"
 #include "NxRuntime/GameUtils/FPSCounter.h"
 #include "NxWorld/Framework/GameInstance.h"
+#include "NxWorld/Framework/InputSystem.h"
 #include "Platform/Glfw.h"
 
 #include <chrono>
@@ -54,6 +55,10 @@ namespace NX
         {
             clock.start();
             Platform::Window::pollEvent();
+            GetInputSystem().setActiveContext(_gameInstance.isApplicationViewportFocused()
+                                                  ? InputContext::Gameplay
+                                                  : InputContext::Editor);
+            GetInputSystem().processEvents();
 
             if (!_gameInstance.isEditorMode())
             {
@@ -99,9 +104,7 @@ namespace NX
                 }
             }
 
-            if (glfwGetWindowAttrib(_gameInstance.window->getRawWindow(), GLFW_ICONIFIED)
-                || glfwGetWindowAttrib(_gameInstance.window->getRawWindow(), GLFW_FOCUSED)
-                       == GLFW_FALSE)
+            if (_gameInstance.window->isIconified() || !_gameInstance.window->isFocused())
             {
                 std::this_thread::sleep_for(std::chrono::milliseconds(50));
             }
