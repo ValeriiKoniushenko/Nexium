@@ -21,12 +21,7 @@ namespace NX
     InputController::InputController(const InputController& other)
         : BaseComponent(other),
           _inputContext(other._inputContext),
-          _bindings(other._bindings),
-          _transientActions(other._transientActions),
-          _actionStates(other._actionStates),
-          _activeChords(other._activeChords),
-          _actionModifiers(other._actionModifiers),
-          _actionCallbacks(other._actionCallbacks)
+          _bindings(other._bindings)
     {
         invalidate();
     }
