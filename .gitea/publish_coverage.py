@@ -70,6 +70,30 @@ def archive_report(report: Path) -> Path:
     return archive
 
 
+def publish_optional_status(
+    client: GiteaClient,
+    sha: str,
+    description: str,
+    *,
+    report_url: str = "",
+) -> None:
+    if not sha:
+        return
+    try:
+        client.publish_check(
+            sha,
+            "success",
+            CHECK_CONTEXT,
+            description,
+            target_url=report_url,
+        )
+    except Exception as error:
+        print(
+            f"[coverage] failed to publish optional commit status: {error}",
+            file=sys.stderr,
+        )
+
+
 def publish(summary: dict[str, object], report: Path, *, dry_run: bool) -> None:
     client = GiteaClient.from_env()
     if client is None:
@@ -82,8 +106,7 @@ def publish(summary: dict[str, object], report: Path, *, dry_run: bool) -> None:
         print(f"[dry-run] would publish {description}")
         return
     if pr_number is None:
-        if sha:
-            client.publish_check(sha, "success", CHECK_CONTEXT, description)
+        publish_optional_status(client, sha, description)
         return
 
     marker = review_marker(CHECK_CONTEXT)
@@ -103,14 +126,7 @@ def publish(summary: dict[str, object], report: Path, *, dry_run: bool) -> None:
         commit_id=sha,
         marker=marker,
     )
-    if sha:
-        client.publish_check(
-            sha,
-            "success",
-            CHECK_CONTEXT,
-            description,
-            target_url=report_url,
-        )
+    publish_optional_status(client, sha, description, report_url=report_url)
 
 
 def main() -> int:

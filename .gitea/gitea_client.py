@@ -30,12 +30,11 @@ _TOKEN_ENV_KEYS = (
 
 
 def _token_preview(token: str, *, head: int = 4, tail: int = 2) -> str:
-    """Return a safe redacted preview of a secret token."""
+    """Describe a token without exposing any of its characters."""
     if not token:
         return "<empty>"
-    if len(token) <= head + tail + 3:
-        return f"{token[:1]}…({len(token)} chars)"
-    return f"{token[:head]}…{token[-tail:]} (len={len(token)})"
+    del head, tail
+    return f"<redacted; {len(token)} chars>"
 
 
 def _looks_quoted(value: str) -> bool:

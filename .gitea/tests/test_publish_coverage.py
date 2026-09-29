@@ -1,13 +1,17 @@
+import contextlib
+import io
 import json
 import sys
 import tempfile
 import unittest
 import zipfile
 from pathlib import Path
+from unittest.mock import Mock
 
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import publish_coverage  # noqa: E402
+from gitea_client import _token_preview  # noqa: E402
 
 
 SUMMARY = {
@@ -44,6 +48,16 @@ class PublishCoverageTests(unittest.TestCase):
             archive = publish_coverage.archive_report(report)
             with zipfile.ZipFile(archive) as content:
                 self.assertEqual(content.read("index.html"), b"coverage")
+
+    def test_commit_status_permission_failure_is_nonfatal(self):
+        client = Mock()
+        client.publish_check.side_effect = PermissionError("forbidden")
+        with contextlib.redirect_stderr(io.StringIO()) as errors:
+            publish_coverage.publish_optional_status(client, "abc", "90% coverage")
+        self.assertIn("optional commit status", errors.getvalue())
+
+    def test_token_preview_does_not_expose_token_characters(self):
+        self.assertEqual(_token_preview("secret-token"), "<redacted; 12 chars>")
 
 
 if __name__ == "__main__":
