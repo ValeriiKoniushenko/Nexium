@@ -211,14 +211,22 @@ when an annotated engine header used by the benchmark changed.
 
 ### `code-coverage`
 
-Nexium currently defines no engine coverage CMake option, instrumentation configuration,
-coverage target, report generator, or report output path. Coverage support found inside
-dependency repositories is not the engine's coverage workflow and must not be reused as
-one. Therefore the `code-coverage` skill must report coverage as unsupported for the root
-project rather than claim success or invent commands. Adding root-project coverage support
-is a separate implementation task; when it exists, use a dedicated directory such as
-`build/coverage` because instrumentation changes compilation and report generation can
-rewrite profiling data.
+Code coverage uses GCC, gcov, and gcovr 8.6 or newer in a dedicated Debug build. Configure
+and generate the report with:
+
+```sh
+cmake -S . -B build/coverage -G Ninja \
+  -DCMAKE_BUILD_TYPE=Debug \
+  -DNEXIUM_DISABLE_TESTS=OFF \
+  -DNEXIUM_DISABLE_BENCHMARKS=ON \
+  -DNEXIUM_ENABLE_CODE_COVERAGE=ON
+cmake --build build/coverage --parallel --target Nexium_Coverage
+```
+
+`Nexium_Coverage` clears stale runtime counters, runs the complete `Nexium_Tests` suite,
+and writes a self-contained HTML report, JSON summary, and text summary under
+`build/coverage/coverage-report/`. Coverage includes project files under `sources/` and
+excludes JRM-generated files. Do not run coverage concurrently in the same build directory.
 
 ### `docs-generation`
 

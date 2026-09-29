@@ -338,6 +338,7 @@ class GiteaClient:
         field_name: str,
         file_path: str,
         file_name: str,
+        content_type: str,
         scheme: str,
     ) -> Any:
         """Send one file as a multipart/form-data API request."""
@@ -353,7 +354,7 @@ class GiteaClient:
                     f'Content-Disposition: form-data; name="{field_name}"; '
                     f'filename="{escaped_name}"\r\n'
                 ).encode(),
-                b"Content-Type: image/png\r\n\r\n",
+                f"Content-Type: {content_type}\r\n\r\n".encode(),
                 attachment,
                 f"\r\n--{boundary}--\r\n".encode(),
             )
@@ -464,6 +465,7 @@ class GiteaClient:
         field_name: str,
         file_path: str,
         file_name: str,
+        content_type: str,
     ) -> Any:
         self._resolve_auth()
         assert self.auth_scheme
@@ -474,6 +476,7 @@ class GiteaClient:
                 field_name=field_name,
                 file_path=file_path,
                 file_name=file_name,
+                content_type=content_type,
                 scheme=self.auth_scheme,
             )
         except urllib.error.HTTPError as e:
@@ -536,6 +539,7 @@ class GiteaClient:
         file_path: str,
         *,
         name: str,
+        content_type: str = "image/png",
     ) -> dict[str, Any]:
         """Upload an attachment to an issue or pull request."""
         if not os.path.isfile(file_path):
@@ -548,6 +552,7 @@ class GiteaClient:
             field_name="attachment",
             file_path=file_path,
             file_name=name,
+            content_type=content_type,
         )
         if not isinstance(result, dict) or not result.get("browser_download_url"):
             raise RuntimeError(f"unexpected attachment response: {result!r}")

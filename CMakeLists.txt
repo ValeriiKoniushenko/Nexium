@@ -57,6 +57,7 @@ include("${CMAKE_CURRENT_SOURCE_DIR}/cmake/NexiumTargets.cmake")
 
 option(NEXIUM_DISABLE_TESTS "Disable Nexium unit-tests targets" ON)
 option(NEXIUM_DISABLE_BENCHMARKS "Disable Nexium benchmark targets" ON)
+option(NEXIUM_ENABLE_CODE_COVERAGE "Instrument Nexium targets and add the coverage report target" OFF)
 option(NEXIUM_ENABLE_3D_MODULE "Enable Nexium 3D Module" OFF)
 option(NEXIUM_VERIFY_INTERFACE_HEADER_SETS "Create public-header verification targets" ON)
 option(NEXIUM_ENABLE_LAYER_CHECKS "Create CMake layer consumer checks" ON)
@@ -89,6 +90,10 @@ add_subdirectory(sources)
 
 if(NOT NEXIUM_DISABLE_TESTS)
     add_subdirectory(tests)
+endif()
+
+if(NEXIUM_ENABLE_CODE_COVERAGE)
+    include("${CMAKE_CURRENT_SOURCE_DIR}/cmake/CodeCoverage.cmake")
 endif()
 
 if(NOT NEXIUM_DISABLE_BENCHMARKS)

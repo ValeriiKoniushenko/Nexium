@@ -13,6 +13,11 @@ function(nexium_configure_target target)
 
     CoreAddCompileOptionsTo(${target})
 
+    if(NEXIUM_ENABLE_CODE_COVERAGE)
+        target_compile_options(${target} PRIVATE --coverage)
+        target_link_options(${target} PRIVATE --coverage)
+    endif()
+
     if(NEXIUM_VERIFY_INTERFACE_HEADER_SETS)
         get_property(header_sets TARGET ${target} PROPERTY HEADER_SETS)
         if(header_sets)
