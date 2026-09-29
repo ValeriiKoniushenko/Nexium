@@ -19,7 +19,7 @@ from capture_game_ui import (
     terminate,
     wait_for_xvfb,
 )
-from gitea_client import GiteaClient, review_marker
+from gitea_client import GiteaClient, classified_review_body, review_marker
 
 ERROR_SUMMARY_RE = re.compile(r"ERROR SUMMARY: (?P<count>\d+) errors?")
 MAX_OUTPUT_CHARS = 8_000
@@ -183,7 +183,10 @@ def review_body(executable_name: str, result: ValgrindGameResult) -> str:
             "</details>",
         )
     )
-    return "\n".join(lines)
+    return classified_review_body(
+        "\n".join(lines),
+        "error" if result.failed else "info",
+    )
 
 
 def publish_result(client: GiteaClient, executable_name: str, result: ValgrindGameResult) -> None:

@@ -36,6 +36,7 @@ class PublishCoverageTests(unittest.TestCase):
 
     def test_review_contains_all_totals_and_report_link(self):
         body = publish_coverage.review_body(SUMMARY, "https://gitea/report.zip")
+        self.assertTrue(body.startswith("ℹ️ **! INFO"))
         self.assertIn("90.0%", body)
         self.assertIn("8/10", body)
         self.assertIn("7/10", body)

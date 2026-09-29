@@ -18,7 +18,7 @@ import json
 import subprocess
 import sys
 
-from gitea_client import GiteaClient, review_marker
+from gitea_client import GiteaClient, classified_review_body, review_marker
 from utils import ChangedFile, get_changed_files, get_target_branch
 
 
@@ -69,7 +69,7 @@ def publish_review(
         try:
             client.create_review(
                 pr_number,
-                body=summary,
+                body=classified_review_body(summary, "error"),
                 event="COMMENT",
                 comments=[],
                 marker=marker,

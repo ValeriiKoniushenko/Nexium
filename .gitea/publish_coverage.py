@@ -10,7 +10,7 @@ import sys
 import zipfile
 from pathlib import Path
 
-from gitea_client import GiteaClient, review_marker
+from gitea_client import GiteaClient, classified_review_body, review_marker
 
 
 CHECK_CONTEXT = "code-coverage"
@@ -55,11 +55,14 @@ def review_body(summary: dict[str, object], report_url: str | None) -> str:
         if report_url
         else "The report attachment could not be uploaded; see the CI job output."
     )
-    return (
-        "## Unit-test coverage\n\n"
-        "| Metric | Coverage | Covered / total |\n"
-        "| --- | ---: | ---: |\n"
-        f"{rows}\n\n{download}"
+    return classified_review_body(
+        (
+            "## Unit-test coverage\n\n"
+            "| Metric | Coverage | Covered / total |\n"
+            "| --- | ---: | ---: |\n"
+            f"{rows}\n\n{download}"
+        ),
+        "info",
     )
 
 

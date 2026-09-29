@@ -5,7 +5,7 @@ import argparse
 import json
 import sys
 
-from gitea_client import GiteaClient, review_marker
+from gitea_client import GiteaClient, classified_review_body, review_marker
 
 
 def main() -> int:
@@ -43,9 +43,12 @@ def main() -> int:
                 )
                 client.create_review(
                     pr_number,
-                    body=(
-                        f"Copyright check found {len(issues)} violation(s).\n\n"
-                        f"{details}"
+                    body=classified_review_body(
+                        (
+                            f"Copyright check found {len(issues)} violation(s).\n\n"
+                            f"{details}"
+                        ),
+                        "error",
                     ),
                     marker=marker,
                 )

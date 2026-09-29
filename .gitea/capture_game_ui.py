@@ -14,7 +14,7 @@ import time
 from dataclasses import dataclass, field
 from pathlib import Path
 
-from gitea_client import GiteaClient, review_marker
+from gitea_client import GiteaClient, classified_review_body, review_marker
 
 
 WARM_UP_SECONDS = 5.0
@@ -418,7 +418,10 @@ def make_review_body(
             f"| Peak resident memory | `{format_bytes(statistics.peak_rss_bytes)}` |",
         )
     )
-    return "\n".join(lines)
+    return classified_review_body(
+        "\n".join(lines),
+        "error" if screenshot_error else "info",
+    )
 
 
 def publish_screenshot(

@@ -21,6 +21,21 @@ def review_marker(check_name: str) -> str:
     """Return the marker used to identify reviews created by a CI check."""
     return f"<!-- ci:{check_name} -->"
 
+
+def classified_review_body(body: str, classification: str) -> str:
+    """Prefix a review with its effect on the CI result."""
+    banners = {
+        "error": "❗ **! ERROR — this check fails the build.**",
+        "warning": "⚠️ **! WARNING — this finding does not fail the build.**",
+        "info": "ℹ️ **! INFO — this comment is informational.**",
+    }
+    try:
+        banner = banners[classification]
+    except KeyError as error:
+        raise ValueError(f"unknown review classification: {classification}") from error
+    return f"{banner}\n\n{body}"
+
+
 # Env vars probed for the API token, in priority order.
 _TOKEN_ENV_KEYS = (
     "GITEATOKEN",

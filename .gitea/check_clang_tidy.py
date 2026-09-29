@@ -21,7 +21,7 @@ import re
 import subprocess
 import sys
 from dataclasses import dataclass
-from gitea_client import GiteaClient, review_marker
+from gitea_client import GiteaClient, classified_review_body, review_marker
 from utils import (
     ChangedFile,
     get_changed_files,
@@ -98,7 +98,10 @@ def publish_inline_review(
             loc = issue["location"]
             client.add_review_comment(
                 loc["path"],
-                f"**clang-tidy** `{issue['check_name']}`\n\n{issue['description']}",
+                classified_review_body(
+                    f"**clang-tidy** `{issue['check_name']}`\n\n{issue['description']}",
+                    "error" if issue["fails_build"] else "warning",
+                ),
                 new_position=loc["lines"]["begin"],
             )
 
@@ -109,12 +112,15 @@ def publish_inline_review(
         try:
             client.create_review(
                 pr_number,
-                body=(
-                    f"clang-tidy found {len(issues)} issue(s) on modified lines.\n\n"
-                    "<details>\n"
-                    "<summary>clang-tidy summary</summary>\n\n"
-                    f"{summary}\n\n"
-                    "</details>"
+                body=classified_review_body(
+                    (
+                        f"clang-tidy found {len(issues)} issue(s) on modified lines.\n\n"
+                        "<details>\n"
+                        "<summary>clang-tidy summary</summary>\n\n"
+                        f"{summary}\n\n"
+                        "</details>"
+                    ),
+                    "error" if failed else "warning",
                 ),
                 event="COMMENT",
                 commit_id=sha,
@@ -285,14 +291,17 @@ def main():
                 continue
             seen_fingerprints.add(fp)
 
-            is_error = ""
-            if level_rank[m.group("level")] >= fail_threshold and check != "clang-diagnostic-error":
-                is_error = "❗️**ERROR:**"
+            fails_build = (
+                level_rank[m.group("level")] >= fail_threshold
+                and check != "clang-diagnostic-error"
+            )
+            if fails_build:
                 should_fail = True
 
             issues.append({
-                "description": f"{is_error} {m.group('message')}",
+                "description": m.group("message"),
                 "check_name": check,
+                "fails_build": fails_build,
                 "fingerprint": fp,
                 "severity": SEVERITY_MAP.get(m.group("level"), "major"),
                 "location": {
@@ -302,8 +311,12 @@ def main():
             })
 
     if not args.dry_run and args.report_path:
+        report_issues = [
+            {key: value for key, value in issue.items() if key != "fails_build"}
+            for issue in issues
+        ]
         with open(args.report_path, "w") as out:
-            json.dump(issues, out, indent=2)
+            json.dump(report_issues, out, indent=2)
 
     if not args.no_gitea:
         client = GiteaClient.from_env(verbose=args.verbose)

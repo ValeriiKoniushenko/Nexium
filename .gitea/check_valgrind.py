@@ -10,7 +10,7 @@ import subprocess
 import sys
 from dataclasses import dataclass
 
-from gitea_client import GiteaClient, review_marker
+from gitea_client import GiteaClient, classified_review_body, review_marker
 
 
 VALGRIND_ERROR_EXIT_CODE = 42
@@ -106,13 +106,16 @@ def failure_review_body(result: ValgrindResult) -> str:
     output = tail_for_review("\n\n".join(sections))
     command = " ".join(result.command)
     title = "Valgrind could not run" if result.infrastructure_error else "Valgrind failed"
-    return (
-        f"**{title}** (exit code `{result.returncode}`).\n\n"
-        f"Command: `{command}`\n\n"
-        "<details>\n"
-        "<summary>Valgrind output</summary>\n\n"
-        f"```text\n{output}\n```\n\n"
-        "</details>"
+    return classified_review_body(
+        (
+            f"**{title}** (exit code `{result.returncode}`).\n\n"
+            f"Command: `{command}`\n\n"
+            "<details>\n"
+            "<summary>Valgrind output</summary>\n\n"
+            f"```text\n{output}\n```\n\n"
+            "</details>"
+        ),
+        "error",
     )
 
 
