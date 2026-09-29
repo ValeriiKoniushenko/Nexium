@@ -11,6 +11,8 @@
 
 #include "Core/Size.h"
 #include "Foundation/Configs.h"
+#include "Foundation/Debug/Latency.h"
+#include "Foundation/Debug/LatencyTerminalPrinter.h"
 #include "InputSystem.h"
 #include "NxWorld/Animations/FrameByFrame/FrameByFrameAnimation.h"
 #include "NxWorld/Animations/FrameByFrame/FrameByFrameAnimator.h"
@@ -46,6 +48,8 @@ namespace NX
 
     GameInstance::GameInstance(int argc, char** argv)
     {
+        NX_LATENCY_POINT("Game start");
+
         if (argc == 1)
         {
             return;
@@ -106,6 +110,7 @@ namespace NX
         std::cout << std::fixed << std::setprecision(15);
         spdlog::set_pattern(Foundation::Config::spdlogPattern);
 
+        NX_LATENCY_POINT("Game: initialization -- start");
         //-------------------- WINDOW ---------------------
         window = &Platform::GetWindow();
         window->create(Foundation::Config::defaultWindowName,
@@ -114,8 +119,12 @@ namespace NX
         _subscriptionPool << window->onResize->subscribeAndGetID([this](Core::ISize2 newSize)
                                                                  { updateViewport(); });
 
+        NX_LATENCY_POINT("Game: Window - inited");
+
         //-------------------- ASSETS MANAGER ---------------------
         GetAssetsManager()->initScanFileSystem();
+
+        NX_LATENCY_POINT("Game: AssetsManager - inited");
 
         //-------------------- SHADER MANAGER ---------------------
         shaderManager.loadShaders(Foundation::Config::Path::shaders);
@@ -128,6 +137,8 @@ namespace NX
         }
         initializeShaders();
 
+        NX_LATENCY_POINT("Game: ShaderManager - inited");
+
         //-------------------- ECS ---------------------
         if (_applicationIntegration)
         {
@@ -139,12 +150,22 @@ namespace NX
             _applicationIntegration->initialize();
         }
 
+        NX_LATENCY_POINT("Game: ECS - inited");
+
         gameScene.initialize();
         _subscriptionPool << gameScene.onObjectAdded->subscribeAndGetID(
             [this](SceneObject* obj) { internal_onAddObjectToScene(obj); });
 
+        NX_LATENCY_POINT("Game: Scene - inited");
+
         startUpReadCache();
         loadCoreResources();
+
+        NX_LATENCY_POINT("Game: Resources - inited");
+
+        NX_LATENCY_POINT("Game: initialization -- end");
+
+        Foundation::Latency::TerminalPrinter p(Foundation::Latency::gCollector);
     }
 
     void GameInstance::startUpReadCache()

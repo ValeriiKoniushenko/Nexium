@@ -20,6 +20,8 @@ target_sources(Nexium_Foundation PRIVATE
     Configs.cpp
     BaseLog.cpp
     Interfaces/DataStream.cpp
+    Debug/Latency.cpp
+    Debug/LatencyTerminalPrinter.cpp
 )
 
 nexium_add_public_headers(Nexium_Foundation
@@ -28,6 +30,8 @@ nexium_add_public_headers(Nexium_Foundation
     Foundation/Interfaces/DataStream.h
     Foundation/Interfaces/IOutliner.h
     Foundation/Interfaces/IOutliner.generated.h
+    Foundation/Debug/Latency.h
+    Foundation/Debug/LatencyTerminalPrinter.h
 )
 
 target_link_libraries(Nexium_Foundation
