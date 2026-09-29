@@ -25,9 +25,9 @@ def review_marker(check_name: str) -> str:
 def classified_review_body(body: str, classification: str) -> str:
     """Prefix a review with its effect on the CI result."""
     banners = {
-        "error": "❗ **! ERROR — this check fails the build.**",
-        "warning": "⚠️ **! WARNING — this finding does not fail the build.**",
-        "info": "ℹ️ **! INFO — this comment is informational.**",
+        "error": "❗ ** — this check fails the build.**",
+        "warning": "⚠️ ** — this finding does not fail the build.**",
+        "info": "ℹ️ ** — this comment is informational.**",
     }
     try:
         banner = banners[classification]
