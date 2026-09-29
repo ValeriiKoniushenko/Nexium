@@ -24,9 +24,6 @@ namespace NX
           _bindings(other._bindings)
     {
         invalidate();
-
-        int* iii = NULL;
-        iii = new int[1233];
     }
 
     InputController::~InputController()
