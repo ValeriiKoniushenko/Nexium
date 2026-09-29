@@ -98,10 +98,7 @@ def publish_inline_review(
             loc = issue["location"]
             client.add_review_comment(
                 loc["path"],
-                classified_review_body(
-                    f"**clang-tidy** `{issue['check_name']}`\n\n{issue['description']}",
-                    "error" if issue["fails_build"] else "warning",
-                ),
+                f"`{issue['check_name']}`: {issue['description']}",
                 new_position=loc["lines"]["begin"],
             )
 
