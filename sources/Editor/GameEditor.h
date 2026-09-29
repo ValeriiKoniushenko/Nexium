@@ -153,8 +153,6 @@ namespace NX
         [[nodiscard]] bool needToDraw();
         void setupShortcuts();
 
-        InputController::Ptr _inputController;
-
     private:
         void handleMouseDrag(glm::vec2 delta, NX::MouseInputAction::SpecKeysState state);
         void handleMouseClick(glm::vec2 pos, NX::MouseInputAction::SpecKeysState state);
@@ -162,6 +160,7 @@ namespace NX
         void lazyOneShotInitialization();
 
     protected:
+        InputController::Ptr _inputController;
         DelegateSubscriberPoolGuard _subscriptionPool;
         std::vector<BaseEWC::Ptr> _windows;
         std::set<StringAtom> _windowTypes;
