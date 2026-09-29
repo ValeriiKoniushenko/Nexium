@@ -165,7 +165,8 @@ namespace NX
 
         NX_LATENCY_POINT("Game: initialization -- end");
 
-        Foundation::Latency::TerminalPrinter p(Foundation::Latency::gCollector);
+        Foundation::Latency::TerminalPrinter p;
+        p.print();
     }
 
     void GameInstance::startUpReadCache()

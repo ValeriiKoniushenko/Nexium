@@ -11,14 +11,12 @@
 
 namespace Foundation::Latency
 {
-    class Collector;
 
     class TerminalPrinter final
     {
     public:
-        TerminalPrinter(const Collector& c);
+        void print();
 
     private:
-        const Collector& _collector;
     };
 } // namespace Foundation::Latency

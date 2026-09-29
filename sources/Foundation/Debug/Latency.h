@@ -43,6 +43,8 @@ namespace Foundation::Latency
     public:
         void add(std::source_location&& source, const char* description = nullptr);
 
+        [[nodiscard]] const auto& getSamples() const noexcept { return _samples; }
+
     private:
         std::flat_map<std::source_location, std::list<Sample>, SourceLocationLess> _samples;
     };
