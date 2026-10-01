@@ -9,8 +9,10 @@
 
 #include "ECSEditorInputControllerAdapter.h"
 
+#include "Editor/EditorIntegration.h"
 #include "Editor/GuiComponents/Misc.h"
 #include "Editor/IconsFontAwesome.h"
+#include "Editor/Windows/Editors/InputBindings/InputBindingsEditor.h"
 #include "ImGui/imgui.h"
 #include "NxWorld/Framework/InputController.h"
 
@@ -256,6 +258,8 @@ namespace NX
 
         if (ImGui::Button(ICON_FA_PLUS " Add shortcut"))
         {
+            GetEditor()->showWindow<InputBindingsEditor>();
+
             bindings.push_back({ .action = "New action"_atom,
                                  .chord = KeyChord::Exact(Platform::Keyboard::Key::None),
                                  .trigger = InputActionTrigger::OnPress });

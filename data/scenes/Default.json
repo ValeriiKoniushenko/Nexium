@@ -95,7 +95,13 @@
                 ]
             },
             "typeSpecificData": {
-                "_isEnabled": true
+                "_animationEnabled": true,
+                "_animationFPS": 70.5,
+                "_animationName": "New animation",
+                "_atlasName": "santa_walk",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "Walk_2.png"
             }
         },
         {
