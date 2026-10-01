@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include "NxWorld/Scene/SceneObjects/Rectangle/Rectangle.h"
+#include "NxWorld/Scene/SceneObjects/Rectangle/RectangleAnimated.h"
 
 CLASS();
 class Player : public NX::SceneObj::RectangleAnimated
