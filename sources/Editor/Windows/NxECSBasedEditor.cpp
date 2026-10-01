@@ -270,7 +270,7 @@ namespace NX
         _targetAsset->syncWithFilesystem(assetData);
         _targetComponent = _targetAsset->getData().get();
 
-        for (auto& obj : gGameInstance->gameScene.getObjects())
+        for (auto& obj : gGameInstance->scenes.getCurrentScene()->getObjects())
         {
             Assert(obj);
             if (!obj)

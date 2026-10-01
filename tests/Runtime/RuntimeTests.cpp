@@ -8,15 +8,19 @@
 //     http://www.apache.org/licenses/LICENSE-2.0
 
 #include "Editor/EditorIntegration.h"
+#include "Foundation/Configs.h"
 #include "NxFundamental/ECS/BaseComponent.h"
 #include "NxRuntime/Runtime.h"
 #include "NxSubsystems/Input/InputManager.h"
 #include "NxWorld/Entities/Camera/Camera.h"
 #include "NxWorld/Framework/GameInstance.h"
+#include "NxWorld/Scene/SceneObjects/Rectangle/Rectangle.h"
+#include "NxWorld/Scene/SceneObjects/Spectator/Spectator.h"
 #include "Platform/Window.h"
 
 #include "gtest/gtest.h"
 #include <array>
+#include <fstream>
 
 namespace
 {
@@ -122,6 +126,39 @@ TEST(RuntimeTests, OrthographicCameraZoomUpdatesProjectionAroundFrameCenter)
 
         camera.applyTypeSpecificSceneData({ { "_zoom", 0.f } });
         EXPECT_FLOAT_EQ(camera.getZoom(), 0.001f);
+    }
+
+    gGameInstance.reset();
+}
+
+TEST(RuntimeTests, DefaultRectangleIsInsideSpectatorAssetDepthRange)
+{
+    auto executableName = std::to_array("Nexium_Tests");
+    std::array<char*, 1> arguments{ executableName.data() };
+    gGameInstance = std::make_unique<NX::GameInstance>(1, arguments.data());
+    TestViewport viewport;
+    gGameInstance->setApplicationIntegration(&viewport);
+
+    {
+        std::ifstream spectatorFile(Foundation::Config::Path::assets / "2D_Spectator.nx");
+        std::ifstream rectangleFile(Foundation::Config::Path::assets / "BaseRectangle.nx");
+        const auto spectatorData = nlohmann::json::parse(spectatorFile);
+        const auto rectangleData = nlohmann::json::parse(rectangleFile);
+        NX::Spectator2D spectator;
+        NX::SceneObj::Rectangle rectangle;
+        auto spectatorStream = RResourceStream<RJsonResourceStream>(spectatorData.at("data"));
+        auto rectangleStream = RResourceStream<RJsonResourceStream>(rectangleData.at("data"));
+        spectator.deserialize(spectatorStream);
+        rectangle.deserialize(rectangleStream);
+
+        auto* camera = spectator.findFirstChildOf<NX::OrthographicCamera>();
+        EXPECT_NE(camera, nullptr);
+        if (camera)
+        {
+            const auto clip = camera->getMatrix() * glm::vec4(rectangle.getPosition(), 1.f);
+            EXPECT_GE(clip.z, -clip.w);
+            EXPECT_LE(clip.z, clip.w);
+        }
     }
 
     gGameInstance.reset();
