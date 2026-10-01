@@ -65,6 +65,9 @@ namespace NX
 
         [[nodiscard]] bool hasTarget() const noexcept { return _targetComponent && _targetAsset; }
 
+        // JRM detects this callback through a public requires-expression.
+        void onPostDeserialize(AbstractComponent* obj, const RLogsCollector& logs) override;
+
     protected:
         void onInitialize() override;
         void onOpen() override;
@@ -81,6 +84,7 @@ namespace NX
         void onClose() override;
 
         void drawTreeNode(BaseComponent* comp, int& id);
+        void registerEditorAdapters();
         void disableAllAdapters();
 
         void reset();

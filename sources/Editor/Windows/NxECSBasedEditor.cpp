@@ -141,14 +141,7 @@ namespace NX
     {
         NxEditorBaseEditorEWC::onOpen();
 
-        addUniqueTypeChildComponent<ECSBaseComponentAdapter>();
-        addUniqueTypeChildComponent<ECSEditorActorAdapter>();
-#ifdef NEXIUM_ENABLE_3D_MODULE
-        addUniqueTypeChildComponent<ECSEditorStaticMeshBundleAdapter>();
-#endif
-        addUniqueTypeChildComponent<ECSEditorInterleavedGraphicsDataAdapter>();
-        addUniqueTypeChildComponent<ECSEditorFrameByFrameAnimationAdapter>();
-        addUniqueTypeChildComponent<ECSEditorInputControllerAdapter>();
+        registerEditorAdapters();
 
         setEnablePreview(true);
         setEnableTree(true);
@@ -171,6 +164,12 @@ namespace NX
         deleteKey->setIsRepeatable(false);
         _subscriptionPool << deleteKey->onPress->subscribeAndGetID(
             [&](auto) { removeCurrentComponent(_targetComponent.get()); });
+    }
+
+    void NxECSBasedEditorEWC::onPostDeserialize(AbstractComponent* obj, const RLogsCollector& logs)
+    {
+        NxEditorBaseEditorEWC::onPostDeserialize(obj, logs);
+        registerEditorAdapters();
     }
 
     void NxECSBasedEditorEWC::onDrawProperties()
@@ -463,6 +462,18 @@ namespace NX
         }
 
         ImGui::PopID();
+    }
+
+    void NxECSBasedEditorEWC::registerEditorAdapters()
+    {
+        addUniqueTypeChildComponent<ECSBaseComponentAdapter>();
+        addUniqueTypeChildComponent<ECSEditorActorAdapter>();
+#ifdef NEXIUM_ENABLE_3D_MODULE
+        addUniqueTypeChildComponent<ECSEditorStaticMeshBundleAdapter>();
+#endif
+        addUniqueTypeChildComponent<ECSEditorInterleavedGraphicsDataAdapter>();
+        addUniqueTypeChildComponent<ECSEditorFrameByFrameAnimationAdapter>();
+        addUniqueTypeChildComponent<ECSEditorInputControllerAdapter>();
     }
 
     void NxECSBasedEditorEWC::disableAllAdapters()

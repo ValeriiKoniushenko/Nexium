@@ -109,7 +109,7 @@ namespace NX
 
     bool ECSEditorInputControllerAdapter::canWorkWith(BaseComponent* component) const
     {
-        return dynamic_cast<InputController*>(component) != nullptr;
+        return component && component->isTypeOf<InputController>();
     }
 
     Core::StringAtom ECSEditorInputControllerAdapter::getProcessedAssetType() const
@@ -132,6 +132,7 @@ namespace NX
         auto* controller = dynamic_cast<InputController*>(getTargetComponent());
         if (!controller)
         {
+            warnLog("Selected ECS component has InputController type, but can't be cast to InputController");
             return;
         }
 
