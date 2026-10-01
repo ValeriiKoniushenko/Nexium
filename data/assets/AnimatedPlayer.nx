@@ -283,6 +283,14 @@
                 "_name": "Animator1",
                 "_noTick": false,
                 "_type": "NX::Animation::FrameByFrameAnimator"
+            },
+            {
+                "_bindings": [],
+                "_children": null,
+                "_isEnabled": true,
+                "_name": "NX-InputController",
+                "_noTick": false,
+                "_type": "NX::InputController"
             }
         ],
         "_isDrawOutline": false,
