@@ -9,24 +9,45 @@
 
 #include "Latency.h"
 
+#include <algorithm>
+#include <map>
+#include <set>
+#include <utility>
+
 namespace Foundation::Latency
 {
-    Collector gCollector; // extern's impl
 
-    void Collector::add(std::source_location&& source, const char* description /*  = nullptr */)
+#if defined(NEXIUM_DEBUG)
+    Collector gCollector{ 256 };
+#else
+    Collector gCollector;
+#endif
+
+    Collector::Collector(std::size_t expectedSamples)
     {
-        Sample sample;
-        sample.timestamp = std::chrono::steady_clock::now();
-        sample.description = description;
-
-        if (auto i = _samples.find(source); i != _samples.end())
-        {
-            i->second.emplace_back(std::move(sample));
-        }
-        else
-        {
-            _samples.emplace(source, std::list{ std::move(sample) });
-        }
+        _samples.reserve(expectedSamples);
     }
 
+    void Collector::add(std::string_view description, std::source_location source)
+    {
+        Sample sample{ Clock::now(), source, description };
+        const std::scoped_lock lock{ _mutex };
+        _samples.push_back(sample);
+    }
+
+    void Collector::clear()
+    {
+        const std::scoped_lock lock{ _mutex };
+        _samples.clear();
+    }
+
+    Report Collector::makeReport() const
+    {
+        std::vector<Sample> samples;
+        {
+            const std::scoped_lock lock{ _mutex };
+            samples = _samples;
+        }
+        return Report{ std::move(samples) };
+    }
 } // namespace Foundation::Latency

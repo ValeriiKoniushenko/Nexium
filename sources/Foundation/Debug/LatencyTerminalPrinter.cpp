@@ -20,140 +20,243 @@
 
 namespace Foundation::Latency
 {
-
     namespace
     {
-        using Ms = std::chrono::duration<double, std::milli>;
-
-        struct Row
+        struct Transition final
         {
-            std::string name;
-            std::size_t hits = 0;
-            TimeT first;
-            TimeT last;
-            double avg = 0, min = 0, max = 0; // ms, period between consecutive hits
+            std::thread::id threadId;
+            std::source_location from;
+            std::source_location to;
         };
 
-        std::string fmt(double ms)
+        struct TransitionLess final
         {
-            if (ms < 1.0)
+            bool operator()(const Transition& lhs, const Transition& rhs) const noexcept
             {
-                return std::format("{:.1f} us", ms * 1000.0);
+                if (lhs.threadId != rhs.threadId)
+                {
+                    return lhs.threadId < rhs.threadId;
+                }
+
+                SourceLocationLess less;
+                if (less(lhs.from, rhs.from))
+                {
+                    return true;
+                }
+                if (less(rhs.from, lhs.from))
+                {
+                    return false;
+                }
+                return less(lhs.to, rhs.to);
             }
-            if (ms < 1000.0)
+        };
+
+        constexpr std::size_t timelineWidth = 48;
+
+        std::string formatDuration(Duration duration)
+        {
+            const auto nanoseconds = std::chrono::duration<double, std::nano>{ duration }.count();
+            if (nanoseconds < 1'000.0)
             {
-                return std::format("{:.3f} ms", ms);
+                return std::format("{:.0f} ns", nanoseconds);
             }
-            return std::format("{:.3f} s", ms / 1000.0);
+            if (nanoseconds < 1'000'000.0)
+            {
+                return std::format("{:.1f} us", nanoseconds / 1'000.0);
+            }
+            if (nanoseconds < 1'000'000'000.0)
+            {
+                return std::format("{:.3f} ms", nanoseconds / 1'000'000.0);
+            }
+            return std::format("{:.3f} s", nanoseconds / 1'000'000'000.0);
         }
 
-        // Bar covering [from, to] (ms from start) inside a lane of `width` columns.
-        std::string lane(double from, double to, double total, std::size_t width)
+        std::string pointName(const Sample& sample)
         {
-            auto col = [&](double t)
-            { return std::min(width - 1, static_cast<std::size_t>(t / total * width)); };
-            const auto a = col(from), b = col(to);
-
-            std::string s;
-            for (std::size_t i = 0; i < width; ++i)
+            if (!sample.description.empty())
             {
-                s += (i >= a && i <= b) ? "█" : "·";
+                return std::string{ sample.description };
             }
-            return s;
+
+            std::string_view file = sample.source.file_name();
+            if (const auto separator = file.find_last_of("/\\");
+                separator != std::string_view::npos)
+            {
+                file.remove_prefix(separator + 1);
+            }
+            return std::format("{}:{}", file, sample.source.line());
+        }
+
+        std::string makeLane(Duration from, Duration to, Duration total)
+        {
+            std::string lane(timelineWidth, '.');
+            if (total == Duration{})
+            {
+                lane.front() = '#';
+                return lane;
+            }
+
+            const auto column = [total](Duration offset)
+            {
+                const auto ratio = std::chrono::duration<double>{ offset }.count()
+                                   / std::chrono::duration<double>{ total }.count();
+                return std::min(timelineWidth - 1,
+                                static_cast<std::size_t>(ratio * (timelineWidth - 1)));
+            };
+            const auto first = column(from);
+            const auto last = column(to);
+            std::fill(lane.begin() + static_cast<std::ptrdiff_t>(first),
+                      lane.begin() + static_cast<std::ptrdiff_t>(last + 1), '=');
+            lane[last] = first == last ? '#' : '>';
+            return lane;
+        }
+
+        std::size_t threadIndex(const std::vector<std::thread::id>& threads,
+                                std::thread::id threadId)
+        {
+            return static_cast<std::size_t>(std::ranges::find(threads, threadId) - threads.begin())
+                   + 1;
         }
     } // namespace
 
-    void TerminalPrinter::print()
+    void TerminalPrinter::print(const Report& report) const
     {
-        auto&& samples = gCollector.getSamples();
+        print(report, std::cout);
+    }
 
-        // 1. One row per point
-        std::vector<Row> rows;
-        for (auto&& [loc, list] : samples)
+    void TerminalPrinter::print(const Report& report, std::ostream& output) const
+    {
+        if (report.empty())
         {
-            if (list.empty())
-            {
-                continue;
-            }
-
-            Row r;
-            r.hits = list.size();
-            r.first = list.front().timestamp;
-            r.last = list.back().timestamp;
-
-            if (list.front().description)
-            {
-                r.name = list.front().description;
-            }
-            else
-            {
-                std::string_view file = loc.file_name();
-                file = file.substr(file.find_last_of("/\\") + 1);
-                r.name = std::format("{}:{}", file, loc.line());
-            }
-
-            if (r.hits > 1)
-            {
-                double sum = 0;
-                r.min = 1e300;
-                auto prev = list.front().timestamp;
-                for (auto it = std::next(list.begin()); it != list.end(); ++it)
-                {
-                    const double d = Ms{ it->timestamp - prev }.count();
-                    prev = it->timestamp;
-                    sum += d;
-                    r.min = std::min(r.min, d);
-                    r.max = std::max(r.max, d);
-                }
-                r.avg = sum / double(r.hits - 1);
-            }
-            rows.push_back(std::move(r));
-        }
-
-        if (rows.empty())
-        {
-            std::cout << "[latency] no samples\n";
+            output << "[latency] no samples\n";
             return;
         }
 
-        // 2. Chronological order (the map is ordered by source location, not by time)
-        std::ranges::sort(rows, {}, &Row::first);
-
-        const auto t0 = rows.front().first;
-        auto tEnd = t0;
-        std::size_t nameW = 5;
-        for (auto& r : rows)
+        const auto& samples = report.getSamples();
+        const auto start = samples.front().timestamp;
+        std::size_t nameWidth = 5;
+        for (const auto& sample : samples)
         {
-            tEnd = std::max(tEnd, r.last);
-            nameW = std::max(nameW, r.name.size());
+            nameWidth = std::max(nameWidth, pointName(sample).size());
         }
-        const double total = std::max(Ms{ tEnd - t0 }.count(), 1e-6);
-        constexpr std::size_t laneW = 60;
 
-        // 3. Print
-        std::cout << std::format("\nTotal: {}   Points: {}\n\n", fmt(total), rows.size());
-        std::cout << std::format(
-            "{:>2}  {:<{}}  {:>6}  {:>11}  {:>11}  {:>11}  {:>11}  {:>11}  {}\n", "#", "Point",
-            nameW, "Hits", "Start", "Δ prev", "Avg", "Min", "Max", "Timeline");
+        output << std::format("\nLatency report: {} samples, {} points, {} threads, {}\n\n",
+                              samples.size(), report.getPointCount(), report.getThreadCount(),
+                              formatDuration(report.getDuration()));
+        output << "Timeline\n";
+        output << std::format("{:>3}  {:>6}  {:<{}}  {:>11}  {:>11}  {}\n", "#", "Thread", "Point",
+                              nameWidth, "At", "Gap", "Timeline");
 
-        for (std::size_t i = 0; i < rows.size(); ++i)
+        std::vector<std::thread::id> threads;
+        threads.reserve(report.getThreadCount());
+        std::size_t gapIndex = 0;
+        for (std::size_t i = 0; i < samples.size(); ++i)
         {
-            const Row& r = rows[i];
-            const double start = Ms{ r.first - t0 }.count();
-            const double end = Ms{ r.last - t0 }.count();
-            const double delta = i ? Ms{ r.first - rows[i - 1].first }.count() : 0.0;
+            if (std::ranges::find(threads, samples[i].threadId) == threads.end())
+            {
+                threads.push_back(samples[i].threadId);
+            }
 
-            // Single hit  -> bar = time since the previous point (the "phase" you waited).
-            // Many hits   -> bar = span from the first to the last hit.
-            const double from = (r.hits == 1 && i) ? start - delta : start;
-
-            const bool rep = r.hits > 1;
-            std::cout << std::format(
-                "{:>2}  {:<{}}  {:>6}  {:>11}  {:>11}  {:>11}  {:>11}  {:>11}  {}\n", i + 1, r.name,
-                nameW, r.hits, fmt(start), i ? fmt(delta) : "-", rep ? fmt(r.avg) : "-",
-                rep ? fmt(r.min) : "-", rep ? fmt(r.max) : "-", lane(from, end, total, laneW));
+            const auto offset = samples[i].timestamp - start;
+            const Gap* gap = nullptr;
+            if (gapIndex < report.getGaps().size() && report.getGaps()[gapIndex].toSample == i)
+            {
+                gap = &report.getGaps()[gapIndex++];
+            }
+            const auto gapStart = gap ? samples[gap->fromSample].timestamp - start : offset;
+            output << std::format("{:>3}  T{:>5}  {:<{}}  {:>11}  {:>11}  {}\n", i + 1,
+                                  threadIndex(threads, samples[i].threadId), pointName(samples[i]),
+                                  nameWidth, formatDuration(offset),
+                                  gap ? formatDuration(gap->duration) : "-",
+                                  makeLane(gapStart, offset, report.getDuration()));
         }
-        std::cout << '\n';
+
+        const auto& summaries = report.getGapSummaries();
+        if (summaries.empty())
+        {
+            output << '\n';
+            return;
+        }
+
+        std::size_t transitionWidth = 10;
+        for (const auto& summary : summaries)
+        {
+            transitionWidth
+                = std::max(transitionWidth, pointName(samples[summary.fromSample]).size() + 4
+                                                + pointName(samples[summary.toSample]).size());
+        }
+
+        output << "\nGap summary\n";
+        output << std::format("{:>6}  {:<{}}  {:>6}  {:>11}  {:>11}  {:>11}\n", "Thread",
+                              "Transition", transitionWidth, "Count", "Average", "Min", "Max");
+        for (const auto& summary : summaries)
+        {
+            const auto transition = std::format("{} -> {}", pointName(samples[summary.fromSample]),
+                                                pointName(samples[summary.toSample]));
+            output << std::format("T{:>5}  {:<{}}  {:>6}  {:>11}  {:>11}  {:>11}\n",
+                                  threadIndex(threads, samples[summary.fromSample].threadId),
+                                  transition, transitionWidth, summary.count,
+                                  formatDuration(summary.getAverage()), formatDuration(summary.min),
+                                  formatDuration(summary.max));
+        }
+        output << '\n';
     }
 
+    Report::Report(std::vector<Sample> samples)
+        : _samples(std::move(samples))
+    {
+        std::ranges::stable_sort(_samples, {}, &Sample::timestamp);
+
+        std::set<std::source_location, SourceLocationLess> points;
+        std::set<std::thread::id> threads;
+        for (const auto& sample : _samples)
+        {
+            points.emplace(sample.source);
+            threads.emplace(sample.threadId);
+        }
+        _pointCount = points.size();
+        _threadCount = threads.size();
+
+        if (_samples.size() < 2)
+        {
+            return;
+        }
+
+        _duration = _samples.back().timestamp - _samples.front().timestamp;
+        _gaps.reserve(_samples.size() - _threadCount);
+        _gapSummaries.reserve(_samples.size() - 1);
+        std::map<std::thread::id, std::size_t> lastSampleByThread;
+        std::map<Transition, std::size_t, TransitionLess> summaryIndices;
+
+        for (std::size_t i = 0; i < _samples.size(); ++i)
+        {
+            const auto lastIt = lastSampleByThread.find(_samples[i].threadId);
+            if (lastIt == lastSampleByThread.end())
+            {
+                lastSampleByThread.emplace(_samples[i].threadId, i);
+                continue;
+            }
+
+            const auto previous = lastIt->second;
+            lastIt->second = i;
+            const auto duration = _samples[i].timestamp - _samples[previous].timestamp;
+            _gaps.push_back({ previous, i, duration });
+
+            const Transition transition{ _samples[i].threadId, _samples[previous].source,
+                                         _samples[i].source };
+            const auto [it, inserted]
+                = summaryIndices.try_emplace(transition, _gapSummaries.size());
+            if (inserted)
+            {
+                _gapSummaries.push_back({ previous, i, 1, duration, duration, duration });
+                continue;
+            }
+
+            auto& summary = _gapSummaries[it->second];
+            ++summary.count;
+            summary.total += duration;
+            summary.min = std::min(summary.min, duration);
+            summary.max = std::max(summary.max, duration);
+        }
+    }
 } // namespace Foundation::Latency

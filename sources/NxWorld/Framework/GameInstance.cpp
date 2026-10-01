@@ -12,7 +12,6 @@
 #include "Core/Size.h"
 #include "Foundation/Configs.h"
 #include "Foundation/Debug/Latency.h"
-#include "Foundation/Debug/LatencyTerminalPrinter.h"
 #include "InputSystem.h"
 #include "NxWorld/Animations/FrameByFrame/FrameByFrameAnimation.h"
 #include "NxWorld/Animations/FrameByFrame/FrameByFrameAnimator.h"
@@ -164,9 +163,6 @@ namespace NX
         NX_LATENCY_POINT("Game: Resources - inited");
 
         NX_LATENCY_POINT("Game: initialization -- end");
-
-        Foundation::Latency::TerminalPrinter p;
-        p.print();
     }
 
     void GameInstance::startUpReadCache()

@@ -10,6 +10,8 @@
 #include "Runtime.h"
 
 #include "Core/Timer.h"
+#include "Foundation/Debug/Latency.h"
+#include "Foundation/Debug/LatencyTerminalPrinter.h"
 #include "NxRuntime/GameUtils/FPSCounter.h"
 #include "NxWorld/Framework/GameInstance.h"
 #include "NxWorld/Framework/InputSystem.h"
@@ -30,6 +32,11 @@ namespace NX
         _gameInstance.initialize();
         runMainLoop();
         _gameInstance.saveAllToCache();
+        NX_LATENCY_POINT("Game: shutdown -- end");
+
+#if defined(NEXIUM_DEBUG)
+        Foundation::Latency::TerminalPrinter{}.print(Foundation::Latency::gCollector.makeReport());
+#endif
     }
 
     GameInstance& Runtime::getGameInstance() const noexcept

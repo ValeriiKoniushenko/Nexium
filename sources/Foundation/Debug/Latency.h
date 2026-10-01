@@ -10,22 +10,29 @@
 #pragma once
 
 #include <chrono>
-#include <flat_map>
-#include <list>
+#include <cstddef>
+#include <mutex>
 #include <source_location>
+#include <string_view>
+#include <thread>
+#include <tuple>
+#include <vector>
 
 namespace Foundation::Latency
 {
+    using Clock = std::chrono::steady_clock;
+    using TimePoint = Clock::time_point;
+    using Duration = Clock::duration;
 
-    using TimeT = std::chrono::time_point<std::chrono::steady_clock>;
-
-    struct Sample
+    struct Sample final
     {
-        TimeT timestamp;
-        const char* description = nullptr;
+        TimePoint timestamp;
+        std::source_location source;
+        std::string_view description;
+        std::thread::id threadId = std::this_thread::get_id();
     };
 
-    struct SourceLocationLess
+    struct SourceLocationLess final
     {
         bool operator()(const std::source_location& lhs,
                         const std::source_location& rhs) const noexcept
@@ -41,21 +48,31 @@ namespace Foundation::Latency
     class Collector final
     {
     public:
-        void add(std::source_location&& source, const char* description = nullptr);
+        explicit Collector(std::size_t expectedSamples = 0);
 
-        [[nodiscard]] const auto& getSamples() const noexcept { return _samples; }
+        void add(std::string_view description = {},
+                 std::source_location source = std::source_location::current());
+        void clear();
 
     private:
-        std::flat_map<std::source_location, std::list<Sample>, SourceLocationLess> _samples;
+        mutable std::mutex _mutex;
+        std::vector<Sample> _samples;
     };
 
     extern Collector gCollector;
-
 } // namespace Foundation::Latency
 
-[[maybe_unused]] inline void NX_LATENCY_POINT(const char* description = nullptr)
-{
 #if defined(NEXIUM_DEBUG)
-    Foundation::Latency::gCollector.add(std::source_location::current(), description);
+    #define NX_LATENCY_POINT(description)                                                          \
+        do                                                                                         \
+        {                                                                                          \
+            static constexpr std::string_view nxLatencyDescription{ description };                 \
+            Foundation::Latency::gCollector.add(nxLatencyDescription,                              \
+                                                std::source_location::current());                  \
+        } while (false)
+#else
+    #define NX_LATENCY_POINT(description)                                                          \
+        do                                                                                         \
+        {                                                                                          \
+        } while (false)
 #endif
-}
