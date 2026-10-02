@@ -25,21 +25,27 @@ namespace Foundation::Latency
 
     void Report::setSamples(const std::vector<Sample>& samples)
     {
-        _rawSamples = samples;
+        for (auto&& s : samples)
+        {
+            _perThreadSamples[s.threadId].push_back(s);
+        }
     }
 
     void Report::processData()
     {
         fullClear(true);
 
-        int i = 123;
+        if (_perThreadSamples.empty())
+        {
+            return;
+        }
     }
 
-    void Report::fullClear(bool isIgnoreRawSamples /*  = true */)
+    void Report::fullClear(bool isIgnoreRawSamples)
     {
         if (!isIgnoreRawSamples)
         {
-            _rawSamples.clear();
+            _perThreadSamples.clear();
         }
 
         _gaps.clear();

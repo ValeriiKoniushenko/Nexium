@@ -12,6 +12,8 @@
 #include "Latency.h"
 
 #include <iosfwd>
+#include <thread>
+#include <unordered_map>
 
 namespace Foundation::Latency
 {
@@ -45,8 +47,6 @@ namespace Foundation::Latency
         explicit Report(const std::vector<Sample>& samples);
         explicit Report(const Collector& collector);
 
-        [[nodiscard]] bool empty() const noexcept { return _rawSamples.empty(); }
-        [[nodiscard]] const std::vector<Sample>& getSamples() const noexcept { return _rawSamples; }
         void setSamples(const std::vector<Sample>& samples);
         [[nodiscard]] const std::vector<Gap>& getGaps() const noexcept { return _gaps; }
         [[nodiscard]] const std::vector<GapSummary>& getGapSummaries() const noexcept
@@ -63,7 +63,7 @@ namespace Foundation::Latency
     private:
         bool _isProcessedData = false;
 
-        std::vector<Sample> _rawSamples;
+        std::unordered_map<std::thread::id, std::vector<Sample>> _perThreadSamples;
 
         std::vector<Gap> _gaps;
         std::vector<GapSummary> _gapSummaries;
