@@ -25,6 +25,7 @@ namespace Foundation::Latency
         }
 
         void print() const override;
+        void print(std::ostream& output) const;
     };
 
 } // namespace Foundation::Latency

@@ -11,6 +11,10 @@
 
 #include "Latency.h"
 
+#include <algorithm>
+#include <set>
+#include <tuple>
+
 namespace Foundation::Latency
 {
     Report::Report(const std::vector<Sample>& samples)
@@ -19,26 +23,42 @@ namespace Foundation::Latency
     }
 
     Report::Report(const Collector& collector)
-        : Report(gCollector.getSamples())
+        : Report(collector.getSamples())
     {
     }
 
     void Report::setSamples(const std::vector<Sample>& samples)
     {
-        for (auto&& s : samples)
-        {
-            _perThreadSamples[s.threadId].push_back(s);
-        }
-    }
+        fullClear(false);
 
-    void Report::processData()
-    {
-        fullClear(true);
-
-        if (_perThreadSamples.empty())
+        if (samples.empty())
         {
             return;
         }
+
+        auto first = samples.front().timestamp;
+        auto last = first;
+        std::set<std::tuple<std::string_view, std::string_view, std::uint_least32_t,
+                            std::uint_least32_t>>
+            points;
+
+        for (const auto& sample : samples)
+        {
+            _perThreadSamples[sample.threadId].push_back(sample);
+            first = std::min(first, sample.timestamp);
+            last = std::max(last, sample.timestamp);
+            points.emplace(sample.source.file_name(), sample.source.function_name(),
+                           sample.source.line(), sample.source.column());
+        }
+
+        for (auto& [threadId, threadSamples] : _perThreadSamples)
+        {
+            std::ranges::stable_sort(threadSamples, {}, &Sample::timestamp);
+        }
+
+        _duration = last - first;
+        _pointCount = points.size();
+        _threadCount = _perThreadSamples.size();
     }
 
     void Report::fullClear(bool isIgnoreRawSamples)
@@ -48,8 +68,6 @@ namespace Foundation::Latency
             _perThreadSamples.clear();
         }
 
-        _gaps.clear();
-        _gapSummaries.clear();
         _duration = {};
         _pointCount = {};
         _threadCount = {};

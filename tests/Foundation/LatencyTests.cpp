@@ -22,102 +22,45 @@ namespace
     using Foundation::Latency::Report;
     using Foundation::Latency::Sample;
 
-    /* TEST(LatencyReportTests, OrdersSamplesAndBuildsGaps)
+    TEST(LatencyReportTests, ReplacesSamplesAndCalculatesOverview)
     {
         const auto start = Clock::now();
         const auto pointA = std::source_location::current();
         const auto pointB = std::source_location::current();
-        const auto pointC = std::source_location::current();
+        Report report{ std::vector{ Sample{ start - 100ms, pointA, "old" } } };
 
-        Report report{ std::vector{
-            Sample{ start + 8ms, pointC, "C" },
-            Sample{ start, pointA, "A" },
-            Sample{ start + 3ms, pointB, "B" },
-        } };
+        report.setSamples(std::vector{
+            Sample{ start + 3ms, pointB, "end" },
+            Sample{ start, pointA, "start" },
+        });
 
-        ASSERT_EQ(report.getSamples().size(), 3u);
-        EXPECT_EQ(report.getSamples()[0].description, "A");
-        EXPECT_EQ(report.getSamples()[1].description, "B");
-        EXPECT_EQ(report.getSamples()[2].description, "C");
-
-        ASSERT_EQ(report.getGaps().size(), 2u);
-        EXPECT_EQ(report.getGaps()[0].duration, 3ms);
-        EXPECT_EQ(report.getGaps()[1].duration, 5ms);
-        EXPECT_EQ(report.getDuration(), 8ms);
-        EXPECT_EQ(report.getPointCount(), 3u);
+        EXPECT_EQ(report.getDuration(), 3ms);
+        EXPECT_EQ(report.getPointCount(), 2u);
+        EXPECT_EQ(report.getThreadCount(), 1u);
     }
 
-    TEST(LatencyReportTests, AggregatesRepeatedTransitions)
+    TEST(LatencyTerminalPrinterTests, PrintsAggregatedHotspots)
     {
         const auto start = Clock::now();
-        const auto pointA = std::source_location::current();
-        const auto pointB = std::source_location::current();
-
+        const auto loopStart = std::source_location::current();
+        const auto loopEnd = std::source_location::current();
         Report report{ std::vector{
-            Sample{ start, pointA, "A" },
-            Sample{ start + 2ms, pointB, "B" },
-            Sample{ start + 5ms, pointA, "A" },
-            Sample{ start + 11ms, pointB, "B" },
-        } };
-
-        ASSERT_EQ(report.getGapSummaries().size(), 2u);
-        const auto& aToB = report.getGapSummaries()[0];
-        EXPECT_EQ(aToB.count, 2u);
-        EXPECT_EQ(aToB.min, 2ms);
-        EXPECT_EQ(aToB.max, 6ms);
-        EXPECT_EQ(aToB.getAverage(), 4ms);
-    }
-
-    TEST(LatencyReportTests, CollectorCanProduceIndependentReports)
-    {
-        Foundation::Latency::Collector collector;
-        collector.add("first");
-
-        const auto report = collector.makeReport();
-        ASSERT_EQ(report.getSamples().size(), 1u);
-        EXPECT_EQ(report.getSamples().front().description, "first");
-
-        collector.clear();
-        EXPECT_TRUE(collector.makeReport().empty());
-        EXPECT_FALSE(report.empty());
-    }
-
-    TEST(LatencyReportTests, DoesNotCreateGapsAcrossThreads)
-    {
-        const auto start = Clock::now();
-        const auto pointA = std::source_location::current();
-        const auto pointB = std::source_location::current();
-        const auto otherThread = std::thread::id{};
-        const auto currentThread = std::this_thread::get_id();
-
-        Report report{ std::vector{
-            Sample{ start, pointA, "A", currentThread },
-            Sample{ start + 1ms, pointB, "Other thread", otherThread },
-            Sample{ start + 3ms, pointB, "B", currentThread },
-        } };
-
-        ASSERT_EQ(report.getGaps().size(), 1u);
-        EXPECT_EQ(report.getGaps().front().duration, 3ms);
-        EXPECT_EQ(report.getThreadCount(), 2u);
-    }
-
-    TEST(LatencyTerminalPrinterTests, PrintsTimelineAndGapSummary)
-    {
-        const auto start = Clock::now();
-        const auto pointA = std::source_location::current();
-        const auto pointB = std::source_location::current();
-        Report report{ std::vector{
-            Sample{ start, pointA, "Load assets" },
-            Sample{ start + 2ms, pointB, "Create scene" },
+            Sample{ start + 11ms, loopEnd, "loop - end" },
+            Sample{ start, loopStart, "loop - start" },
+            Sample{ start + 4ms, loopEnd, "loop - end" },
+            Sample{ start + 5ms, loopStart, "loop - start" },
         } };
         std::ostringstream output;
 
-        Foundation::Latency::TerminalPrinter{}.print(report, output);
+        Foundation::Latency::TerminalPrinter{ report }.print(output);
 
         const auto text = output.str();
-        EXPECT_NE(text.find("Latency report"), std::string::npos);
-        EXPECT_NE(text.find("Timeline"), std::string::npos);
-        EXPECT_NE(text.find("Load assets -> Create scene"), std::string::npos);
-        EXPECT_NE(text.find("2.000 ms"), std::string::npos);
-    } */
+        EXPECT_NE(text.find("Latency hotspots"), std::string::npos);
+        EXPECT_NE(text.find(loopStart.function_name()), std::string::npos);
+        EXPECT_NE(text.find("loop - start -> loop - end"), std::string::npos);
+        EXPECT_NE(text.find("10.000 ms"), std::string::npos);
+        EXPECT_NE(text.find("5.000 ms"), std::string::npos);
+        EXPECT_NE(text.find("4.000 ms"), std::string::npos);
+        EXPECT_NE(text.find("6.000 ms"), std::string::npos);
+    }
 } // namespace

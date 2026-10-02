@@ -35,7 +35,6 @@ namespace NX
 
 #if defined(NEXIUM_DEBUG)
         Foundation::Latency::Report r(Foundation::Latency::gCollector);
-        r.processData();
         Foundation::Latency::TerminalPrinter{ r }.print();
 #endif
     }

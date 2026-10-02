@@ -9,25 +9,19 @@
 
 #include "LatencyTerminalPrinter.h"
 
-#include "Latency.h"
-
 #include <algorithm>
 #include <chrono>
 #include <format>
 #include <iostream>
+#include <map>
 #include <string>
 #include <tuple>
 #include <vector>
 
 namespace Foundation::Latency
 {
-    void TerminalPrinter::print() const
+    namespace
     {
-    }
-
-    /* namespace
-    {
-
         struct SourceLocationLess final
         {
             bool operator()(const std::source_location& lhs,
@@ -43,7 +37,6 @@ namespace Foundation::Latency
 
         struct Transition final
         {
-            std::thread::id threadId;
             std::source_location from;
             std::source_location to;
         };
@@ -52,12 +45,7 @@ namespace Foundation::Latency
         {
             bool operator()(const Transition& lhs, const Transition& rhs) const noexcept
             {
-                if (lhs.threadId != rhs.threadId)
-                {
-                    return lhs.threadId < rhs.threadId;
-                }
-
-                SourceLocationLess less;
+                const SourceLocationLess less;
                 if (less(lhs.from, rhs.from))
                 {
                     return true;
@@ -70,7 +58,20 @@ namespace Foundation::Latency
             }
         };
 
-        constexpr std::size_t timelineWidth = 48;
+        struct Hotspot final
+        {
+            const Sample* from = nullptr;
+            const Sample* to = nullptr;
+            std::size_t calls = 0;
+            Duration total{};
+            Duration min{};
+            Duration max{};
+
+            [[nodiscard]] Duration average() const noexcept
+            {
+                return total / static_cast<Duration::rep>(calls);
+            }
+        };
 
         std::string formatDuration(Duration duration)
         {
@@ -106,120 +107,114 @@ namespace Foundation::Latency
             return std::format("{}:{}", file, sample.source.line());
         }
 
-        std::string makeLane(Duration from, Duration to, Duration total)
+        std::string hotspotName(const Hotspot& hotspot)
         {
-            std::string lane(timelineWidth, '.');
-            if (total == Duration{})
+            const std::string_view fromMethod = hotspot.from->source.function_name();
+            const std::string_view toMethod = hotspot.to->source.function_name();
+            if (fromMethod == toMethod)
             {
-                lane.front() = '#';
-                return lane;
+                return std::format("{} [{} -> {}]", fromMethod, pointName(*hotspot.from),
+                                   pointName(*hotspot.to));
             }
 
-            const auto column = [total](Duration offset)
-            {
-                const auto ratio = std::chrono::duration<double>{ offset }.count()
-                                   / std::chrono::duration<double>{ total }.count();
-                return std::min(timelineWidth - 1,
-                                static_cast<std::size_t>(ratio * (timelineWidth - 1)));
-            };
-            const auto first = column(from);
-            const auto last = column(to);
-            std::fill(lane.begin() + static_cast<std::ptrdiff_t>(first),
-                      lane.begin() + static_cast<std::ptrdiff_t>(last + 1), '=');
-            lane[last] = first == last ? '#' : '>';
-            return lane;
+            return std::format("{} [{}] -> {} [{}]", fromMethod, pointName(*hotspot.from), toMethod,
+                               pointName(*hotspot.to));
         }
 
-        std::size_t threadIndex(const std::vector<std::thread::id>& threads,
-                                std::thread::id threadId)
+        std::vector<Hotspot> buildHotspots(const std::vector<Sample>& samples)
         {
-            return static_cast<std::size_t>(std::ranges::find(threads, threadId) - threads.begin())
-                   + 1;
+            std::map<Transition, Hotspot, TransitionLess> aggregated;
+            for (std::size_t i = 1; i < samples.size(); ++i)
+            {
+                const auto duration = samples[i].timestamp - samples[i - 1].timestamp;
+                const Transition transition{ samples[i - 1].source, samples[i].source };
+                auto [it, inserted]
+                    = aggregated.try_emplace(transition, Hotspot{ &samples[i - 1], &samples[i], 1,
+                                                                  duration, duration, duration });
+                if (!inserted)
+                {
+                    auto& hotspot = it->second;
+                    ++hotspot.calls;
+                    hotspot.total += duration;
+                    hotspot.min = std::min(hotspot.min, duration);
+                    hotspot.max = std::max(hotspot.max, duration);
+                }
+            }
+
+            std::vector<Hotspot> hotspots;
+            hotspots.reserve(aggregated.size());
+            for (const auto& [transition, hotspot] : aggregated)
+            {
+                hotspots.push_back(hotspot);
+            }
+            std::ranges::sort(hotspots, [](const Hotspot& lhs, const Hotspot& rhs)
+                              { return lhs.total > rhs.total; });
+            return hotspots;
         }
     } // namespace
 
     void TerminalPrinter::print() const
     {
-        const auto samples = gCollector.getSamples();
-        print(report, std::cout);
+        print(std::cout);
     }
 
-    void TerminalPrinter::print(const Report& report, std::ostream& output) const
+    void TerminalPrinter::print(std::ostream& output) const
     {
-        if (report.empty())
+        const auto& perThreadSamples = _report->getThreadSamples();
+        std::size_t sampleCount = 0;
+        for (const auto& [threadId, samples] : perThreadSamples)
+        {
+            sampleCount += samples.size();
+        }
+
+        if (sampleCount == 0)
         {
             output << "[latency] no samples\n";
             return;
         }
 
-        const auto& samples = report.getSamples();
-        const auto start = samples.front().timestamp;
-        std::size_t nameWidth = 5;
-        for (const auto& sample : samples)
+        output << std::format("\nLatency hotspots: {} samples, {} points, {} threads, {}\n",
+                              sampleCount, _report->getPointCount(), _report->getThreadCount(),
+                              formatDuration(_report->getDuration()));
+
+        using ThreadSamples = std::pair<const std::thread::id, std::vector<Sample>>;
+        std::vector<const ThreadSamples*> threads;
+        threads.reserve(perThreadSamples.size());
+        for (const auto& entry : perThreadSamples)
         {
-            nameWidth = std::max(nameWidth, pointName(sample).size());
+            threads.push_back(&entry);
         }
+        std::ranges::sort(
+            threads, [](const ThreadSamples* lhs, const ThreadSamples* rhs)
+            { return lhs->second.front().timestamp < rhs->second.front().timestamp; });
 
-        output << std::format("\nLatency report: {} samples, {} points, {} threads, {}\n\n",
-                              samples.size(), report.getPointCount(), report.getThreadCount(),
-                              formatDuration(report.getDuration()));
-        output << "Timeline\n";
-        output << std::format("{:>3}  {:>6}  {:<{}}  {:>11}  {:>11}  {}\n", "#", "Thread", "Point",
-                              nameWidth, "At", "Gap", "Timeline");
-
-        std::vector<std::thread::id> threads;
-        threads.reserve(report.getThreadCount());
-        std::size_t gapIndex = 0;
-        for (std::size_t i = 0; i < samples.size(); ++i)
+        for (std::size_t threadIndex = 0; threadIndex < threads.size(); ++threadIndex)
         {
-            if (std::ranges::find(threads, samples[i].threadId) == threads.end())
+            const auto hotspots = buildHotspots(threads[threadIndex]->second);
+            output << std::format("\nThread T{}\n", threadIndex + 1);
+            if (hotspots.empty())
             {
-                threads.push_back(samples[i].threadId);
+                output << "[latency] no measurable intervals\n";
+                continue;
             }
 
-            const auto offset = samples[i].timestamp - start;
-            const Gap* gap = nullptr;
-            if (gapIndex < report.getGaps().size() && report.getGaps()[gapIndex].toSample == i)
+            std::size_t nameWidth = 7;
+            for (const auto& hotspot : hotspots)
             {
-                gap = &report.getGaps()[gapIndex++];
+                nameWidth = std::max(nameWidth, hotspotName(hotspot).size());
             }
-            const auto gapStart = gap ? samples[gap->fromSample].timestamp - start : offset;
-            output << std::format("{:>3}  T{:>5}  {:<{}}  {:>11}  {:>11}  {}\n", i + 1,
-                                  threadIndex(threads, samples[i].threadId), pointName(samples[i]),
-                                  nameWidth, formatDuration(offset),
-                                  gap ? formatDuration(gap->duration) : "-",
-                                  makeLane(gapStart, offset, report.getDuration()));
-        }
 
-        const auto& summaries = report.getGapSummaries();
-        if (summaries.empty())
-        {
-            output << '\n';
-            return;
-        }
-
-        std::size_t transitionWidth = 10;
-        for (const auto& summary : summaries)
-        {
-            transitionWidth
-                = std::max(transitionWidth, pointName(samples[summary.fromSample]).size() + 4
-                                                + pointName(samples[summary.toSample]).size());
-        }
-
-        output << "\nGap summary\n";
-        output << std::format("{:>6}  {:<{}}  {:>6}  {:>11}  {:>11}  {:>11}\n", "Thread",
-                              "Transition", transitionWidth, "Count", "Average", "Min", "Max");
-        for (const auto& summary : summaries)
-        {
-            const auto transition = std::format("{} -> {}", pointName(samples[summary.fromSample]),
-                                                pointName(samples[summary.toSample]));
-            output << std::format("T{:>5}  {:<{}}  {:>6}  {:>11}  {:>11}  {:>11}\n",
-                                  threadIndex(threads, samples[summary.fromSample].threadId),
-                                  transition, transitionWidth, summary.count,
-                                  formatDuration(summary.getAverage()), formatDuration(summary.min),
-                                  formatDuration(summary.max));
+            output << std::format("{:<{}}  {:>7}  {:>11}  {:>11}  {:>11}  {:>11}\n", "Hotspot",
+                                  nameWidth, "Calls", "Total", "Average", "Min", "Max");
+            for (const auto& hotspot : hotspots)
+            {
+                output << std::format("{:<{}}  {:>7}  {:>11}  {:>11}  {:>11}  {:>11}\n",
+                                      hotspotName(hotspot), nameWidth, hotspot.calls,
+                                      formatDuration(hotspot.total),
+                                      formatDuration(hotspot.average()),
+                                      formatDuration(hotspot.min), formatDuration(hotspot.max));
+            }
         }
         output << '\n';
-    } */
-
+    }
 } // namespace Foundation::Latency

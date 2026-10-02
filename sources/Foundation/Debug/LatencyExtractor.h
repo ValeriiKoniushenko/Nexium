@@ -18,28 +18,6 @@
 namespace Foundation::Latency
 {
 
-    struct Gap final
-    {
-        std::size_t fromSample = 0;
-        std::size_t toSample = 0;
-        Duration duration{};
-    };
-
-    struct GapSummary final
-    {
-        std::size_t fromSample = 0;
-        std::size_t toSample = 0;
-        std::size_t count = 0;
-        Duration total{};
-        Duration min{};
-        Duration max{};
-
-        [[nodiscard]] Duration getAverage() const noexcept
-        {
-            return count ? total / static_cast<Duration::rep>(count) : Duration{};
-        }
-    };
-
     class Report final
     {
     public:
@@ -48,25 +26,16 @@ namespace Foundation::Latency
         explicit Report(const Collector& collector);
 
         void setSamples(const std::vector<Sample>& samples);
-        [[nodiscard]] const std::vector<Gap>& getGaps() const noexcept { return _gaps; }
-        [[nodiscard]] const std::vector<GapSummary>& getGapSummaries() const noexcept
-        {
-            return _gapSummaries;
-        }
         [[nodiscard]] Duration getDuration() const noexcept { return _duration; }
         [[nodiscard]] std::size_t getPointCount() const noexcept { return _pointCount; }
         [[nodiscard]] std::size_t getThreadCount() const noexcept { return _threadCount; }
+        [[nodiscard]] const auto& getThreadSamples() const noexcept { return _perThreadSamples; }
 
-        void processData();
         void fullClear(bool isIgnoreRawSamples = true);
 
     private:
-        bool _isProcessedData = false;
-
         std::unordered_map<std::thread::id, std::vector<Sample>> _perThreadSamples;
 
-        std::vector<Gap> _gaps;
-        std::vector<GapSummary> _gapSummaries;
         Duration _duration{};
         std::size_t _pointCount = 0;
         std::size_t _threadCount = 0;
