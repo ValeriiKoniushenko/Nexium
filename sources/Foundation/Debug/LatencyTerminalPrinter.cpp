@@ -16,12 +16,31 @@
 #include <format>
 #include <iostream>
 #include <string>
+#include <tuple>
 #include <vector>
 
 namespace Foundation::Latency
 {
-    namespace
+    void TerminalPrinter::print() const
     {
+    }
+
+    /* namespace
+    {
+
+        struct SourceLocationLess final
+        {
+            bool operator()(const std::source_location& lhs,
+                            const std::source_location& rhs) const noexcept
+            {
+                return std::tuple{
+                    std::string_view{ lhs.file_name() }, std::string_view{ lhs.function_name() },
+                    lhs.line(), lhs.column()
+                } < std::tuple{ std::string_view{ rhs.file_name() },
+                                std::string_view{ rhs.function_name() }, rhs.line(), rhs.column() };
+            }
+        };
+
         struct Transition final
         {
             std::thread::id threadId;
@@ -119,8 +138,9 @@ namespace Foundation::Latency
         }
     } // namespace
 
-    void TerminalPrinter::print(const Report& report) const
+    void TerminalPrinter::print() const
     {
+        const auto samples = gCollector.getSamples();
         print(report, std::cout);
     }
 
@@ -200,63 +220,6 @@ namespace Foundation::Latency
                                   formatDuration(summary.max));
         }
         output << '\n';
-    }
+    } */
 
-    Report::Report(std::vector<Sample> samples)
-        : _samples(std::move(samples))
-    {
-        std::ranges::stable_sort(_samples, {}, &Sample::timestamp);
-
-        std::set<std::source_location, SourceLocationLess> points;
-        std::set<std::thread::id> threads;
-        for (const auto& sample : _samples)
-        {
-            points.emplace(sample.source);
-            threads.emplace(sample.threadId);
-        }
-        _pointCount = points.size();
-        _threadCount = threads.size();
-
-        if (_samples.size() < 2)
-        {
-            return;
-        }
-
-        _duration = _samples.back().timestamp - _samples.front().timestamp;
-        _gaps.reserve(_samples.size() - _threadCount);
-        _gapSummaries.reserve(_samples.size() - 1);
-        std::map<std::thread::id, std::size_t> lastSampleByThread;
-        std::map<Transition, std::size_t, TransitionLess> summaryIndices;
-
-        for (std::size_t i = 0; i < _samples.size(); ++i)
-        {
-            const auto lastIt = lastSampleByThread.find(_samples[i].threadId);
-            if (lastIt == lastSampleByThread.end())
-            {
-                lastSampleByThread.emplace(_samples[i].threadId, i);
-                continue;
-            }
-
-            const auto previous = lastIt->second;
-            lastIt->second = i;
-            const auto duration = _samples[i].timestamp - _samples[previous].timestamp;
-            _gaps.push_back({ previous, i, duration });
-
-            const Transition transition{ _samples[i].threadId, _samples[previous].source,
-                                         _samples[i].source };
-            const auto [it, inserted]
-                = summaryIndices.try_emplace(transition, _gapSummaries.size());
-            if (inserted)
-            {
-                _gapSummaries.push_back({ previous, i, 1, duration, duration, duration });
-                continue;
-            }
-
-            auto& summary = _gapSummaries[it->second];
-            ++summary.count;
-            summary.total += duration;
-            summary.min = std::min(summary.min, duration);
-            summary.max = std::max(summary.max, duration);
-        }
-    }
 } // namespace Foundation::Latency

@@ -11,6 +11,7 @@
 
 #include <algorithm>
 #include <map>
+#include <mutex>
 #include <set>
 #include <utility>
 
@@ -18,7 +19,7 @@ namespace Foundation::Latency
 {
 
 #if defined(NEXIUM_DEBUG)
-    Collector gCollector{ 256 };
+    Collector gCollector{ 1024 };
 #else
     Collector gCollector;
 #endif
@@ -31,23 +32,23 @@ namespace Foundation::Latency
     void Collector::add(std::string_view description, std::source_location source)
     {
         Sample sample{ Clock::now(), source, description };
-        const std::scoped_lock lock{ _mutex };
+
+        const std::unique_lock lock{ _mutex };
         _samples.push_back(sample);
     }
 
     void Collector::clear()
     {
-        const std::scoped_lock lock{ _mutex };
+        const std::unique_lock lock{ _mutex };
         _samples.clear();
     }
 
-    Report Collector::makeReport() const
+    std::vector<Sample> Collector::getSamples() const
     {
-        std::vector<Sample> samples;
-        {
-            const std::scoped_lock lock{ _mutex };
-            samples = _samples;
-        }
-        return Report{ std::move(samples) };
+        std::vector<Sample> out;
+
+        const std::shared_lock lock{ _mutex };
+        out = _samples;
+        return out;
     }
 } // namespace Foundation::Latency

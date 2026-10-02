@@ -32,10 +32,10 @@ namespace NX
         _gameInstance.initialize();
         runMainLoop();
         _gameInstance.saveAllToCache();
-        NX_LATENCY_POINT("Game: shutdown -- end");
 
 #if defined(NEXIUM_DEBUG)
-        Foundation::Latency::TerminalPrinter{}.print(Foundation::Latency::gCollector.makeReport());
+        Foundation::Latency::Report r;
+        Foundation::Latency::TerminalPrinter{ r }.print();
 #endif
     }
 
@@ -46,6 +46,7 @@ namespace NX
 
     void Runtime::runMainLoop()
     {
+        NX_LATENCY_POINT("start");
         NX::FPSCounter fps;
         fps.start();
         Core::FStopwatch clock;
@@ -58,8 +59,10 @@ namespace NX
 
         constexpr int clearBits = GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT;
 
+        NX_LATENCY_POINT("while loop - pre-start");
         while (!_gameInstance.window->shouldClose())
         {
+            NX_LATENCY_POINT("loop - start");
             clock.start();
             Platform::Window::pollEvent();
             GetInputSystem().setActiveContext(_gameInstance.isApplicationViewportFocused()
@@ -128,7 +131,9 @@ namespace NX
             _gameInstance.window->swapBuffers();
             fps.newFrameUpdate();
             _gameInstance.world.internal_UpdateTimeDelta(clock.stop());
+            NX_LATENCY_POINT("loop - end");
         }
+        NX_LATENCY_POINT("while loop - post-end");
 
         _gameInstance.infoLog("Total FPS for this session: {}"_f << fps.getFPS());
     }

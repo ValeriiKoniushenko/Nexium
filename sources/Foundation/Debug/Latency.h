@@ -10,12 +10,10 @@
 #pragma once
 
 #include <chrono>
-#include <cstddef>
-#include <mutex>
+#include <shared_mutex>
 #include <source_location>
 #include <string_view>
 #include <thread>
-#include <tuple>
 #include <vector>
 
 namespace Foundation::Latency
@@ -32,19 +30,6 @@ namespace Foundation::Latency
         std::thread::id threadId = std::this_thread::get_id();
     };
 
-    struct SourceLocationLess final
-    {
-        bool operator()(const std::source_location& lhs,
-                        const std::source_location& rhs) const noexcept
-        {
-            return std::tuple{ std::string_view{ lhs.file_name() },
-                               std::string_view{ lhs.function_name() }, lhs.line(), lhs.column() }
-                   < std::tuple{ std::string_view{ rhs.file_name() },
-                                 std::string_view{ rhs.function_name() }, rhs.line(),
-                                 rhs.column() };
-        }
-    };
-
     class Collector final
     {
     public:
@@ -52,10 +37,12 @@ namespace Foundation::Latency
 
         void add(std::string_view description = {},
                  std::source_location source = std::source_location::current());
+
         void clear();
+        [[nodiscard]] std::vector<Sample> getSamples() const;
 
     private:
-        mutable std::mutex _mutex;
+        mutable std::shared_mutex _mutex;
         std::vector<Sample> _samples;
     };
 

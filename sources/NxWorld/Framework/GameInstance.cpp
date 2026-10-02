@@ -20,6 +20,7 @@
 #include "NxWorld/Scene/Rectangle.h"
 #include "Platform/Glfw.h"
 #include "Platform/Window.h"
+#include "spdlog/common.h"
 #include "spdlog/spdlog.h"
 
 std::unique_ptr<NX::GameInstance> gGameInstance = nullptr;
@@ -104,12 +105,12 @@ namespace NX
     void GameInstance::initialize()
     {
 #ifdef NEXIUM_DEBUG
-        spdlog::set_level(spdlog::level::trace);
+        spdlog::set_level(spdlog::level::debug);
 #endif
         std::cout << std::fixed << std::setprecision(15);
         spdlog::set_pattern(Foundation::Config::spdlogPattern);
 
-        NX_LATENCY_POINT("Game: initialization -- start");
+        NX_LATENCY_POINT("start");
         //-------------------- WINDOW ---------------------
         window = &Platform::GetWindow();
         window->create(Foundation::Config::defaultWindowName,
@@ -118,12 +119,12 @@ namespace NX
         _subscriptionPool << window->onResize->subscribeAndGetID([this](Core::ISize2 newSize)
                                                                  { updateViewport(); });
 
-        NX_LATENCY_POINT("Game: Window - inited");
+        NX_LATENCY_POINT("Window - inited");
 
         //-------------------- ASSETS MANAGER ---------------------
         GetAssetsManager()->initScanFileSystem();
 
-        NX_LATENCY_POINT("Game: AssetsManager - inited");
+        NX_LATENCY_POINT("AssetsManager - inited");
 
         //-------------------- SHADER MANAGER ---------------------
         shaderManager.loadShaders(Foundation::Config::Path::shaders);
@@ -136,7 +137,7 @@ namespace NX
         }
         initializeShaders();
 
-        NX_LATENCY_POINT("Game: ShaderManager - inited");
+        NX_LATENCY_POINT("ShaderManager - inited");
 
         //-------------------- ECS ---------------------
         if (_applicationIntegration)
@@ -149,20 +150,20 @@ namespace NX
             _applicationIntegration->initialize();
         }
 
-        NX_LATENCY_POINT("Game: ECS - inited");
+        NX_LATENCY_POINT("ECS - inited");
 
         gameScene.initialize();
         _subscriptionPool << gameScene.onObjectAdded->subscribeAndGetID(
             [this](SceneObject* obj) { internal_onAddObjectToScene(obj); });
 
-        NX_LATENCY_POINT("Game: Scene - inited");
+        NX_LATENCY_POINT("Scene - inited");
 
         startUpReadCache();
         loadCoreResources();
 
-        NX_LATENCY_POINT("Game: Resources - inited");
+        NX_LATENCY_POINT("Resources - inited");
 
-        NX_LATENCY_POINT("Game: initialization -- end");
+        NX_LATENCY_POINT("end");
     }
 
     void GameInstance::startUpReadCache()
