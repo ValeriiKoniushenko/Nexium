@@ -16,7 +16,6 @@
 #include <map>
 #include <set>
 #include <tuple>
-#include <utility>
 
 namespace Foundation::Latency
 {
@@ -90,9 +89,9 @@ namespace Foundation::Latency
 
             std::vector<Hotspot> hotspots;
             hotspots.reserve(aggregated.size());
-            for (auto& [transition, hotspot] : aggregated)
+            for (const auto& [transition, hotspot] : aggregated)
             {
-                hotspots.push_back(std::move(hotspot));
+                hotspots.push_back(hotspot);
             }
             std::ranges::sort(hotspots, [](const Hotspot& lhs, const Hotspot& rhs)
                               { return lhs.total > rhs.total; });

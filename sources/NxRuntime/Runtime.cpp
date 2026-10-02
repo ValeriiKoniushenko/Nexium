@@ -34,7 +34,7 @@ namespace NX
         _gameInstance.saveAllToCache();
 
 #if defined(NEXIUM_DEBUG)
-        Foundation::Latency::Report r(Foundation::Latency::gCollector);
+        const Foundation::Latency::Report r(Foundation::Latency::gCollector);
         Foundation::Latency::TerminalPrinter{ r }.print();
 #endif
     }

@@ -31,7 +31,7 @@ namespace Foundation::Latency
 
     void Collector::add(std::string_view description, std::source_location source)
     {
-        Sample sample{ Clock::now(), source, description };
+        const Sample sample{ Clock::now(), source, description };
 
         const std::unique_lock lock{ _mutex };
         _samples.push_back(sample);
