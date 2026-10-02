@@ -58,7 +58,7 @@ namespace Foundation::Latency
             }
         };
 
-        struct Hotspot final
+        struct ThreadHotspot final
         {
             const Sample* from = nullptr;
             const Sample* to = nullptr;
@@ -107,7 +107,7 @@ namespace Foundation::Latency
             return std::format("{}:{}", file, sample.source.line());
         }
 
-        std::string hotspotName(const Hotspot& hotspot)
+        std::string hotspotName(const ThreadHotspot& hotspot)
         {
             const std::string_view fromMethod = hotspot.from->source.function_name();
             const std::string_view toMethod = hotspot.to->source.function_name();
@@ -121,16 +121,16 @@ namespace Foundation::Latency
                                pointName(*hotspot.to));
         }
 
-        std::vector<Hotspot> buildHotspots(const std::vector<Sample>& samples)
+        std::vector<ThreadHotspot> buildHotspots(const std::vector<Sample>& samples)
         {
-            std::map<Transition, Hotspot, TransitionLess> aggregated;
+            std::map<Transition, ThreadHotspot, TransitionLess> aggregated;
             for (std::size_t i = 1; i < samples.size(); ++i)
             {
                 const auto duration = samples[i].timestamp - samples[i - 1].timestamp;
                 const Transition transition{ samples[i - 1].source, samples[i].source };
-                auto [it, inserted]
-                    = aggregated.try_emplace(transition, Hotspot{ &samples[i - 1], &samples[i], 1,
-                                                                  duration, duration, duration });
+                auto [it, inserted] = aggregated.try_emplace(
+                    transition,
+                    ThreadHotspot{ &samples[i - 1], &samples[i], 1, duration, duration, duration });
                 if (!inserted)
                 {
                     auto& hotspot = it->second;
@@ -141,13 +141,13 @@ namespace Foundation::Latency
                 }
             }
 
-            std::vector<Hotspot> hotspots;
+            std::vector<ThreadHotspot> hotspots;
             hotspots.reserve(aggregated.size());
             for (const auto& [transition, hotspot] : aggregated)
             {
                 hotspots.push_back(hotspot);
             }
-            std::ranges::sort(hotspots, [](const Hotspot& lhs, const Hotspot& rhs)
+            std::ranges::sort(hotspots, [](const ThreadHotspot& lhs, const ThreadHotspot& rhs)
                               { return lhs.total > rhs.total; });
             return hotspots;
         }
