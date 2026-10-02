@@ -23,9 +23,16 @@ namespace Foundation::Latency
     {
     }
 
+    void Report::setSamples(const std::vector<Sample>& samples)
+    {
+        _rawSamples = samples;
+    }
+
     void Report::processData()
     {
         fullClear(true);
+
+        int i = 123;
     }
 
     void Report::fullClear(bool isIgnoreRawSamples /*  = true */)
