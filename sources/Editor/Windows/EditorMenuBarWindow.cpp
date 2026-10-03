@@ -40,11 +40,18 @@ namespace NX
 {
     ECS_IMPL(EditorMenuBarWindowEWC);
 
+    EditorMenuBarWindowEWC::EditorMenuBarWindowEWC(const StringAtom& name)
+        : BaseMenuBarEWC(componentType, name)
+    {
+        if (name.isEmpty())
+        {
+            setComponentName("Menu Bar"_atom);
+        }
+    }
+
     void EditorMenuBarWindowEWC::onInitialize()
     {
         BaseMenuBarEWC::onInitialize();
-
-        setComponentName("Menu Bar");
 
         _slowUpdater.setRepeatTime(1. / 10.);
         _slowUpdater.setCallback(

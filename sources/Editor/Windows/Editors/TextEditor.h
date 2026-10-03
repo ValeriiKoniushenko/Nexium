@@ -18,9 +18,11 @@ namespace NX
     CLASS();
     class TextEditorEWC : public BaseFloatEWC
     {
-        ECS_DECL(TextEditorEWC, NX::BaseFloatEWC);
+        ECS_DECL_NO_CNSTR(TextEditorEWC, NX::BaseFloatEWC);
 
     public:
+        explicit TextEditorEWC(const StringAtom& name = ""_atom);
+
         void putArguments(const StringAtom& args) override;
 
         [[nodiscard]] const char* getIcon() override;

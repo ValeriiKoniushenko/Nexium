@@ -26,6 +26,15 @@ namespace NX
 {
     ECS_IMPL(ModalAssetsSearchPopUpEWC);
 
+    ModalAssetsSearchPopUpEWC::ModalAssetsSearchPopUpEWC(const StringAtom& name)
+        : BaseModalPopUp(componentType, name)
+    {
+        if (name.isEmpty())
+        {
+            setComponentName("Assets searcher"_atom);
+        }
+    }
+
     void ModalAssetsSearchPopUpEWC::Open(StringAtom text)
     {
         GetEditor()->tryToOpenWindow<ModalAssetsSearchPopUpEWC>("", std::move(text));
@@ -34,7 +43,6 @@ namespace NX
     void ModalAssetsSearchPopUpEWC::onInitialize()
     {
         BaseModalPopUp::onInitialize();
-        setComponentName("Assets searcher"_atom);
 
         _layout.setHorizontalAlign(Gui::Align::Center);
         _layout.setFlex(Gui::Flex::FlexWidthAndHeight);

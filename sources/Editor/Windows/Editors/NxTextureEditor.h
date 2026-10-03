@@ -21,9 +21,11 @@ namespace NX
     CLASS();
     class NxTextureEditorEWC : public NxEditorBaseEditorEWC
     {
-        ECS_DECL(NxTextureEditorEWC, NX::NxEditorBaseEditorEWC);
+        ECS_DECL_NO_CNSTR(NxTextureEditorEWC, NX::NxEditorBaseEditorEWC);
 
     public:
+        explicit NxTextureEditorEWC(const StringAtom& name = ""_atom);
+
         [[nodiscard]] const char* getIcon() override;
 
     protected:

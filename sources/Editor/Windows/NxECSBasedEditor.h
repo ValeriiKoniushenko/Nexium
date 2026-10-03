@@ -52,9 +52,11 @@ namespace NX
     CLASS();
     class NxECSBasedEditorEWC : public NxEditorBaseEditorEWC
     {
-        ECS_DECL(NxECSBasedEditorEWC, NX::NxEditorBaseEditorEWC);
+        ECS_DECL_NO_CNSTR(NxECSBasedEditorEWC, NX::NxEditorBaseEditorEWC);
 
     public:
+        explicit NxECSBasedEditorEWC(const StringAtom& name = ""_atom);
+
         [[nodiscard]] BaseComponent* getTargetComponent() noexcept;
         [[nodiscard]] const BaseComponent* getTargetComponent() const noexcept;
 

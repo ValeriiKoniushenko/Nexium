@@ -118,6 +118,15 @@ namespace
 
 namespace NX
 {
+    ObjectPropertiesWindowEWC::ObjectPropertiesWindowEWC(const StringAtom& name)
+        : BaseFloatEWC(componentType, name)
+    {
+        if (name.isEmpty())
+        {
+            setComponentName("Object properties"_atom);
+        }
+    }
+
     ECS_IMPL(ObjectPropertiesWindowEWC);
 
     Gui::HorizontalLayout::Ptr _GraphicsModifiersArray_ArrayCellViewerFunc::operator()(
@@ -256,8 +265,6 @@ namespace NX
     void ObjectPropertiesWindowEWC::onInitialize()
     {
         BaseFloatEWC::onInitialize();
-
-        setComponentName("Object properties");
 
         createGui();
         registerGuiEvents();

@@ -20,9 +20,12 @@ namespace NX
     CLASS();
     class LogsWindowEWC : public BaseFloatEWC
     {
-        ECS_DECL_NO_SER(LogsWindowEWC, NX::BaseFloatEWC);
+        ECS_DECL_NO_SER_NO_CNSTR(LogsWindowEWC, NX::BaseFloatEWC);
+        R_FRIEND(LogsWindowEWC);
 
     public:
+        explicit LogsWindowEWC(const StringAtom& name = ""_atom);
+
         struct LogLine
         {
             StringAtom message;

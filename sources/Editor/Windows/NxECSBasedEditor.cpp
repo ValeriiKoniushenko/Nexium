@@ -34,6 +34,15 @@ namespace NX
     ECS_IMPL(NxECSBasedEditorEWC);
     ECS_IMPL(ECSEditorMimeAdapter);
 
+    NxECSBasedEditorEWC::NxECSBasedEditorEWC(const StringAtom& name)
+        : NxEditorBaseEditorEWC(componentType, name)
+    {
+        if (name.isEmpty())
+        {
+            setComponentName("Assets editor"_atom);
+        }
+    }
+
     void ECSEditorMimeAdapter::applyAssetRawData(const nlohmann::json& json)
     {
         // if (json.empty())
@@ -123,8 +132,6 @@ namespace NX
     void NxECSBasedEditorEWC::onInitialize()
     {
         NxEditorBaseEditorEWC::onInitialize();
-
-        setComponentName("Assets editor"_atom);
 
         addUniqueTypeChildComponent<ECSBaseComponentAdapter>();
         addUniqueTypeChildComponent<ECSEditorActorAdapter>();

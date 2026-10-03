@@ -29,6 +29,15 @@ namespace NX
 {
     ECS_IMPL(ShaderManagerEWC);
 
+    ShaderManagerEWC::ShaderManagerEWC(const StringAtom& name)
+        : BaseFloatEWC(componentType, name)
+    {
+        if (name.isEmpty())
+        {
+            setComponentName("Shader manager"_atom);
+        }
+    }
+
     const char* ShaderManagerEWC::getIcon()
     {
         return ICON_FA_COGS;
@@ -165,8 +174,6 @@ namespace NX
     void ShaderManagerEWC::onInitialize()
     {
         BaseFloatEWC::onInitialize();
-
-        setComponentName("Shader manager"_atom);
 
         createGui();
         invalidateShaderCache();

@@ -27,9 +27,11 @@ namespace NX
     CLASS();
     class RenamePopUpWindow : public BaseEWC
     {
-        ECS_DECL(RenamePopUpWindow, NX::BaseEWC);
+        ECS_DECL_NO_CNSTR(RenamePopUpWindow, NX::BaseEWC);
 
     public:
+        explicit RenamePopUpWindow(const StringAtom& name = ""_atom);
+
         using RenameCallbackT = std::function<void(const std::filesystem::path& oldPath,
                                                    const std::filesystem::path& newPath)>;
 

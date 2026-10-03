@@ -19,9 +19,11 @@ namespace NX
     CLASS();
     class ImageViewerEWC : public BaseFloatEWC
     {
-        ECS_DECL(ImageViewerEWC, NX::BaseFloatEWC);
+        ECS_DECL_NO_CNSTR(ImageViewerEWC, NX::BaseFloatEWC);
 
     public:
+        explicit ImageViewerEWC(const StringAtom& name = ""_atom);
+
         void openImageFromFile(const std::filesystem::path& path);
 
         void putArguments(const StringAtom& args) override;
@@ -60,9 +62,11 @@ namespace NX
     CLASS();
     class DummyEWC : public BaseFloatEWC
     {
-        ECS_DECL(DummyEWC, NX::BaseFloatEWC);
+        ECS_DECL_NO_CNSTR(DummyEWC, NX::BaseFloatEWC);
 
     public:
+        explicit DummyEWC(const StringAtom& name = ""_atom);
+
         [[nodiscard]] const char* getIcon() override;
 
     protected:

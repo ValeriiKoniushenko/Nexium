@@ -24,6 +24,15 @@ namespace NX
 {
     ECS_IMPL(NxTextureEditorEWC);
 
+    NxTextureEditorEWC::NxTextureEditorEWC(const StringAtom& name)
+        : NxEditorBaseEditorEWC(componentType, name)
+    {
+        if (name.isEmpty())
+        {
+            setComponentName("NX texture editor"_atom);
+        }
+    }
+
     const char* NxTextureEditorEWC::getIcon()
     {
         return ICON_FA_COG;
@@ -46,8 +55,6 @@ namespace NX
     void NxTextureEditorEWC::onInitialize()
     {
         NxEditorBaseEditorEWC::onInitialize();
-
-        setComponentName("NX texture editor"_atom);
 
         setEnablePreview(true);
         _fileFilters.emplace(std::string("*") + NXTexture::AssetT::fileExtension);

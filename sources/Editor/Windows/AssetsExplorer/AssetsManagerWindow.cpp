@@ -49,6 +49,15 @@ namespace NX
 {
     ECS_IMPL(AssetsManagerWindowEWC);
 
+    AssetsManagerWindowEWC::AssetsManagerWindowEWC(const StringAtom& name)
+        : BaseFloatEWC(componentType, name)
+    {
+        if (name.isEmpty())
+        {
+            setComponentName("Assets"_atom);
+        }
+    }
+
     const char* AssetsManagerWindowEWC::getIcon()
     {
         return ICON_FA_FOLDER;
@@ -193,8 +202,6 @@ namespace NX
     void AssetsManagerWindowEWC::onInitialize()
     {
         BaseFloatEWC::onInitialize();
-
-        setComponentName("Assets"_atom);
 
         if (_openedPath.empty())
         {

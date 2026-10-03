@@ -20,9 +20,11 @@ namespace NX
     CLASS();
     class ModalCreateBlueprintEWC : public BaseModalPopUp
     {
-        ECS_DECL(ModalCreateBlueprintEWC, NX::BaseModalPopUp);
+        ECS_DECL_NO_CNSTR(ModalCreateBlueprintEWC, NX::BaseModalPopUp);
 
     public:
+        explicit ModalCreateBlueprintEWC(const StringAtom& name = ""_atom);
+
         static void Open(StringAtom text);
 
     protected:

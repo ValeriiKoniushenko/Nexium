@@ -49,9 +49,11 @@ namespace NX
     CLASS();
     class ObjectPropertiesWindowEWC : public BaseFloatEWC
     {
-        ECS_DECL(ObjectPropertiesWindowEWC, NX::BaseFloatEWC);
+        ECS_DECL_NO_CNSTR(ObjectPropertiesWindowEWC, NX::BaseFloatEWC);
 
     public:
+        explicit ObjectPropertiesWindowEWC(const StringAtom& name = ""_atom);
+
         static constexpr float defaultLabelWidth = 100.0f;
         static constexpr float defaultLabelWidthBig = 150.0f;
 

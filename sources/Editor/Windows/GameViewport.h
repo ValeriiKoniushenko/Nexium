@@ -19,9 +19,11 @@ namespace NX
     CLASS();
     class GameViewportEWC : public BaseFloatEWC
     {
-        ECS_DECL(GameViewportEWC, NX::BaseFloatEWC);
+        ECS_DECL_NO_CNSTR(GameViewportEWC, NX::BaseFloatEWC);
 
     public:
+        explicit GameViewportEWC(const StringAtom& name = ""_atom);
+
         [[nodiscard]] const char* getIcon() override;
         [[nodiscard]] bool blocksPicking() const noexcept { return _blocksPicking; }
 

@@ -19,9 +19,11 @@ namespace NX
     CLASS();
     class RootDockWindowEWC : public BaseEWC
     {
-        ECS_DECL(RootDockWindowEWC, NX::BaseEWC);
+        ECS_DECL_NO_CNSTR(RootDockWindowEWC, NX::BaseEWC);
 
     public:
+        explicit RootDockWindowEWC(const StringAtom& name = ""_atom);
+
         [[nodiscard]] std::vector<std::string> getCurrentWindowsList() const;
 
     protected:

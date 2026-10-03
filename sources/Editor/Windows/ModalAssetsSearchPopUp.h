@@ -21,9 +21,11 @@ namespace NX
     CLASS();
     class ModalAssetsSearchPopUpEWC : public BaseModalPopUp
     {
-        ECS_DECL(ModalAssetsSearchPopUpEWC, NX::BaseModalPopUp);
+        ECS_DECL_NO_CNSTR(ModalAssetsSearchPopUpEWC, NX::BaseModalPopUp);
 
     public:
+        explicit ModalAssetsSearchPopUpEWC(const StringAtom& name = ""_atom);
+
         static void Open(StringAtom text);
 
     protected:

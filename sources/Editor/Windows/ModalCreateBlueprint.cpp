@@ -39,6 +39,15 @@ namespace NX
 {
     ECS_IMPL(ModalCreateBlueprintEWC);
 
+    ModalCreateBlueprintEWC::ModalCreateBlueprintEWC(const StringAtom& name)
+        : BaseModalPopUp(componentType, name)
+    {
+        if (name.isEmpty())
+        {
+            setComponentName("Create blueprint"_atom);
+        }
+    }
+
     void ModalCreateBlueprintEWC::Open(StringAtom text)
     {
         GetEditor()->tryToOpenWindow<ModalCreateBlueprintEWC>("", std::move(text));
@@ -47,8 +56,6 @@ namespace NX
     void ModalCreateBlueprintEWC::onInitialize()
     {
         BaseModalPopUp::onInitialize();
-
-        setComponentName("Create blueprint"_atom);
 
         _layout.setHorizontalAlign(Gui::Align::Center);
         _layout.setFlex(Gui::Flex::FlexWidthAndHeight);

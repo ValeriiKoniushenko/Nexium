@@ -24,9 +24,11 @@ namespace NX
     CLASS();
     class AssetsManagerWindowEWC : public BaseFloatEWC
     {
-        ECS_DECL(AssetsManagerWindowEWC, NX::BaseFloatEWC);
+        ECS_DECL_NO_CNSTR(AssetsManagerWindowEWC, NX::BaseFloatEWC);
 
     public:
+        explicit AssetsManagerWindowEWC(const StringAtom& name = ""_atom);
+
         constexpr static std::string_view defaultNewFileName = "NewFile";
 
     public:

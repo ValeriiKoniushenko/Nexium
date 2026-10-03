@@ -32,11 +32,27 @@ namespace NX
     ECS_IMPL(Internal::KeymapItem);
     ECS_IMPL(Internal::ColorItem);
 
+    EditorSettingsEWC::EditorSettingsEWC(const StringAtom& name)
+        : BaseFloatEWC(componentType, name)
+    {
+        if (name.isEmpty())
+        {
+            setComponentName("Settings"_atom);
+        }
+    }
+
+    Internal::BaseListItem::BaseListItem(const StringAtom& name)
+        : Gui::HorizontalLayout(componentType, name)
+    {
+        if (name.isEmpty())
+        {
+            setComponentName("ListItem"_atom);
+        }
+    }
+
     void EditorSettingsEWC::onInitialize()
     {
         BaseFloatEWC::onInitialize();
-
-        setComponentName("Settings"_atom);
     }
 
     const char* EditorSettingsEWC::getIcon()
@@ -71,7 +87,6 @@ namespace NX
     {
         HorizontalLayout::onInitialize();
 
-        setComponentName("ListItem");
         setFlex(Flex::FlexWidth);
         setHorizontalAlign(Align::SpaceBetween);
         _label = addChildComponent<Label>(Stringify::gcDefaultNoneString.data());

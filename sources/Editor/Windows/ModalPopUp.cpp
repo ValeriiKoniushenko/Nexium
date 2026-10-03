@@ -21,6 +21,15 @@ namespace NX
 {
     ECS_IMPL(ModalPopUp);
 
+    ModalPopUp::ModalPopUp(const StringAtom& name)
+        : BaseModalPopUp(componentType, name)
+    {
+        if (name.isEmpty())
+        {
+            setComponentName("PopUp"_atom);
+        }
+    }
+
     void ModalPopUp::open(StringAtom text, const std::function<void(bool)>& okOrCancelCallback)
     {
         BaseModalPopUp::open(std::move(text));
@@ -36,8 +45,6 @@ namespace NX
     void ModalPopUp::onInitialize()
     {
         BaseModalPopUp::onInitialize();
-
-        setComponentName("PopUp"_atom);
 
         _okButton = _layout.addChildComponent<Gui::Button>("OK");
         _cancelButton = _layout.addChildComponent<Gui::Button>("Cancel");

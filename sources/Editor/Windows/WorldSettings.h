@@ -20,9 +20,11 @@ namespace NX
     CLASS();
     class WorldSettingsEWC : public BaseFloatEWC
     {
-        ECS_DECL(WorldSettingsEWC, NX::BaseFloatEWC);
+        ECS_DECL_NO_CNSTR(WorldSettingsEWC, NX::BaseFloatEWC);
 
     public:
+        explicit WorldSettingsEWC(const StringAtom& name = ""_atom);
+
         [[nodiscard]] const char* getIcon() override;
 
     protected:

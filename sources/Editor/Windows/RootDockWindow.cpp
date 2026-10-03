@@ -13,6 +13,15 @@
 
 namespace NX
 {
+    RootDockWindowEWC::RootDockWindowEWC(const StringAtom& name)
+        : BaseEWC(componentType, name)
+    {
+        if (name.isEmpty())
+        {
+            setComponentName("Root dock space"_atom);
+        }
+    }
+
     ECS_IMPL(RootDockWindowEWC);
 
     namespace
@@ -52,8 +61,6 @@ namespace NX
     void RootDockWindowEWC::onInitialize()
     {
         BaseEWC::onInitialize();
-
-        setComponentName("Root dock space");
 
         _windowFlags |= ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking
                         | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse

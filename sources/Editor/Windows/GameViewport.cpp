@@ -21,6 +21,15 @@ namespace NX
 {
     ECS_IMPL(GameViewportEWC);
 
+    GameViewportEWC::GameViewportEWC(const StringAtom& name)
+        : BaseFloatEWC(componentType, name)
+    {
+        if (name.isEmpty())
+        {
+            setComponentName("Viewport"_atom);
+        }
+    }
+
     const char* GameViewportEWC::getIcon()
     {
         return ICON_FA_VIDEO_CAMERA;
@@ -29,8 +38,6 @@ namespace NX
     void GameViewportEWC::onInitialize()
     {
         BaseFloatEWC::onInitialize();
-
-        setComponentName("Viewport"_atom);
     }
 
     void GameViewportEWC::onUpdate()

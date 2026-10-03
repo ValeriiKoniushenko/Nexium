@@ -22,6 +22,15 @@ namespace NX
 {
     ECS_IMPL_NO_SER(LogsWindowEWC);
 
+    LogsWindowEWC::LogsWindowEWC(const StringAtom& name)
+        : BaseFloatEWC(componentType, name)
+    {
+        if (name.isEmpty())
+        {
+            setComponentName("Logs"_atom);
+        }
+    }
+
     const std::unordered_map<spdlog::level::level_enum, Color4> LogsWindowEWC::_levelColor
         = { { spdlog::level::level_enum::critical, Foundation::Config::ColorRed },
             { spdlog::level::level_enum::err, Foundation::Config::ColorYellow },
@@ -101,8 +110,6 @@ namespace NX
     void LogsWindowEWC::onInitialize()
     {
         BaseFloatEWC::onInitialize();
-
-        setComponentName("Logs");
     }
 
     void LogsWindowEWC::onPreInitialize()

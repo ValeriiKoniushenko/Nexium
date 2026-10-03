@@ -46,6 +46,15 @@ namespace
 
 namespace NX
 {
+    WorldSettingsEWC::WorldSettingsEWC(const StringAtom& name)
+        : BaseFloatEWC(componentType, name)
+    {
+        if (name.isEmpty())
+        {
+            setComponentName("World settings"_atom);
+        }
+    }
+
     ECS_IMPL(WorldSettingsEWC);
 
     const char* WorldSettingsEWC::getIcon()
@@ -63,8 +72,6 @@ namespace NX
     void WorldSettingsEWC::onInitialize()
     {
         BaseFloatEWC::onInitialize();
-
-        setComponentName("World settings"_atom);
 
         constexpr float defaultWidth = 120.f;
         // ===================== GLOBAL =========================

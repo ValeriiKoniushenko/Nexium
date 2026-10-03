@@ -41,6 +41,15 @@ namespace NX
 {
     ECS_IMPL(RenamePopUpWindow);
 
+    RenamePopUpWindow::RenamePopUpWindow(const StringAtom& name)
+        : BaseEWC(componentType, name)
+    {
+        if (name.isEmpty())
+        {
+            setComponentName("Rename window"_atom);
+        }
+    }
+
     void RenamePopUpWindow::open(const StringAtom& text, const std::filesystem::path& path,
                                  std::function<void(const std::filesystem::path& oldPath,
                                                     const std::filesystem::path& newPath)>
@@ -121,8 +130,6 @@ namespace NX
     void RenamePopUpWindow::onInitialize()
     {
         BaseEWC::onInitialize();
-
-        setComponentName("Rename window"_atom);
 
         _label = _layout.addChildComponent<Gui::Label>("New name");
         _fileNameInput = _layout.addChildComponent<Gui::TextInput>();

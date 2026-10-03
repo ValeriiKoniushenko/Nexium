@@ -23,9 +23,11 @@ namespace NX
     CLASS();
     class ShaderManagerEWC : public BaseFloatEWC
     {
-        ECS_DECL(ShaderManagerEWC, NX::BaseFloatEWC);
+        ECS_DECL_NO_CNSTR(ShaderManagerEWC, NX::BaseFloatEWC);
 
     public:
+        explicit ShaderManagerEWC(const StringAtom& name = ""_atom);
+
         [[nodiscard]] const char* getIcon() override;
 
     protected:

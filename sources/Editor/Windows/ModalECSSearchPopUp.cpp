@@ -24,6 +24,15 @@ namespace NX
 {
     ECS_IMPL(ModalECSSearchPopUpEWC);
 
+    ModalECSSearchPopUpEWC::ModalECSSearchPopUpEWC(const StringAtom& name)
+        : BaseModalPopUp(componentType, name)
+    {
+        if (name.isEmpty())
+        {
+            setComponentName("ECS searcher"_atom);
+        }
+    }
+
     void ModalECSSearchPopUpEWC::open(StringAtom text,
                                       const std::function<void(BaseComponent::Ptr)>& callback)
     {
@@ -40,7 +49,6 @@ namespace NX
     void ModalECSSearchPopUpEWC::onInitialize()
     {
         BaseModalPopUp::onInitialize();
-        setComponentName("ECS searcher"_atom);
 
         _layout.setHorizontalAlign(Gui::Align::Center);
         _layout.setFlex(Gui::Flex::FlexWidthAndHeight);

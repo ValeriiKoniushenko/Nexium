@@ -25,6 +25,24 @@ namespace NX
     ECS_IMPL(ImageViewerEWC);
     ECS_IMPL(DummyEWC);
 
+    ImageViewerEWC::ImageViewerEWC(const StringAtom& name)
+        : BaseFloatEWC(componentType, name)
+    {
+        if (name.isEmpty())
+        {
+            setComponentName("Image viewer"_atom);
+        }
+    }
+
+    DummyEWC::DummyEWC(const StringAtom& name)
+        : BaseFloatEWC(componentType, name)
+    {
+        if (name.isEmpty())
+        {
+            setComponentName("Dummy window"_atom);
+        }
+    }
+
     const char* ImageViewerEWC::getIcon()
     {
         return ICON_FA_PICTURE_O;
@@ -57,8 +75,6 @@ namespace NX
     void ImageViewerEWC::onInitialize()
     {
         BaseFloatEWC::onInitialize();
-
-        setComponentName("Image viewer"_atom);
 
         _windowFlags |= ImGuiWindowFlags_NoScrollbar;
         _windowFlags |= ImGuiWindowFlags_NoScrollWithMouse;
@@ -192,8 +208,6 @@ namespace NX
     void DummyEWC::onInitialize()
     {
         BaseFloatEWC::onInitialize();
-
-        setComponentName("Dummy window"_atom);
     }
 
     void DummyEWC::onUpdate()

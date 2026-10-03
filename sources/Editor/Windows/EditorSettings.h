@@ -26,9 +26,11 @@ namespace NX
         CLASS();
         class BaseListItem : public Gui::HorizontalLayout
         {
-            ECS_DECL(BaseListItem, NX::Gui::HorizontalLayout);
+            ECS_DECL_NO_CNSTR(BaseListItem, NX::Gui::HorizontalLayout);
 
         public:
+            explicit BaseListItem(const StringAtom& name = ""_atom);
+
             [[nodiscard]] virtual bool containsString(const StringAtom& str);
 
             virtual void setReadOnly(bool value = true) = 0;
@@ -84,9 +86,11 @@ namespace NX
     CLASS();
     class EditorSettingsEWC : public BaseFloatEWC
     {
-        ECS_DECL(EditorSettingsEWC, NX::BaseFloatEWC);
+        ECS_DECL_NO_CNSTR(EditorSettingsEWC, NX::BaseFloatEWC);
 
     public:
+        explicit EditorSettingsEWC(const StringAtom& name = ""_atom);
+
         [[nodiscard]] const char* getIcon() override;
 
     protected:

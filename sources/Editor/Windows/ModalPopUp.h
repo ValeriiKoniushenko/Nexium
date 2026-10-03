@@ -20,9 +20,11 @@ namespace NX
     CLASS();
     class ModalPopUp : public BaseModalPopUp
     {
-        ECS_DECL(ModalPopUp, NX::BaseModalPopUp);
+        ECS_DECL_NO_CNSTR(ModalPopUp, NX::BaseModalPopUp);
 
     public:
+        explicit ModalPopUp(const StringAtom& name = ""_atom);
+
         void open(StringAtom text, const std::function<void(bool)>& okOrCancelCallback);
 
         static void Open(StringAtom text, const std::function<void(bool)>& okOrCancelCallback);

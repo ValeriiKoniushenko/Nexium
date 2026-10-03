@@ -39,6 +39,10 @@ namespace NX
         : BaseFloatEWC(componentType, name),
           _commonTreeFlags(ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth)
     {
+        if (name.isEmpty())
+        {
+            setComponentName("Scene"_atom);
+        }
     }
 
     void SceneTreeWindowEWC::highlightSpecificObject(const SceneObject* obj)
@@ -58,8 +62,6 @@ namespace NX
     void SceneTreeWindowEWC::onInitialize()
     {
         BaseFloatEWC::onInitialize();
-
-        setComponentName("Scene"_atom);
 
         setScene(&gGameInstance->gameScene);
 

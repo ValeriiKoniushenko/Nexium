@@ -19,9 +19,11 @@ namespace NX
     CLASS();
     class EditorMenuBarWindowEWC : public BaseMenuBarEWC
     {
-        ECS_DECL(EditorMenuBarWindowEWC, NX::BaseMenuBarEWC);
+        ECS_DECL_NO_CNSTR(EditorMenuBarWindowEWC, NX::BaseMenuBarEWC);
 
     public:
+        explicit EditorMenuBarWindowEWC(const StringAtom& name = ""_atom);
+
         EditorMenuBarWindowEWC(const EditorMenuBarWindowEWC&) = delete;
         EditorMenuBarWindowEWC(EditorMenuBarWindowEWC&&) noexcept = delete;
         EditorMenuBarWindowEWC& operator=(const EditorMenuBarWindowEWC&) = delete;
