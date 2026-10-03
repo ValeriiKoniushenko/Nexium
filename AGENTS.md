@@ -131,14 +131,17 @@ CI uses clang-format 19.1.7 and clang-tidy 19.1.7. Use the project helpers so fi
 selection and diagnostic handling match CI, and pass `--no-gitea` for local checks:
 
 ```sh
-python3 .gitea/check_clang_format.py --base develop --no-gitea
-python3 .gitea/check_clang_tidy.py --base develop --build-dir build --fail-on error --no-gitea
+python3 .gitea/check_clang_format.py --base develop --no-gitea \
+  --exclude dependencies/ --exclude docs/ --exclude cmake/ --exclude data/
+python3 .gitea/check_clang_tidy.py --base develop --build-dir build --fail-on error --no-gitea \
+  --exclude dependencies/ --exclude docs/ --exclude cmake/ --exclude data/
 ```
 
 Apply formatting with:
 
 ```sh
-python3 .gitea/check_clang_format.py --base develop --fix --no-gitea
+python3 .gitea/check_clang_format.py --base develop --fix --no-gitea \
+  --exclude dependencies/ --exclude docs/ --exclude cmake/ --exclude data/
 ```
 
 The branch-based helpers compare committed changes with `develop`. For uncommitted task
@@ -154,7 +157,8 @@ the repository-root `valgrind.supp`. Build and run the CI-aligned unit-test wrap
 
 ```sh
 cmake --build build --parallel --target Nexium_Tests
-python3 .gitea/check_valgrind.py --executable build/bin/Nexium_Tests --no-gitea --verbose
+python3 .gitea/check_valgrind.py --executable build/bin/Nexium_Tests \
+  --suppressions valgrind.supp --no-gitea --verbose
 ```
 
 Pass focused GoogleTest arguments after `--` only while investigating; run the full suite
@@ -164,7 +168,10 @@ a headless Xvfb environment with:
 
 ```sh
 python3 .gitea/run_game_valgrind.py \
-  --executable build/bin/TemplateGame --timeout 5 --no-gitea
+  --executable build/bin/TemplateGame --timeout 5 \
+  --suppressions valgrind.supp \
+  --window-cache data/cache/RootWindow.json \
+  --environment NEXIUM_HEADLESS_GL=1 --no-gitea
 ```
 
 ### `benchmark`

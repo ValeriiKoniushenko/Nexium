@@ -609,6 +609,12 @@ namespace NX
 
         try
         {
+            if (_openedPath.empty())
+            {
+                warnLog("Can't prepare explorer entries. The input path is empty");
+                return {};
+            }
+
             for (const auto& entry : std::filesystem::directory_iterator(_openedPath))
             {
                 if (!isFiltered(entry.path()))

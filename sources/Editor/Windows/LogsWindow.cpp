@@ -13,6 +13,8 @@
 #include "Editor/GuiComponents/Input.h"
 #include "Editor/GuiComponents/Spacer.h"
 #include "Editor/IconsFontAwesome.h"
+#include "Editor/Windows/BaseWindow.h"
+#include "Foundation/BaseLog.h"
 #include "Foundation/Configs.h"
 #include "NxWorld/Framework/GameInstance.h"
 
@@ -46,8 +48,15 @@ namespace NX
 
     nlohmann::json LogsWindowEWC::serialize() const
     {
-        auto json = R<LogsWindowEWC>::Serialize<RJsonResourceStream>(*this).getData();
+        RResourceStream<RJsonResourceStream> s;
+        // R<BaseFloatEWC>::Serialize(*this, s);
+        R<LogsWindowEWC>::Serialize(*this, s);
 
+        auto json = s.getData();
+
+#if defined(NEXIUM_DEBUG)
+        const auto jsonString = json.dump(4);
+#endif
         json["_levelFilter"] = nlohmann::json::array();
         for (auto&& [level, button] : _levelFilter)
         {
@@ -63,6 +72,7 @@ namespace NX
 
     void LogsWindowEWC::deserialize(RResourceStream<RJsonResourceStream>& stream)
     {
+        R<BaseFloatEWC>::Deserialize(stream, *this);
         R<LogsWindowEWC>::Deserialize(stream, *this);
         auto& rawData = stream.getData();
 
@@ -206,6 +216,13 @@ namespace NX
             {
                 auto& message = _logs[i].message;
                 auto level = _logs[i].level;
+
+                if (!_levelFilter[level])
+                {
+                    LOG_CRITICAL_ONCE(
+                        "LogsWindowEWC wan't initialized correctly. Impossible to print logs");
+                    continue;
+                }
 
                 if (!_levelFilter[level]->isActive() || canBeFiltered(message))
                 {

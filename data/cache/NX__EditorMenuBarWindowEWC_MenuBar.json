@@ -1,6 +1,6 @@
 {
     "_children": null,
-    "_isEnabled": false,
+    "_isEnabled": true,
     "_name": "Menu Bar",
     "_noTick": false,
     "_type": "NX::EditorMenuBarWindowEWC"

@@ -25,6 +25,7 @@ namespace NX
         explicit RootDockWindowEWC(const StringAtom& name = ""_atom);
 
         [[nodiscard]] std::vector<std::string> getCurrentWindowsList() const;
+        // void onPostDeserialize(AbstractComponent*, const RLogsCollector&) override;
 
     protected:
         void onInitialize() override;
