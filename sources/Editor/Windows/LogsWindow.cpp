@@ -49,7 +49,7 @@ namespace NX
     nlohmann::json LogsWindowEWC::serialize() const
     {
         RResourceStream<RJsonResourceStream> s;
-        // R<BaseFloatEWC>::Serialize(*this, s);
+        R<BaseFloatEWC>::Serialize(*this, s);
         R<LogsWindowEWC>::Serialize(*this, s);
 
         auto json = s.getData();
