@@ -111,6 +111,7 @@ target_link_libraries(Nexium_World
         ${MODULE_PRIVATE_TARGET}
         spdlog::spdlog
 )
+target_precompile_headers(Nexium_World PRIVATE WorldPCH.h)
 
 if(NEXIUM_ENABLE_3D_MODULE)
     target_compile_definitions(Nexium_World PRIVATE NEXIUM_ENABLE_3D_MODULE=1)
