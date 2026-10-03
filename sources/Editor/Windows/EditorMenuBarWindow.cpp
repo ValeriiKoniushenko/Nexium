@@ -20,7 +20,7 @@
 #include "Editors/TextEditor.h"
 #include "ImageViewer.h"
 #include "NxECSBasedEditor.h"
-#include "NxWorld/Framework/GameInstance.h"
+#include "NxWorld/Framework/GameInstanceAccess.h"
 #include "ShaderManager.h"
 #include "WorldSettings.h"
 
@@ -72,7 +72,7 @@ namespace NX
         {
             if (ImGui::MenuItem(ICON_FA_FLOPPY_O " Save all"))
             {
-                gGameInstance->saveAllToCache();
+                SaveAllToCache();
             }
             if (ImGui::MenuItem(ICON_FA_COG " Settings"))
             {

@@ -15,7 +15,9 @@
 #include "Editor/Windows/Editors/TextEditor.h"
 #include "Editor/Windows/ModalPopUp.h"
 #include "ImGui/imgui.h"
-#include "NxWorld/Framework/GameInstance.h"
+#include "NxSubsystems/AssetsManager/AssetsManager.h"
+#include "NxWorld/Framework/GameInstanceAccess.h"
+#include "NxWorld/Scene/Scene.h"
 
 #include <array>
 #include <chrono>
@@ -296,7 +298,7 @@ namespace NX
             {
                 if (ImGui::MenuItem("Spawn on scene"))
                 {
-                    gGameInstance->gameScene.addBlueprintObjectToScene(asset, "");
+                    GetGameScene()->addBlueprintObjectToScene(asset, "");
                 }
             }
 

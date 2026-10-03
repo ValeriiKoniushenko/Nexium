@@ -19,7 +19,9 @@
 #include "Editor/GuiComponents/List.h"
 #include "Editor/GuiComponents/Separator.h"
 #include "Foundation/Configs.h"
-#include "NxWorld/Framework/GameInstance.h"
+#include "NxSubsystems/AssetsManager/AssetsManager.h"
+#include "NxWorld/Framework/GameInstanceAccess.h"
+#include "NxWorld/Framework/World.h"
 
 #include <algorithm>
 #include <string_view>

@@ -15,7 +15,8 @@
 #include "Editor/GuiComponents/Input.h"
 #include "Editor/GuiComponents/Label.h"
 #include "ImGui/imgui.h"
-#include "NxWorld/Framework/GameInstance.h"
+#include "NxWorld/Framework/GameInstanceAccess.h"
+#include "NxWorld/Framework/World.h"
 
 #include <algorithm>
 #include <ranges>

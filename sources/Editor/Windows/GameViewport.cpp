@@ -13,7 +13,8 @@
 #include "Editor/IconsFontAwesome.h"
 #include "ImGui/imgui_internal.h"
 #include "NxWorld/Entities/Camera/Camera.h"
-#include "NxWorld/Framework/GameInstance.h"
+#include "NxWorld/Framework/GameInstanceAccess.h"
+#include "NxWorld/Framework/World.h"
 
 using namespace NX;
 
@@ -53,7 +54,7 @@ namespace NX
     void GameViewportEWC::onDraw()
     {
         _blocksPicking = false;
-        if (gGameInstance->renderMode != GameInstance::RenderMode::Editor)
+        if (!IsEditorMode())
         {
             return;
         }

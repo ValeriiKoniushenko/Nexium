@@ -16,7 +16,8 @@
 #include "Editor/Windows/BaseWindow.h"
 #include "Foundation/BaseLog.h"
 #include "Foundation/Configs.h"
-#include "NxWorld/Framework/GameInstance.h"
+#include "NxWorld/Framework/GameInstanceAccess.h"
+#include "NxWorld/Framework/World.h"
 
 using namespace NX;
 

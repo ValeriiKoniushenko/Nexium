@@ -12,6 +12,7 @@
 #pragma once
 
 #include "ApplicationIntegration.h"
+#include "GameInstanceAccess.h"
 #include "NxSubsystems/AssetsManager/AssetsManager.h"
 #include "NxSubsystems/Graphics/ShaderManager.h"
 #include "NxWorld/Scene/Scene.h"
@@ -100,9 +101,6 @@ namespace NX
         float _timeout = 0;
     };
 
-    [[nodiscard]] World* GetWorld();
-
-    [[nodiscard]] AssetsManager* GetAssetsManager();
 } // namespace NX
 
 extern std::unique_ptr<NX::GameInstance> gGameInstance;

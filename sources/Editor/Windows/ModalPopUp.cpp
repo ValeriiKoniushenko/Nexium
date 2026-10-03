@@ -13,7 +13,8 @@
 #include "Editor/GuiComponents/Button.h"
 #include "Editor/IconsFontAwesome.h"
 #include "ImGui/imgui.h"
-#include "NxWorld/Framework/GameInstance.h"
+#include "NxWorld/Framework/GameInstanceAccess.h"
+#include "NxWorld/Framework/World.h"
 
 using namespace NX;
 

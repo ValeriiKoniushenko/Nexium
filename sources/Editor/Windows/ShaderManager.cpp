@@ -20,7 +20,9 @@
 #include "Editor/IconsFontAwesome.h"
 #include "Editors/TextEditor.h"
 #include "Foundation/Configs.h"
-#include "NxWorld/Framework/GameInstance.h"
+#include "NxSubsystems/Graphics/ShaderManager.h"
+#include "NxWorld/Framework/GameInstanceAccess.h"
+#include "NxWorld/Framework/World.h"
 
 using namespace NX::Gui;
 using namespace NX;
@@ -185,7 +187,7 @@ namespace NX
 
     void ShaderManagerEWC::onDraw()
     {
-        const float dt = gGameInstance->world.getTimeDelta();
+        const float dt = GetWorld()->getTimeDelta();
         _headLayout.tick(dt);
 
         ImGui::Dummy({ 0, ImGui::GetStyle().ItemSpacing.y * 2.f });
@@ -298,8 +300,8 @@ namespace NX
         if (_comboView)
         {
             std::vector<StringAtom> shaders;
-            shaders.reserve(gGameInstance->shaderManager.getShaderMetas().size());
-            for (auto&& shader : gGameInstance->shaderManager.getShaderMetas())
+            shaders.reserve(GetShaderManager().getShaderMetas().size());
+            for (auto&& shader : GetShaderManager().getShaderMetas())
             {
                 shaders.push_back(shader.first.data());
             }

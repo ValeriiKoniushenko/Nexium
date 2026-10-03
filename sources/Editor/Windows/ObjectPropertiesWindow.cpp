@@ -26,7 +26,9 @@
     #include "NxWorld/Entities/Mesh/StaticMesh.h"
     #include "NxWorld/Entities/Mesh/StaticMeshBundle.h"
 #endif
-#include "NxWorld/Framework/GameInstance.h"
+#include "NxSubsystems/AssetsManager/AssetsManager.h"
+#include "NxWorld/Framework/GameInstanceAccess.h"
+#include "NxWorld/Framework/World.h"
 #include "NxWorld/Scene/Rectangle.h"
 
 using namespace Core;

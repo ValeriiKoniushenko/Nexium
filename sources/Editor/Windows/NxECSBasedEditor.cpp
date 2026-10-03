@@ -23,7 +23,10 @@
 #include "Editor/IconsFontAwesome.h"
 #include "ImGui/imgui_internal.h"
 #include "ModalECSSearchPopUp.h"
-#include "NxWorld/Framework/GameInstance.h"
+#include "NxSubsystems/AssetsManager/AssetsManager.h"
+#include "NxWorld/Framework/GameInstanceAccess.h"
+#include "NxWorld/Framework/World.h"
+#include "NxWorld/Scene/Scene.h"
 
 using namespace NX::Gui;
 using namespace NX;
@@ -277,7 +280,7 @@ namespace NX
         _targetAsset->syncWithFilesystem(assetData);
         _targetComponent = _targetAsset->getData().get();
 
-        for (auto& obj : gGameInstance->gameScene.getObjects())
+        for (auto& obj : GetGameScene()->getObjects())
         {
             Assert(obj);
             if (!obj)

@@ -18,7 +18,10 @@
 #include "Editor/GuiComponents/Separator.h"
 #include "Editor/GuiComponents/Spacer.h"
 #include "Foundation/BaseLog.h"
-#include "NxWorld/Framework/GameInstance.h"
+#include "NxSubsystems/AssetsManager/AssetsManager.h"
+#include "NxWorld/Framework/GameInstanceAccess.h"
+#include "NxWorld/Framework/World.h"
+#include "NxWorld/Scene/Scene.h"
 
 using namespace NX;
 
@@ -175,7 +178,7 @@ namespace NX
             return;
         }
 
-        gGameInstance->gameScene.addBlueprintObjectToScene(loadedAsset, name);
+        GetGameScene()->addBlueprintObjectToScene(loadedAsset, name);
 
         closeWindow();
     }

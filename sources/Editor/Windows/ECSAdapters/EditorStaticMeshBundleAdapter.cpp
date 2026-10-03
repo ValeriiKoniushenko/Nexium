@@ -16,7 +16,6 @@
 #include "Editor/GuiComponents/Misc.h"
 #include "NxWorld/Entities/Mesh/AssimpMisc/AssimpHelper.h"
 #include "NxWorld/Entities/Mesh/StaticMeshBundle.h"
-#include "NxWorld/Framework/GameInstance.h"
 
 using namespace NX::Gui;
 using namespace NX;

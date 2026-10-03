@@ -18,7 +18,9 @@
 #include "Editor/GuiComponents/Spacer.h"
 #include "Editor/IconsFontAwesome.h"
 #include "NxFundamental/Utils/Stringifier.h"
-#include "NxWorld/Framework/GameInstance.h"
+#include "NxWorld/Framework/GameInstanceAccess.h"
+#include "NxWorld/Framework/World.h"
+#include "NxWorld/Scene/Scene.h"
 #include "NxWorld/Scene/Spectator.h"
 
 using namespace NX::Gui;
@@ -174,7 +176,7 @@ namespace NX
 
     void EditorSettingsEWC::onDraw()
     {
-        const float tick = gGameInstance->world.getTimeDelta();
+        const float tick = GetWorld()->getTimeDelta();
 
         if (ImGui::BeginChild("MainMenu", glm::vec2(120.f, 0), ImGuiChildFlags_ResizeX))
         {
@@ -253,7 +255,7 @@ namespace NX
                 R<Keyboard::Key>::ToString(Widget::Input::editorImGuiShowRect).data());
         }
 
-        if (auto spectator = gGameInstance->gameScene.gerFirstOf<BaseSpectator>())
+        if (auto spectator = GetGameScene()->gerFirstOf<BaseSpectator>())
         {
             layout.addChildComponent<Spacer>();
             layout.addChildComponent<Label>()->setText("Spectator");

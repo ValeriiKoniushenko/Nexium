@@ -50,6 +50,30 @@ TEST(RuntimeTests, KeepsBoundGameInstance)
     EXPECT_EQ(&runtime.getGameInstance(), &gameInstance);
 }
 
+TEST(RuntimeTests, GameInstanceAccessExposesAvailableSubsystems)
+{
+    gGameInstance.reset();
+
+    EXPECT_EQ(NX::GetWorld(), nullptr);
+    EXPECT_EQ(NX::GetAssetsManager(), nullptr);
+    EXPECT_EQ(NX::GetGameScene(), nullptr);
+    EXPECT_FALSE(NX::IsEditorMode());
+
+    auto executableName = std::to_array("Nexium_Tests");
+    std::array<char*, 1> arguments{ executableName.data() };
+    gGameInstance = std::make_unique<NX::GameInstance>(1, arguments.data());
+
+    EXPECT_EQ(NX::GetWorld(), &gGameInstance->world);
+    EXPECT_EQ(NX::GetAssetsManager(), &gGameInstance->assets);
+    EXPECT_EQ(NX::GetGameScene(), &gGameInstance->gameScene);
+    EXPECT_TRUE(NX::IsEditorMode());
+
+    gGameInstance->renderMode = NX::GameInstance::RenderMode::GameOnly;
+    EXPECT_FALSE(NX::IsEditorMode());
+
+    gGameInstance.reset();
+}
+
 TEST(RuntimeTests, LinksWorldComponentRegistrars)
 {
     const auto& factory = NX::GetGlobalComponentFactory();

@@ -20,7 +20,8 @@
 #include "Editor/GuiComponents/VecInput.h"
 #include "Editor/IconsFontAwesome.h"
 #include "NxWorld/Entities/Camera/Camera.h"
-#include "NxWorld/Framework/GameInstance.h"
+#include "NxWorld/Framework/GameInstanceAccess.h"
+#include "NxWorld/Framework/World.h"
 #include "SceneTreeWindow.h"
 
 using namespace NX;
@@ -107,8 +108,8 @@ namespace NX
 
             _resetCameraButton = h->input->addChildComponent<Gui::Button>(ICON_FA_UNDO);
             _resetCameraButton->setWidth(30.f);
-            _subscriptionPool << _resetCameraButton->onClick->subscribeAndGetID(
-                []() { gGameInstance->resetCamera(); });
+            _subscriptionPool << _resetCameraButton->onClick->subscribeAndGetID([]()
+                                                                                { ResetCamera(); });
         }
 
         // ===================== LIGHTNING =========================

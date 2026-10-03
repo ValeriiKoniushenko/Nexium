@@ -46,6 +46,26 @@ namespace NX
         return nullptr;
     }
 
+    Scene* GetGameScene()
+    {
+        return gGameInstance ? &gGameInstance->gameScene : nullptr;
+    }
+
+    bool IsEditorMode()
+    {
+        return gGameInstance && gGameInstance->renderMode == GameInstance::RenderMode::Editor;
+    }
+
+    void ResetCamera()
+    {
+        gGameInstance->resetCamera();
+    }
+
+    void SaveAllToCache()
+    {
+        gGameInstance->saveAllToCache();
+    }
+
     GameInstance::GameInstance(int argc, char** argv)
     {
         NX_LATENCY_POINT("Game start");

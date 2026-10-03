@@ -15,9 +15,11 @@
 #include "ImGui/imgui.h"
 #include "ImGui/misc/cpp/imgui_stdlib.h"
 #include "ModalAssetsSearchPopUp.h"
+#include "NxSubsystems/AssetsManager/AssetsManager.h"
 #include "NxWorld/Entities/Actor.h"
 #include "NxWorld/Entities/Camera/Camera.h"
-#include "NxWorld/Framework/GameInstance.h"
+#include "NxWorld/Framework/GameInstanceAccess.h"
+#include "NxWorld/Framework/World.h"
 #include "NxWorld/Scene/Scene.h"
 
 using namespace NX;
@@ -63,7 +65,7 @@ namespace NX
     {
         BaseFloatEWC::onInitialize();
 
-        setScene(&gGameInstance->gameScene);
+        setScene(GetGameScene());
 
         _subscriptionPool << GetObjectSelectorManager()->onChange->subscribeAndGetID(
             [this](BaseComponent* comp, bool newValue)
@@ -228,7 +230,7 @@ namespace NX
         {
             if (ImGui::IsKeyPressed(ImGuiKey_Delete))
             {
-                gGameInstance->gameScene.deleteFromSceneOrFromObject(n);
+                GetGameScene()->deleteFromSceneOrFromObject(n);
             }
             else if (ImGui::IsItemClicked())
             {
@@ -244,11 +246,11 @@ namespace NX
         {
             if (ImGui::MenuItem(ICON_FA_TRASH " Delete"))
             {
-                gGameInstance->gameScene.deleteFromSceneOrFromObject(n);
+                GetGameScene()->deleteFromSceneOrFromObject(n);
             }
             if (ImGui::MenuItem(ICON_FA_CLONE " Duplicate"))
             {
-                gGameInstance->gameScene.duplicateSceneObject(n);
+                GetGameScene()->duplicateSceneObject(n);
             }
 
             if (auto* camera = n->tryCastTo<BaseCamera>())

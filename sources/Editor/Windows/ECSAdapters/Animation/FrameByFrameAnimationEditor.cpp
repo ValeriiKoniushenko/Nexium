@@ -11,8 +11,9 @@
 
 #include "Editor/IconsFontAwesome.h"
 #include "ImGui/imgui.h"
+#include "NxSubsystems/AssetsManager/AssetsManager.h"
 #include "NxWorld/Animations/FrameByFrame/FrameByFrameAnimator.h"
-#include "NxWorld/Framework/GameInstance.h"
+#include "NxWorld/Framework/GameInstanceAccess.h"
 
 #include <algorithm>
 #include <cstring>
