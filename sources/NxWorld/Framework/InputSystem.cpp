@@ -96,10 +96,13 @@ namespace NX
     void InputSystem::pushKeyEvent(Platform::Keyboard::Key key, int scancode,
                                    Platform::Keyboard::KeyState state, int mods)
     {
-        _events.push_back({ .key = NormalizeModifier(key),
-                            .state = state,
-                            .modifiers = ConvertModifiers(mods),
-                            .scancode = scancode });
+        _events.push_back({
+            .key = NormalizeModifier(key),
+            .state = state,
+            .modifiers = ConvertModifiers(mods),
+            .scancode = scancode,
+            .pressedKeys = {},
+        });
     }
     void InputSystem::registerController(InputController* controller)
     {

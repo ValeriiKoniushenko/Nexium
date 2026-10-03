@@ -16,7 +16,10 @@ namespace NX
 {
     KeyChord KeyChord::Exact(Platform::Keyboard::Key key)
     {
-        return { .triggerKey = key };
+        return {
+            .triggerKey = key,
+            .requiredKeys = {},
+        };
     }
 
     bool KeyChord::matches(Platform::Keyboard::Key eventKey,
