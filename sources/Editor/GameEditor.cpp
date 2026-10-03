@@ -100,7 +100,6 @@ namespace NX
         _windowTypes.emplace(wndType);
         auto& added = _windows.emplace_back(std::move(wnd));
 
-        added->initialize();
         auto name = added->getComponentName();
         if (added->getIcon())
         {

@@ -1,32 +1,32 @@
 {
     "_children": null,
     "_innerPosition": [
-        20.0,
-        72.0
+        0.0,
+        0.0
     ],
     "_innerSize": {
-        "height": 377.0,
-        "width": 202.0
+        "height": 0.0,
+        "width": 0.0
     },
-    "_isEnabled": true,
+    "_isEnabled": false,
     "_isFitContent": false,
     "_minWindowSize": {
         "height": 200.0,
         "width": 200.0
     },
-    "_name": " Scene",
+    "_name": "Scene",
     "_noTick": false,
     "_oldSize": {
-        "height": 423.0,
-        "width": 222.0
+        "height": -1.0,
+        "width": -1.0
     },
     "_position": [
-        10.0,
-        36.0
+        0.0,
+        0.0
     ],
     "_size": {
-        "height": 423.0,
-        "width": 222.0
+        "height": 0.0,
+        "width": 0.0
     },
     "_type": "NX::SceneTreeWindowEWC"
 }

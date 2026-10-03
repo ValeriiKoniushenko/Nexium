@@ -83,6 +83,11 @@ namespace NX
         return BaseComponent::getTags() | Tag_EditorWindow;
     }
 
+    void BaseEWC::onPostDeserialize(AbstractComponent* obj, const RLogsCollector& logs)
+    {
+        initialize();
+    }
+
     void BaseFloatEWC::setFitContent(bool v)
     {
         _isFitContent = v;

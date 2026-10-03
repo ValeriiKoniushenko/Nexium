@@ -1,6 +1,6 @@
 {
     "_children": null,
-    "_isEnabled": true,
+    "_isEnabled": false,
     "_name": "Root dock space",
     "_noTick": false,
     "_type": "NX::RootDockWindowEWC"

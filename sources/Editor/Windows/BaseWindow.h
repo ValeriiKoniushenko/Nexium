@@ -50,6 +50,7 @@ namespace NX
 
         [[nodiscard]] StringAtom getCacheHash() const override;
         [[nodiscard]] Tag getTags() const override;
+        void onPostDeserialize(AbstractComponent* obj, const RLogsCollector& logs) override;
 
     protected:
         virtual void onOpen() {}

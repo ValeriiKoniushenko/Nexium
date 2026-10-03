@@ -44,7 +44,7 @@ namespace NX
         {
             auto j = nlohmann::json::object();
             j["level"] = std::string(spdlog::level::to_string_view(level).data());
-            j["isActive"] = button->isActive();
+            j["isActive"] = button ? button->isActive() : true;
 
             json["_levelFilter"].push_back(std::move(j));
         }

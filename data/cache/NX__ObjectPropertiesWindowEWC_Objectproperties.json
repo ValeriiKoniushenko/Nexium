@@ -1,32 +1,32 @@
 {
     "_children": null,
     "_innerPosition": [
-        1190.0,
-        72.0
+        0.0,
+        0.0
     ],
     "_innerSize": {
-        "height": 618.0,
-        "width": 507.0
+        "height": 0.0,
+        "width": 0.0
     },
-    "_isEnabled": true,
+    "_isEnabled": false,
     "_isFitContent": false,
     "_minWindowSize": {
         "height": 200.0,
         "width": 200.0
     },
-    "_name": " Object properties",
+    "_name": "Object properties",
     "_noTick": false,
     "_oldSize": {
-        "height": 664.0,
-        "width": 527.0
+        "height": -1.0,
+        "width": -1.0
     },
     "_position": [
-        1180.0,
-        36.0
+        0.0,
+        0.0
     ],
     "_size": {
-        "height": 664.0,
-        "width": 527.0
+        "height": 0.0,
+        "width": 0.0
     },
     "_type": "NX::ObjectPropertiesWindowEWC"
 }

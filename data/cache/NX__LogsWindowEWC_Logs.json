@@ -1,22 +1,22 @@
 {
     "_children": null,
     "_innerPosition": [
-        20.0,
-        497.0
+        0.0,
+        0.0
     ],
     "_innerSize": {
-        "height": 193.0,
-        "width": 1677.0
+        "height": 0.0,
+        "width": 0.0
     },
-    "_isEnabled": true,
+    "_isEnabled": false,
     "_isFitContent": false,
     "_levelFilter": [
         {
-            "isActive": false,
+            "isActive": true,
             "level": "trace"
         },
         {
-            "isActive": false,
+            "isActive": true,
             "level": "debug"
         },
         {
@@ -41,19 +41,19 @@
         "height": 200.0,
         "width": 200.0
     },
-    "_name": " Logs",
+    "_name": "Logs",
     "_noTick": false,
     "_oldSize": {
-        "height": 239.0,
-        "width": 1697.0
+        "height": -1.0,
+        "width": -1.0
     },
     "_position": [
-        10.0,
-        461.0
+        0.0,
+        0.0
     ],
     "_size": {
-        "height": 239.0,
-        "width": 1697.0
+        "height": 0.0,
+        "width": 0.0
     },
     "_type": "NX::LogsWindowEWC"
 }
