@@ -72,7 +72,6 @@ namespace NX
         UserInterface userInterface;
         ShaderManager& shaderManager = GetShaderManager();
 
-        void resetCamera();
         RenderMode renderMode = RenderMode::Editor;
         Platform::Window* window = nullptr;
 
@@ -84,20 +83,18 @@ namespace NX
         virtual void onLoadShaders() {}
         virtual void onLoadCoreResources() {}
         virtual void onInitializeReadCache() {}
-        void internal_onAddObjectToScene(SceneObject* obj);
 
     protected:
         Core::DelegateSubscriberPoolGuard _subscriptionPool;
 
     private:
-        void bindCurrentScene(Scene* scene);
         void loadCoreResources();
         void startUpReadCache();
         void initializeShaders();
 
     private:
-        Core::DelegateSubscriberPoolGuard _sceneSubscriptionPool;
         bool _canSaveSceneLibrary = true;
+        bool _isInitialized = false;
 
         ApplicationIntegration* _applicationIntegration = nullptr;
 

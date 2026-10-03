@@ -21,59 +21,69 @@ namespace fs = std::filesystem;
 namespace NX
 {
 
-    void CacheSystem::write(const IDataIO& data, const nlohmann::json& json)
+    CacheSystem::CacheSystem()
+        : _cacheRoot(Config::Path::data)
     {
-        if (_failedReads.contains(getPath(data)))
+    }
+
+    bool CacheSystem::write(const IDataIO& data, const nlohmann::json& json)
+    {
+        if (_failedReads.contains(getCacheFilePath(data)))
         {
             errorLog("Save blocked after a failed load: {}. Reload successfully before saving."_f
-                     << getPath(data));
-            return;
+                     << getCacheFilePath(data));
+            return false;
         }
         if (!createCacheDirIfNotExist(data))
         {
-            return;
+            return false;
         }
 
         const auto str = json.dump(4);
 
         try
         {
-            WriteFileAtomically(getPath(data), str);
+            WriteFileAtomically(getCacheFilePath(data), str);
+            return true;
         }
         catch (const std::filesystem::filesystem_error& error)
         {
             errorLog("Can't save object {}. Path: {}. Details: {}"_f
-                     << data.getCacheHash() << getPath(data) << error.what());
+                     << data.getCacheHash() << getCacheFilePath(data) << error.what());
+            return false;
         }
     }
 
     bool CacheSystem::hasCache(const IDataIO& data) const
     {
-        return fs::exists(getPath(data));
+        return fs::exists(getCacheFilePath(data));
     }
 
-    void CacheSystem::clearCache(const IDataIO& data)
+    bool CacheSystem::clearCache(const IDataIO& data)
     {
         if (hasCache(data))
         {
             std::error_code ec;
-            fs::remove(getPath(data), ec);
+            fs::remove(getCacheFilePath(data), ec);
             if (ec)
             {
                 errorLog("Can't clear cache for this object {}. Path: {}. Details: {}"_f
-                         << data.getCacheHash() << getPath(data) << ec.message());
+                         << data.getCacheHash() << getCacheFilePath(data) << ec.message());
+                return false;
             }
         }
         if (!hasCache(data))
         {
-            _failedReads.erase(getPath(data));
+            _failedReads.erase(getCacheFilePath(data));
+            return true;
         }
+        return false;
     }
 
-    std::filesystem::path CacheSystem::getPath(const IDataIO& data) const
+    std::filesystem::path CacheSystem::getCacheFilePath(const IDataIO& data) const
     {
         std::string out;
-        for (auto c : data.getCacheHash().toStdString())
+        for (const unsigned char c : data.getCacheHash().toStdString())
         {
             out += (std::isalnum(c) || c == '_') ? c : '_';
         }
@@ -83,7 +93,7 @@ namespace NX
 
     std::filesystem::path CacheSystem::getCachePath(const IDataIO& data) const
     {
-        return Config::Path::data / data.getCacheDir();
+        return _cacheRoot / data.getCacheDir();
     }
 
     bool CacheSystem::createCacheDirIfNotExist(const IDataIO& data) const

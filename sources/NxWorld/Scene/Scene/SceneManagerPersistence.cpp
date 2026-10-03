@@ -7,6 +7,7 @@
 //
 //     http://www.apache.org/licenses/LICENSE-2.0
 
+#include "NxFundamental/ResourceManagement/DataStream.h"
 #include "SceneManager.h"
 
 #include <algorithm>
@@ -15,6 +16,11 @@
 
 namespace NX
 {
+    void SceneManager::importScenes()
+    {
+        importScenes(GetCacheSystem().getCacheFilePath(*_scenes.front()).parent_path());
+    }
+
     nlohmann::json SceneManager::serialize() const
     {
         auto data = nlohmann::json{ { "formatVersion", 1 },
@@ -80,11 +86,14 @@ namespace NX
             auto scene = Core::IntrusivePtr<Scene>(new Scene());
             scene->deserialize(stream);
             const auto name = scene->getSceneName();
+            const auto cacheKey = getPortableCacheKey(*scene);
             if (name.isEmpty()
                 || std::ranges::any_of(replacement, [&name](const auto& existing)
-                                       { return existing->getSceneName() == name; }))
+                                       { return existing->getSceneName() == name; })
+                || std::ranges::any_of(replacement, [&cacheKey](const auto& existing)
+                                       { return getPortableCacheKey(*existing) == cacheKey; }))
             {
-                throw std::runtime_error("Empty or duplicate scene name.");
+                throw std::runtime_error("Empty or conflicting scene name.");
             }
             scene->initialize();
             replacement.push_back(std::move(scene));

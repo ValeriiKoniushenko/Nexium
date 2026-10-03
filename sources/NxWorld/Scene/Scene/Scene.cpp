@@ -108,12 +108,12 @@ namespace NX
     void Scene::directDraw(NX::ShaderProgram* skyboxShader, NX::ShaderProgram* gridShader)
     {
         auto* world = GetWorld();
-        if (!world || !world->currentCamera)
+        if (!world || !world->getCurrentCamera())
         {
             return;
         }
 
-        auto& camera = *world->currentCamera;
+        auto& camera = *world->getCurrentCamera();
 
         if (gGameInstance->isEditorMode())
         {
@@ -154,7 +154,7 @@ namespace NX
             mesh->draw(camera);
         }
 
-        if (world->currentCamera->getType() == CameraType::Perspective && skyboxShader)
+        if (camera.getType() == CameraType::Perspective && skyboxShader)
         {
             skybox->draw(camera, *skyboxShader);
         }
@@ -171,6 +171,16 @@ namespace NX
     const Core::StringAtom& Scene::getSceneName() const noexcept
     {
         return _sceneName;
+    }
+
+    void Scene::setMainCamera(BaseCamera* camera)
+    {
+        _mainCamera = camera;
+    }
+
+    BaseCamera* Scene::getMainCamera() const noexcept
+    {
+        return dynamic_cast<BaseCamera*>(_mainCamera.get());
     }
 
     void Scene::internal_addObjectToScene(SceneObject* object)
@@ -424,9 +434,9 @@ namespace NX
             replacement._sceneObjects.push_back(std::move(object));
         }
 
-        if (gGameInstance && gGameInstance->scenes.getCurrentScene() == this)
+        if (auto* world = GetWorld(); world && GetSceneManager()->getCurrentScene() == this)
         {
-            gGameInstance->resetCamera();
+            world->resetCamera();
         }
         _sceneObjects.swap(replacement._sceneObjects);
         _sceneName = std::move(replacement._sceneName);

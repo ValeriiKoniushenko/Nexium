@@ -72,7 +72,7 @@ namespace NX
                     integration->updateInput();
                 }
 
-                if (_gameInstance.world.currentCamera)
+                if (_gameInstance.world.getCurrentCamera())
                 {
                     _gameInstance.scenes.getCurrentScene()->directDraw(
                         _gameInstance.shaderManager.getShaderProgram("skybox"_atom),
@@ -92,7 +92,7 @@ namespace NX
                 glClear(clearBits);
                 integration->tick(_gameInstance.world.getTimeDelta());
 
-                if (_gameInstance.world.currentCamera)
+                if (_gameInstance.world.getCurrentCamera())
                 {
                     integration->updateSceneInteraction(*_gameInstance.scenes.getCurrentScene());
                     integration->beforeSceneDraw();

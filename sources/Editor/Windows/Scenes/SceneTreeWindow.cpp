@@ -258,7 +258,7 @@ namespace NX
             {
                 if (ImGui::MenuItem("Set as a main camera"))
                 {
-                    GetWorld()->currentCamera = camera;
+                    GetWorld()->setCurrentCamera(camera);
                 }
             }
 

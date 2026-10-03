@@ -29,7 +29,7 @@ namespace NX
     void BaseObjectPicker::update(Scene& scene)
     {
         const auto* world = GetWorld();
-        if (!_requested || !world || !world->currentCamera)
+        if (!_requested || !world || !world->getCurrentCamera())
         {
             _requested = false;
             return;
@@ -44,7 +44,7 @@ namespace NX
         }
         pickPos = getPickedObject(gameViewportWnd);
 
-        onRequest(scene, world->currentCamera, pickPos);
+        onRequest(scene, world->getCurrentCamera(), pickPos);
     }
 
     glm::vec2 BaseObjectPicker::getPickedObject(const GameViewportEWC* wnd)

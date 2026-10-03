@@ -79,7 +79,7 @@ namespace NX
                      glm::vec2(1.0f, 0.0f));
 
         const auto& selected = GetObjectSelectorManager()->getSelectedObjects();
-        auto* camera = GetWorld()->currentCamera;
+        auto* camera = GetWorld()->getCurrentCamera();
         if (selected.size() == 1 && camera && renderSize.x > 0.f && renderSize.y > 0.f)
         {
             if (auto* object = dynamic_cast<SceneObject*>(selected.begin()->second.get());

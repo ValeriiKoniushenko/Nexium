@@ -22,6 +22,7 @@
 #include <fstream>
 #include <functional>
 #include <unordered_set>
+#include <utility>
 
 namespace NX
 {
@@ -29,25 +30,29 @@ namespace NX
 
     class CacheSystem : public Foundation::BaseLog, public Core::Singleton<CacheSystem>
     {
-        SINGLETONS_FRIEND(CacheSystem);
+        SINGLETONS_FRIEND_NO_CNSTR(CacheSystem);
 
     public:
+        CacheSystem(CacheSystem&&) = delete;
+        CacheSystem(const CacheSystem&) = delete;
+        CacheSystem& operator=(CacheSystem&&) = delete;
+        CacheSystem& operator=(const CacheSystem&) = delete;
         ~CacheSystem() override = default;
 
         template<Foundation::IsDataIO T>
-        void write(const T& data)
+        bool write(const T& data)
         {
             if constexpr (requires { data.serialize(); })
             {
-                write(data, data.serialize());
+                return write(data, data.serialize());
             }
             else
             {
-                write(data, R<T>::template Serialize<RJsonResourceStream>(data).getData());
+                return write(data, R<T>::template Serialize<RJsonResourceStream>(data).getData());
             }
         }
 
-        void write(const Foundation::IDataIO& data, const nlohmann::json& json);
+        bool write(const Foundation::IDataIO& data, const nlohmann::json& json);
 
         template<Foundation::IsDataIO T>
         void read(T& data)
@@ -55,7 +60,7 @@ namespace NX
             try
             {
                 std::string content;
-                auto path = getPath(data);
+                auto path = getCacheFilePath(data);
 
                 {
                     std::ifstream ifs(path);
@@ -84,13 +89,13 @@ namespace NX
             }
             catch (std::exception& ex)
             {
-                _failedReads.insert(getPath(data));
+                _failedReads.insert(getCacheFilePath(data));
                 warnLog("Can't read the object from cache: {} {}. Details: {}"_f
                         << data.getCacheDir().generic_string() << data.getCacheHash() << ex.what());
             }
             catch (...)
             {
-                _failedReads.insert(getPath(data));
+                _failedReads.insert(getCacheFilePath(data));
                 warnLog("Can't read the object from cache: {} {}. Due to unknown reasons."_f
                         << data.getCacheDir().generic_string() << data.getCacheHash());
             }
@@ -109,15 +114,23 @@ namespace NX
 
         [[nodiscard]] bool hasCache(const Foundation::IDataIO& data) const;
 
-        void clearCache(const Foundation::IDataIO& data);
+        bool clearCache(const Foundation::IDataIO& data);
+
+        [[nodiscard]] std::filesystem::path getCacheFilePath(const Foundation::IDataIO& data) const;
+        [[nodiscard]] const std::filesystem::path& getCacheRoot() const noexcept
+        {
+            return _cacheRoot;
+        }
+        void setCacheRoot(std::filesystem::path root) { _cacheRoot = std::move(root); }
 
         [[nodiscard]] spdlog::logger* getLogger() const override;
 
     private:
-        [[nodiscard]] std::filesystem::path getPath(const Foundation::IDataIO& data) const;
+        CacheSystem();
         [[nodiscard]] std::filesystem::path getCachePath(const Foundation::IDataIO& data) const;
         [[nodiscard]] bool createCacheDirIfNotExist(const Foundation::IDataIO& data) const;
 
+        std::filesystem::path _cacheRoot;
         // A failed load must not let shutdown autosave overwrite the unread document.
         std::unordered_set<std::filesystem::path> _failedReads;
     };

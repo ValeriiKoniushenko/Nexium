@@ -87,21 +87,22 @@ namespace NX
             _subscriptionPool << _showCameraButton->onClick->subscribeAndGetID(
                 []()
                 {
-                    if (!GetWorld()->currentCamera)
+                    auto* camera = GetWorld()->getCurrentCamera();
+                    if (!camera)
                     {
                         return;
                     }
 
                     if (auto sceneTree = GetEditor()->getWindow<SceneTreeWindowEWC>())
                     {
-                        sceneTree->highlightSpecificObject(GetWorld()->currentCamera);
+                        sceneTree->highlightSpecificObject(camera);
                     }
                 });
 
             _resetCameraButton = h->input->addChildComponent<Gui::Button>(ICON_FA_UNDO);
             _resetCameraButton->setWidth(30.f);
             _subscriptionPool << _resetCameraButton->onClick->subscribeAndGetID(
-                []() { gGameInstance->resetCamera(); });
+                []() { GetWorld()->resetCamera(); });
         }
 
         // ===================== LIGHTNING =========================
@@ -222,23 +223,23 @@ namespace NX
     {
         if (_showCameraButton)
         {
-            _showCameraButton->disableWidget(!GetWorld()->currentCamera);
+            _showCameraButton->disableWidget(!GetWorld()->getCurrentCamera());
         }
         if (_changeCameraButton)
         {
-            _changeCameraButton->disableWidget(!GetWorld()->currentCamera);
+            _changeCameraButton->disableWidget(!GetWorld()->getCurrentCamera());
         }
         if (_resetCameraButton)
         {
-            _resetCameraButton->disableWidget(!GetWorld()->currentCamera);
+            _resetCameraButton->disableWidget(!GetWorld()->getCurrentCamera());
         }
 
         if (_cameraInputField)
         {
             std::string str = "";
-            if (GetWorld()->currentCamera)
+            if (auto* camera = GetWorld()->getCurrentCamera())
             {
-                str = GetWorld()->currentCamera->getComponentName().c_str();
+                str = camera->getComponentName().c_str();
             }
             _cameraInputField->setInputtedData(std::move(str));
         }

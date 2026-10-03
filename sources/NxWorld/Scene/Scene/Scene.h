@@ -23,6 +23,7 @@
 namespace NX
 {
     class Actor;
+    class BaseCamera;
 
     CLASS();
     class Scene :
@@ -60,6 +61,9 @@ namespace NX
         void setSceneName(Core::StringAtom name);
 
         [[nodiscard]] const Core::StringAtom& getSceneName() const noexcept;
+
+        void setMainCamera(BaseCamera* camera);
+        [[nodiscard]] BaseCamera* getMainCamera() const noexcept;
 
         [[nodiscard]] const ObjectContainerT& getObjects() const noexcept { return _sceneObjects; }
         [[nodiscard]] ObjectContainerT& getObjects() noexcept { return _sceneObjects; }
@@ -104,6 +108,7 @@ namespace NX
         std::vector<Actor*> _postDrawBuffer;
 
         uint32_t _uniqueCounterName = 0;
+        Core::WeakPtr<SceneObject> _mainCamera;
     };
 
     template<IsComponent T>

@@ -12,6 +12,7 @@
 #pragma once
 
 #include "Core/Color.h"
+#include "Core/Delegate.h"
 #include "Foundation/BaseLog.h"
 #include "Foundation/Interfaces/DataStream.h"
 #include "GameState.h"
@@ -22,6 +23,8 @@
 namespace NX
 {
     class BaseCamera;
+    class Scene;
+    class SceneObject;
 
     CLASS();
     struct LightningProps : public Foundation::IDataIO
@@ -63,10 +66,16 @@ namespace NX
         PlayerState playerState;
         GameState gameState;
         LevelData levelData;
-        // It a reference to the real camera. It doesn't own it.
-        BaseCamera* currentCamera = nullptr;
 
     public:
+        void bindScene(Scene* scene);
+        void setCurrentCamera(BaseCamera* camera);
+        void resetCamera();
+        [[nodiscard]] BaseCamera* getCurrentCamera() const noexcept { return _currentCamera; }
+
+        Core::Delegate<void(BaseCamera*)>::Ptr onCurrentCameraChanged
+            = Core::Delegate<void(BaseCamera*)>::Create();
+
         [[nodiscard]] std::filesystem::path getCacheDir() const override;
         [[nodiscard]] Core::StringAtom getCacheHash() const override;
         [[nodiscard]] spdlog::logger* getLogger() const override;
@@ -77,6 +86,14 @@ namespace NX
         void internal_UpdateTimeDelta(float delta) noexcept;
 
     private:
+        void updateCurrentCamera(BaseCamera* camera);
+        void internal_onAddObjectToScene(SceneObject* object);
+
+    private:
+        Core::DelegateSubscriberPoolGuard _sceneSubscriptionPool;
+        Scene* _boundScene = nullptr;
+        // It is a reference to a camera owned by the bound scene.
+        BaseCamera* _currentCamera = nullptr;
         float _timeDelta = 0.f;
 
         // How long the application(world) is active in seconds

@@ -55,6 +55,18 @@ namespace NX
 
     GameInstance::GameInstance(int argc, char** argv)
     {
+        _subscriptionPool << scenes.onCurrentSceneChanged->subscribeAndGetID(
+            [this](Scene* scene) { world.bindScene(scene); });
+        _subscriptionPool << world.onCurrentCameraChanged->subscribeAndGetID(
+            [this](BaseCamera* camera)
+            {
+                if (!camera && _applicationIntegration && _isInitialized)
+                {
+                    _applicationIntegration->clearSceneRenderTarget();
+                }
+            });
+        world.bindScene(scenes.getCurrentScene());
+
         if (argc == 1)
         {
             return;
@@ -149,26 +161,13 @@ namespace NX
         {
             _applicationIntegration->initialize();
         }
+        _isInitialized = true;
 
         gGameInstance->scenes.getCurrentScene()->initialize();
-        _subscriptionPool << scenes.onCurrentSceneChanged->subscribeAndGetID(
-            [this](Scene* scene) { bindCurrentScene(scene); });
-        bindCurrentScene(scenes.getCurrentScene());
+        world.bindScene(scenes.getCurrentScene());
 
         startUpReadCache();
         loadCoreResources();
-    }
-
-    void GameInstance::bindCurrentScene(Scene* scene)
-    {
-        _sceneSubscriptionPool.clearAndReleaseAll();
-        resetCamera();
-        _sceneSubscriptionPool << scene->onObjectAdded->subscribeAndGetID(
-            [this](SceneObject* obj) { internal_onAddObjectToScene(obj); });
-        for (const auto& object : scene->getObjects())
-        {
-            internal_onAddObjectToScene(object.get());
-        }
     }
 
     void GameInstance::startUpReadCache()
@@ -180,7 +179,7 @@ namespace NX
         GetCacheSystem().tryRead(Platform::GetWindow());
         try
         {
-            scenes.importScenes(Foundation::Config::Path::data / "scenes");
+            scenes.importScenes();
             GetCacheSystem().tryRead(scenes);
         }
         catch (const std::exception& error)
@@ -213,15 +212,6 @@ namespace NX
         onSaveAll();
     }
 
-    void GameInstance::resetCamera()
-    {
-        world.currentCamera = nullptr;
-        if (_applicationIntegration)
-        {
-            _applicationIntegration->clearSceneRenderTarget();
-        }
-    }
-
     void GameInstance::updateViewport()
     {
         if (!isEditorMode())
@@ -236,9 +226,9 @@ namespace NX
 
         if (auto* world = GetWorld())
         {
-            if (world->currentCamera)
+            if (auto* camera = world->getCurrentCamera())
             {
-                world->currentCamera->invalidateCameraMatrices();
+                camera->invalidateCameraMatrices();
             }
         }
     }
@@ -362,23 +352,6 @@ namespace NX
     Core::StringAtom GameInstance::getCacheHash() const
     {
         return "GameInstance"_atom;
-    }
-
-    void GameInstance::internal_onAddObjectToScene(SceneObject* obj)
-    {
-        if (!world.currentCamera)
-        {
-            obj->forEach(
-                [this](BaseComponent* obj)
-                {
-                    if (auto* camera = dynamic_cast<BaseCamera*>(obj))
-                    {
-                        world.currentCamera = camera;
-                        return false;
-                    }
-                    return true;
-                });
-        }
     }
 
     void GameInstance::loadCoreResources()

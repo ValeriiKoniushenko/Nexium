@@ -42,6 +42,7 @@ namespace NX
 
         [[nodiscard]] nlohmann::json serialize() const;
         void deserialize(RResourceStream<RJsonResourceStream>& stream);
+        void importScenes();
         void importScenes(const std::filesystem::path& directory);
 
         [[nodiscard]] std::filesystem::path getCacheDir() const override { return "cache"; }
@@ -63,6 +64,10 @@ namespace NX
         Delegate<void(Scene*)>::Ptr onCurrentSceneChanged = Delegate<void(Scene*)>::Create();
 
         [[nodiscard]] spdlog::logger* getLogger() const override;
+
+    private:
+        [[nodiscard]] static std::string getPortableCacheKey(const Scene& scene);
+        [[nodiscard]] bool canUseSceneName(const Scene* scene, const Core::StringAtom& name) const;
 
     private:
         std::vector<Core::IntrusivePtr<Scene>> _scenes;

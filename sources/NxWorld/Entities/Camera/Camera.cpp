@@ -94,9 +94,9 @@ namespace NX
 
     BaseCamera::~BaseCamera()
     {
-        if (gGameInstance && this == GetWorld()->currentCamera)
+        if (auto* world = GetWorld(); world && this == world->getCurrentCamera())
         {
-            gGameInstance->resetCamera();
+            world->resetCamera();
         }
     }
 

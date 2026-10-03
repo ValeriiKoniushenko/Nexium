@@ -10,6 +10,7 @@
 #include "Editor/EditorIntegration.h"
 #include "Foundation/Configs.h"
 #include "NxFundamental/ECS/BaseComponent.h"
+#include "NxFundamental/ResourceManagement/DataStream.h"
 #include "NxRuntime/Runtime.h"
 #include "NxSubsystems/Input/InputManager.h"
 #include "NxWorld/Entities/Camera/Camera.h"
@@ -20,6 +21,7 @@
 
 #include "gtest/gtest.h"
 #include <array>
+#include <chrono>
 #include <fstream>
 
 namespace
@@ -43,12 +45,37 @@ namespace
             return Core::ISize2{ 800, 600 };
         }
     };
+
+    class TestDirectory final
+    {
+    public:
+        TestDirectory()
+            : path(
+                  std::filesystem::temp_directory_path()
+                  / ("nexium_runtime_tests_"
+                     + std::to_string(std::chrono::steady_clock::now().time_since_epoch().count())))
+        {
+            std::filesystem::create_directories(path);
+            previousCacheRoot = NX::GetCacheSystem().getCacheRoot();
+            NX::GetCacheSystem().setCacheRoot(path);
+        }
+
+        ~TestDirectory()
+        {
+            NX::GetCacheSystem().setCacheRoot(previousCacheRoot);
+            std::filesystem::remove_all(path);
+        }
+
+        std::filesystem::path path;
+        std::filesystem::path previousCacheRoot;
+    };
 } // namespace
 
 TEST(RuntimeTests, KeepsBoundGameInstance)
 {
     auto executableName = std::to_array("Nexium_Tests");
     std::array<char*, 1> arguments{ executableName.data() };
+    TestDirectory sceneDirectory;
     NX::GameInstance gameInstance{ 1, arguments.data() };
     NX::Runtime runtime{ gameInstance };
 
@@ -59,6 +86,7 @@ TEST(RuntimeTests, SceneChangesClearSelectionWithoutEditorWindows)
 {
     auto executableName = std::to_array("Nexium_Tests");
     std::array<char*, 1> arguments{ executableName.data() };
+    TestDirectory sceneDirectory;
     NX::GameInstance gameInstance{ 1, arguments.data() };
     NX::Runtime runtime{ gameInstance };
     NX::EditorIntegration editor{ runtime };
@@ -81,6 +109,33 @@ TEST(RuntimeTests, SceneChangesClearSelectionWithoutEditorWindows)
     selector.selectSingleObject(object.get());
     scenes.removeAllScenes();
     EXPECT_TRUE(selector.getSelectedObjects().empty());
+}
+
+TEST(RuntimeTests, SceneSwitchRestoresSelectedMainCamera)
+{
+    auto executableName = std::to_array("Nexium_Tests");
+    std::array<char*, 1> arguments{ executableName.data() };
+    TestDirectory sceneDirectory;
+    NX::GameInstance gameInstance{ 1, arguments.data() };
+    auto* initial = gameInstance.scenes.getCurrentScene();
+    auto initialRoot = NX::SceneObject::Create();
+    auto* firstCamera = initialRoot->addChildComponent<NX::OrthographicCamera>("First"_atom);
+    auto* selectedCamera = initialRoot->addChildComponent<NX::OrthographicCamera>("Selected"_atom);
+    initial->addObjectToScene(initialRoot);
+    EXPECT_EQ(gameInstance.world.getCurrentCamera(), firstCamera);
+    gameInstance.world.setCurrentCamera(selectedCamera);
+
+    auto& next = gameInstance.scenes.createNewScene();
+    auto nextRoot = NX::SceneObject::Create();
+    auto* nextCamera = nextRoot->addChildComponent<NX::OrthographicCamera>("Next"_atom);
+    next.addObjectToScene(nextRoot);
+
+    EXPECT_TRUE(gameInstance.scenes.setCurrentScene(&next));
+    EXPECT_EQ(gameInstance.world.getCurrentCamera(), nextCamera);
+    EXPECT_TRUE(gameInstance.scenes.setCurrentScene(initial));
+    EXPECT_EQ(gameInstance.world.getCurrentCamera(), selectedCamera);
+
+    gameInstance.scenes.removeScene(&next);
 }
 
 TEST(RuntimeTests, LinksWorldComponentRegistrars)

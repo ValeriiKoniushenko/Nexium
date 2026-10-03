@@ -9,6 +9,7 @@
 
 #include "../../sources/NxWorld/Scene/Scene/Scene.h"
 #include "Foundation/Configs.h"
+#include "NxFundamental/ResourceManagement/DataStream.h"
 #include "NxWorld/Framework/GameInstance.h"
 
 #include "gtest/gtest.h"
@@ -22,19 +23,22 @@ namespace
     protected:
         void SetUp() override
         {
-            char executable[] = "Nexium_Tests";
-            char* arguments[] = { executable };
-            gGameInstance = std::make_unique<NX::GameInstance>(1, arguments);
             root
                 = std::filesystem::temp_directory_path()
                   / ("nexium_scene_tests_"
                      + std::to_string(std::chrono::steady_clock::now().time_since_epoch().count()));
             std::filesystem::create_directories(root);
+            previousCacheRoot = NX::GetCacheSystem().getCacheRoot();
+            NX::GetCacheSystem().setCacheRoot(root);
+            char executable[] = "Nexium_Tests";
+            char* arguments[] = { executable };
+            gGameInstance = std::make_unique<NX::GameInstance>(1, arguments);
         }
 
         void TearDown() override
         {
             gGameInstance.reset();
+            NX::GetCacheSystem().setCacheRoot(previousCacheRoot);
             std::filesystem::remove_all(root);
         }
 
@@ -55,6 +59,7 @@ namespace
         }
 
         std::filesystem::path root;
+        std::filesystem::path previousCacheRoot;
     };
 } // namespace
 

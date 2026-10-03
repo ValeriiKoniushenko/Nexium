@@ -13,13 +13,17 @@
 #include "NxWorld/PrivateModuleInfo.h"
 
 #include <algorithm>
+#include <cctype>
 #include <string>
 
 namespace NX
 {
     SceneManager::SceneManager()
     {
-        removeAllScenes();
+        auto scene = Core::IntrusivePtr<Scene>(new Scene());
+        _scenes.push_back(std::move(scene));
+        _currentScene = _scenes.front().get();
+        _openScenes = { _currentScene };
     }
 
     Scene& SceneManager::createNewScene()
@@ -30,7 +34,7 @@ namespace NX
         do
         {
             name = Core::StringAtom::Intern("Scene_" + std::to_string(suffix++));
-        } while (getScene(name));
+        } while (!canUseSceneName(nullptr, name));
         scene->setSceneName(name);
         scene->initialize();
         _scenes.push_back(std::move(scene));
@@ -40,7 +44,7 @@ namespace NX
 
     bool SceneManager::renameScene(Scene* scene, Core::StringAtom newName)
     {
-        if (!scene || newName.isEmpty() || (getScene(newName) && getScene(newName) != scene))
+        if (!scene || newName.isEmpty())
         {
             return false;
         }
@@ -56,10 +60,72 @@ namespace NX
         {
             return true;
         }
-        GetCacheSystem().clearCache(*scene);
+        if (!canUseSceneName(scene, newName))
+        {
+            return false;
+        }
+
+        auto& cache = GetCacheSystem();
+        const auto oldPath = cache.getCacheFilePath(*scene);
         scene->setSceneName(newName);
-        GetCacheSystem().write(*scene);
+        const auto newPath = cache.getCacheFilePath(*scene);
+        try
+        {
+            if (!cache.write(*scene))
+            {
+                scene->setSceneName(oldName);
+                return false;
+            }
+        }
+        catch (const std::exception& error)
+        {
+            scene->setSceneName(oldName);
+            errorLog("Cannot rename scene '{}': {}"_f << oldName << error.what());
+            return false;
+        }
+
+        if (oldPath == newPath)
+        {
+            return true;
+        }
+
+        scene->setSceneName(oldName);
+        if (!cache.clearCache(*scene))
+        {
+            scene->setSceneName(newName);
+            cache.clearCache(*scene);
+            scene->setSceneName(oldName);
+            return false;
+        }
+        scene->setSceneName(newName);
         return true;
+    }
+
+    std::string SceneManager::getPortableCacheKey(const Scene& scene)
+    {
+        auto key = GetCacheSystem().getCacheFilePath(scene).filename().generic_string();
+        std::ranges::transform(key, key.begin(), [](const unsigned char value)
+                               { return static_cast<char>(std::tolower(value)); });
+        return key;
+    }
+
+    bool SceneManager::canUseSceneName(const Scene* scene, const Core::StringAtom& name) const
+    {
+        Scene candidate;
+        candidate.setSceneName(name);
+        const auto key = getPortableCacheKey(candidate);
+        const auto path = GetCacheSystem().getCacheFilePath(candidate);
+        return std::ranges::none_of(_scenes,
+                                    [scene, &key, &path](const auto& existing)
+                                    {
+                                        if (getPortableCacheKey(*existing) != key)
+                                        {
+                                            return false;
+                                        }
+                                        return existing.get() != scene
+                                               || GetCacheSystem().getCacheFilePath(*existing)
+                                                      != path;
+                                    });
     }
 
     Scene* SceneManager::getScene(const Core::StringAtom& sceneName) const
@@ -149,10 +215,16 @@ namespace NX
     {
         std::vector<Core::IntrusivePtr<Scene>> replacement;
         auto scene = Core::IntrusivePtr<Scene>(new Scene());
+        scene->initialize();
         replacement.push_back(std::move(scene));
         _scenes.swap(replacement);
         _currentScene = _scenes.front().get();
         _openScenes = { _currentScene };
+        for (const auto& oldScene : replacement)
+        {
+            GetCacheSystem().clearCache(*oldScene);
+        }
+        GetCacheSystem().write(*_currentScene);
         onCurrentSceneChanged->trigger(_currentScene);
     }
 
