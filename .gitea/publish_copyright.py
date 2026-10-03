@@ -1,80 +1,12 @@
 #!/usr/bin/env python3
-"""Publish copyright results as a Gitea PR review and commit status."""
+"""Compatibility launcher for the shared CI helper."""
 
-import argparse
-import json
 import sys
+from pathlib import Path
 
-from gitea_client import GiteaClient, classified_review_body, review_marker
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-
-def main() -> int:
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--report-path", default="copyright-report.json")
-    parser.add_argument("--dry-run", action="store_true")
-    args = parser.parse_args()
-
-    try:
-        with open(args.report_path) as report:
-            issues = json.load(report)["issues"]
-    except (OSError, KeyError, TypeError, json.JSONDecodeError) as error:
-        print(f"[copyright] cannot read report: {error}", file=sys.stderr)
-        return 1
-
-    marker = review_marker("copyright")
-    pr_number = GiteaClient.resolve_pr_number()
-    sha = GiteaClient.resolve_sha() or ""
-    if args.dry_run:
-        print(f"[dry-run] would publish {len(issues)} copyright violation(s)")
-        return 0
-
-    client = GiteaClient.from_env()
-    if client is None:
-        print("[copyright] Gitea client is not configured", file=sys.stderr)
-        return 1
-
-    if pr_number is not None:
-        try:
-            client.dismiss_previous_reviews(pr_number, marker=marker)
-            if issues:
-                details = "\n".join(
-                    f"- `{issue['path']}:{issue['line']}` — {issue['message']}"
-                    for issue in issues
-                )
-                client.create_review(
-                    pr_number,
-                    body=classified_review_body(
-                        (
-                            f"Copyright check found {len(issues)} violation(s).\n\n"
-                            f"{details}"
-                        ),
-                        "error",
-                    ),
-                    marker=marker,
-                )
-        except Exception as error:
-            print(f"[copyright] failed to publish PR review: {error}", file=sys.stderr)
-            return 1
-
-    if sha:
-        try:
-            client.publish_check(
-                sha,
-                "failure" if issues else "success",
-                "copyright",
-                (
-                    f"{len(issues)} copyright violation(s)"
-                    if issues
-                    else "copyright clean"
-                ),
-            )
-        except Exception as error:
-            print(
-                f"[copyright] failed to publish optional commit status: {error}",
-                file=sys.stderr,
-            )
-
-    return 0
+from scripts.ci.gitea.publish_copyright import main
 
 
 if __name__ == "__main__":

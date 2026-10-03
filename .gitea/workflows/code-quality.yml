@@ -5,21 +5,6 @@ permissions:
   contents: read
   pull-requests: write
 
-env:
-  JOBS: '4'
-  COMPILER: gcc
-  BUILD_TYPE: Debug
-  CACHE_VARIANT: cache/gcc/debug
-  PROJECT_DIR: /workspace/Vakon/Nexium/cache/gcc/debug
-  BUILD_DIR: /cache/build/gcc/debug
-  CCACHE_DIR: /ccache/gcc/debug
-  CLANG_CACHE_VARIANT: cache/clang/debug
-  CLANG_PROJECT_DIR: /workspace/Vakon/Nexium/cache/clang/debug
-  CLANG_BUILD_DIR: /cache/build/clang/debug
-  CLANG_CCACHE_DIR: /ccache/clang/debug
-  COVERAGE_BUILD_DIR: /cache/build/gcc/coverage
-  COVERAGE_CCACHE_DIR: /ccache/gcc/coverage
-
 jobs:
   build:
     name: Build
@@ -35,190 +20,105 @@ jobs:
         - /srv/ci-cache/build-cache:/cache/build
     steps:
       - uses: actions/checkout@v3
-        with:
-          submodules: false
-          fetch-depth: 0
-          path: ${{ env.CACHE_VARIANT }}
-
+        with: {submodules: false, fetch-depth: 0, path: cache/gcc/debug}
       - name: Init submodules
-        working-directory: ${{ env.PROJECT_DIR }}
+        working-directory: cache/gcc/debug
         run: |
-          git submodule sync --recursive
-          git submodule update --init --recursive --depth 1 --jobs "$JOBS" \
-            dependencies/JustReflectMe dependencies/Utils
-
-          set -- .agents/Agents dependencies/assimp dependencies/freetype \
-            dependencies/glfw dependencies/spdlog scripts
-          CACHE_KEY="$(date -u +%G-%V)-$(git ls-tree HEAD -- "$@" | sha256sum | cut -d' ' -f1)"
-          CACHE_STAMP=.git/third-party-submodules.cache
-          if [ ! -f "$CACHE_STAMP" ] || [ "$(cat "$CACHE_STAMP")" != "$CACHE_KEY" ] || \
-             git submodule status --recursive "$@" | grep -Eq '^[-+U]'; then
-            git submodule update --init --recursive --depth 1 --jobs "$JOBS" "$@"
-            printf '%s\n' "$CACHE_KEY" > "$CACHE_STAMP"
-          fi
-
+          . .gitea/ci-config.sh
+          git submodule update --init --recursive --depth 1 --jobs "$CI_JOBS" scripts
+          sh scripts/ci/gitea/runners/prepare_checkout.sh .gitea/ci-config.sh
+      - name: CI helper tests
+        working-directory: cache/gcc/debug
+        run: python3 -m unittest discover -s scripts/ci/gitea/tests -v
       - name: Copyright
-        working-directory: ${{ env.PROJECT_DIR }}
+        working-directory: cache/gcc/debug
         env:
           GITEA_TOKEN: ${{ secrets.GITEA_TOKEN }}
           GITEA_AUTH_SCHEME: Bearer
         run: |
           COPYRIGHT_FAILED=0
-          python3 .gitea/check_copyright.py \
-            --report-path "$RUNNER_TEMP/copyright-report.json" || COPYRIGHT_FAILED=1
-          python3 .gitea/publish_copyright.py \
-            --report-path "$RUNNER_TEMP/copyright-report.json" || COPYRIGHT_FAILED=1
+          sh scripts/ci/gitea/runners/run_ci_check.sh .gitea/ci-config.sh copyright || COPYRIGHT_FAILED=1
+          sh scripts/ci/gitea/runners/run_ci_check.sh .gitea/ci-config.sh publish-copyright || COPYRIGHT_FAILED=1
           printf 'COPYRIGHT_FAILED=%s\n' "$COPYRIGHT_FAILED" >> "$GITHUB_ENV"
-
       - name: Clang-format
-        working-directory: ${{ env.PROJECT_DIR }}
+        working-directory: cache/gcc/debug
         env:
           GITEA_TOKEN: ${{ secrets.GITEA_TOKEN }}
           GITEA_AUTH_SCHEME: Bearer
         run: |
           CLANG_FORMAT_FAILED=0
-          python3 .gitea/check_clang_format.py || CLANG_FORMAT_FAILED=1
+          sh scripts/ci/gitea/runners/run_ci_check.sh .gitea/ci-config.sh format || CLANG_FORMAT_FAILED=1
           printf 'CLANG_FORMAT_FAILED=%s\n' "$CLANG_FORMAT_FAILED" >> "$GITHUB_ENV"
-
-      - name: Configure
-        run: |
-          case "$COMPILER" in
-            clang) export CC=clang CXX=clang++ ;;
-            gcc) export CC=gcc CXX=g++ ;;
-            *) exit 1 ;;
-          esac
-          "$CXX" --version
-          BENCHMARKS_DISABLED=ON
-          if [ "$BUILD_TYPE" = Release ]; then BENCHMARKS_DISABLED=OFF; fi
-          cmake -S "$PROJECT_DIR" -B "$BUILD_DIR" -G Ninja \
-            -DCMAKE_BUILD_TYPE="$BUILD_TYPE" \
-            -DNEXIUM_DISABLE_TESTS=OFF \
-            -DNEXIUM_DISABLE_BENCHMARKS="$BENCHMARKS_DISABLED" \
-            -DNEXIUM_ENABLE_3D_MODULE="OFF" \
-            -DNEXIUM_VERIFY_INTERFACE_HEADER_SETS=ON \
-            -DNEXIUM_ENABLE_LAYER_CHECKS=ON
-
+      - name: Configure GCC Debug
+        working-directory: cache/gcc/debug
+        run: sh scripts/ci/gitea/runners/configure_variant.sh .gitea/ci-config.sh gcc
       - name: Clang-tidy
-        working-directory: ${{ env.PROJECT_DIR }}
+        working-directory: cache/gcc/debug
         env:
           GITEA_TOKEN: ${{ secrets.GITEA_TOKEN }}
           GITEA_AUTH_SCHEME: Bearer
-        run: timeout 10m python3 .gitea/check_clang_tidy.py --build-dir "$BUILD_DIR" --fail-on error
-
-      - name: Build
-        run: cmake --build "$BUILD_DIR" --parallel "$JOBS"
-
-      - name: Checkout Clang Debug
-        uses: actions/checkout@v3
-        with:
-          submodules: false
-          fetch-depth: 0
-          path: ${{ env.CLANG_CACHE_VARIANT }}
-
+        run: timeout 10m sh scripts/ci/gitea/runners/run_ci_check.sh .gitea/ci-config.sh tidy
+      - name: Build GCC Debug
+        working-directory: cache/gcc/debug
+        run: sh scripts/ci/gitea/runners/build_variant.sh .gitea/ci-config.sh gcc
+      - uses: actions/checkout@v3
+        with: {submodules: false, fetch-depth: 0, path: cache/clang/debug}
       - name: Init Clang submodules
-        working-directory: ${{ env.CLANG_PROJECT_DIR }}
+        working-directory: cache/clang/debug
         run: |
-          git submodule sync --recursive
-          git submodule update --init --recursive --depth 1 --jobs "$JOBS" \
-            dependencies/JustReflectMe dependencies/Utils
-
-          set -- .agents/Agents dependencies/assimp dependencies/freetype \
-            dependencies/glfw dependencies/spdlog scripts
-          CACHE_KEY="$(date -u +%G-%V)-$(git ls-tree HEAD -- "$@" | sha256sum | cut -d' ' -f1)"
-          CACHE_STAMP=.git/third-party-submodules.cache
-          if [ ! -f "$CACHE_STAMP" ] || [ "$(cat "$CACHE_STAMP")" != "$CACHE_KEY" ] || \
-             git submodule status --recursive "$@" | grep -Eq '^[-+U]'; then
-            git submodule update --init --recursive --depth 1 --jobs "$JOBS" "$@"
-            printf '%s\n' "$CACHE_KEY" > "$CACHE_STAMP"
-          fi
-
+          . .gitea/ci-config.sh
+          git submodule update --init --recursive --depth 1 --jobs "$CI_JOBS" scripts
+          sh scripts/ci/gitea/runners/prepare_checkout.sh .gitea/ci-config.sh
       - name: Configure Clang Debug
-        env:
-          CCACHE_DIR: ${{ env.CLANG_CCACHE_DIR }}
-        run: |
-          export CC=clang CXX=clang++
-          "$CXX" --version
-          cmake -S "$CLANG_PROJECT_DIR" -B "$CLANG_BUILD_DIR" -G Ninja \
-            -DCMAKE_BUILD_TYPE=Debug \
-            -DNEXIUM_DISABLE_TESTS=OFF \
-            -DNEXIUM_DISABLE_BENCHMARKS=ON \
-            -DNEXIUM_ENABLE_3D_MODULE=OFF \
-            -DNEXIUM_VERIFY_INTERFACE_HEADER_SETS=ON \
-            -DNEXIUM_ENABLE_LAYER_CHECKS=ON
-
-      - name: Build with Clang
-        env:
-          CCACHE_DIR: ${{ env.CLANG_CCACHE_DIR }}
-        run: cmake --build "$CLANG_BUILD_DIR" --parallel "$JOBS"
-
+        working-directory: cache/clang/debug
+        run: sh scripts/ci/gitea/runners/configure_variant.sh .gitea/ci-config.sh clang
+      - name: Build Clang Debug
+        working-directory: cache/clang/debug
+        run: sh scripts/ci/gitea/runners/build_variant.sh .gitea/ci-config.sh clang
       - name: Capture TemplateGame UI
-        working-directory: ${{ env.PROJECT_DIR }}
+        working-directory: cache/gcc/debug
         env:
           GITEA_TOKEN: ${{ secrets.GITEA_TOKEN }}
           GITEA_AUTH_SCHEME: Bearer
         run: |
-          SCREENSHOT="$RUNNER_TEMP/template-game-ui.png"
-          timeout 2m python3 .gitea/capture_game_ui.py \
-            --executable "$BUILD_DIR/bin/TemplateGame" \
-            --output "$SCREENSHOT"
-          {
-            echo "## TemplateGame UI"
-            echo "Captured and published \`template-game-ui.png\`."
-          } >> "$GITHUB_STEP_SUMMARY"
-
+          sh scripts/ci/gitea/runners/run_ci_check.sh .gitea/ci-config.sh capture-ui
+          echo '## TemplateGame UI' >> "$GITHUB_STEP_SUMMARY"
+          echo 'Captured and published `template-game-ui.png`.' >> "$GITHUB_STEP_SUMMARY"
       - name: Unit tests
-        run: timeout 3m "$BUILD_DIR/bin/Nexium_Tests"
-
+        working-directory: cache/gcc/debug
+        run: sh scripts/ci/gitea/runners/run_ci_check.sh .gitea/ci-config.sh tests
       - name: Configure unit-test coverage
-        env:
-          CCACHE_DIR: ${{ env.COVERAGE_CCACHE_DIR }}
-        run: |
-          export CC=gcc CXX=g++
-          cmake -E remove_directory "$COVERAGE_BUILD_DIR"
-          cmake -S "$PROJECT_DIR" -B "$COVERAGE_BUILD_DIR" -G Ninja \
-            -DCMAKE_BUILD_TYPE=Debug \
-            -DNEXIUM_DISABLE_TESTS=OFF \
-            -DNEXIUM_DISABLE_BENCHMARKS=ON \
-            -DNEXIUM_ENABLE_CODE_COVERAGE=ON \
-            -DNEXIUM_ENABLE_3D_MODULE=OFF \
-            -DNEXIUM_VERIFY_INTERFACE_HEADER_SETS=OFF \
-            -DNEXIUM_ENABLE_LAYER_CHECKS=OFF
-
+        working-directory: cache/gcc/debug
+        run: sh scripts/ci/gitea/runners/configure_coverage.sh .gitea/ci-config.sh
       - name: Generate unit-test coverage
-        env:
-          CCACHE_DIR: ${{ env.COVERAGE_CCACHE_DIR }}
-        run: timeout 45m cmake --build "$COVERAGE_BUILD_DIR" --parallel "$JOBS" --target Nexium_Coverage
-
+        working-directory: cache/gcc/debug
+        run: sh scripts/ci/gitea/runners/run_ci_check.sh .gitea/ci-config.sh coverage
       - name: Publish unit-test coverage
-        working-directory: ${{ env.PROJECT_DIR }}
+        working-directory: cache/gcc/debug
         env:
           GITEA_TOKEN: ${{ secrets.GITEA_TOKEN }}
           GITEA_AUTH_SCHEME: Bearer
         run: |
-          python3 .gitea/publish_coverage.py \
-            --summary "$COVERAGE_BUILD_DIR/coverage-report/summary.json" \
-            --report "$COVERAGE_BUILD_DIR/coverage-report/index.html"
+          sh scripts/ci/gitea/runners/run_ci_check.sh .gitea/ci-config.sh publish-coverage
+          . .gitea/ci-config.sh
           {
             echo '## Unit-test coverage'
             echo '```text'
-            tail -n 3 "$COVERAGE_BUILD_DIR/coverage-report/summary.txt"
+            tail -n 3 "$CI_COVERAGE_BUILD_DIR/coverage-report/summary.txt"
             echo '```'
           } >> "$GITHUB_STEP_SUMMARY"
-
       - name: Unit tests under Valgrind
-        working-directory: ${{ env.PROJECT_DIR }}
+        working-directory: cache/gcc/debug
         env:
           GITEA_TOKEN: ${{ secrets.GITEA_TOKEN }}
           GITEA_AUTH_SCHEME: Bearer
-        run: timeout 5m python3 .gitea/check_valgrind.py --executable "$BUILD_DIR/bin/Nexium_Tests" --verbose
-
+        run: sh scripts/ci/gitea/runners/run_ci_check.sh .gitea/ci-config.sh valgrind-tests
       - name: Headless game under Valgrind
-        working-directory: ${{ env.PROJECT_DIR }}
+        working-directory: cache/gcc/debug
         env:
           GITEA_TOKEN: ${{ secrets.GITEA_TOKEN }}
           GITEA_AUTH_SCHEME: Bearer
-        run: timeout 8m python3 .gitea/run_game_valgrind.py --executable "$BUILD_DIR/bin/TemplateGame" --timeout 5
-
+        run: sh scripts/ci/gitea/runners/run_ci_check.sh .gitea/ci-config.sh valgrind-game
       - name: Precheck results
         if: always()
         run: |
