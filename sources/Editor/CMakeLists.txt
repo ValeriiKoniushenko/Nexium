@@ -22,6 +22,7 @@ file(GLOB_RECURSE EDITOR_HEADERS CONFIGURE_DEPENDS "*.h")
 list(REMOVE_ITEM EDITOR_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/PrivateModuleInfo.cpp")
 list(REMOVE_ITEM EDITOR_HEADERS "${CMAKE_CURRENT_SOURCE_DIR}/PrivateModuleInfo.h")
 list(REMOVE_ITEM EDITOR_HEADERS "${CMAKE_CURRENT_SOURCE_DIR}/ImGuizmoIntegration.h")
+list(REMOVE_ITEM EDITOR_HEADERS "${CMAKE_CURRENT_SOURCE_DIR}/EditorPCH.h")
 foreach(EDITOR_HEADER IN LISTS EDITOR_HEADERS)
     if(EDITOR_HEADER MATCHES "\\.generated\\.h$")
         set_source_files_properties("${EDITOR_HEADER}" PROPERTIES SKIP_LINTING TRUE)
@@ -54,6 +55,7 @@ target_link_libraries(Nexium_Editor
         Core::ImGui
     PRIVATE ${MODULE_PRIVATE_TARGET} imguizmo::imguizmo
 )
+target_precompile_headers(Nexium_Editor PRIVATE EditorPCH.h)
 
 if(NEXIUM_ENABLE_3D_MODULE)
     target_compile_definitions(Nexium_Editor PUBLIC NEXIUM_ENABLE_3D_MODULE=1)
