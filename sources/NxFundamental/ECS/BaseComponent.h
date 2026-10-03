@@ -14,7 +14,7 @@
 #include "Core/IntrusivePtr.h"
 #include "Foundation/BaseLog.h"
 #include "NxFundamental/ITagHolder.h"
-#include "NxFundamental/ResourceManagement/JsonAdapter.h"
+#include "NxFundamental/ResourceManagement/ComponentJsonAdapter.h"
 
 #include <queue>
 #include <stack>

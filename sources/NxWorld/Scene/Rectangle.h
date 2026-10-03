@@ -11,6 +11,7 @@
 
 #pragma once
 
+#include "Core/Size.h"
 #include "NxWorld/Scene/SceneObject.h"
 
 #include <utility>

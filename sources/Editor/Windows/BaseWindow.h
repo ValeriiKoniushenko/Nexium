@@ -15,6 +15,7 @@
 #include "Core/Size.h"
 #include "Foundation/Interfaces/DataStream.h"
 #include "NxFundamental/ECS/BaseComponent.h"
+#include "NxFundamental/ResourceManagement/JsonAdapter.h"
 
 namespace NX
 {

@@ -14,6 +14,7 @@
 #include "../BaseAnimation.h"
 #include "Core/Position.h"
 #include "Foundation/BaseLog.h"
+#include "NxFundamental/ResourceManagement/JsonAdapter.h"
 
 #include <algorithm>
 #include <optional>

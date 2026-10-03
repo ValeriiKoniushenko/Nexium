@@ -12,7 +12,7 @@
 #pragma once
 
 #include "Core/Position.h"
-#include "JustReflectMe/Adapter.h"
+#include "NxFundamental/ResourceManagement/JsonAdapter.h"
 
 namespace NX
 {
