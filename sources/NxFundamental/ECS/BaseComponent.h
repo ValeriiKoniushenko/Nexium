@@ -630,6 +630,7 @@ namespace NX
         /// Call this function directly only if you sure in it.
         /// It should be called only once per one component.
         virtual void initialize();
+        virtual void deinitialize();
 
         [[nodiscard]] bool isInitialized() const noexcept { return _isInitialized; }
 

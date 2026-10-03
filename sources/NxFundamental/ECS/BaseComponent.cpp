@@ -445,6 +445,16 @@ namespace NX
         }
     }
 
+    void BaseComponent::deinitialize()
+    {
+        invalidate();
+
+        for (auto&& child : _children)
+        {
+            child->deinitialize();
+        }
+    }
+
     BaseComponent::BaseComponent(BaseComponent&& other) noexcept
         : AbstractComponent(std::move(static_cast<AbstractComponent&>(other))),
           _children(std::move(other._children)),
