@@ -237,6 +237,7 @@ namespace NX
         BaseComponent::onPostDeserialize(obj, logs);
         setBindings(_bindings);
     }
+
     void InputController::handleRoutedEvent(const KeyInputEvent& event)
     {
         if (event.state == Platform::Keyboard::KeyState::Released)
@@ -257,6 +258,7 @@ namespace NX
 
         handlePressedEvent(event);
     }
+
     void InputController::handleReleasedEvent(const KeyInputEvent& event)
     {
         for (auto it = _activeChords.begin(); it != _activeChords.end();)
@@ -273,6 +275,7 @@ namespace NX
             it = _activeChords.begin();
         }
     }
+
     void InputController::handlePressedEvent(const KeyInputEvent& event)
     {
         const auto* binding = findBestBinding(event);
@@ -283,6 +286,7 @@ namespace NX
 
         activateBinding(*binding, event);
     }
+
     const InputController::Binding* InputController::findBestBinding(
         const KeyInputEvent& event) const
     {
@@ -301,6 +305,7 @@ namespace NX
         }
         return best;
     }
+
     void InputController::activateBinding(const Binding& binding, const KeyInputEvent& event)
     {
         _activeChords.insert_or_assign(binding.action, binding.chord);
@@ -327,6 +332,7 @@ namespace NX
         }
         onAction->trigger(actionEvent);
     }
+
     void InputController::releaseBinding(const Core::StringAtom& action, const KeyInputEvent& event)
     {
         const auto binding = std::ranges::find_if(_bindings, [&action](const Binding& value)
@@ -357,6 +363,7 @@ namespace NX
             onAction->trigger(actionEvent);
         }
     }
+
     void InputController::beginInputFrame()
     {
         for (const auto& action : _transientActions)
@@ -366,6 +373,7 @@ namespace NX
         }
         _transientActions.clear();
     }
+
     void InputController::releaseAllActions()
     {
         for (auto& [action, pressed] : _actionStates)

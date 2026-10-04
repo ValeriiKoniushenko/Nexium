@@ -36,6 +36,17 @@ namespace NX
         initializeBindingsList();
     }
 
+    void BindingsListWidget::setBindings(const std::vector<StringAtom>& bindings)
+    {
+        _bindings = bindings;
+
+        if (_bindingsList)
+        {
+            _bindingsList->setData(_bindings);
+            _bindingsList->resetCurrentIndex();
+        }
+    }
+
     void BindingsListWidget::initializeToolbar()
     {
         constexpr float rowHeight = 40.f;

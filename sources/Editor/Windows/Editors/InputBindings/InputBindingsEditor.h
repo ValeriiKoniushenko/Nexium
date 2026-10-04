@@ -20,6 +20,11 @@ namespace NX
         ECS_DECL(InputBindingsEditor, NX::BaseFloatEWC);
 
     public:
+        void setBindings(const std::vector<StringAtom>& bindings)
+        {
+            _bindingsList.setBindings(bindings);
+        }
+
     protected:
         void onInitialize() override;
 
