@@ -10,10 +10,6 @@
 #pragma once
 
 #include "Editor/Windows/NxECSBasedEditor.h"
-#include "NxSubsystems/Input/InputTypes.h"
-
-#include <optional>
-#include <vector>
 
 namespace NX
 {
@@ -27,14 +23,8 @@ namespace NX
         [[nodiscard]] Core::StringAtom getProcessedAssetType() const override;
 
     protected:
-        void onInitialize() override;
         void onDraw(float dt) override;
         void onApplyAssetData(const nlohmann::json&) override {}
-
-    private:
-        KeyChord _recordedChord;
-        std::optional<std::size_t> _recordingBinding;
-        std::vector<Platform::Keyboard::Key> _recordedKeys;
     };
 } // namespace NX
 

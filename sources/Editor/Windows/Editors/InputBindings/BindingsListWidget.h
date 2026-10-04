@@ -31,6 +31,11 @@ namespace NX
         void initialize();
 
         void setBindings(const std::vector<StringAtom>& bindings);
+        void setCurrentIndex(std::size_t index);
+
+        Core::Delegate<void(std::size_t)>::Ptr onSelect
+            = Core::Delegate<void(std::size_t)>::Create();
+        Core::Delegate<void()>::Ptr onAddBinding = Core::Delegate<void()>::Create();
 
     private:
         void initializeToolbar();
@@ -53,7 +58,9 @@ namespace NX
 
         Core::DelegateSubscriber _addBindingSubscription;
         Core::DelegateSubscriber _searchSubscription;
+        Core::DelegateSubscriber _selectionSubscription;
 
         std::vector<StringAtom> _bindings;
+        std::size_t _currentIndex = 0;
     };
 } // namespace NX

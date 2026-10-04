@@ -17,6 +17,8 @@
 #include "ImGui/imgui_internal.h"
 #include "NxWorld/Framework/GameInstance.h"
 
+#include <algorithm>
+
 namespace NX
 {
 
@@ -39,11 +41,21 @@ namespace NX
     void BindingsListWidget::setBindings(const std::vector<StringAtom>& bindings)
     {
         _bindings = bindings;
+        _currentIndex = 0;
 
         if (_bindingsList)
         {
             _bindingsList->setData(_bindings);
             _bindingsList->resetCurrentIndex();
+        }
+    }
+
+    void BindingsListWidget::setCurrentIndex(std::size_t index)
+    {
+        _currentIndex = _bindings.empty() ? 0 : std::min(index, _bindings.size() - 1);
+        if (_bindingsList && !_bindings.empty())
+        {
+            _bindingsList->setCurrentIndex(_currentIndex);
         }
     }
 
@@ -84,6 +96,13 @@ namespace NX
         _bindingsList = _mainLayout.addChildComponent<Gui::ListView>();
         _bindingsList->setFlex(Gui::Flex::FlexWidthAndHeight);
         _bindingsList->setData(_bindings);
+        setCurrentIndex(_currentIndex);
+        _selectionSubscription = _bindingsList->onSelect->subscribeAndGetID(
+            [this](StringAtom)
+            {
+                _currentIndex = _bindingsList->getCurrentIndex();
+                onSelect->trigger(_currentIndex);
+            });
     }
 
     void BindingsListWidget::drawBindingsListWidget()
@@ -99,14 +118,7 @@ namespace NX
 
     void BindingsListWidget::addBinding()
     {
-        const auto nextIndex = _bindings.size() + 1;
-        _bindings.emplace_back("New binding {}"_f << nextIndex);
-
-        if (_bindingsList)
-        {
-            _bindingsList->setData(_bindings);
-            _bindingsList->setCurrentIndex(_bindings.size() - 1);
-        }
+        onAddBinding->trigger();
     }
 
     void BindingsListWidget::applySearchFilter(const char* text) const
