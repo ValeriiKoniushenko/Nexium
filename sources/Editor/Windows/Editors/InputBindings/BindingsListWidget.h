@@ -30,6 +30,8 @@ namespace NX
 
         void initialize();
 
+        void setBindings(const std::vector<StringAtom>& bindings);
+
     private:
         void initializeToolbar();
         void initializeBindingsList();

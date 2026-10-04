@@ -134,7 +134,9 @@ namespace NX
         auto* controller = dynamic_cast<InputController*>(getTargetComponent());
         if (!controller)
         {
-            warnLog("Selected ECS component has InputController type, but can't be cast to InputController");
+            warnLog(
+                "Selected ECS component has InputController type, but can't be cast to "
+                "InputController");
             return;
         }
 
@@ -258,12 +260,24 @@ namespace NX
 
         if (ImGui::Button(ICON_FA_PLUS " Add shortcut"))
         {
-            GetEditor()->showWindow<InputBindingsEditor>();
-
             bindings.push_back({ .action = "New action"_atom,
                                  .chord = KeyChord::Exact(Platform::Keyboard::Key::None),
                                  .trigger = InputActionTrigger::OnPress });
             changed = true;
+
+            if (auto* window = GetEditor()->getWindow<InputBindingsEditor>())
+            {
+                std::vector<StringAtom> names;
+                names.reserve(bindings.size());
+
+                for (const auto& binding : bindings)
+                {
+                    names.push_back(binding.action);
+                }
+
+                window->setBindings(names);
+                window->openWindow();
+            }
         }
 
         if (changed)
