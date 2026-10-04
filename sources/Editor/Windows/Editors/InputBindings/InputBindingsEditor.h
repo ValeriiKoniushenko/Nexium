@@ -9,29 +9,52 @@
 
 #pragma once
 
+#include "BindingSettingsWidget.h"
 #include "BindingsListWidget.h"
 #include "Editor/Windows/BaseWindow.h"
+#include "NxWorld/Framework/InputController.h"
+
+#include <optional>
 
 namespace NX
 {
+    class NxECSBasedEditorEWC;
+
     CLASS();
     class InputBindingsEditor : public BaseFloatEWC
     {
         ECS_DECL(InputBindingsEditor, NX::BaseFloatEWC);
 
     public:
-        void setBindings(const std::vector<StringAtom>& bindings)
-        {
-            _bindingsList.setBindings(bindings);
-        }
+        void setBindings(const std::vector<InputController::Binding>& bindings);
+        void setTarget(InputController* controller, NxECSBasedEditorEWC* owner = nullptr);
+        void selectBinding(std::size_t index);
 
     protected:
         void onInitialize() override;
 
         void onDraw() override;
+        void onClose() override;
+
+    private:
+        void refreshBindingsList();
+        void addBinding();
+        void deleteSelectedBinding();
+        void applyBindings();
+        void validateTarget();
 
     private:
         BindingsListWidget _bindingsList;
+        BindingSettingsWidget _bindingSettings;
+        std::vector<InputController::Binding> _bindings;
+        std::optional<std::size_t> _selectedBinding;
+        std::size_t _bindingSession = 0;
+        Core::WeakPtr<InputController> _targetController;
+        Core::WeakPtr<BaseComponent> _owner;
+        bool _hasTarget = false;
+        bool _hasOwner = false;
+        Core::DelegateSubscriber _selectionSubscription;
+        Core::DelegateSubscriber _addBindingSubscription;
     };
 } // namespace NX
 

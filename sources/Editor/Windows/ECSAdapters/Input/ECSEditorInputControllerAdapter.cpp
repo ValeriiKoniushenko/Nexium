@@ -16,95 +16,6 @@
 #include "ImGui/imgui.h"
 #include "NxWorld/Framework/InputController.h"
 
-#include <algorithm>
-#include <array>
-#include <optional>
-#include <string>
-
-namespace
-{
-    template<std::size_t Size>
-    void CopyToBuffer(std::array<char, Size>& destination, const Core::StringAtom& source)
-    {
-        destination.fill('\0');
-        const auto& text = source.toStdString();
-        std::memcpy(destination.data(), text.data(), std::min(text.size(), Size - 1));
-    }
-
-    Platform::Keyboard::Key NormalizeModifier(Platform::Keyboard::Key key)
-    {
-        using Key = Platform::Keyboard::Key;
-        if (key == Key::Right_Shift)
-        {
-            return Key::Left_Shift;
-        }
-        if (key == Key::Right_Control)
-        {
-            return Key::Left_Control;
-        }
-        if (key == Key::Right_Alt)
-        {
-            return Key::Left_Alt;
-        }
-        if (key == Key::Right_Super)
-        {
-            return Key::Left_Super;
-        }
-        return key;
-    }
-
-    bool IsModifier(Platform::Keyboard::Key key)
-    {
-        using Key = Platform::Keyboard::Key;
-        return key == Key::Left_Control || key == Key::Left_Shift || key == Key::Left_Alt
-               || key == Key::Left_Super;
-    }
-
-    std::string_view KeyText(Platform::Keyboard::Key key)
-    {
-        using Key = Platform::Keyboard::Key;
-        if (key == Key::Left_Control)
-        {
-            return "Ctrl";
-        }
-        if (key == Key::Left_Shift)
-        {
-            return "Shift";
-        }
-        if (key == Key::Left_Alt)
-        {
-            return "Alt";
-        }
-        if (key == Key::Left_Super)
-        {
-            return "Super";
-        }
-        return R<Key>::ToString(key);
-    }
-
-    std::string ChordText(const NX::KeyChord& chord)
-    {
-        std::string result;
-        const auto append = [&result](std::string_view value)
-        {
-            if (!result.empty())
-            {
-                result += " + ";
-            }
-            result += value;
-        };
-        for (const auto key : chord.requiredKeys)
-        {
-            append(KeyText(key));
-        }
-        if (chord.triggerKey != Platform::Keyboard::Key::None)
-        {
-            append(KeyText(chord.triggerKey));
-        }
-        return result.empty() ? "None" : result;
-    }
-} // namespace
-
 namespace NX
 {
     ECS_IMPL(ECSEditorInputControllerAdapter);
@@ -119,14 +30,9 @@ namespace NX
         return InputController::componentType;
     }
 
-    void ECSEditorInputControllerAdapter::onInitialize()
-    {
-        ECSEditorMimeAdapter::onInitialize();
-    }
-
     void ECSEditorInputControllerAdapter::onDraw(float)
     {
-        if (!Gui::CollapsingHeader("Input shortcuts", ImGuiTreeNodeFlags_DefaultOpen))
+        if (!Gui::CollapsingHeader("Input shortcuts"_atom.c_str(), ImGuiTreeNodeFlags_DefaultOpen))
         {
             return;
         }
@@ -134,156 +40,22 @@ namespace NX
         auto* controller = dynamic_cast<InputController*>(getTargetComponent());
         if (!controller)
         {
-            warnLog(
-                "Selected ECS component has InputController type, but can't be cast to "
-                "InputController");
             return;
         }
 
-        auto bindings = controller->getBindings();
-        bool changed = false;
-        std::optional<std::size_t> bindingToDelete;
-
-        for (std::size_t i = 0; i < bindings.size(); ++i)
+        ImGui::TextUnformatted(("{} shortcuts"_f << controller->getBindings().size()).c_str());
+        if (ImGui::Button(ICON_FA_KEYBOARD_O " Edit shortcuts"_atom.c_str()))
         {
-            auto& binding = bindings[i];
-            ImGui::PushID(static_cast<int>(i));
-
-            std::array<char, 128> action{};
-            CopyToBuffer(action, binding.action);
-            if (ImGui::InputText("Action", action.data(), action.size()))
+            auto* editor = GetEditor();
+            if (!editor)
             {
-                binding.action = Core::StringAtom{ action.data() };
-                changed = true;
+                return;
             }
-
-            const auto recording = _recordingBinding && *_recordingBinding == i;
-            if (recording)
+            if (auto* window = editor->getWindow<InputBindingsEditor>())
             {
-                const auto& keys = R<Platform::Keyboard::Key>::ToArrayC();
-                for (const auto rawKey : keys)
-                {
-                    const auto key = NormalizeModifier(rawKey);
-                    if (rawKey == Platform::Keyboard::Key::None
-                        || rawKey == Platform::Keyboard::Key::Last
-                        || !Platform::Keyboard::IsKeyPressed(rawKey)
-                        || std::ranges::find(_recordedKeys, key) != _recordedKeys.end())
-                    {
-                        continue;
-                    }
-                    _recordedKeys.push_back(key);
-                    if (!IsModifier(key))
-                    {
-                        _recordedChord.triggerKey = key;
-                    }
-                }
-                _recordedChord.requiredKeys.clear();
-                for (const auto key : _recordedKeys)
-                {
-                    if (key != _recordedChord.triggerKey)
-                    {
-                        _recordedChord.requiredKeys.push_back(key);
-                    }
-                }
-            }
-
-            const auto shortcutText = ChordText(recording ? _recordedChord : binding.chord);
-            ImGui::InputText("Shortcut", const_cast<char*>(shortcutText.c_str()),
-                             shortcutText.size() + 1, ImGuiInputTextFlags_ReadOnly);
-
-            if (!recording && ImGui::Button("Record"))
-            {
-                _recordingBinding = i;
-                _recordedChord = {};
-                _recordedKeys.clear();
-            }
-            if (recording)
-            {
-                ImGui::SameLine();
-                ImGui::BeginDisabled(_recordedChord.triggerKey == Platform::Keyboard::Key::None);
-                if (ImGui::Button("Apply"))
-                {
-                    binding.chord = _recordedChord;
-                    _recordingBinding.reset();
-                    changed = true;
-                }
-                ImGui::EndDisabled();
-                ImGui::SameLine();
-                if (ImGui::Button("Cancel"))
-                {
-                    _recordingBinding.reset();
-                }
-            }
-
-            const char* triggerName
-                = binding.trigger == InputActionTrigger::WhileHeld
-                      ? "While held"
-                      : (binding.trigger == InputActionTrigger::OnRelease ? "On release"
-                                                                          : "On press");
-            if (ImGui::BeginCombo("Trigger", triggerName))
-            {
-                if (ImGui::Selectable("While held",
-                                      binding.trigger == InputActionTrigger::WhileHeld))
-                {
-                    binding.trigger = InputActionTrigger::WhileHeld;
-                    changed = true;
-                }
-                if (ImGui::Selectable("On press", binding.trigger == InputActionTrigger::OnPress))
-                {
-                    binding.trigger = InputActionTrigger::OnPress;
-                    changed = true;
-                }
-                if (ImGui::Selectable("On release",
-                                      binding.trigger == InputActionTrigger::OnRelease))
-                {
-                    binding.trigger = InputActionTrigger::OnRelease;
-                    changed = true;
-                }
-                ImGui::EndCombo();
-            }
-
-            if (ImGui::Button(ICON_FA_TRASH " Delete shortcut"))
-            {
-                bindingToDelete = i;
-            }
-
-            ImGui::Separator();
-            ImGui::PopID();
-        }
-
-        if (bindingToDelete)
-        {
-            _recordingBinding.reset();
-            bindings.erase(bindings.begin() + static_cast<std::ptrdiff_t>(*bindingToDelete));
-            changed = true;
-        }
-
-        if (ImGui::Button(ICON_FA_PLUS " Add shortcut"))
-        {
-            bindings.push_back({ .action = "New action"_atom,
-                                 .chord = KeyChord::Exact(Platform::Keyboard::Key::None),
-                                 .trigger = InputActionTrigger::OnPress });
-            changed = true;
-
-            if (auto* window = GetEditor()->getWindow<InputBindingsEditor>())
-            {
-                std::vector<StringAtom> names;
-                names.reserve(bindings.size());
-
-                for (const auto& binding : bindings)
-                {
-                    names.push_back(binding.action);
-                }
-
-                window->setBindings(names);
+                window->setTarget(controller, getParentAs<NxECSBasedEditorEWC>());
                 window->openWindow();
             }
-        }
-
-        if (changed)
-        {
-            controller->setBindings(bindings);
-            makeParentDirty();
         }
     }
 } // namespace NX

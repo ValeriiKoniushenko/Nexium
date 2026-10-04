@@ -57,6 +57,7 @@ namespace NX::Gui
                     continue;
                 }
 
+                ImGui::PushID(static_cast<int>(i));
                 if (_needsFocus && i == _currentIndex)
                 {
                     ImGui::SetKeyboardFocusHere();
@@ -77,6 +78,7 @@ namespace NX::Gui
                 {
                     onDoubleClickSelect->trigger(_items.at(i));
                 }
+                ImGui::PopID();
             }
             ImGui::EndListBox();
         }
