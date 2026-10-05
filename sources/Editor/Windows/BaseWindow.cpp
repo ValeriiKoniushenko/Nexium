@@ -85,7 +85,7 @@ namespace NX
 
     void BaseEWC::onPostDeserialize(AbstractComponent* obj, const RLogsCollector& logs)
     {
-        initialize();
+        BaseComponent::onPostDeserialize(obj, logs);
     }
 
     void BaseFloatEWC::setFitContent(bool v)

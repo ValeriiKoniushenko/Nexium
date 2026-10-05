@@ -12,11 +12,11 @@
     "_isFitContent": false,
     "_levelFilter": [
         {
-            "isActive": true,
+            "isActive": false,
             "level": "trace"
         },
         {
-            "isActive": true,
+            "isActive": false,
             "level": "debug"
         },
         {

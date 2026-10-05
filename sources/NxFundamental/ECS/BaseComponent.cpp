@@ -356,7 +356,10 @@ namespace NX
             }
         }
 
-        initialize();
+        if (_isEnabled)
+        {
+            initialize();
+        }
     }
 
     void BaseComponent::onPreSerialize(const AbstractComponent* obj) const
@@ -453,6 +456,8 @@ namespace NX
         {
             child->deinitialize();
         }
+
+        onDeinitialize();
     }
 
     BaseComponent::BaseComponent(BaseComponent&& other) noexcept

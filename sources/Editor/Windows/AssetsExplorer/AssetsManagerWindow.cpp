@@ -821,7 +821,6 @@ namespace NX
 
         drawExplorerContextMenu();
 
-        ImGui::SetCursorPosX(ImGui::GetCursorPosX() + padding);
         ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, 0.0f);
 
         const auto entries = prepareExplorerEntries();

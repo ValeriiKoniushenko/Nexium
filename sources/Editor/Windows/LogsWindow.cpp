@@ -197,11 +197,9 @@ namespace NX
     void LogsWindowEWC::logsDraw()
     {
         const auto defaultSpace = ImGui::GetStyle().ItemSpacing.x;
-        const auto finalWidth = ImGui::GetContentRegionAvail().x - defaultSpace;
+        const auto finalWidth = ImGui::GetContentRegionAvail().x;
         const float inputPadding
             = (ImGui::GetStyle().FramePadding.x * 2.0f) + 20.0f; // tweak 20.0f as needed
-
-        ImGui::SetCursorPosX(ImGui::GetCursorPosX() + defaultSpace);
 
         if (ImGui::BeginChild("ScrollingRegion", glm::vec2(finalWidth, 0), 0))
         {

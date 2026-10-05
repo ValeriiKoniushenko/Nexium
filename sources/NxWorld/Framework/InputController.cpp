@@ -234,8 +234,8 @@ namespace NX
 
     void InputController::onPostDeserialize(AbstractComponent* obj, const RLogsCollector& logs)
     {
-        setBindings(_bindings);
         BaseComponent::onPostDeserialize(obj, logs);
+        setBindings(_bindings);
     }
     void InputController::handleRoutedEvent(const KeyInputEvent& event)
     {

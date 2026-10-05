@@ -854,6 +854,8 @@ namespace NX
         /// This method will be called automatically. Don't call it directly.
         virtual void onPreInitialize() {}
 
+        virtual void onDeinitialize() {}
+
     private:
         [[nodiscard]] BaseComponent* rawAddChildComponent(BaseComponent* newOne);
 
