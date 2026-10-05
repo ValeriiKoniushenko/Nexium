@@ -33,6 +33,7 @@ namespace NX
     protected:
         void onInitialize() override;
 
+        [[nodiscard]] bool beginWindowDraw() override;
         void onDraw() override;
         void onClose() override;
 

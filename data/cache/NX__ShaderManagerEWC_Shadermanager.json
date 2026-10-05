@@ -1,32 +1,32 @@
 {
     "_children": null,
     "_innerPosition": [
-        0.0,
-        0.0
+        1393.0,
+        72.0
     ],
     "_innerSize": {
-        "height": 0.0,
-        "width": 0.0
+        "height": 956.0,
+        "width": 507.0
     },
-    "_isEnabled": false,
+    "_isEnabled": true,
     "_isFitContent": false,
     "_minWindowSize": {
         "height": 200.0,
         "width": 200.0
     },
-    "_name": "Shader manager",
+    "_name": " Shader manager",
     "_noTick": false,
     "_oldSize": {
-        "height": -1.0,
-        "width": -1.0
+        "height": 1002.0,
+        "width": 527.0
     },
     "_position": [
-        0.0,
-        0.0
+        1383.0,
+        36.0
     ],
     "_size": {
-        "height": 0.0,
-        "width": 0.0
+        "height": 1002.0,
+        "width": 527.0
     },
     "_type": "NX::ShaderManagerEWC"
 }

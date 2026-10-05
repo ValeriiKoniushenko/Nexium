@@ -45,7 +45,12 @@ namespace NX
         void pushKeyEvent(Platform::Keyboard::Key key, int scancode,
                           Platform::Keyboard::KeyState state, int mods);
 
+        void pushMouseEvent(Platform::Mouse::Key button, Platform::Mouse::State state,
+                            Platform::Mouse::Mod mods);
+
         void dispatch(const KeyInputEvent& event);
+
+        void releaseControllerActions();
 
         [[nodiscard]] std::vector<InputController*> selectControllers() const;
 
@@ -68,7 +73,7 @@ namespace NX
         std::vector<InputController*> _routedControllers;
         InputContext _activeContext = InputContext::Editor;
 
-        std::vector<Platform::Keyboard::Key> _pressedKeys;
+        std::vector<InputButton> _pressedKeys;
 
         Core::DelegateSubscriberPoolGuard _subscriptions;
 

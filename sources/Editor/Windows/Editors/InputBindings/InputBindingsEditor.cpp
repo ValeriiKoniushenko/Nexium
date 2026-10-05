@@ -24,6 +24,16 @@ namespace NX
         _bindingsList.initialize();
     }
 
+    bool InputBindingsEditor::beginWindowDraw()
+    {
+        const bool visible = BaseFloatEWC::beginWindowDraw();
+        if (!visible)
+        {
+            _bindingSettings.cancelRecording();
+        }
+        return visible;
+    }
+
     void InputBindingsEditor::onDraw()
     {
         validateTarget();

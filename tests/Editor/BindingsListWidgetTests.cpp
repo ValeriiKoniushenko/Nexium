@@ -13,6 +13,8 @@
 #include "Editor/Windows/NxECSBasedEditor.h"
 #include "ImGui/imgui_internal.h"
 #include "NxWorld/Framework/GameInstance.h"
+#include "NxWorld/Framework/InputSystem.h"
+#include "Platform/Window.h"
 
 #include "gtest/gtest.h"
 #include <algorithm>
@@ -51,6 +53,8 @@ namespace
             std::array<char*, 1> arguments{ executable.data() };
             _previousGameInstance = std::move(gGameInstance);
             gGameInstance = std::make_unique<GameInstance>(1, arguments.data());
+            GetInputSystem().initialize(Platform::GetWindow());
+            GetInputSystem().resetInput();
 
             ImGui::CreateContext();
             auto& io = ImGui::GetIO();
@@ -65,12 +69,14 @@ namespace
         void TearDown() override
         {
             ImGui::DestroyContext();
+            GetInputSystem().resetInput();
             gGameInstance = std::move(_previousGameInstance);
         }
 
         template<class Draw>
         static std::string captureDrawnText(const Draw& draw)
         {
+            GetInputSystem().processEvents();
             ImGui::NewFrame();
             ImGui::SetNextWindowPos(glm::vec2(0));
             ImGui::SetNextWindowSize(ImGui::GetIO().DisplaySize);
@@ -141,25 +147,59 @@ namespace
         }
 
         template<class Draw>
-        static void clickAt(const Draw& draw, glm::vec2 position)
+        static void clickAt(const Draw& draw, glm::vec2 position, bool platformEvents = false)
         {
             auto& io = ImGui::GetIO();
             io.AddMousePosEvent(position.x, position.y);
             captureDrawnText(draw);
+            if (platformEvents)
+            {
+                Platform::GetWindow().onMouseKeyPressed->trigger(Platform::Mouse::Key::Left,
+                                                                 Platform::Mouse::State::Press,
+                                                                 Platform::Mouse::Mod::None);
+            }
             io.AddMouseButtonEvent(ImGuiMouseButton_Left, true);
             captureDrawnText(draw);
+            if (platformEvents)
+            {
+                Platform::GetWindow().onMouseKeyPressed->trigger(Platform::Mouse::Key::Left,
+                                                                 Platform::Mouse::State::Release,
+                                                                 Platform::Mouse::Mod::None);
+            }
             io.AddMouseButtonEvent(ImGuiMouseButton_Left, false);
             captureDrawnText(draw);
         }
 
         template<class Draw>
-        static void clickText(const Draw& draw, std::string_view text)
+        static void clickText(const Draw& draw, std::string_view text, bool platformEvents = false)
         {
             captureDrawnText(draw);
             captureDrawnText(draw);
             const auto positions = renderedTextPositions(text);
             ASSERT_FALSE(positions.empty()) << "Missing rendered control: " << text;
-            clickAt(draw, positions.front());
+            clickAt(draw, positions.front(), platformEvents);
+        }
+
+        template<class Draw>
+        static void moveIntoMouseCaptureArea(const Draw& draw)
+        {
+            captureDrawnText(draw);
+            const auto positions = renderedTextPositions("Click here to record mouse buttons");
+            ASSERT_FALSE(positions.empty());
+            ImGui::GetIO().AddMousePosEvent(positions.front().x, positions.front().y);
+            captureDrawnText(draw);
+        }
+
+        static void sendKey(Platform::Keyboard::Key key, Platform::Keyboard::KeyState state,
+                            int modifiers = 0)
+        {
+            Platform::GetWindow().onKeyPressed->trigger(key, 0, state, modifiers);
+        }
+
+        static void sendMouse(Platform::Mouse::Key button, Platform::Mouse::State state,
+                              Platform::Mouse::Mod modifiers = Platform::Mouse::Mod::None)
+        {
+            Platform::GetWindow().onMouseKeyPressed->trigger(button, state, modifiers);
         }
 
         template<class Draw>
@@ -342,6 +382,219 @@ namespace
         clickText(draw, "Delete shortcut");
         EXPECT_TRUE(controller->getBindings().empty());
         EXPECT_EQ(captureDrawnText(draw).find("Delete shortcut"), std::string::npos);
+    }
+
+    TEST_F(BindingsListWidgetTests, RecordsMouseWithHeldModifierAndConfirmsOnlyOnEnterPress)
+    {
+        using Key = Platform::Keyboard::Key;
+        using State = Platform::Keyboard::KeyState;
+        using Mouse = Platform::Mouse;
+        ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+        InputController::Ptr controller = new InputController;
+        controller->setBindings(
+            { { .action = "Jump"_atom, .chord = KeyChord::Exact(Key::Space) } });
+        TestInputBindingsEditor editor;
+        editor.initialize();
+        editor.setTarget(controller.get());
+        const auto draw = [&editor] { editor.onDraw(); };
+
+        clickText(draw, "Record", true);
+        EXPECT_TRUE(InputCapture::isActive());
+        sendKey(Key::Enter, State::Pressed);
+        EXPECT_NE(captureDrawnText(draw).find("Press Enter to confirm"), std::string::npos);
+        EXPECT_EQ(controller->getBindings()[0].chord.triggerKey, Key::Space);
+        sendKey(Key::Enter, State::Released);
+
+        moveIntoMouseCaptureArea(draw);
+        sendMouse(Mouse::Key::Right, Mouse::State::Press, Mouse::Mod::Control);
+        sendMouse(Mouse::Key::Right, Mouse::State::Release, Mouse::Mod::Control);
+        sendKey(Key::Right_Control, State::Released);
+        sendKey(Key::Enter, State::Repeated);
+        captureDrawnText(draw);
+        EXPECT_EQ(controller->getBindings()[0].chord.triggerKey, Key::Space);
+
+        sendKey(Key::Enter, State::Pressed);
+        ImGui::GetIO().AddKeyEvent(ImGuiKey_Enter, true);
+        const auto confirmed = captureDrawnText(draw);
+        EXPECT_TRUE(InputCapture::isActive());
+        sendKey(Key::Enter, State::Released);
+        ImGui::GetIO().AddKeyEvent(ImGuiKey_Enter, false);
+        captureDrawnText(draw);
+        EXPECT_FALSE(InputCapture::isActive());
+        const auto& chord = controller->getBindings()[0].chord;
+        EXPECT_EQ(chord.triggerKey, Mouse::Key::Right);
+        ASSERT_EQ(chord.requiredKeys.size(), 1);
+        EXPECT_EQ(chord.requiredKeys[0], Key::Left_Control);
+        EXPECT_FALSE(chord.contains(Key::Enter));
+        EXPECT_FALSE(chord.contains(Mouse::Key::Left));
+        EXPECT_NE(confirmed.find("Ctrl + Mouse Right"), std::string::npos);
+        EXPECT_EQ(confirmed.find("Press Enter to confirm"), std::string::npos);
+        EXPECT_EQ(confirmed.find("Apply"), std::string::npos);
+    }
+
+    TEST_F(BindingsListWidgetTests, RecordsEachPhysicalMouseButtonWithoutAliasDuplicates)
+    {
+        using Key = Platform::Keyboard::Key;
+        using Mouse = Platform::Mouse;
+        InputController::Ptr controller = new InputController;
+        controller->setBindings({ { .action = "Action"_atom } });
+        TestInputBindingsEditor editor;
+        editor.initialize();
+        editor.setTarget(controller.get());
+        const auto draw = [&editor] { editor.onDraw(); };
+
+        for (int code = GLFW_MOUSE_BUTTON_1; code <= GLFW_MOUSE_BUTTON_8; ++code)
+        {
+            SCOPED_TRACE(code);
+            clickText(draw, "Record", true);
+            moveIntoMouseCaptureArea(draw);
+            const auto button = static_cast<Mouse::Key>(code);
+            sendMouse(button, Mouse::State::Press);
+            sendMouse(button, Mouse::State::Release);
+            sendKey(Key::Kp_Enter, Platform::Keyboard::KeyState::Pressed);
+            captureDrawnText(draw);
+            sendKey(Key::Kp_Enter, Platform::Keyboard::KeyState::Released);
+
+            const auto& chord = controller->getBindings()[0].chord;
+            EXPECT_EQ(chord.triggerKey, button);
+            EXPECT_TRUE(chord.requiredKeys.empty());
+            EXPECT_FALSE(chord.contains(Key::Kp_Enter));
+        }
+    }
+
+    TEST_F(BindingsListWidgetTests, RecordsOnlyButtonsHeldWhenTheLatestTriggerIsPressed)
+    {
+        using Key = Platform::Keyboard::Key;
+        using State = Platform::Keyboard::KeyState;
+        using Mouse = Platform::Mouse;
+        InputController::Ptr controller = new InputController;
+        controller->setBindings({ { .action = "Action"_atom } });
+        TestInputBindingsEditor editor;
+        editor.initialize();
+        editor.setTarget(controller.get());
+        const auto draw = [&editor] { editor.onDraw(); };
+
+        clickText(draw, "Record", true);
+        sendKey(Key::K, State::Pressed);
+        sendKey(Key::K, State::Released);
+        sendKey(Key::Q, State::Pressed);
+        moveIntoMouseCaptureArea(draw);
+        sendMouse(Mouse::Key::Middle, Mouse::State::Press);
+        sendMouse(Mouse::Key::Middle, Mouse::State::Release);
+        sendKey(Key::Q, State::Released);
+        sendKey(Key::Enter, State::Pressed);
+        captureDrawnText(draw);
+        sendKey(Key::Enter, State::Released);
+
+        const auto& chord = controller->getBindings()[0].chord;
+        EXPECT_EQ(chord.triggerKey, Mouse::Key::Middle);
+        ASSERT_EQ(chord.requiredKeys.size(), 1);
+        EXPECT_EQ(chord.requiredKeys[0], Key::Q);
+        EXPECT_FALSE(chord.contains(Key::K));
+        EXPECT_FALSE(chord.contains(Key::Enter));
+    }
+
+    TEST_F(BindingsListWidgetTests, CancelAndSelectionChangesDiscardPendingRecordedButtons)
+    {
+        using Key = Platform::Keyboard::Key;
+        using State = Platform::Keyboard::KeyState;
+        InputController::Ptr controller = new InputController;
+        controller->setBindings({ { .action = "Jump"_atom, .chord = KeyChord::Exact(Key::Space) },
+                                  { .action = "Attack"_atom, .chord = KeyChord::Exact(Key::A) } });
+        TestInputBindingsEditor editor;
+        editor.initialize();
+        editor.setTarget(controller.get());
+        const auto draw = [&editor] { editor.onDraw(); };
+        const auto keySubscriptions = Platform::GetWindow().onKeyPressed->getSubscriptionsCount();
+        const auto mouseSubscriptions
+            = Platform::GetWindow().onMouseKeyPressed->getSubscriptionsCount();
+
+        clickText(draw, "Record", true);
+        sendKey(Key::S, State::Pressed);
+        clickText(draw, "Cancel", true);
+        sendKey(Key::S, State::Released);
+        sendKey(Key::Enter, State::Pressed);
+        sendKey(Key::Enter, State::Released);
+        captureDrawnText(draw);
+        EXPECT_EQ(controller->getBindings()[0].chord.triggerKey, Key::Space);
+        EXPECT_EQ(Platform::GetWindow().onKeyPressed->getSubscriptionsCount(), keySubscriptions);
+        EXPECT_EQ(Platform::GetWindow().onMouseKeyPressed->getSubscriptionsCount(),
+                  mouseSubscriptions);
+
+        clickText(draw, "Record", true);
+        sendKey(Key::S, State::Pressed);
+        sendKey(Key::Enter, State::Pressed);
+        editor.selectBinding(1);
+        const auto switched = captureDrawnText(draw);
+        sendKey(Key::S, State::Released);
+        sendKey(Key::Enter, State::Released);
+        EXPECT_EQ(controller->getBindings()[0].chord.triggerKey, Key::Space);
+        EXPECT_EQ(controller->getBindings()[1].chord.triggerKey, Key::A);
+        EXPECT_EQ(switched.find("Press Enter to confirm"), std::string::npos);
+        EXPECT_EQ(Platform::GetWindow().onKeyPressed->getSubscriptionsCount(), keySubscriptions);
+        EXPECT_EQ(Platform::GetWindow().onMouseKeyPressed->getSubscriptionsCount(),
+                  mouseSubscriptions);
+    }
+
+    TEST_F(BindingsListWidgetTests, EscapeAndFocusLossCancelRecordingWithoutChangingTheChord)
+    {
+        using Key = Platform::Keyboard::Key;
+        using State = Platform::Keyboard::KeyState;
+        InputController::Ptr controller = new InputController;
+        controller->setBindings(
+            { { .action = "Jump"_atom, .chord = KeyChord::Exact(Key::Space) } });
+        TestInputBindingsEditor editor;
+        editor.initialize();
+        editor.setTarget(controller.get());
+        const auto draw = [&editor] { editor.onDraw(); };
+
+        clickText(draw, "Record", true);
+        sendKey(Key::S, State::Pressed);
+        sendKey(Key::Escape, State::Pressed);
+        EXPECT_EQ(captureDrawnText(draw).find("Press Enter to confirm"), std::string::npos);
+        EXPECT_EQ(controller->getBindings()[0].chord.triggerKey, Key::Space);
+        sendKey(Key::S, State::Released);
+        sendKey(Key::Escape, State::Released);
+
+        clickText(draw, "Record", true);
+        sendKey(Key::S, State::Pressed);
+        Platform::GetWindow().onFocusChanged->trigger(false);
+        EXPECT_EQ(captureDrawnText(draw).find("Press Enter to confirm"), std::string::npos);
+        EXPECT_EQ(controller->getBindings()[0].chord.triggerKey, Key::Space);
+    }
+
+    TEST_F(BindingsListWidgetTests, CollapsingTheEditorCancelsRecordingAndReleasesInputCapture)
+    {
+        using Key = Platform::Keyboard::Key;
+        using State = Platform::Keyboard::KeyState;
+        InputController::Ptr controller = new InputController;
+        controller->setBindings(
+            { { .action = "Jump"_atom, .chord = KeyChord::Exact(Key::Space) } });
+        TestInputBindingsEditor editor;
+        editor.initialize();
+        editor.setTarget(controller.get());
+        editor.openWindow();
+        const auto draw = [&editor] { editor.tick(0.f); };
+        const auto keySubscriptions = Platform::GetWindow().onKeyPressed->getSubscriptionsCount();
+        const auto mouseSubscriptions
+            = Platform::GetWindow().onMouseKeyPressed->getSubscriptionsCount();
+
+        clickText(draw, "Record", true);
+        ASSERT_TRUE(InputCapture::isActive());
+        sendKey(Key::S, State::Pressed);
+        sendKey(Key::S, State::Released);
+        captureDrawnText(
+            [&editor]
+            {
+                ImGui::SetNextWindowCollapsed(true, ImGuiCond_Always);
+                editor.tick(0.f);
+            });
+
+        EXPECT_FALSE(InputCapture::isActive());
+        EXPECT_EQ(controller->getBindings()[0].chord.triggerKey, Key::Space);
+        EXPECT_EQ(Platform::GetWindow().onKeyPressed->getSubscriptionsCount(), keySubscriptions);
+        EXPECT_EQ(Platform::GetWindow().onMouseKeyPressed->getSubscriptionsCount(),
+                  mouseSubscriptions);
     }
 
     TEST_F(BindingsListWidgetTests, SwitchingTheOwnerSelectionClearsTheOldShortcutEditor)

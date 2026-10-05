@@ -14,16 +14,61 @@
 
 namespace NX
 {
-    KeyChord KeyChord::Exact(Platform::Keyboard::Key key)
+    std::size_t InputCapture::_captureCount = 0;
+    bool InputCapture::_awaitingRelease = false;
+    std::vector<InputButton> InputCapture::_heldButtons;
+
+    InputCapture::InputCapture()
     {
-        return {
-            .triggerKey = key,
-            .requiredKeys = {},
-        };
+        ++_captureCount;
     }
 
-    bool KeyChord::matches(Platform::Keyboard::Key eventKey,
-                           const std::vector<Platform::Keyboard::Key>& pressedKeys) const
+    InputCapture::~InputCapture()
+    {
+        if (--_captureCount == 0)
+        {
+            _awaitingRelease = !_heldButtons.empty();
+        }
+    }
+
+    bool InputCapture::isActive() noexcept
+    {
+        return _captureCount != 0 || _awaitingRelease;
+    }
+
+    void InputCapture::updateButton(InputButton button, Platform::Keyboard::KeyState state)
+    {
+        if (button.isNone())
+        {
+            return;
+        }
+        if (state == Platform::Keyboard::KeyState::Pressed
+            && std::ranges::find(_heldButtons, button) == _heldButtons.end())
+        {
+            _heldButtons.push_back(button);
+        }
+        else if (state == Platform::Keyboard::KeyState::Released)
+        {
+            std::erase(_heldButtons, button);
+            if (_heldButtons.empty())
+            {
+                _awaitingRelease = false;
+            }
+        }
+    }
+
+    void InputCapture::resetButtons()
+    {
+        _heldButtons.clear();
+        _awaitingRelease = false;
+    }
+
+    KeyChord KeyChord::Exact(InputButton key)
+    {
+        return { .triggerKey = key, .requiredKeys = {} };
+    }
+
+    bool KeyChord::matches(InputButton eventKey, const std::vector<InputButton>& pressedKeys) const
     {
         if (triggerKey != eventKey)
         {
@@ -31,11 +76,11 @@ namespace NX
         }
 
         return std::ranges::all_of(
-            requiredKeys, [&pressedKeys](Platform::Keyboard::Key key)
+            requiredKeys, [&pressedKeys](InputButton key)
             { return std::ranges::find(pressedKeys, key) != pressedKeys.end(); });
     }
 
-    bool KeyChord::contains(Platform::Keyboard::Key key) const
+    bool KeyChord::contains(InputButton key) const
     {
         return triggerKey == key || std::ranges::find(requiredKeys, key) != requiredKeys.end();
     }

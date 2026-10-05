@@ -16,6 +16,7 @@
 
 #include <algorithm>
 #include <array>
+#include <utility>
 
 namespace NX
 {
@@ -49,8 +50,15 @@ namespace NX
     void BindingSettingsWidget::cancelRecording()
     {
         _recording = false;
+        _confirmationRequested = false;
+        _cancellationRequested = false;
         _recordedChord = {};
-        _recordedKeys.clear();
+        _pressedButtons.clear();
+        _captureAreaValid = false;
+        _keyRecordingSubscription.release();
+        _mouseRecordingSubscription.release();
+        _focusRecordingSubscription.release();
+        _inputCapture.reset();
         _actionBufferInitialized = false;
     }
 
@@ -65,8 +73,11 @@ namespace NX
                                                - ImGui::GetStyle().ItemInnerSpacing.x));
 
         DrawResult result;
+        ImGui::BeginDisabled(_recording);
         result.changed = drawAction(binding);
+        ImGui::EndDisabled();
         result.changed = drawChord(binding) || result.changed;
+        ImGui::BeginDisabled(_recording);
         result.changed = drawTrigger(binding) || result.changed;
 
         ImGui::PopItemWidth();
@@ -76,6 +87,7 @@ namespace NX
             cancelRecording();
             result.deleteRequested = true;
         }
+        ImGui::EndDisabled();
         return result;
     }
 
@@ -100,9 +112,18 @@ namespace NX
 
     bool BindingSettingsWidget::drawChord(InputController::Binding& binding)
     {
-        if (_recording)
+        bool changed = false;
+        const bool finishedRecording
+            = _recording && (_cancellationRequested || _confirmationRequested);
+        if (_recording && _cancellationRequested)
         {
-            pollRecording();
+            cancelRecording();
+        }
+        else if (_recording && _confirmationRequested)
+        {
+            binding.chord = _recordedChord;
+            cancelRecording();
+            changed = true;
         }
 
         auto shortcutText = chordText(_recording ? _recordedChord : binding.chord).toStdString();
@@ -110,25 +131,17 @@ namespace NX
 
         if (!_recording)
         {
+            ImGui::BeginDisabled(finishedRecording);
             if (ImGui::Button("Record"_atom.c_str()))
             {
-                _recording = true;
-                _recordedChord = {};
-                _recordedKeys.clear();
+                startRecording();
             }
-            return false;
+            ImGui::EndDisabled();
+            return changed;
         }
 
-        bool changed = false;
-        ImGui::BeginDisabled(_recordedChord.triggerKey == Platform::Keyboard::Key::None);
-        if (ImGui::Button("Apply"_atom.c_str()))
-        {
-            binding.chord = _recordedChord;
-            cancelRecording();
-            changed = true;
-        }
-        ImGui::EndDisabled();
-        ImGui::SameLine();
+        ImGui::TextUnformatted("Press Enter to confirm"_atom.c_str());
+        drawMouseCaptureArea();
         if (ImGui::Button("Cancel"_atom.c_str()))
         {
             cancelRecording();
@@ -157,38 +170,153 @@ namespace NX
         return changed;
     }
 
-    void BindingSettingsWidget::pollRecording()
+    void BindingSettingsWidget::startRecording()
     {
-        if (!Platform::GetWindow().getRawWindow())
+        cancelRecording();
+        _recording = true;
+        _inputCapture.emplace();
+        auto& window = Platform::GetWindow();
+        _keyRecordingSubscription = window.onKeyPressed->subscribeAndGetID(
+            [this](Platform::Keyboard::Key key, int, Platform::Keyboard::KeyState state,
+                   int modifiers)
+            {
+                using Key = Platform::Keyboard::Key;
+                if (!_recording || _confirmationRequested || _cancellationRequested
+                    || (state != Platform::Keyboard::KeyState::Pressed
+                        && state != Platform::Keyboard::KeyState::Released))
+                {
+                    return;
+                }
+
+                if (key == Key::Enter || key == Key::Kp_Enter)
+                {
+                    if (state == Platform::Keyboard::KeyState::Pressed)
+                    {
+                        _confirmationRequested = !_recordedChord.triggerKey.isNone();
+                    }
+                    return;
+                }
+                if (key == Key::Escape)
+                {
+                    _cancellationRequested = state == Platform::Keyboard::KeyState::Pressed;
+                    return;
+                }
+
+                recordModifiers(modifiers);
+                const auto normalizedKey = normalizeModifier(key);
+                if (isModifier(normalizedKey))
+                {
+                    return;
+                }
+                if (state == Platform::Keyboard::KeyState::Pressed)
+                {
+                    recordButton(normalizedKey);
+                }
+                else
+                {
+                    std::erase(_pressedButtons, InputButton{ normalizedKey });
+                }
+            });
+        _mouseRecordingSubscription = window.onMouseKeyPressed->subscribeAndGetID(
+            [this](Platform::Mouse::Key button, Platform::Mouse::State state,
+                   Platform::Mouse::Mod modifiers)
+            {
+                const auto buttonCode = static_cast<int>(button);
+                if (!_recording || _confirmationRequested || _cancellationRequested
+                    || buttonCode < 0 || buttonCode > GLFW_MOUSE_BUTTON_8)
+                {
+                    return;
+                }
+
+                if (state == Platform::Mouse::State::Release)
+                {
+                    std::erase(_pressedButtons, InputButton{ button });
+                    return;
+                }
+                if (state != Platform::Mouse::State::Press || !isMouseInCaptureArea())
+                {
+                    return;
+                }
+
+                recordModifiers(static_cast<int>(modifiers));
+                recordButton(button);
+            });
+        _focusRecordingSubscription = window.onFocusChanged->subscribeAndGetID(
+            [this](bool focused)
+            {
+                if (!focused)
+                {
+                    _cancellationRequested = true;
+                }
+            });
+    }
+
+    void BindingSettingsWidget::recordButton(InputButton button)
+    {
+        if (button.isNone())
         {
             return;
         }
 
-        using Key = Platform::Keyboard::Key;
-        for (const auto rawKey : R<Key>::ToArrayC())
+        if (std::ranges::find(_pressedButtons, button) == _pressedButtons.end())
         {
-            const auto key = normalizeModifier(rawKey);
-            if (rawKey == Key::None || rawKey == Key::Last
-                || !Platform::Keyboard::IsKeyPressed(rawKey)
-                || std::ranges::find(_recordedKeys, key) != _recordedKeys.end())
+            _pressedButtons.push_back(button);
+        }
+        if (button.isMouse() || !isModifier(button.getKeyboardKey()))
+        {
+            _recordedChord.triggerKey = button;
+            _recordedChord.requiredKeys = _pressedButtons;
+            std::erase(_recordedChord.requiredKeys, button);
+        }
+    }
+
+    void BindingSettingsWidget::recordModifiers(int modifiers)
+    {
+        using Key = Platform::Keyboard::Key;
+        constexpr std::array modifierKeys{ std::pair{ GLFW_MOD_CONTROL, Key::Left_Control },
+                                           std::pair{ GLFW_MOD_SHIFT, Key::Left_Shift },
+                                           std::pair{ GLFW_MOD_ALT, Key::Left_Alt },
+                                           std::pair{ GLFW_MOD_SUPER, Key::Left_Super } };
+        for (const auto& [modifier, key] : modifierKeys)
+        {
+            if ((modifiers & modifier) != 0)
             {
-                continue;
+                recordButton(key);
             }
-            _recordedKeys.push_back(key);
-            if (!isModifier(key))
+            else
             {
-                _recordedChord.triggerKey = key;
+                std::erase(_pressedButtons, InputButton{ key });
             }
+        }
+    }
+
+    void BindingSettingsWidget::drawMouseCaptureArea()
+    {
+        ImGui::PushStyleColor(ImGuiCol_ChildBg, ImGui::GetStyleColorVec4(ImGuiCol_FrameBg));
+        if (ImGui::BeginChild("MouseCaptureArea"_atom.c_str(), { 0.f, 72.f },
+                              ImGuiChildFlags_Border))
+        {
+            ImGui::TextWrapped("%s"_atom.c_str(),
+                               "Click here to record mouse buttons"_atom.c_str());
+        }
+        ImGui::EndChild();
+        ImGui::PopStyleColor();
+        _captureAreaMin = ImGui::GetItemRectMin();
+        _captureAreaMax = ImGui::GetItemRectMax();
+        _captureAreaValid = true;
+    }
+
+    bool BindingSettingsWidget::isMouseInCaptureArea() const
+    {
+        if (!_captureAreaValid || !ImGui::GetCurrentContext())
+        {
+            return false;
         }
 
-        _recordedChord.requiredKeys.clear();
-        for (const auto key : _recordedKeys)
-        {
-            if (key != _recordedChord.triggerKey)
-            {
-                _recordedChord.requiredKeys.push_back(key);
-            }
-        }
+        const auto position = Platform::GetWindow().getRawWindow() ? Platform::Mouse::GetPosition()
+                                                                   : ImGui::GetIO().MousePos;
+        return position.x >= _captureAreaMin.x && position.y >= _captureAreaMin.y
+               && position.x < _captureAreaMax.x && position.y < _captureAreaMax.y;
     }
 
     Platform::Keyboard::Key BindingSettingsWidget::normalizeModifier(Platform::Keyboard::Key key)
@@ -216,8 +344,25 @@ namespace NX
                || key == Key::Left_Super;
     }
 
-    Core::StringAtom BindingSettingsWidget::keyText(Platform::Keyboard::Key key)
+    Core::StringAtom BindingSettingsWidget::buttonText(InputButton button)
     {
+        if (button.isMouse())
+        {
+            using Mouse = Platform::Mouse::Key;
+            switch (button.getMouseButton())
+            {
+                case Mouse::Left:
+                    return "Mouse Left"_atom;
+                case Mouse::Right:
+                    return "Mouse Right"_atom;
+                case Mouse::Middle:
+                    return "Mouse Middle"_atom;
+                default:
+                    return "Mouse {}"_f << (static_cast<int>(button.getMouseButton()) + 1);
+            }
+        }
+
+        const auto key = button.getKeyboardKey();
         using Key = Platform::Keyboard::Key;
         switch (key)
         {
@@ -245,13 +390,13 @@ namespace NX
             }
             result += value;
         };
-        for (const auto key : chord.requiredKeys)
+        for (const auto button : chord.requiredKeys)
         {
-            append(keyText(key));
+            append(buttonText(button));
         }
-        if (chord.triggerKey != Platform::Keyboard::Key::None)
+        if (!chord.triggerKey.isNone())
         {
-            append(keyText(chord.triggerKey));
+            append(buttonText(chord.triggerKey));
         }
         return result.isEmpty() ? "None"_atom : result;
     }

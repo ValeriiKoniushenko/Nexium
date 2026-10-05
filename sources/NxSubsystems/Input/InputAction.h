@@ -14,6 +14,7 @@
 #include "Core/Delegate.h"
 #include "Core/IntrusivePtr.h"
 #include "Core/String.h"
+#include "InputTypes.h"
 #include "Platform/Keyboard.h"
 #include "Platform/Mouse.h"
 #include "glm/glm.hpp"
@@ -108,6 +109,12 @@ namespace NX
         /// (repeatable, frequency, etc.) are met.
         virtual void update()
         {
+            if (InputCapture::isActive())
+            {
+                _lastState = State::None;
+                _lastUpdate = {};
+                return;
+            }
             if (_key)
             {
                 if (isKeyPressed())

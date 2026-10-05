@@ -9,8 +9,10 @@
 
 #pragma once
 
+#include "Core/Delegate.h"
 #include "NxWorld/Framework/InputController.h"
 
+#include <optional>
 #include <string>
 #include <vector>
 
@@ -35,11 +37,15 @@ namespace NX
         [[nodiscard]] bool drawChord(InputController::Binding& binding);
         [[nodiscard]] bool drawTrigger(InputController::Binding& binding);
 
-        void pollRecording();
+        void startRecording();
+        void recordButton(InputButton button);
+        void recordModifiers(int modifiers);
+        void drawMouseCaptureArea();
+        [[nodiscard]] bool isMouseInCaptureArea() const;
 
         [[nodiscard]] Platform::Keyboard::Key normalizeModifier(Platform::Keyboard::Key key);
         [[nodiscard]] bool isModifier(Platform::Keyboard::Key key);
-        [[nodiscard]] Core::StringAtom keyText(Platform::Keyboard::Key key);
+        [[nodiscard]] Core::StringAtom buttonText(InputButton button);
         [[nodiscard]] Core::StringAtom chordText(const KeyChord& chord);
         [[nodiscard]] Core::StringAtom triggerText(InputActionTrigger trigger);
 
@@ -48,11 +54,21 @@ namespace NX
 
     private:
         bool _recording = false;
+        bool _confirmationRequested = false;
+        bool _cancellationRequested = false;
+        std::optional<InputCapture> _inputCapture;
         KeyChord _recordedChord;
-        std::vector<Platform::Keyboard::Key> _recordedKeys;
+        std::vector<InputButton> _pressedButtons;
+        bool _captureAreaValid = false;
+        glm::vec2 _captureAreaMin{};
+        glm::vec2 _captureAreaMax{};
 
         bool _actionBufferInitialized = false;
         Core::StringAtom _displayedAction;
         std::string _actionBuffer;
+
+        Core::DelegateSubscriber _keyRecordingSubscription;
+        Core::DelegateSubscriber _mouseRecordingSubscription;
+        Core::DelegateSubscriber _focusRecordingSubscription;
     };
 } // namespace NX
