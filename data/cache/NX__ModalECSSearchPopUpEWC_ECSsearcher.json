@@ -1,12 +1,12 @@
 {
     "_children": null,
     "_innerPosition": [
-        0.0,
-        0.0
+        310.0,
+        128.0
     ],
     "_innerSize": {
-        "height": 0.0,
-        "width": 0.0
+        "height": 554.0,
+        "width": 480.0
     },
     "_isEnabled": false,
     "_isFitContent": false,
@@ -17,16 +17,16 @@
     "_name": "ECS searcher",
     "_noTick": false,
     "_oldSize": {
-        "height": -1.0,
-        "width": -1.0
+        "height": 600.0,
+        "width": 500.0
     },
     "_position": [
-        0.0,
-        0.0
+        300.0,
+        92.0
     ],
     "_size": {
-        "height": 0.0,
-        "width": 0.0
+        "height": 600.0,
+        "width": 500.0
     },
     "_type": "NX::ModalECSSearchPopUpEWC"
 }

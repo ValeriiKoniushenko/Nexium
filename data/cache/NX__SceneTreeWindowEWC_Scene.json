@@ -6,7 +6,7 @@
     ],
     "_innerSize": {
         "height": 404.0,
-        "width": 202.0
+        "width": 240.0
     },
     "_isEnabled": true,
     "_isFitContent": false,
@@ -18,7 +18,7 @@
     "_noTick": false,
     "_oldSize": {
         "height": 450.0,
-        "width": 222.0
+        "width": 260.0
     },
     "_position": [
         10.0,
@@ -26,7 +26,7 @@
     ],
     "_size": {
         "height": 450.0,
-        "width": 222.0
+        "width": 260.0
     },
     "_type": "NX::SceneTreeWindowEWC"
 }
