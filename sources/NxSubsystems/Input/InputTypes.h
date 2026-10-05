@@ -11,8 +11,11 @@
 
 #include "Core/String.h"
 #include "Platform/Keyboard.h"
+#include "Platform/Mouse.h"
 
+#include <cstddef>
 #include <cstdint>
+#include <variant>
 #include <vector>
 
 namespace NX
@@ -35,19 +38,98 @@ namespace NX
         All = (1 << 4) - 1
     };
 
+    class InputButton
+    {
+    public:
+        constexpr InputButton() = default;
+        constexpr InputButton(Platform::Keyboard::Key key)
+            : _value(key)
+        {
+        }
+        constexpr InputButton(Platform::Mouse::Key button)
+            : _value(button)
+        {
+        }
+
+        [[nodiscard]] constexpr bool isMouse() const noexcept
+        {
+            return std::holds_alternative<Platform::Mouse::Key>(_value);
+        }
+
+        [[nodiscard]] constexpr Platform::Keyboard::Key getKeyboardKey() const noexcept
+        {
+            if (const auto* key = std::get_if<Platform::Keyboard::Key>(&_value))
+            {
+                return *key;
+            }
+            return Platform::Keyboard::Key::None;
+        }
+
+        [[nodiscard]] constexpr Platform::Mouse::Key getMouseButton() const noexcept
+        {
+            if (const auto* button = std::get_if<Platform::Mouse::Key>(&_value))
+            {
+                return *button;
+            }
+            return Platform::Mouse::Key::None;
+        }
+
+        [[nodiscard]] constexpr bool isNone() const noexcept
+        {
+            return isMouse() ? getMouseButton() == Platform::Mouse::Key::None
+                             : getKeyboardKey() == Platform::Keyboard::Key::None;
+        }
+
+        [[nodiscard]] constexpr bool operator==(const InputButton&) const noexcept = default;
+
+    private:
+        std::variant<Platform::Keyboard::Key, Platform::Mouse::Key> _value
+            = Platform::Keyboard::Key::None;
+    };
+
+    /// @brief RAII guard that suspends input actions while recording a shortcut.
+    /// All instances share capture state: actions remain suspended while any guard exists.
+    /// After the last guard is destroyed, suspension continues until all tracked held
+    /// keyboard keys and mouse buttons are released or resetButtons() clears them.
+    class InputCapture
+    {
+    public:
+        InputCapture();
+        ~InputCapture();
+
+        InputCapture(const InputCapture&) = delete;
+        InputCapture(InputCapture&&) = delete;
+        InputCapture& operator=(const InputCapture&) = delete;
+        InputCapture& operator=(InputCapture&&) = delete;
+
+        /// Returns whether a guard exists or held buttons are still awaiting release.
+        [[nodiscard]] static bool isActive() noexcept;
+
+        /// Tracks button presses and releases, even when no guard exists.
+        static void updateButton(InputButton button, Platform::Keyboard::KeyState state);
+
+        /// Clears button tracking and pending releases without ending live captures.
+        static void resetButtons();
+
+    private:
+        static std::size_t _captureCount;
+        static bool _awaitingRelease;
+        static std::vector<InputButton> _heldButtons;
+    };
+
     struct KeyChord
     {
-        /// Key that completes the chord and triggers its action (for example S in Ctrl+Shift+S).
-        Platform::Keyboard::Key triggerKey = Platform::Keyboard::Key::None;
-        /// Keys that must already be held when triggerKey is pressed (for example Ctrl and Shift).
-        std::vector<Platform::Keyboard::Key> requiredKeys;
+        /// Keyboard key or mouse button that completes the chord and triggers its action.
+        InputButton triggerKey;
+        /// Keys and mouse buttons that must already be held when triggerKey is pressed.
+        std::vector<InputButton> requiredKeys;
 
-        [[nodiscard]] static KeyChord Exact(Platform::Keyboard::Key key);
+        [[nodiscard]] static KeyChord Exact(InputButton key);
 
-        [[nodiscard]] bool matches(Platform::Keyboard::Key eventKey,
-                                   const std::vector<Platform::Keyboard::Key>& pressedKeys) const;
+        [[nodiscard]] bool matches(InputButton eventKey,
+                                   const std::vector<InputButton>& pressedKeys) const;
 
-        [[nodiscard]] bool contains(Platform::Keyboard::Key key) const;
+        [[nodiscard]] bool contains(InputButton key) const;
     };
 
     ENUM_CLASS();
@@ -60,11 +142,11 @@ namespace NX
 
     struct KeyInputEvent
     {
-        Platform::Keyboard::Key key = Platform::Keyboard::Key::None;
+        InputButton key;
         Platform::Keyboard::KeyState state = Platform::Keyboard::KeyState::None;
         InputModifier modifiers = InputModifier::None;
         int scancode = 0;
-        std::vector<Platform::Keyboard::Key> pressedKeys;
+        std::vector<InputButton> pressedKeys;
     };
 
     struct InputActionEvent

@@ -12,7 +12,75 @@
 #include "InputSystem.h"
 
 #include <algorithm>
+#include <optional>
 #include <ranges>
+
+namespace
+{
+    Core::StringAtom MouseButtonName(Platform::Mouse::Key button)
+    {
+        using Button = Platform::Mouse::Key;
+        switch (button)
+        {
+            case Button::Left:
+                return "Left"_atom;
+            case Button::Right:
+                return "Right"_atom;
+            case Button::Middle:
+                return "Middle"_atom;
+            case Button::_4:
+                return "_4"_atom;
+            case Button::_5:
+                return "_5"_atom;
+            case Button::_6:
+                return "_6"_atom;
+            case Button::_7:
+                return "_7"_atom;
+            case Button::_8:
+                return "_8"_atom;
+            default:
+                return "None"_atom;
+        }
+    }
+
+    nlohmann::json SerializeInputButton(NX::InputButton button)
+    {
+        if (button.isMouse())
+        {
+            return { { "device", "Mouse" },
+                     { "button", MouseButtonName(button.getMouseButton()).toStdString() } };
+        }
+        return std::string{ R<Platform::Keyboard::Key>::ToString(button.getKeyboardKey()) };
+    }
+
+    std::optional<NX::InputButton> DeserializeInputButton(const nlohmann::json& value)
+    {
+        if (value.is_string())
+        {
+            if (const auto key = R<Platform::Keyboard::Key>::FromString(value.get<std::string>()))
+            {
+                return *key;
+            }
+        }
+        else if (value.is_number_integer())
+        {
+            return static_cast<Platform::Keyboard::Key>(value.get<int>());
+        }
+        else if (value.is_object() && value.contains("device") && value.at("device").is_string()
+                 && value.at("device").get<std::string>() == "Mouse" && value.contains("button"))
+        {
+            const auto& button = value.at("button");
+            if (button.is_string())
+            {
+                if (const auto key = R<Platform::Mouse::Key>::FromString(button.get<std::string>()))
+                {
+                    return *key;
+                }
+            }
+        }
+        return std::nullopt;
+    }
+} // namespace
 
 namespace NX
 {
@@ -40,19 +108,17 @@ namespace NX
 
     void to_json(nlohmann::json& json, const InputController::Binding& binding)
     {
-        json = nlohmann::json{
-            { "action", binding.action },
-            { "triggerKey",
-              std::string{ R<Platform::Keyboard::Key>::ToString(binding.chord.triggerKey) } },
-            { "trigger",
-              binding.trigger == InputActionTrigger::WhileHeld
-                  ? "WhileHeld"
-                  : (binding.trigger == InputActionTrigger::OnRelease ? "OnRelease" : "OnPress") }
-        };
+        json = nlohmann::json{ { "action", binding.action },
+                               { "triggerKey", SerializeInputButton(binding.chord.triggerKey) },
+                               { "trigger", binding.trigger == InputActionTrigger::WhileHeld
+                                                ? "WhileHeld"
+                                                : (binding.trigger == InputActionTrigger::OnRelease
+                                                       ? "OnRelease"
+                                                       : "OnPress") } };
         auto& keys = json["requiredKeys"] = nlohmann::json::array();
         for (const auto key : binding.chord.requiredKeys)
         {
-            keys.push_back(std::string{ R<Platform::Keyboard::Key>::ToString(key) });
+            keys.push_back(SerializeInputButton(key));
         }
     }
 
@@ -67,32 +133,16 @@ namespace NX
         const auto* const keyField = json.contains("triggerKey") ? "triggerKey" : "key";
         if (json.contains(keyField))
         {
-            if (json.at(keyField).is_string())
+            if (const auto button = DeserializeInputButton(json.at(keyField)))
             {
-                const auto key
-                    = R<Platform::Keyboard::Key>::FromString(json.at(keyField).get<std::string>());
-                binding.chord.triggerKey = key.value_or(Platform::Keyboard::Key::None);
-            }
-            else if (json.at(keyField).is_number_integer())
-            {
-                binding.chord.triggerKey
-                    = static_cast<Platform::Keyboard::Key>(json.at(keyField).get<int>());
+                binding.chord.triggerKey = *button;
             }
         }
         for (const auto& value : json.value("requiredKeys", nlohmann::json::array()))
         {
-            if (value.is_string())
+            if (const auto button = DeserializeInputButton(value))
             {
-                if (const auto key
-                    = R<Platform::Keyboard::Key>::FromString(value.get<std::string>()))
-                {
-                    binding.chord.requiredKeys.push_back(*key);
-                }
-            }
-            else if (value.is_number_integer())
-            {
-                binding.chord.requiredKeys.push_back(
-                    static_cast<Platform::Keyboard::Key>(value.get<int>()));
+                binding.chord.requiredKeys.push_back(*button);
             }
         }
 
@@ -130,7 +180,7 @@ namespace NX
     bool InputController::bind(const Core::StringAtom& action, const KeyChord& chord,
                                InputActionTrigger trigger)
     {
-        if (action.isEmpty() || chord.triggerKey == Platform::Keyboard::Key::None)
+        if (action.isEmpty() || chord.triggerKey.isNone())
         {
             return false;
         }
@@ -156,7 +206,7 @@ namespace NX
     bool InputController::bind(const Core::StringAtom& action, KeyChord chord,
                                ActionCallback callback, InputActionTrigger trigger)
     {
-        if (action.isEmpty() || chord.triggerKey == Platform::Keyboard::Key::None)
+        if (action.isEmpty() || chord.triggerKey.isNone())
         {
             return false;
         }

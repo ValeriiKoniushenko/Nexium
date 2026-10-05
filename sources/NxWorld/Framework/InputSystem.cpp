@@ -73,6 +73,9 @@ namespace NX
         _subscriptions << window.onKeyPressed->subscribeAndGetID(
             [this](Platform::Keyboard::Key key, int scancode, Platform::Keyboard::KeyState state,
                    int mods) { pushKeyEvent(key, scancode, state, mods); });
+        _subscriptions << window.onMouseKeyPressed->subscribeAndGetID(
+            [this](Platform::Mouse::Key button, Platform::Mouse::State state,
+                   Platform::Mouse::Mod mods) { pushMouseEvent(button, state, mods); });
         _subscriptions << window.onFocusChanged->subscribeAndGetID(
             [this](bool focused)
             {
@@ -96,13 +99,26 @@ namespace NX
     void InputSystem::pushKeyEvent(Platform::Keyboard::Key key, int scancode,
                                    Platform::Keyboard::KeyState state, int mods)
     {
-        _events.push_back({
-            .key = NormalizeModifier(key),
-            .state = state,
-            .modifiers = ConvertModifiers(mods),
-            .scancode = scancode,
-            .pressedKeys = {},
-        });
+        _events.push_back({ .key = key,
+                            .state = state,
+                            .modifiers = ConvertModifiers(mods),
+                            .scancode = scancode,
+                            .pressedKeys = {} });
+    }
+    void InputSystem::pushMouseEvent(Platform::Mouse::Key button, Platform::Mouse::State state,
+                                     Platform::Mouse::Mod mods)
+    {
+        if (button == Platform::Mouse::Key::None
+            || (state != Platform::Mouse::State::Press && state != Platform::Mouse::State::Release))
+        {
+            return;
+        }
+
+        _events.push_back({ .key = button,
+                            .state = state == Platform::Mouse::State::Press
+                                         ? Platform::Keyboard::KeyState::Pressed
+                                         : Platform::Keyboard::KeyState::Released,
+                            .modifiers = ConvertModifiers(static_cast<int>(mods)) });
     }
     void InputSystem::registerController(InputController* controller)
     {
@@ -145,6 +161,11 @@ namespace NX
             }
         }
 
+        if (InputCapture::isActive())
+        {
+            releaseControllerActions();
+        }
+
         while (!_events.empty())
         {
             const auto event = _events.front();
@@ -152,24 +173,42 @@ namespace NX
             dispatch(event);
         }
     }
+
     void InputSystem::dispatch(const KeyInputEvent& event)
     {
+        const bool captured = InputCapture::isActive();
+        InputCapture::updateButton(event.key, event.state);
         auto routedEvent = event;
-        if (event.state == Platform::Keyboard::KeyState::Pressed
-            && std::ranges::find(_pressedKeys, event.key) == _pressedKeys.end())
+        if (!routedEvent.key.isMouse())
         {
-            _pressedKeys.push_back(event.key);
+            routedEvent.key = NormalizeModifier(routedEvent.key.getKeyboardKey());
+        }
+        if (event.state == Platform::Keyboard::KeyState::Pressed
+            && std::ranges::find(_pressedKeys, routedEvent.key) == _pressedKeys.end())
+        {
+            _pressedKeys.push_back(routedEvent.key);
         }
         routedEvent.pressedKeys = _pressedKeys;
 
         if (event.state == Platform::Keyboard::KeyState::Released)
         {
-            std::erase(_pressedKeys, event.key);
+            std::erase(_pressedKeys, routedEvent.key);
+        }
+
+        if (captured || InputCapture::isActive())
+        {
+            releaseControllerActions();
+            return;
         }
 
         const auto controllers = _routedControllers;
         for (auto* controller : controllers)
         {
+            if (InputCapture::isActive())
+            {
+                releaseControllerActions();
+                return;
+            }
             if (std::ranges::find(_routedControllers, controller) != _routedControllers.end()
                 && controller->isEnabled())
             {
@@ -197,6 +236,12 @@ namespace NX
     {
         _events.clear();
         _pressedKeys.clear();
+        InputCapture::resetButtons();
+        releaseControllerActions();
+    }
+
+    void InputSystem::releaseControllerActions()
+    {
         for (auto* controller : _editorControllers)
         {
             controller->releaseAllActions();

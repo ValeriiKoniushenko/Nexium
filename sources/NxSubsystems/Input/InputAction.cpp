@@ -60,6 +60,12 @@ namespace NX
     {
         InputAction::update();
 
+        if (InputCapture::isActive())
+        {
+            _lastMousePosition.reset();
+            return;
+        }
+
         const auto pos = Mouse::GetPosition();
         if (!_lastMousePosition)
         {
