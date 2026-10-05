@@ -19,6 +19,7 @@
 #include "Editor/GuiComponents/Misc.h"
 #include "Editor/GuiComponents/VecInput.h"
 #include "Editor/IconsFontAwesome.h"
+#include "Editor/Windows/BaseWindow.h"
 #include "NxWorld/Entities/Camera/Camera.h"
 #include "NxWorld/Framework/GameInstanceAccess.h"
 #include "NxWorld/Framework/World.h"
@@ -73,6 +74,11 @@ namespace NX
     void WorldSettingsEWC::onInitialize()
     {
         BaseFloatEWC::onInitialize();
+    }
+
+    void WorldSettingsEWC::onOpen()
+    {
+        BaseFloatEWC::onOpen();
 
         constexpr float defaultWidth = 120.f;
         // ===================== GLOBAL =========================
@@ -194,11 +200,6 @@ namespace NX
         }
 
         createExtraGui();
-    }
-
-    void WorldSettingsEWC::onOpen()
-    {
-        BaseFloatEWC::onOpen();
 
         if (Verify(_color3Input))
         {
@@ -224,6 +225,25 @@ namespace NX
         {
             _sunDirection->setInputtedData(GetWorld()->lightning.sunDirection);
         }
+    }
+
+    void WorldSettingsEWC::onClose()
+    {
+        BaseEWC::onClose();
+
+        _globalLayout.removeAllChildren();
+        _cameraInputField = nullptr;
+        _changeCameraButton = nullptr;
+        _showCameraButton = nullptr;
+        _resetCameraButton = nullptr;
+
+        _lightningLayout.removeAllChildren();
+        _color3Input = nullptr;
+        _ambientStrength = nullptr;
+        _minLightStrength = nullptr;
+        _specularStrength = nullptr;
+        _specularPow = nullptr;
+        _sunDirection = nullptr;
     }
 
     void WorldSettingsEWC::onDraw()
