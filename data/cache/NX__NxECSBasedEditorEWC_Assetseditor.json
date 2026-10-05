@@ -1,48 +1,12 @@
 {
-    "_children": [
-        {
-            "_children": null,
-            "_isEnabled": true,
-            "_name": "",
-            "_noTick": false,
-            "_type": "NX::ECSBaseComponentAdapter"
-        },
-        {
-            "_children": null,
-            "_isEnabled": true,
-            "_name": "",
-            "_noTick": false,
-            "_type": "NX::ECSEditorActorAdapter"
-        },
-        {
-            "_children": null,
-            "_isEnabled": true,
-            "_name": "",
-            "_noTick": false,
-            "_type": "NX::ECSEditorInterleavedGraphicsDataAdapter"
-        },
-        {
-            "_children": null,
-            "_isEnabled": true,
-            "_name": "",
-            "_noTick": false,
-            "_type": "NX::ECSEditorFrameByFrameAnimationAdapter"
-        },
-        {
-            "_children": null,
-            "_isEnabled": true,
-            "_name": "",
-            "_noTick": false,
-            "_type": "NX::ECSEditorInputControllerAdapter"
-        }
-    ],
+    "_children": null,
     "_innerPosition": [
-        0.0,
-        0.0
+        244.0,
+        98.0
     ],
     "_innerSize": {
-        "height": 0.0,
-        "width": 0.0
+        "height": 378.0,
+        "width": 582.0
     },
     "_isEnabled": false,
     "_isFitContent": false,
@@ -53,16 +17,16 @@
     "_name": "Assets editor",
     "_noTick": false,
     "_oldSize": {
-        "height": -1.0,
-        "width": -1.0
+        "height": 450.0,
+        "width": 602.0
     },
     "_position": [
-        0.0,
-        0.0
+        234.0,
+        36.0
     ],
     "_size": {
-        "height": 0.0,
-        "width": 0.0
+        "height": 450.0,
+        "width": 602.0
     },
     "_type": "NX::NxECSBasedEditorEWC"
 }

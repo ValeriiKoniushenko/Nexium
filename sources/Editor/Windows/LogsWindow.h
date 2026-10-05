@@ -45,6 +45,8 @@ namespace NX
     protected:
         void onInitialize() override;
         void onPreInitialize() override;
+        void onOpen() override;
+        void onClose() override;
 
         void onDraw() override;
 

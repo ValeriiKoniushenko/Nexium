@@ -34,6 +34,8 @@ namespace NX
         void createGui();
 
         void onInitialize() override;
+        void onOpen() override;
+        void onClose() override;
 
         void onDraw() override;
 

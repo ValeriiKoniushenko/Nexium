@@ -57,6 +57,11 @@ namespace NX
     void NxTextureEditorEWC::onInitialize()
     {
         NxEditorBaseEditorEWC::onInitialize();
+    }
+
+    void NxTextureEditorEWC::onOpen()
+    {
+        NxEditorBaseEditorEWC::onOpen();
 
         setEnablePreview(true);
         _fileFilters.emplace(std::string("*") + NXTexture::AssetT::fileExtension);
@@ -96,6 +101,21 @@ namespace NX
                                                                                  { makeDirty(); });
 
         updateGuiBasedOnAsset();
+    }
+
+    void NxTextureEditorEWC::onClose()
+    {
+        NxEditorBaseEditorEWC::onClose();
+        _layout.removeAllChildren();
+        _imageSize = nullptr;
+        _imageChannelType = nullptr;
+        _pathToImage = nullptr;
+        _isFlipVertical = nullptr;
+        _targetAsset = {};
+        _zoom = 1.f;
+        _offset = {};
+        _lastPreviewRegionSize = {};
+        removeFileFilter(std::string("*") + NXTexture::AssetT::fileExtension);
     }
 
     void NxTextureEditorEWC::onDrawProperties()
@@ -170,6 +190,8 @@ namespace NX
                       - static_cast<glm::vec2>(_targetAsset->getData().getSize().toGlm());
             _offset /= 2.0f;
         }
+
+        updateGuiBasedOnAsset();
 
         return true;
     }

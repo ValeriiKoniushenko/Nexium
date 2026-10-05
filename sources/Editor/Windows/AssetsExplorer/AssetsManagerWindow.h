@@ -45,9 +45,12 @@ namespace NX
     protected:
         void onPreInitialize() override;
         void onInitialize() override;
+        void onOpen() override;
+        void onClose() override;
 
         void onDraw() override;
         void onUpdate() override;
+        void createGui();
         void openPath(const std::filesystem::path& path);
 
         void copyFrom(const std::filesystem::path& path);

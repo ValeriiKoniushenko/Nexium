@@ -176,6 +176,11 @@ namespace NX
     void ShaderManagerEWC::onInitialize()
     {
         BaseFloatEWC::onInitialize();
+    }
+
+    void ShaderManagerEWC::onOpen()
+    {
+        BaseFloatEWC::onOpen();
 
         createGui();
         invalidateShaderCache();
@@ -183,6 +188,24 @@ namespace NX
         {
             selectShader(_comboView->getSelectedString());
         }
+    }
+
+    void ShaderManagerEWC::onClose()
+    {
+        BaseFloatEWC::onClose();
+        _headLayout.removeAllChildren();
+        _selectedShaderLayout.removeAllChildren();
+        _totalShaders = nullptr;
+        _failedShaders = nullptr;
+        _validExtensions = nullptr;
+        _comboView = nullptr;
+        _shaderName = nullptr;
+        _fragPath = nullptr;
+        _vertPath = nullptr;
+        _recompileResult = nullptr;
+        _selectedRawShader = nullptr;
+        _selectedShader.clear();
+        _currentItem = 0;
     }
 
     void ShaderManagerEWC::onDraw()

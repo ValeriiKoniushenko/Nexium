@@ -51,6 +51,8 @@ namespace NX
         virtual void onFinishOpenFromPath(const std::filesystem::path& path) {}
 
         void onInitialize() override;
+        void onOpen() override;
+        void onClose() override;
         void onDraw() final;
         virtual void onDrawTree() {}
         void treeContextMenuBehavior();

@@ -32,6 +32,8 @@ namespace NX
 
     protected:
         void onInitialize() override;
+        void onOpen() override;
+        void onClose() override;
 
         void onUpdate() override;
 
@@ -71,6 +73,8 @@ namespace NX
 
     protected:
         void onInitialize() override;
+        void onOpen() override;
+        void onClose() override;
         void onUpdate() override;
         void onDraw() override;
 

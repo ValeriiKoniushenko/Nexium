@@ -30,6 +30,7 @@ namespace NX
 
     protected:
         void onInitialize() override;
+        void onOpen() override;
         void onDraw() override;
 
         void onClose() override;

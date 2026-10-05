@@ -67,6 +67,7 @@ namespace NX
 
     protected:
         void onInitialize() override;
+        void onOpen() override;
         void onDrawProperties() override;
         void onDrawPreview() override;
         void onDrawTree() override;

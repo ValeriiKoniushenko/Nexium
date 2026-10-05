@@ -169,9 +169,20 @@ namespace NX
 
     void EditorSettingsEWC::onOpen()
     {
+        BaseFloatEWC::onOpen();
         setupCommonLayoutSettings();
         createPage_Appearance();
         createPage_Keymap();
+    }
+
+    void EditorSettingsEWC::onClose()
+    {
+        BaseFloatEWC::onClose();
+        for (auto& layout : _layouts)
+        {
+            layout.removeAllChildren();
+        }
+        _currentMenu = Menu_Appearance;
     }
 
     void EditorSettingsEWC::onDraw()

@@ -33,6 +33,7 @@ namespace NX
         void onClose() override;
         void onOpen() override;
 
+        void createGui();
         void resetGUI();
         void performBlueprintCreation(const std::string& type, const std::string& name,
                                       const std::string& path);

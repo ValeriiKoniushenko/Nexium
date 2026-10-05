@@ -41,6 +41,17 @@ namespace NX
         BaseFloatEWC::onInitialize();
     }
 
+    void GameViewportEWC::onOpen()
+    {
+        BaseFloatEWC::onOpen();
+    }
+
+    void GameViewportEWC::onClose()
+    {
+        BaseFloatEWC::onClose();
+        _blocksPicking = false;
+    }
+
     void GameViewportEWC::onUpdate()
     {
         BaseFloatEWC::onUpdate();

@@ -58,7 +58,10 @@ namespace NX
     void ModalCreateBlueprintEWC::onInitialize()
     {
         BaseModalPopUp::onInitialize();
+    }
 
+    void ModalCreateBlueprintEWC::createGui()
+    {
         _layout.setHorizontalAlign(Gui::Align::Center);
         _layout.setFlex(Gui::Flex::FlexWidthAndHeight);
 
@@ -179,6 +182,14 @@ namespace NX
     {
         BaseModalPopUp::onClose();
         resetGUI();
+        _layout.removeAllChildren();
+        _list = nullptr;
+        _nameField = nullptr;
+        _typeField = nullptr;
+        _pathField = nullptr;
+        _errorOutput = nullptr;
+        _okButton = nullptr;
+        _cancelButton = nullptr;
     }
 
     void ModalCreateBlueprintEWC::resetGUI()
@@ -277,6 +288,7 @@ namespace NX
     void ModalCreateBlueprintEWC::onOpen()
     {
         BaseModalPopUp::onOpen();
+        createGui();
 
         if (_pathField)
         {

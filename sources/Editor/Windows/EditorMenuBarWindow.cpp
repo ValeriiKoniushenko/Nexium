@@ -29,7 +29,7 @@ namespace
     template<NX::IsEditorWindowComponent T>
     void WindowMenuItem()
     {
-        if (ImGui::MenuItem(NX::GetEditor()->getWindow<T>()->getComponentName().c_str()))
+        if (ImGui::MenuItem(NX::GetEditor()->getWindow<T>()->getWindowTitleWithIcon().c_str()))
         {
             NX::GetEditor()->showWindow<T>();
         }
@@ -52,6 +52,11 @@ namespace NX
     void EditorMenuBarWindowEWC::onInitialize()
     {
         BaseMenuBarEWC::onInitialize();
+    }
+
+    void EditorMenuBarWindowEWC::onOpen()
+    {
+        BaseMenuBarEWC::onOpen();
 
         _slowUpdater.setRepeatTime(1. / 10.);
         _slowUpdater.setCallback(
@@ -64,6 +69,13 @@ namespace NX
         const auto& style = ImGui::GetStyle();
         _fpsTextSize = ImGui::CalcTextSize(_fpsTextTemplate).x + style.ItemSpacing.x;
         _simulationButton = ImGui::CalcTextSize(ICON_FA_PLAY_CIRCLE).x + style.ItemSpacing.x * 2.f;
+    }
+
+    void EditorMenuBarWindowEWC::onClose()
+    {
+        BaseMenuBarEWC::onClose();
+        _slowUpdater.reset();
+        _cachedFpsText = _fpsText;
     }
 
     void EditorMenuBarWindowEWC::onDraw()

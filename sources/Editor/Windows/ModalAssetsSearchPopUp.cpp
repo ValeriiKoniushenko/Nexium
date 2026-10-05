@@ -46,6 +46,11 @@ namespace NX
     void ModalAssetsSearchPopUpEWC::onInitialize()
     {
         BaseModalPopUp::onInitialize();
+    }
+
+    void ModalAssetsSearchPopUpEWC::onOpen()
+    {
+        BaseModalPopUp::onOpen();
 
         _layout.setHorizontalAlign(Gui::Align::Center);
         _layout.setFlex(Gui::Flex::FlexWidthAndHeight);
@@ -202,5 +207,10 @@ namespace NX
         {
             _list->resetListNavigation();
         }
+        _layout.removeAllChildren();
+        _nameField = nullptr;
+        _list = nullptr;
+        _okButton = nullptr;
+        _cancelButton = nullptr;
     }
 } // namespace NX

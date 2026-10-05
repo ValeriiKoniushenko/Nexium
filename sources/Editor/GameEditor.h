@@ -157,7 +157,6 @@ namespace NX
         void handleMouseDrag(glm::vec2 delta, NX::MouseInputAction::SpecKeysState state);
         void handleMouseClick(glm::vec2 pos, NX::MouseInputAction::SpecKeysState state);
         void responseOnPick(NX::Transformable* object);
-        void lazyOneShotInitialization();
 
     protected:
         InputController::Ptr _inputController;

@@ -52,6 +52,7 @@ namespace NX
     protected:
         void onDraw() override;
         void onInitialize() override;
+        void onOpen() override;
         void preOpenedEndWindowDraw() override;
         [[nodiscard]] bool beginWindowDraw() override;
 

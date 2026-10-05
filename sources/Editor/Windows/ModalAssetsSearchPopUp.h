@@ -31,6 +31,7 @@ namespace NX
     protected:
         void onDraw() override;
         void onInitialize() override;
+        void onOpen() override;
 
         void okButtonClicked();
         void cancelButtonClicked();

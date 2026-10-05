@@ -100,8 +100,22 @@ namespace NX
     void NxEditorBaseEditorEWC::onInitialize()
     {
         BaseFloatEWC::onInitialize();
+    }
+
+    void NxEditorBaseEditorEWC::onOpen()
+    {
+        BaseFloatEWC::onOpen();
 
         _windowFlags |= ImGuiWindowFlags_MenuBar;
+    }
+
+    void NxEditorBaseEditorEWC::onClose()
+    {
+        BaseFloatEWC::onClose();
+        _assetFilePath.clear();
+        _isDirty = false;
+        _lastPropertiesTreeWidth = -1.f;
+        _windowFlags &= ~ImGuiWindowFlags_MenuBar;
     }
 
     void NxEditorBaseEditorEWC::onDraw()

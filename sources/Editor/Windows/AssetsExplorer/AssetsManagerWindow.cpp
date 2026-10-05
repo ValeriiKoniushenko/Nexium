@@ -152,6 +152,10 @@ namespace NX
     void AssetsManagerWindowEWC::onPreInitialize()
     {
         BaseFloatEWC::onPreInitialize();
+    }
+
+    void AssetsManagerWindowEWC::createGui()
+    {
         _nodeTypesData = {
             { NodeType::Default,
               GetAssetsManager()->getTexture("data/assets/baked/document.nxtex"_atom) },
@@ -205,6 +209,12 @@ namespace NX
     void AssetsManagerWindowEWC::onInitialize()
     {
         BaseFloatEWC::onInitialize();
+    }
+
+    void AssetsManagerWindowEWC::onOpen()
+    {
+        BaseFloatEWC::onOpen();
+        createGui();
 
         if (_openedPath.empty())
         {
@@ -217,6 +227,21 @@ namespace NX
 
         // passed 'true' to ignore scan of already scanned filesystem on the Engine start.
         refresh(true);
+    }
+
+    void AssetsManagerWindowEWC::onClose()
+    {
+        BaseFloatEWC::onClose();
+        _toolbarLayout.removeAllChildren();
+        _refreshButton = nullptr;
+        _homeButton = nullptr;
+        _backButton = nullptr;
+        _pathInput = nullptr;
+        _filterInput = nullptr;
+        _nodeTypesData.clear();
+        _rootCacheNode = {};
+        _selectedPath.clear();
+        _selectedPaths.clear();
     }
 
     void AssetsManagerWindowEWC::onDraw()

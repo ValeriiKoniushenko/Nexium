@@ -50,6 +50,11 @@ namespace NX
     void ModalECSSearchPopUpEWC::onInitialize()
     {
         BaseModalPopUp::onInitialize();
+    }
+
+    void ModalECSSearchPopUpEWC::onOpen()
+    {
+        BaseModalPopUp::onOpen();
 
         _layout.setHorizontalAlign(Gui::Align::Center);
         _layout.setFlex(Gui::Flex::FlexWidthAndHeight);
@@ -173,6 +178,12 @@ namespace NX
         {
             _list->resetListNavigation();
         }
+        _layout.removeAllChildren();
+        _nameInput = nullptr;
+        _list = nullptr;
+        _okButton = nullptr;
+        _cancelButton = nullptr;
+        _callback = {};
     }
 
     void ModalECSSearchPopUpEWC::okButtonClicked()

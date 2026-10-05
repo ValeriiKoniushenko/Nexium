@@ -61,11 +61,22 @@ namespace NX
     void RootDockWindowEWC::onInitialize()
     {
         BaseEWC::onInitialize();
+    }
+
+    void RootDockWindowEWC::onOpen()
+    {
+        BaseEWC::onOpen();
 
         _windowFlags |= ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking
                         | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse
                         | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove
                         | ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
+    }
+
+    void RootDockWindowEWC::onClose()
+    {
+        BaseEWC::onClose();
+        _windowFlags = 0;
     }
 
     std::vector<std::string> RootDockWindowEWC::getCurrentWindowsList() const
@@ -102,7 +113,7 @@ namespace NX
         ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
         ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
 
-        const auto res = ImGui::Begin(getComponentName().c_str(), &_isEnabled, _windowFlags);
+        const auto res = ImGui::Begin(getWindowTitleWithIcon().c_str(), &_isEnabled, _windowFlags);
 
         ImGui::PopStyleVar(2);
 

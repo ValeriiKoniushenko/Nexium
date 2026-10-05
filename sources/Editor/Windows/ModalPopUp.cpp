@@ -33,9 +33,10 @@ namespace NX
 
     void ModalPopUp::open(StringAtom text, const std::function<void(bool)>& okOrCancelCallback)
     {
-        BaseModalPopUp::open(std::move(text));
+        _text = std::move(text);
         _okOrCancelCallback = okOrCancelCallback;
         _caption = ICON_FA_TIMES " Warning!";
+        BaseModalPopUp::open(_caption);
     }
 
     void ModalPopUp::Open(StringAtom text, const std::function<void(bool)>& okOrCancelCallback)
@@ -46,6 +47,11 @@ namespace NX
     void ModalPopUp::onInitialize()
     {
         BaseModalPopUp::onInitialize();
+    }
+
+    void ModalPopUp::onOpen()
+    {
+        BaseModalPopUp::onOpen();
 
         _okButton = _layout.addChildComponent<Gui::Button>("OK");
         _cancelButton = _layout.addChildComponent<Gui::Button>("Cancel");
@@ -60,6 +66,16 @@ namespace NX
                                                                        { cancelButton(); });
     }
 
+    void ModalPopUp::onClose()
+    {
+        BaseModalPopUp::onClose();
+        _layout.removeAllChildren();
+        _okButton = nullptr;
+        _cancelButton = nullptr;
+        _okOrCancelCallback = {};
+        _text.clear();
+    }
+
     void ModalPopUp::okButton()
     {
         if (Verify(!!_okOrCancelCallback))
@@ -67,6 +83,7 @@ namespace NX
             _okOrCancelCallback(true);
         }
         ImGui::CloseCurrentPopup();
+        closeWindow();
     }
 
     void ModalPopUp::cancelButton()
@@ -76,6 +93,7 @@ namespace NX
             _okOrCancelCallback(false);
         }
         ImGui::CloseCurrentPopup();
+        closeWindow();
     }
 
     void ModalPopUp::onDraw()

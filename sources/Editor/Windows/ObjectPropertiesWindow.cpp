@@ -267,6 +267,11 @@ namespace NX
     void ObjectPropertiesWindowEWC::onInitialize()
     {
         BaseFloatEWC::onInitialize();
+    }
+
+    void ObjectPropertiesWindowEWC::onOpen()
+    {
+        BaseFloatEWC::onOpen();
 
         createGui();
         registerGuiEvents();
@@ -283,6 +288,37 @@ namespace NX
                     resetTargetObject();
                 }
             });
+    }
+
+    void ObjectPropertiesWindowEWC::onClose()
+    {
+        BaseFloatEWC::onClose();
+
+        _generalInfoLayout.removeAllChildren();
+        _staticMeshBundleLayout.removeAllChildren();
+        _baseComponentExtraLayout.removeAllChildren();
+        _graphicsComponentLayout.removeAllChildren();
+        _perspectiveCameraLayout.removeAllChildren();
+        _orthoCameraLayout.removeAllChildren();
+        _baseCameraLayout.removeAllChildren();
+        _staticMeshLayout.removeAllChildren();
+        _transformableLayout.removeAllChildren();
+        _rectLayout.removeAllChildren();
+
+        _objectName = _objectType = _parentName = _graphicsShader = _outlineShader = nullptr;
+        _objectIsEnabled = _ignoreMouseSelectBundle = _isInited = _disabledTicks = nullptr;
+        _rectBlending = _activateAnimation = nullptr;
+        _renderMeshesCount = _renderBundlesCount = _activeTrianglesCount = nullptr;
+        _childrenCount = _graphicsTriangles = _graphicsVBO = _graphicsVAO = nullptr;
+        _graphicsEBO = _graphicsTexture = nullptr;
+        _childrenList = nullptr;
+        _graphicsModifiers = nullptr;
+        _cameraFov = _cameraFar = _cameraNear = _rectAnimationFPS = nullptr;
+        _cameraFrame = _cameraOutput = _orthoCameraLeftTop = _orthoCameraRightBottom = nullptr;
+        _transformPosition = _transformRotation = _transformScale = _transformOrigin = nullptr;
+        _rectComboAtlas = _rectComboRect = _rectComboAnimation = nullptr;
+        _rectAnimationRow = _rectAnimationFPSRow = nullptr;
+        _target = nullptr;
     }
 
     void ObjectPropertiesWindowEWC::onDraw()

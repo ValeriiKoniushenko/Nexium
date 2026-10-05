@@ -135,6 +135,11 @@ namespace NX
     void NxECSBasedEditorEWC::onInitialize()
     {
         NxEditorBaseEditorEWC::onInitialize();
+    }
+
+    void NxECSBasedEditorEWC::onOpen()
+    {
+        NxEditorBaseEditorEWC::onOpen();
 
         addUniqueTypeChildComponent<ECSBaseComponentAdapter>();
         addUniqueTypeChildComponent<ECSEditorActorAdapter>();
@@ -347,6 +352,12 @@ namespace NX
     void NxECSBasedEditorEWC::onClose()
     {
         NxEditorBaseEditorEWC::onClose();
+        removeAllChildren();
+        _headerLayout.removeAllChildren();
+        _logicalPath = nullptr;
+        _assetType = nullptr;
+        _keyboardManager.remove("Delete selected component"_atom);
+        _targetComponent = nullptr;
         reset();
     }
 

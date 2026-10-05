@@ -31,6 +31,8 @@ namespace NX
     protected:
         void updateGuiBasedOnAsset() override;
         void onInitialize() override;
+        void onOpen() override;
+        void onClose() override;
         void onDrawProperties() override;
         void onDrawPreview() override;
         void onDiscardChanges() override;

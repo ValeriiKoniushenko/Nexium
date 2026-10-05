@@ -34,14 +34,13 @@ namespace NX
         BaseEWC& operator=(BaseEWC&&) = default;
         ~BaseEWC() override = default;
 
-        [[nodiscard]] const StringAtom& getWindowTitle() const
-        {
-            return _windowTitle.isEmpty() ? getComponentName() : _windowTitle;
-        }
+        [[nodiscard]] const StringAtom& getWindowTitle() const;
 
         virtual void putArguments(const StringAtom& args) {}
 
         [[nodiscard]] virtual const char* getIcon() { return nullptr; }
+
+        [[nodiscard]] StringAtom getWindowTitleWithIcon();
 
         void openWindow(const StringAtom& args = ""_atom);
 
@@ -56,7 +55,7 @@ namespace NX
     protected:
         virtual void onOpen() {}
 
-        virtual void onClose() {}
+        virtual void onClose();
 
         void onTick(float delta) final;
 
@@ -78,6 +77,9 @@ namespace NX
         StringAtom _windowTitle;
         int /*ImGuiWindowFlags*/ _windowFlags = 0;
         bool _wasFocusRequested = false;
+        bool _isOpen = false;
+        bool _isDrawing = false;
+        bool _hasCloseRequest = false;
     };
 
     template<class T>

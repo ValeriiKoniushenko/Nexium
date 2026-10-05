@@ -75,9 +75,25 @@ namespace NX
     void ImageViewerEWC::onInitialize()
     {
         BaseFloatEWC::onInitialize();
+    }
+
+    void ImageViewerEWC::onOpen()
+    {
+        BaseFloatEWC::onOpen();
 
         _windowFlags |= ImGuiWindowFlags_NoScrollbar;
         _windowFlags |= ImGuiWindowFlags_NoScrollWithMouse;
+    }
+
+    void ImageViewerEWC::onClose()
+    {
+        BaseFloatEWC::onClose();
+        _image.reset();
+        _path.clear();
+        _offset = {};
+        _zoom = 1.f;
+        _fitOnNextDraw = true;
+        _windowFlags &= ~(ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
     }
 
     void ImageViewerEWC::onUpdate()
@@ -208,6 +224,16 @@ namespace NX
     void DummyEWC::onInitialize()
     {
         BaseFloatEWC::onInitialize();
+    }
+
+    void DummyEWC::onOpen()
+    {
+        BaseFloatEWC::onOpen();
+    }
+
+    void DummyEWC::onClose()
+    {
+        BaseFloatEWC::onClose();
     }
 
     void DummyEWC::onUpdate()

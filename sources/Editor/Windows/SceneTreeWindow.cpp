@@ -64,6 +64,11 @@ namespace NX
     void SceneTreeWindowEWC::onInitialize()
     {
         BaseFloatEWC::onInitialize();
+    }
+
+    void SceneTreeWindowEWC::onOpen()
+    {
+        BaseFloatEWC::onOpen();
 
         setScene(GetGameScene());
 
@@ -79,6 +84,15 @@ namespace NX
                     selectedObject = nullptr;
                 }
             });
+    }
+
+    void SceneTreeWindowEWC::onClose()
+    {
+        BaseFloatEWC::onClose();
+        _scene = nullptr;
+        selectedObject = nullptr;
+        _lastSelectedObject = nullptr;
+        _highlightTracerObject = nullptr;
     }
 
     void SceneTreeWindowEWC::onDraw()

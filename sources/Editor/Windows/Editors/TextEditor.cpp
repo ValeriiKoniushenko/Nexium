@@ -37,9 +37,23 @@ namespace NX
     void TextEditorEWC::onInitialize()
     {
         BaseFloatEWC::onInitialize();
+    }
+
+    void TextEditorEWC::onOpen()
+    {
+        BaseFloatEWC::onOpen();
 
         _minWindowSize = FSize2(500.f, 500.f);
         _windowFlags |= ImGuiWindowFlags_MenuBar;
+    }
+
+    void TextEditorEWC::onClose()
+    {
+        BaseFloatEWC::onClose();
+        _path.clear();
+        _fileContent.clear();
+        _wasEdited = false;
+        _windowFlags &= ~ImGuiWindowFlags_MenuBar;
     }
 
     void TextEditorEWC::onDraw()

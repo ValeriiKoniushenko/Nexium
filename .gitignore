@@ -24,7 +24,7 @@
 /.agents/skills/test
 /.agents/skills/valgrind
 /.agents/skills/verification-run
-/.agents/skills/ci-generated
+/.agents/skills/ci-generate
 
 /.vscode/*.json
 string_metrics.csv

@@ -56,9 +56,6 @@ namespace NX
                                                     const std::filesystem::path& newPath)>
                                      onRenameCallback)
     {
-        initialize();
-        enable();
-
         if (_hasOpenRequest)
         {
             warnLog(
@@ -72,6 +69,7 @@ namespace NX
         _renameToPath = path;
         _renameError.clear();
         _renameBuffer = path.filename().generic_string();
+        openWindow();
 
         if (_fileNameInput)
         {
@@ -131,6 +129,11 @@ namespace NX
     void RenamePopUpWindow::onInitialize()
     {
         BaseEWC::onInitialize();
+    }
+
+    void RenamePopUpWindow::onOpen()
+    {
+        BaseEWC::onOpen();
 
         _label = _layout.addChildComponent<Gui::Label>("New name");
         _fileNameInput = _layout.addChildComponent<Gui::TextInput>();
@@ -177,7 +180,12 @@ namespace NX
         _renameToPath.clear();
         _renameBuffer.clear();
         _renameError.clear();
-        ImGui::CloseCurrentPopup();
+        _layout.removeAllChildren();
+        _label = nullptr;
+        _applyButton = nullptr;
+        _cancelButton = nullptr;
+        _fileNameInput = nullptr;
+        _onRenameCallback = {};
     }
 
     void RenamePopUpWindow::applyChangesAndCloseWindow()

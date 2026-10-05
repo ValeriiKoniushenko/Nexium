@@ -6,7 +6,7 @@
     ],
     "_innerSize": {
         "height": 256.0,
-        "width": 913.0
+        "width": 806.0
     },
     "_isEnabled": true,
     "_isFitContent": false,
@@ -16,11 +16,11 @@
             "level": "trace"
         },
         {
-            "isActive": false,
+            "isActive": true,
             "level": "debug"
         },
         {
-            "isActive": true,
+            "isActive": false,
             "level": "info"
         },
         {
@@ -41,11 +41,11 @@
         "height": 200.0,
         "width": 200.0
     },
-    "_name": " Logs",
+    "_name": "Logs",
     "_noTick": false,
     "_oldSize": {
         "height": 302.0,
-        "width": 933.0
+        "width": 826.0
     },
     "_position": [
         10.0,
@@ -53,7 +53,7 @@
     ],
     "_size": {
         "height": 302.0,
-        "width": 933.0
+        "width": 826.0
     },
     "_type": "NX::LogsWindowEWC"
 }

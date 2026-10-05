@@ -126,6 +126,11 @@ namespace NX
     void LogsWindowEWC::onPreInitialize()
     {
         BaseFloatEWC::onPreInitialize();
+    }
+
+    void LogsWindowEWC::onOpen()
+    {
+        BaseFloatEWC::onOpen();
 
         // Structure & ordering
         _searchInput = _toolbar.addChildComponent<Gui::TextInput>();
@@ -160,6 +165,21 @@ namespace NX
                     _needScroll = true;
                 }
             });
+    }
+
+    void LogsWindowEWC::onClose()
+    {
+        BaseFloatEWC::onClose();
+        _toolbar.removeAllChildren();
+        _searchInput = nullptr;
+        _regexModeButton = nullptr;
+        _autoScrollButton = nullptr;
+        _clearButton = nullptr;
+        for (auto& [severity, button] : _levelFilter)
+        {
+            button = nullptr;
+        }
+        _needScroll = false;
     }
 
     void LogsWindowEWC::onDraw()

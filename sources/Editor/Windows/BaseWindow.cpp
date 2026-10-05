@@ -24,12 +24,30 @@ namespace NX
     ECS_IMPL(BaseMenuBarEWC);
     ECS_IMPL(BaseModalPopUp);
 
+    const StringAtom& BaseEWC::getWindowTitle() const
+    {
+        return _windowTitle.isEmpty() ? getComponentName() : _windowTitle;
+    }
+
+    StringAtom BaseEWC::getWindowTitleWithIcon()
+    {
+        if (getIcon())
+        {
+            return getIcon() + (" " + getWindowTitle());
+        }
+        return getWindowTitle();
+    }
+
     void BaseEWC::openWindow(const StringAtom& args)
     {
         initialize();
 
         setEnabled(true);
-        onOpen();
+        if (!_isOpen)
+        {
+            _isOpen = true;
+            onOpen();
+        }
         requestFocus();
         if (!args.isEmpty())
         {
@@ -40,7 +58,16 @@ namespace NX
     void BaseEWC::closeWindow()
     {
         setEnabled(false);
-        onClose();
+        if (_isOpen)
+        {
+            if (_isDrawing)
+            {
+                _hasCloseRequest = true;
+                return;
+            }
+            _isOpen = false;
+            onClose();
+        }
     }
 
     void BaseEWC::requestFocus() noexcept
@@ -50,6 +77,7 @@ namespace NX
 
     void BaseEWC::onTick(float delta)
     {
+        _isDrawing = true;
         if (beginWindowDraw())
         {
             onUpdate(); // in the future maybe will be called not every tick
@@ -57,6 +85,14 @@ namespace NX
             preOpenedEndWindowDraw();
         }
         endWindowDraw();
+        _isDrawing = false;
+
+        if (_hasCloseRequest)
+        {
+            _hasCloseRequest = false;
+            _isOpen = false;
+            onClose();
+        }
     }
 
     StringAtom BaseEWC::getCacheHash() const
@@ -86,6 +122,16 @@ namespace NX
     void BaseEWC::onPostDeserialize(AbstractComponent* obj, const RLogsCollector& logs)
     {
         BaseComponent::onPostDeserialize(obj, logs);
+        if (_isEnabled && !_isOpen)
+        {
+            _isOpen = true;
+            onOpen();
+        }
+    }
+
+    void BaseEWC::onClose()
+    {
+        _subscriptionPool.clearAndReleaseAll();
     }
 
     void BaseFloatEWC::setFitContent(bool v)
@@ -129,6 +175,8 @@ namespace NX
         if (_windowTitle.isEmpty())
         {
             _windowTitle = getComponentName();
+            debugLog("Window title for window '{}' wasn't set. Restored from the component name."_f
+                     << getComponentName());
         }
 
         ImGui::SetNextWindowSizeConstraints(glm::vec2(_minWindowSize.width, _minWindowSize.height),
@@ -145,10 +193,10 @@ namespace NX
         }
 
         bool prevEnabledState = _isEnabled;
-        const auto res = ImGui::Begin(_windowTitle.c_str(), &_isEnabled, _windowFlags);
+        const auto res = ImGui::Begin(getWindowTitleWithIcon().c_str(), &_isEnabled, _windowFlags);
         if (_wasFocusRequested)
         {
-            ImGui::SetWindowFocus(_windowTitle.c_str());
+            ImGui::SetWindowFocus(getWindowTitleWithIcon().c_str());
             _wasFocusRequested = false;
         }
         if (prevEnabledState != _isEnabled)
@@ -199,8 +247,6 @@ namespace NX
 
     void BaseModalPopUp::open(StringAtom text)
     {
-        initialize();
-        enable();
         if (_hasOpenRequest)
         {
             warnLog("Can't open second time BaseModalPopUp. It's already processing the request.");
@@ -208,8 +254,7 @@ namespace NX
         }
         _caption = std::move(text);
         _hasOpenRequest = true;
-
-        onOpen();
+        openWindow();
     }
 
     void BaseModalPopUp::onInitialize()
