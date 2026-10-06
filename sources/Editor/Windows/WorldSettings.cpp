@@ -27,25 +27,6 @@
 
 using namespace NX;
 
-namespace
-{
-
-    class GuiGenerator final
-    {
-    public:
-        void spawn(const Core::StringAtom& label, int& value)
-        {
-            auto* input = _root.addChildComponent<Gui::LabelRow<Gui::IntInput>>();
-            input->label->setText(label);
-            input->label->setWidth(100.f);
-        }
-
-    private:
-        Gui::VerticalLayout _root;
-    };
-
-} // namespace
-
 namespace NX
 {
     WorldSettingsEWC::WorldSettingsEWC(const StringAtom& name)
@@ -62,13 +43,6 @@ namespace NX
     const char* WorldSettingsEWC::getIcon()
     {
         return ICON_FA_SUN_O;
-    }
-
-    void WorldSettingsEWC::createExtraGui()
-    {
-        GuiGenerator gg;
-        static int i = 1;
-        gg.spawn("Hello", i);
     }
 
     void WorldSettingsEWC::onInitialize()
@@ -199,7 +173,8 @@ namespace NX
                 [](glm::vec3 value) { GetWorld()->lightning.sunDirection = value; });
         }
 
-        createExtraGui();
+        static int i = 1;
+        gg.spawn("Hello", i);
 
         if (Verify(_color3Input))
         {
@@ -230,6 +205,8 @@ namespace NX
     void WorldSettingsEWC::onClose()
     {
         BaseEWC::onClose();
+
+        gg.despawnEverything();
 
         _globalLayout.removeAllChildren();
         _cameraInputField = nullptr;
@@ -280,5 +257,19 @@ namespace NX
         {
             _lightningLayout.tick(GetWorld()->getTimeDelta());
         }
+
+        gg.tick(GetWorld()->getTimeDelta());
+    }
+
+    void GuiGenerator::spawn(const Core::StringAtom& label, int& value)
+    {
+        auto* input = addChildComponent<Gui::LabelRow<Gui::IntInput>>();
+        input->label->setText(label);
+        input->label->setWidth(100.f);
+    }
+
+    void GuiGenerator::despawnEverything()
+    {
+        removeAllChildren();
     }
 } // namespace NX
