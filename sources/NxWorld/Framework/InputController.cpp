@@ -192,7 +192,8 @@ namespace NX
             _actionStates.insert_or_assign(action, false);
             _actionModifiers.erase(action);
             _transientActions.erase(action);
-            _activeChords.erase(action);
+            std::erase_if(_activeBindings,
+                          [&action](const Binding& binding) { return binding.action == action; });
             duplicate->chord = chord;
             duplicate->trigger = trigger;
             return false;
@@ -213,9 +214,25 @@ namespace NX
         const auto inserted = bind(action, chord, trigger);
         if (!action.isEmpty() && callback)
         {
-            _actionCallbacks.insert_or_assign(action, std::move(callback));
+            setActionCallback(action, std::move(callback));
         }
         return inserted;
+    }
+
+    void InputController::setActionCallback(const Core::StringAtom& action, ActionCallback callback)
+    {
+        if (action.isEmpty())
+        {
+            return;
+        }
+        if (callback)
+        {
+            _actionCallbacks.insert_or_assign(action, std::move(callback));
+        }
+        else
+        {
+            _actionCallbacks.erase(action);
+        }
     }
 
     bool InputController::unbind(const Core::StringAtom& action)
@@ -227,8 +244,8 @@ namespace NX
         _actionStates.erase(action);
         _actionModifiers.erase(action);
         _transientActions.erase(action);
-        _activeChords.erase(action);
-        _actionCallbacks.erase(action);
+        std::erase_if(_activeBindings,
+                      [&action](const Binding& binding) { return binding.action == action; });
 
         return oldSize != _bindings.size();
     }
@@ -240,13 +257,11 @@ namespace NX
         _actionStates.clear();
         _actionModifiers.clear();
         _transientActions.clear();
-        _actionCallbacks.clear();
     }
 
     void InputController::setBindings(const std::vector<Binding>& bindings)
     {
         const auto updated = bindings;
-        auto callbacks = std::move(_actionCallbacks);
         clearBindings();
         for (const auto& binding : updated)
         {
@@ -254,11 +269,6 @@ namespace NX
             if (!binding.action.isEmpty())
             {
                 _actionStates.insert_or_assign(binding.action, false);
-                if (const auto callback = callbacks.find(binding.action);
-                    callback != callbacks.end())
-                {
-                    _actionCallbacks.emplace(binding.action, std::move(callback->second));
-                }
             }
         }
     }
@@ -311,18 +321,18 @@ namespace NX
 
     void InputController::handleReleasedEvent(const KeyInputEvent& event)
     {
-        for (auto it = _activeChords.begin(); it != _activeChords.end();)
+        for (auto it = _activeBindings.begin(); it != _activeBindings.end();)
         {
-            if (!it->second.contains(event.key))
+            if (!it->chord.contains(event.key))
             {
                 ++it;
                 continue;
             }
 
-            const auto action = it->first;
-            _activeChords.erase(it);
-            releaseBinding(action, event);
-            it = _activeChords.begin();
+            const auto binding = *it;
+            _activeBindings.erase(it);
+            releaseBinding(binding, event);
+            it = _activeBindings.begin();
         }
     }
 
@@ -358,12 +368,22 @@ namespace NX
 
     void InputController::activateBinding(const Binding& binding, const KeyInputEvent& event)
     {
-        _activeChords.insert_or_assign(binding.action, binding.chord);
+        const auto active = std::ranges::find_if(
+            _activeBindings,
+            [&binding](const Binding& value)
+            {
+                return value.action == binding.action && value.trigger == binding.trigger
+                       && value.chord.triggerKey == binding.chord.triggerKey
+                       && value.chord.requiredKeys == binding.chord.requiredKeys;
+            });
+        if (active == _activeBindings.end())
+        {
+            _activeBindings.push_back(binding);
+        }
         _actionModifiers.insert_or_assign(binding.action, event.modifiers);
 
         if (binding.trigger == InputActionTrigger::OnRelease)
         {
-            _actionStates.insert_or_assign(binding.action, false);
             return;
         }
 
@@ -383,23 +403,31 @@ namespace NX
         onAction->trigger(actionEvent);
     }
 
-    void InputController::releaseBinding(const Core::StringAtom& action, const KeyInputEvent& event)
+    bool InputController::hasHeldBinding(const Core::StringAtom& action) const
     {
-        const auto binding = std::ranges::find_if(_bindings, [&action](const Binding& value)
-                                                  { return value.action == action; });
-        if (binding == _bindings.end())
+        return std::ranges::any_of(_activeBindings,
+                                   [&action](const Binding& binding)
+                                   {
+                                       return binding.action == action
+                                              && binding.trigger == InputActionTrigger::WhileHeld;
+                                   });
+    }
+
+    void InputController::releaseBinding(const Binding& binding, const KeyInputEvent& event)
+    {
+        const auto& action = binding.action;
+        if (binding.trigger == InputActionTrigger::WhileHeld)
         {
+            const bool pressed = _transientActions.contains(action) || hasHeldBinding(action);
+            _actionStates.insert_or_assign(action, pressed);
+            if (!pressed)
+            {
+                _actionModifiers.insert_or_assign(action, InputModifier::None);
+            }
             return;
         }
 
-        if (binding->trigger == InputActionTrigger::WhileHeld)
-        {
-            _actionStates.insert_or_assign(action, false);
-            _actionModifiers.insert_or_assign(action, InputModifier::None);
-            return;
-        }
-
-        if (binding->trigger == InputActionTrigger::OnRelease)
+        if (binding.trigger == InputActionTrigger::OnRelease)
         {
             _actionStates.insert_or_assign(action, true);
             _transientActions.insert(action);
@@ -418,8 +446,12 @@ namespace NX
     {
         for (const auto& action : _transientActions)
         {
-            _actionStates.insert_or_assign(action, false);
-            _actionModifiers.insert_or_assign(action, InputModifier::None);
+            const bool pressed = hasHeldBinding(action);
+            _actionStates.insert_or_assign(action, pressed);
+            if (!pressed)
+            {
+                _actionModifiers.insert_or_assign(action, InputModifier::None);
+            }
         }
         _transientActions.clear();
     }
@@ -431,7 +463,7 @@ namespace NX
             pressed = false;
             _actionModifiers.insert_or_assign(action, InputModifier::None);
         }
-        _activeChords.clear();
+        _activeBindings.clear();
         _transientActions.clear();
     }
 } // namespace NX

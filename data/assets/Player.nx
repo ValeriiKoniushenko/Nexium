@@ -46,6 +46,19 @@
                         "requiredKeys": [],
                         "trigger": "OnPress",
                         "triggerKey": "None"
+                    },
+                    {
+                        "action": "New binding 7",
+                        "requiredKeys": [
+                            "Left_Shift",
+                            "Left_Control",
+                            "D"
+                        ],
+                        "trigger": "OnPress",
+                        "triggerKey": {
+                            "button": "Left",
+                            "device": "Mouse"
+                        }
                     }
                 ],
                 "_children": null,

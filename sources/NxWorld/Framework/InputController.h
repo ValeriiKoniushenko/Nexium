@@ -57,6 +57,10 @@ namespace NX
         bool bind(const Core::StringAtom& action, KeyChord chord, ActionCallback callback,
                   InputActionTrigger trigger = InputActionTrigger::OnPress);
 
+        // Callback registration is independent of the editable bindings.
+        // An empty callback unregisters the handler.
+        void setActionCallback(const Core::StringAtom& action, ActionCallback callback);
+
         void clearBindings();
 
         bool unbind(const Core::StringAtom& action);
@@ -91,7 +95,8 @@ namespace NX
         [[nodiscard]] const Binding* findBestBinding(const KeyInputEvent& event) const;
 
         void activateBinding(const Binding& binding, const KeyInputEvent& event);
-        void releaseBinding(const Core::StringAtom& action, const KeyInputEvent& event);
+        void releaseBinding(const Binding& binding, const KeyInputEvent& event);
+        [[nodiscard]] bool hasHeldBinding(const Core::StringAtom& action) const;
 
         void beginInputFrame();
 
@@ -106,7 +111,7 @@ namespace NX
         std::unordered_set<Core::StringAtom> _transientActions;
 
         std::unordered_map<Core::StringAtom, bool> _actionStates;
-        std::unordered_map<Core::StringAtom, KeyChord> _activeChords;
+        std::vector<Binding> _activeBindings;
         std::unordered_map<Core::StringAtom, InputModifier> _actionModifiers;
         std::unordered_map<Core::StringAtom, ActionCallback> _actionCallbacks;
     };

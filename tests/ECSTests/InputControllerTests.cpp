@@ -174,6 +174,94 @@ TEST_F(InputControllerTests, EditingBindingsPreservesCallbacksAndResetsHeldState
     EXPECT_EQ(calls, 2);
 }
 
+TEST_F(InputControllerTests, DuplicateActionsUseTheActivatedBindingsReleaseTrigger)
+{
+    auto controller = InputController::Create("Game"_atom, InputContext::Gameplay);
+    int releases = 0;
+    controller->setActionCallback("Jump"_atom, [&](const InputActionEvent& event)
+                                  { releases += event.state == State::Released ? 1 : 0; });
+    controller->setBindings({ { .action = "Jump"_atom,
+                                .chord = KeyChord::Exact(Key::Space),
+                                .trigger = InputActionTrigger::WhileHeld },
+                              { .action = "Jump"_atom,
+                                .chord = KeyChord::Exact(Key::Enter),
+                                .trigger = InputActionTrigger::OnRelease } });
+    key(Key::Enter, State::Pressed);
+    frame();
+    EXPECT_FALSE(controller->isActionPressed("Jump"_atom));
+    key(Key::Enter, State::Released);
+    frame();
+    EXPECT_EQ(releases, 1);
+    EXPECT_TRUE(controller->isActionPressed("Jump"_atom));
+    frame();
+    EXPECT_FALSE(controller->isActionPressed("Jump"_atom));
+
+    key(Key::Space, State::Pressed);
+    key(Key::Enter, State::Pressed);
+    frame();
+    EXPECT_TRUE(controller->isActionPressed("Jump"_atom));
+    key(Key::Enter, State::Released);
+    frame();
+    EXPECT_EQ(releases, 2);
+    frame();
+    EXPECT_TRUE(controller->isActionPressed("Jump"_atom));
+    key(Key::Space, State::Released);
+    frame();
+    EXPECT_FALSE(controller->isActionPressed("Jump"_atom));
+}
+
+TEST_F(InputControllerTests, ReleasingOneBindingKeepsAnotherBindingOfTheSameActionHeld)
+{
+    auto controller = InputController::Create("Game"_atom, InputContext::Gameplay);
+    controller->setBindings({ { .action = "Move"_atom,
+                                .chord = KeyChord::Exact(Key::W),
+                                .trigger = InputActionTrigger::WhileHeld },
+                              { .action = "Move"_atom,
+                                .chord = KeyChord::Exact(MouseButton::Left),
+                                .trigger = InputActionTrigger::WhileHeld } });
+    key(Key::W, State::Pressed);
+    mouse(MouseButton::Left, MouseState::Press);
+    frame();
+    EXPECT_TRUE(controller->isActionPressed("Move"_atom));
+    mouse(MouseButton::Left, MouseState::Release);
+    frame();
+    EXPECT_TRUE(controller->isActionPressed("Move"_atom));
+    key(Key::W, State::Released);
+    frame();
+    EXPECT_FALSE(controller->isActionPressed("Move"_atom));
+}
+
+TEST_F(InputControllerTests, TemporarilyRemovingAnActionDoesNotUnregisterItsCallback)
+{
+    auto controller = InputController::Create("Game"_atom, InputContext::Gameplay);
+    int calls = 0;
+    controller->bind("Jump"_atom, KeyChord::Exact(Key::Space),
+                     [&](const InputActionEvent&) { ++calls; });
+    const auto original = controller->getBindings();
+    auto edited = original;
+    edited[0].action = ""_atom;
+    controller->setBindings(edited);
+    edited[0].action = "Other"_atom;
+    controller->setBindings(edited);
+    controller->setBindings(original);
+    key(Key::Space, State::Pressed);
+    frame();
+    EXPECT_EQ(calls, 1);
+    key(Key::Space, State::Released);
+    frame();
+    controller->clearBindings();
+    controller->setBindings(original);
+    key(Key::Space, State::Pressed);
+    frame();
+    EXPECT_EQ(calls, 2);
+    key(Key::Space, State::Released);
+    frame();
+    controller->setActionCallback("Jump"_atom, {});
+    key(Key::Space, State::Pressed);
+    frame();
+    EXPECT_EQ(calls, 2);
+}
+
 TEST_F(InputControllerTests, CloneHasIndependentRuntimeStateAndRegistersOnInitialize)
 {
     auto original = InputController::Create("Original"_atom, InputContext::Gameplay);
