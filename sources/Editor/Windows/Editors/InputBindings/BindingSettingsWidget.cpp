@@ -10,7 +10,7 @@
 #include "BindingSettingsWidget.h"
 
 #include "Editor/IconsFontAwesome.h"
-#include "ImGui/imgui.h"
+#include "ImGui/imgui_internal.h"
 #include "ImGui/misc/cpp/imgui_stdlib.h"
 #include "Platform/Window.h"
 
@@ -50,7 +50,6 @@ namespace NX
     void BindingSettingsWidget::cancelRecording()
     {
         _recording = false;
-        _confirmationRequested = false;
         _cancellationRequested = false;
         _recordedChord = {};
         _pressedButtons.clear();
@@ -113,19 +112,11 @@ namespace NX
     bool BindingSettingsWidget::drawChord(InputController::Binding& binding)
     {
         bool changed = false;
-        const bool finishedRecording
-            = _recording && (_cancellationRequested || _confirmationRequested);
+        const bool finishedRecording = _recording && _cancellationRequested;
         if (_recording && _cancellationRequested)
         {
             cancelRecording();
         }
-        else if (_recording && _confirmationRequested)
-        {
-            binding.chord = _recordedChord;
-            cancelRecording();
-            changed = true;
-        }
-
         auto shortcutText = chordText(_recording ? _recordedChord : binding.chord).toStdString();
         ImGui::InputText("Shortcut"_atom.c_str(), &shortcutText, ImGuiInputTextFlags_ReadOnly);
 
@@ -140,12 +131,23 @@ namespace NX
             return changed;
         }
 
-        ImGui::TextUnformatted("Press Enter to confirm"_atom.c_str());
+        ImGui::TextUnformatted("Press keys, then confirm with the button below"_atom.c_str());
         drawMouseCaptureArea();
+        ImGui::PushItemFlag(ImGuiItemFlags_NoNav, true);
+        ImGui::BeginDisabled(_recordedChord.triggerKey.isNone());
+        if (ImGui::Button("Confirm"_atom.c_str()))
+        {
+            binding.chord = _recordedChord;
+            cancelRecording();
+            changed = true;
+        }
+        ImGui::EndDisabled();
+        ImGui::SameLine();
         if (ImGui::Button("Cancel"_atom.c_str()))
         {
             cancelRecording();
         }
+        ImGui::PopItemFlag();
         return changed;
     }
 
@@ -180,25 +182,10 @@ namespace NX
             [this](Platform::Keyboard::Key key, int, Platform::Keyboard::KeyState state,
                    int modifiers)
             {
-                using Key = Platform::Keyboard::Key;
-                if (!_recording || _confirmationRequested || _cancellationRequested
+                if (!_recording || _cancellationRequested
                     || (state != Platform::Keyboard::KeyState::Pressed
                         && state != Platform::Keyboard::KeyState::Released))
                 {
-                    return;
-                }
-
-                if (key == Key::Enter || key == Key::Kp_Enter)
-                {
-                    if (state == Platform::Keyboard::KeyState::Pressed)
-                    {
-                        _confirmationRequested = !_recordedChord.triggerKey.isNone();
-                    }
-                    return;
-                }
-                if (key == Key::Escape)
-                {
-                    _cancellationRequested = state == Platform::Keyboard::KeyState::Pressed;
                     return;
                 }
 
@@ -222,8 +209,8 @@ namespace NX
                    Platform::Mouse::Mod modifiers)
             {
                 const auto buttonCode = static_cast<int>(button);
-                if (!_recording || _confirmationRequested || _cancellationRequested
-                    || buttonCode < 0 || buttonCode > GLFW_MOUSE_BUTTON_8)
+                if (!_recording || _cancellationRequested || buttonCode < 0
+                    || buttonCode > GLFW_MOUSE_BUTTON_8)
                 {
                     return;
                 }

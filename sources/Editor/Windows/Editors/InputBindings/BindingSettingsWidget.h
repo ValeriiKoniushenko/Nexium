@@ -54,7 +54,6 @@ namespace NX
 
     private:
         bool _recording = false;
-        bool _confirmationRequested = false;
         bool _cancellationRequested = false;
         std::optional<InputCapture> _inputCapture;
         KeyChord _recordedChord;

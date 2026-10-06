@@ -282,7 +282,6 @@ namespace NX
 
         assetData = _targetAsset->getData()->serialize();
         _targetAsset->syncWithFilesystem(assetData);
-        _targetComponent = _targetAsset->getData().get();
 
         for (auto& obj : GetGameScene()->getObjects())
         {

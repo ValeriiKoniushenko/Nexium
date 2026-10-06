@@ -5,8 +5,8 @@
         72.0
     ],
     "_innerSize": {
-        "height": 678.0,
-        "width": 1115.0
+        "height": 710.0,
+        "width": 1127.0
     },
     "_isEnabled": true,
     "_isFitContent": false,
@@ -17,7 +17,7 @@
     "_name": "Input bindings",
     "_noTick": false,
     "_oldSize": {
-        "height": 724.0,
+        "height": 756.0,
         "width": 1147.0
     },
     "_position": [
@@ -25,7 +25,7 @@
         36.0
     ],
     "_size": {
-        "height": 724.0,
+        "height": 756.0,
         "width": 1147.0
     },
     "_type": "NX::InputBindingsEditor"
