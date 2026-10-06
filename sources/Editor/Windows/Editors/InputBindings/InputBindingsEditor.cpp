@@ -1,5 +1,16 @@
+// Nexium
+// Copyright 2018-2026 Valerii Koniushenko
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+
 #include "InputBindingsEditor.h"
 
+#include "Editor/IconsFontAwesome.h"
+#include "Editor/ToastNotifications.h"
 #include "Editor/Windows/NxECSBasedEditor.h"
 #include "ImGui/imgui.h"
 
@@ -37,6 +48,8 @@ namespace NX
     void InputBindingsEditor::onDraw()
     {
         validateTarget();
+        drawSaveButton();
+
         _bindingsList.draw();
         ImGui::SameLine();
 
@@ -64,6 +77,39 @@ namespace NX
         setTarget(nullptr);
     }
 
+    void InputBindingsEditor::drawSaveButton()
+    {
+        auto owner = _owner.tryLoad();
+        auto* assetEditor = dynamic_cast<NxECSBasedEditorEWC*>(owner.get());
+        ImGui::BeginDisabled(!assetEditor || InputCapture::isActive());
+        if (ImGui::Button(ICON_FA_FLOPPY_O " Save"_atom.c_str()))
+        {
+            saveTarget();
+        }
+        ImGui::EndDisabled();
+    }
+
+    void InputBindingsEditor::saveTarget()
+    {
+        auto owner = _owner.tryLoad();
+        auto* assetEditor = dynamic_cast<NxECSBasedEditorEWC*>(owner.get());
+        if (!assetEditor || InputCapture::isActive())
+        {
+            return;
+        }
+
+        if (_targetAsset && assetEditor->getTargetAsset() != _targetAsset)
+        {
+            _targetAsset->syncWithFilesystem(_targetAsset->getData()->serialize());
+        }
+        else
+        {
+            assetEditor->save();
+            Editor::NotificationPopUp::Success("Bindings are modified !").show();
+        }
+        validateTarget();
+    }
+
     void InputBindingsEditor::setBindings(const std::vector<InputController::Binding>& bindings)
     {
         _bindings = bindings;
@@ -77,6 +123,7 @@ namespace NX
     {
         _targetController = controller;
         _owner = owner;
+        _targetAsset = controller && owner ? owner->getTargetAsset() : nullptr;
         _hasTarget = controller != nullptr;
         _hasOwner = owner != nullptr;
         if (controller)

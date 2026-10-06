@@ -27,6 +27,25 @@
                         "requiredKeys": [],
                         "trigger": "WhileHeld",
                         "triggerKey": "Left"
+                    },
+                    {
+                        "action": "MOUSE TEST",
+                        "requiredKeys": [
+                            "Left_Shift",
+                            "Left_Control",
+                            "D"
+                        ],
+                        "trigger": "OnPress",
+                        "triggerKey": {
+                            "button": "Left",
+                            "device": "Mouse"
+                        }
+                    },
+                    {
+                        "action": "New binding 6",
+                        "requiredKeys": [],
+                        "trigger": "OnPress",
+                        "triggerKey": "None"
                     }
                 ],
                 "_children": null,

@@ -19,6 +19,8 @@
 #include "gtest/gtest.h"
 #include <algorithm>
 #include <array>
+#include <chrono>
+#include <fstream>
 #include <memory>
 #include <string>
 #include <string_view>
@@ -42,6 +44,35 @@ namespace
         Core::StringAtom getCacheHash() const override { return "BindingsTestOwner"_atom; }
 
         void selectComponent(const BaseComponent::Ptr& component) { _targetComponent = component; }
+
+        int saves = 0;
+        nlohmann::json savedComponent;
+
+    protected:
+        void onSave() override
+        {
+            ++saves;
+            savedComponent = getTargetComponent()->serialize();
+        }
+    };
+
+    class DiskOwner : public NxECSBasedEditorEWC
+    {
+    public:
+        Core::StringAtom getCacheHash() const override { return "DiskBindingsTest"_atom; }
+        using NxECSBasedEditorEWC::onClose;
+        void selectAsset(const NXECSAsset& asset, BaseComponent* component)
+        {
+            _targetAsset = asset;
+            _targetComponent = component;
+        }
+    };
+
+    class DiskAsset : public ECSAsset
+    {
+    public:
+        using ECSAsset::ECSAsset;
+        using ECSAsset::load;
     };
 
     class BindingsListWidgetTests : public ::testing::Test
@@ -384,7 +415,151 @@ namespace
         EXPECT_EQ(captureDrawnText(draw).find("Delete shortcut"), std::string::npos);
     }
 
-    TEST_F(BindingsListWidgetTests, RecordsMouseWithHeldModifierAndConfirmsOnlyOnEnterPress)
+    TEST_F(BindingsListWidgetTests, SaveButtonWritesRecordedChordIntoTheAssetFile)
+    {
+        struct TemporaryFile
+        {
+            std::filesystem::path path;
+            ~TemporaryFile() { std::filesystem::remove(path); }
+        } file{ std::filesystem::temp_directory_path()
+                / ("nexium_binding_save_"
+                   + std::to_string(std::chrono::steady_clock::now().time_since_epoch().count())
+                   + ".nx") };
+        using Key = Platform::Keyboard::Key;
+        using State = Platform::Keyboard::KeyState;
+        InputController root;
+        InputController::Ptr child = new InputController;
+        child->setBindings({ { .action = "Jump"_atom, .chord = KeyChord::Exact(Key::Space) } });
+        root.attachChild(child);
+        Core::IntrusivePtr<DiskAsset> asset = new DiskAsset("BindingSaveTest"_atom);
+        ECSAsset::PackObjectToAsset(*asset, &root);
+        std::ofstream(file.path) << asset->toJson().dump(4);
+        asset->connectSourceFile(file.path);
+        if (asset->getLoadingStatus() == ECSAsset::Status::PreLoaded)
+        {
+            asset->load();
+        }
+        ASSERT_EQ(asset->getLoadingStatus(), ECSAsset::Status::Loaded);
+        auto* controller = asset->getData()->findFirstChildOf<InputController>();
+        ASSERT_NE(controller, nullptr);
+        Core::IntrusivePtr<DiskOwner> owner = new DiskOwner;
+        owner->initialize();
+        owner->selectAsset(asset, controller);
+        TestInputBindingsEditor editor;
+        editor.initialize();
+        editor.setTarget(controller, owner.get());
+        const auto draw = [&editor] { editor.onDraw(); };
+        clickText(draw, "Record", true);
+        sendKey(Key::S, State::Pressed, GLFW_MOD_CONTROL);
+        sendKey(Key::S, State::Released, GLFW_MOD_CONTROL);
+        clickText(draw, "Confirm", true);
+        const auto expected = controller->serialize()["_bindings"];
+        clickText(draw, "Save");
+        EXPECT_EQ(owner->getTargetComponent(), controller);
+        EXPECT_EQ(asset->getData()->findFirstChildOf<InputController>(), controller);
+        EXPECT_NE(captureDrawnText(draw).find("Ctrl + S"), std::string::npos);
+
+        owner->onClose();
+        clickText(draw, "Save");
+        const auto saved = nlohmann::json::parse(std::ifstream(file.path));
+        EXPECT_EQ(saved["data"]["_children"][0]["_bindings"], expected);
+        EXPECT_EQ(saved["data"]["_children"][0]["_bindings"][0]["triggerKey"], "S");
+        EXPECT_NE(captureDrawnText(draw).find("Ctrl + S"), std::string::npos);
+
+        clickText(draw, "Add binding");
+        clickText(draw, "Record", true);
+        sendKey(Key::K, State::Pressed);
+        sendKey(Key::K, State::Released);
+        clickText(draw, "Confirm", true);
+        clickText(draw, "Save");
+        const auto updated = nlohmann::json::parse(std::ifstream(file.path));
+        ASSERT_EQ(updated["data"]["_children"][0]["_bindings"].size(), 2);
+        EXPECT_EQ(updated["data"]["_children"][0]["_bindings"][1]["triggerKey"], "K");
+        EXPECT_EQ(asset->getData()->findFirstChildOf<InputController>(), controller);
+        EXPECT_NE(captureDrawnText(draw).find("New binding 2"), std::string::npos);
+    }
+
+    TEST_F(BindingsListWidgetTests, SaveButtonPersistsBindingsThroughTheirOwner)
+    {
+        using Key = Platform::Keyboard::Key;
+        InputController::Ptr controller = new InputController;
+        controller->setBindings(
+            { { .action = "Jump"_atom, .chord = KeyChord::Exact(Key::Space) } });
+        Core::IntrusivePtr<BindingsTestOwner> owner = new BindingsTestOwner;
+        owner->selectComponent(controller);
+        TestInputBindingsEditor editor;
+        editor.initialize();
+        editor.setTarget(controller.get(), owner.get());
+        const auto draw = [&editor] { editor.onDraw(); };
+
+        clickText(draw, "Add binding");
+        ASSERT_TRUE(owner->isDirty());
+        clickText(draw, "Save");
+        EXPECT_EQ(owner->saves, 1);
+        EXPECT_FALSE(owner->isDirty());
+        EXPECT_EQ(owner->savedComponent["_bindings"], controller->serialize()["_bindings"]);
+
+        clickText(draw, "Record");
+        clickText(draw, "Save");
+        EXPECT_EQ(owner->saves, 1);
+        clickText(draw, "Cancel");
+        clickText(draw, "Delete shortcut");
+        clickText(draw, "Delete shortcut");
+        clickText(draw, "Save");
+        EXPECT_EQ(owner->saves, 2);
+        EXPECT_TRUE(owner->savedComponent["_bindings"].empty());
+
+        editor.setTarget(nullptr);
+        clickText(draw, "Save");
+        EXPECT_EQ(owner->saves, 2);
+    }
+
+    TEST_F(BindingsListWidgetTests, RecordsEnterEscapeAndControlEnterWithoutAcceptingOrCancelling)
+    {
+        using Key = Platform::Keyboard::Key;
+        using State = Platform::Keyboard::KeyState;
+        ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+        InputController::Ptr controller = new InputController;
+        controller->setBindings(
+            { { .action = "Jump"_atom, .chord = KeyChord::Exact(Key::Space) } });
+        TestInputBindingsEditor editor;
+        editor.initialize();
+        editor.setTarget(controller.get());
+        const auto draw = [&editor] { editor.onDraw(); };
+        const std::array cases{ std::pair{ Key::Enter, 0 }, std::pair{ Key::Kp_Enter, 0 },
+                                std::pair{ Key::Escape, 0 },
+                                std::pair{ Key::Enter, GLFW_MOD_CONTROL } };
+        for (const auto& [key, modifiers] : cases)
+        {
+            clickText(draw, "Record", true);
+            clickText(draw, "Confirm", true);
+            EXPECT_TRUE(InputCapture::isActive());
+            const auto previousChord = controller->getBindings()[0].chord.triggerKey;
+            const auto imguiKey = key == Key::Escape     ? ImGuiKey_Escape
+                                  : key == Key::Kp_Enter ? ImGuiKey_KeypadEnter
+                                                         : ImGuiKey_Enter;
+            sendKey(key, State::Pressed, modifiers);
+            ImGui::GetIO().AddKeyEvent(imguiKey, true);
+            captureDrawnText(draw);
+            EXPECT_TRUE(InputCapture::isActive());
+            EXPECT_EQ(controller->getBindings()[0].chord.triggerKey, previousChord);
+            sendKey(key, State::Released);
+            ImGui::GetIO().AddKeyEvent(imguiKey, false);
+            captureDrawnText(draw);
+            clickText(draw, "Confirm", true);
+            EXPECT_FALSE(InputCapture::isActive());
+            const auto& chord = controller->getBindings()[0].chord;
+            EXPECT_EQ(chord.triggerKey, key);
+            EXPECT_EQ(chord.requiredKeys.size(), modifiers == 0 ? 0u : 1u);
+            if (modifiers != 0)
+            {
+                EXPECT_TRUE(chord.contains(Key::Left_Control));
+            }
+            EXPECT_FALSE(chord.contains(Platform::Mouse::Key::Left));
+        }
+    }
+
+    TEST_F(BindingsListWidgetTests, RecordsMouseWithHeldModifierAndConfirmsOnlyOnButtonClick)
     {
         using Key = Platform::Keyboard::Key;
         using State = Platform::Keyboard::KeyState;
@@ -401,7 +576,8 @@ namespace
         clickText(draw, "Record", true);
         EXPECT_TRUE(InputCapture::isActive());
         sendKey(Key::Enter, State::Pressed);
-        EXPECT_NE(captureDrawnText(draw).find("Press Enter to confirm"), std::string::npos);
+        EXPECT_NE(captureDrawnText(draw).find("Press keys, then confirm with the button below"),
+                  std::string::npos);
         EXPECT_EQ(controller->getBindings()[0].chord.triggerKey, Key::Space);
         sendKey(Key::Enter, State::Released);
 
@@ -413,13 +589,8 @@ namespace
         captureDrawnText(draw);
         EXPECT_EQ(controller->getBindings()[0].chord.triggerKey, Key::Space);
 
-        sendKey(Key::Enter, State::Pressed);
-        ImGui::GetIO().AddKeyEvent(ImGuiKey_Enter, true);
+        clickText(draw, "Confirm", true);
         const auto confirmed = captureDrawnText(draw);
-        EXPECT_TRUE(InputCapture::isActive());
-        sendKey(Key::Enter, State::Released);
-        ImGui::GetIO().AddKeyEvent(ImGuiKey_Enter, false);
-        captureDrawnText(draw);
         EXPECT_FALSE(InputCapture::isActive());
         const auto& chord = controller->getBindings()[0].chord;
         EXPECT_EQ(chord.triggerKey, Mouse::Key::Right);
@@ -428,7 +599,8 @@ namespace
         EXPECT_FALSE(chord.contains(Key::Enter));
         EXPECT_FALSE(chord.contains(Mouse::Key::Left));
         EXPECT_NE(confirmed.find("Ctrl + Mouse Right"), std::string::npos);
-        EXPECT_EQ(confirmed.find("Press Enter to confirm"), std::string::npos);
+        EXPECT_EQ(confirmed.find("Press keys, then confirm with the button below"),
+                  std::string::npos);
         EXPECT_EQ(confirmed.find("Apply"), std::string::npos);
     }
 
@@ -451,9 +623,7 @@ namespace
             const auto button = static_cast<Mouse::Key>(code);
             sendMouse(button, Mouse::State::Press);
             sendMouse(button, Mouse::State::Release);
-            sendKey(Key::Kp_Enter, Platform::Keyboard::KeyState::Pressed);
-            captureDrawnText(draw);
-            sendKey(Key::Kp_Enter, Platform::Keyboard::KeyState::Released);
+            clickText(draw, "Confirm", true);
 
             const auto& chord = controller->getBindings()[0].chord;
             EXPECT_EQ(chord.triggerKey, button);
@@ -482,9 +652,7 @@ namespace
         sendMouse(Mouse::Key::Middle, Mouse::State::Press);
         sendMouse(Mouse::Key::Middle, Mouse::State::Release);
         sendKey(Key::Q, State::Released);
-        sendKey(Key::Enter, State::Pressed);
-        captureDrawnText(draw);
-        sendKey(Key::Enter, State::Released);
+        clickText(draw, "Confirm", true);
 
         const auto& chord = controller->getBindings()[0].chord;
         EXPECT_EQ(chord.triggerKey, Mouse::Key::Middle);
@@ -530,13 +698,14 @@ namespace
         sendKey(Key::Enter, State::Released);
         EXPECT_EQ(controller->getBindings()[0].chord.triggerKey, Key::Space);
         EXPECT_EQ(controller->getBindings()[1].chord.triggerKey, Key::A);
-        EXPECT_EQ(switched.find("Press Enter to confirm"), std::string::npos);
+        EXPECT_EQ(switched.find("Press keys, then confirm with the button below"),
+                  std::string::npos);
         EXPECT_EQ(Platform::GetWindow().onKeyPressed->getSubscriptionsCount(), keySubscriptions);
         EXPECT_EQ(Platform::GetWindow().onMouseKeyPressed->getSubscriptionsCount(),
                   mouseSubscriptions);
     }
 
-    TEST_F(BindingsListWidgetTests, EscapeAndFocusLossCancelRecordingWithoutChangingTheChord)
+    TEST_F(BindingsListWidgetTests, CancelAndFocusLossDiscardRecordingWithoutChangingTheChord)
     {
         using Key = Platform::Keyboard::Key;
         using State = Platform::Keyboard::KeyState;
@@ -551,7 +720,11 @@ namespace
         clickText(draw, "Record", true);
         sendKey(Key::S, State::Pressed);
         sendKey(Key::Escape, State::Pressed);
-        EXPECT_EQ(captureDrawnText(draw).find("Press Enter to confirm"), std::string::npos);
+        EXPECT_NE(captureDrawnText(draw).find("Press keys, then confirm with the button below"),
+                  std::string::npos);
+        clickText(draw, "Cancel", true);
+        EXPECT_EQ(captureDrawnText(draw).find("Press keys, then confirm with the button below"),
+                  std::string::npos);
         EXPECT_EQ(controller->getBindings()[0].chord.triggerKey, Key::Space);
         sendKey(Key::S, State::Released);
         sendKey(Key::Escape, State::Released);
@@ -559,7 +732,8 @@ namespace
         clickText(draw, "Record", true);
         sendKey(Key::S, State::Pressed);
         Platform::GetWindow().onFocusChanged->trigger(false);
-        EXPECT_EQ(captureDrawnText(draw).find("Press Enter to confirm"), std::string::npos);
+        EXPECT_EQ(captureDrawnText(draw).find("Press keys, then confirm with the button below"),
+                  std::string::npos);
         EXPECT_EQ(controller->getBindings()[0].chord.triggerKey, Key::Space);
     }
 

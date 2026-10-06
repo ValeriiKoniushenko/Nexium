@@ -12,6 +12,7 @@
 #include "BindingSettingsWidget.h"
 #include "BindingsListWidget.h"
 #include "Editor/Windows/BaseWindow.h"
+#include "NxFundamental/Assets/ECSAsset.h"
 #include "NxWorld/Framework/InputController.h"
 
 #include <optional>
@@ -38,6 +39,8 @@ namespace NX
         void onClose() override;
 
     private:
+        void drawSaveButton();
+        void saveTarget();
         void refreshBindingsList();
         void addBinding();
         void deleteSelectedBinding();
@@ -52,10 +55,13 @@ namespace NX
         std::size_t _bindingSession = 0;
         Core::WeakPtr<InputController> _targetController;
         Core::WeakPtr<BaseComponent> _owner;
-        bool _hasTarget = false;
-        bool _hasOwner = false;
+        NXECSAsset _targetAsset;
+
         Core::DelegateSubscriber _selectionSubscription;
         Core::DelegateSubscriber _addBindingSubscription;
+
+        bool _hasTarget = false;
+        bool _hasOwner = false;
     };
 } // namespace NX
 
