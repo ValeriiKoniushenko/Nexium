@@ -17,6 +17,14 @@
 
 namespace NX
 {
+    class GuiGenerator : public Gui::VerticalLayout
+    {
+    public:
+        void spawn(const Core::StringAtom& label, int& value);
+
+        void despawnEverything();
+    };
+
     CLASS();
     class WorldSettingsEWC : public BaseFloatEWC
     {
@@ -32,9 +40,6 @@ namespace NX
         void onOpen() override;
         void onClose() override;
         void onDraw() override;
-
-    private:
-        void createExtraGui();
 
     protected:
         // Global
@@ -52,6 +57,8 @@ namespace NX
         Gui::FloatInput* _specularStrength = nullptr;
         Gui::FloatInput* _specularPow = nullptr;
         Gui::Float3Input* _sunDirection = nullptr;
+
+        GuiGenerator gg;
     };
 } // namespace NX
 
