@@ -1,12 +1,12 @@
 {
     "_children": null,
     "_innerPosition": [
-        20.0,
-        830.0
+        293.0,
+        804.0
     ],
     "_innerSize": {
-        "height": 193.0,
-        "width": 1880.0
+        "height": 187.0,
+        "width": 1078.0
     },
     "_isEnabled": true,
     "_isFitContent": false,
@@ -41,19 +41,19 @@
         "height": 200.0,
         "width": 200.0
     },
-    "_name": " Logs",
+    "_name": "Logs",
     "_noTick": false,
     "_oldSize": {
-        "height": 239.0,
-        "width": 1900.0
+        "height": 233.0,
+        "width": 1098.0
     },
     "_position": [
-        10.0,
-        794.0
+        283.0,
+        768.0
     ],
     "_size": {
-        "height": 239.0,
-        "width": 1900.0
+        "height": 233.0,
+        "width": 1098.0
     },
     "_type": "NX::LogsWindowEWC"
 }

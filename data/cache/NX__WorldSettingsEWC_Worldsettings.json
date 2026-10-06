@@ -1,14 +1,14 @@
 {
     "_children": null,
     "_innerPosition": [
-        811.0,
+        1393.0,
         72.0
     ],
     "_innerSize": {
-        "height": 708.0,
-        "width": 369.0
+        "height": 919.0,
+        "width": 507.0
     },
-    "_isEnabled": true,
+    "_isEnabled": false,
     "_isFitContent": false,
     "_minWindowSize": {
         "height": 200.0,
@@ -17,16 +17,16 @@
     "_name": "World settings",
     "_noTick": false,
     "_oldSize": {
-        "height": 754.0,
-        "width": 389.0
+        "height": 965.0,
+        "width": 527.0
     },
     "_position": [
-        801.0,
+        1383.0,
         36.0
     ],
     "_size": {
-        "height": 754.0,
-        "width": 389.0
+        "height": 965.0,
+        "width": 527.0
     },
     "_type": "NX::WorldSettingsEWC"
 }
