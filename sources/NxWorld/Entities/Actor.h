@@ -11,8 +11,8 @@
 
 #pragma once
 
-#include "../Scene/SceneObjects/SceneObject.h"
 #include "NxFundamental/ECS/BaseComponent.h"
+#include "NxWorld/Scene/SceneObjects/SceneObject.h"
 #include "RawBackend/IDrawable.h"
 
 namespace NX

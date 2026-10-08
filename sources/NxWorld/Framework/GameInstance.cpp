@@ -9,16 +9,17 @@
 
 #include "GameInstance.h"
 
-#include "../Scene/SceneObjects/Rectangle/Rectangle.h"
 #include "Core/Size.h"
 #include "Foundation/Configs.h"
 #include "Foundation/Debug/Latency.h"
 #include "InputSystem.h"
+#include "NxSubsystems/Graphics/ShaderManager.h"
 #include "NxSubsystems/Graphics/ShaderProgram.h"
 #include "NxWorld/Animations/FrameByFrame/FrameByFrameAnimation.h"
 #include "NxWorld/Animations/FrameByFrame/FrameByFrameAnimator.h"
 #include "NxWorld/Entities/Camera/Camera.h"
 #include "NxWorld/PrivateModuleInfo.h"
+#include "NxWorld/Scene/SceneObjects/Rectangle/Rectangle.h"
 #include "Platform/Input/Glfw.h"
 #include "Platform/Input/Window.h"
 #include "spdlog/common.h"
@@ -155,11 +156,12 @@ namespace NX
         NX_LATENCY_POINT("AssetsManager - inited");
 
         //-------------------- SHADER MANAGER ---------------------
-        shaderManager.loadShaders(Foundation::Config::Path::shaders);
-        shaderManager.debugLog("Was loaded {} shaders."_f << shaderManager.countOfShaders());
-        for (const auto& notLoadedShader : shaderManager.getFailedShaders())
+        GetShaderManager().loadShaders(Foundation::Config::Path::shaders);
+        GetShaderManager().debugLog("Was loaded {} shaders."_f
+                                    << GetShaderManager().countOfShaders());
+        for (const auto& notLoadedShader : GetShaderManager().getFailedShaders())
         {
-            shaderManager.criticalLog(
+            GetShaderManager().criticalLog(
                 "Shader '{}' found but not loaded. It contains some error[s]. See above in the log"_f
                 << notLoadedShader);
         }
@@ -286,7 +288,7 @@ namespace NX
 
     void GameInstance::initializeShaders()
     {
-        if (auto* s = shaderManager.getShaderProgram("defaultTextured"_atom); Verify(s))
+        if (auto* s = GetShaderManager().getShaderProgram("defaultTextured"_atom); Verify(s))
         {
             s->setSetEventCallback(
                 [](ShaderProgram::Event event)
@@ -307,7 +309,7 @@ namespace NX
                 });
         }
 
-        if (auto* s = shaderManager.getShaderProgram("outline"_atom); Verify(s))
+        if (auto* s = GetShaderManager().getShaderProgram("outline"_atom); Verify(s))
         {
             s->setSetEventCallback(
                 [](ShaderProgram::Event event)
@@ -325,7 +327,7 @@ namespace NX
                 });
         }
 
-        if (auto* s = shaderManager.getShaderProgram("objectIdentifier"_atom); Verify(s))
+        if (auto* s = GetShaderManager().getShaderProgram("objectIdentifier"_atom); Verify(s))
         {
             s->setSetEventCallback(
                 [](ShaderProgram::Event event)
@@ -339,7 +341,7 @@ namespace NX
                 });
         }
 
-        if (auto* s = shaderManager.getShaderProgram("pickUpColorFiller"_atom); Verify(s))
+        if (auto* s = GetShaderManager().getShaderProgram("pickUpColorFiller"_atom); Verify(s))
         {
             s->setSetEventCallback(
                 [](ShaderProgram::Event event)
@@ -357,7 +359,7 @@ namespace NX
                 });
         }
 
-        if (auto* s = shaderManager.getShaderProgram("skybox"_atom); Verify(s))
+        if (auto* s = GetShaderManager().getShaderProgram("skybox"_atom); Verify(s))
         {
             s->setSetEventCallback(
                 [](ShaderProgram::Event event)
@@ -371,7 +373,7 @@ namespace NX
                 });
         }
 
-        if (auto* s = shaderManager.getShaderProgram("2d_rect"_atom); Verify(s))
+        if (auto* s = GetShaderManager().getShaderProgram("2d_rect"_atom); Verify(s))
         {
             s->setSetEventCallback(
                 [](ShaderProgram::Event event)
@@ -391,7 +393,7 @@ namespace NX
                 });
         }
 
-        if (auto* s = shaderManager.getShaderProgram("line"_atom); Verify(s))
+        if (auto* s = GetShaderManager().getShaderProgram("line"_atom); Verify(s))
         {
             s->setSetEventCallback(
                 [](ShaderProgram::Event event)
@@ -405,7 +407,7 @@ namespace NX
                 });
         }
 
-        if (auto* s = shaderManager.getShaderProgram("text"_atom); Verify(s))
+        if (auto* s = GetShaderManager().getShaderProgram("text"_atom); Verify(s))
         {
             s->setSetEventCallback(
                 [](ShaderProgram::Event event)
@@ -419,14 +421,14 @@ namespace NX
                 });
         }
 
-        if (auto* s = shaderManager.getShaderProgram("grid"_atom); Verify(s))
+        if (auto* s = GetShaderManager().getShaderProgram("grid"_atom); Verify(s))
         {
             // Fake event to suprress debug tracker. This shader doesn't use any Vertex stuff. So,
             // it's totally safe.
             s->callSetEvent(ShaderProgram::Event::None);
         }
 
-        if (auto* s = shaderManager.getShaderProgram("line"_atom); Verify(s))
+        if (auto* s = GetShaderManager().getShaderProgram("line"_atom); Verify(s))
         {
             // Fake event to suprress debug tracker. This shader doesn't use any Vertex stuff. So,
             // it's totally safe.

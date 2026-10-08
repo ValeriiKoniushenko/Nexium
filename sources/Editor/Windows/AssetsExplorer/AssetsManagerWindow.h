@@ -11,9 +11,9 @@
 
 #pragma once
 
-#include "../BaseWindow.h"
 #include "Editor/ForwardDeclarations.h"
 #include "Editor/GuiComponents/HorizontalLayout.h"
+#include "Editor/Windows/BaseWindow.h"
 #include "NxSubsystems/AssetsManager/AssetsManager.h"
 #include "NxSubsystems/AssetsManager/TextureAsset.h"
 #include "RenamePopUpWindow.h"

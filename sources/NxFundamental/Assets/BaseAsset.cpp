@@ -9,8 +9,8 @@
 
 #include "BaseAsset.h"
 
-#include "../PrivateModuleInfo.h"
 #include "Foundation/Configs.h"
+#include "NxFundamental/PrivateModuleInfo.h"
 #include "NxFundamental/ResourceManagement/AtomicFile.h"
 #include "Utils/Functions.h"
 

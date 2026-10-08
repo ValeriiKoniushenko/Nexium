@@ -9,7 +9,7 @@
 
 #include "ShaderProgramMeta.h"
 
-#include "../PrivateModuleInfo.h"
+#include "NxSubsystems/PrivateModuleInfo.h"
 #include "Utils/Functions.h"
 #include "spdlog/async_logger.h"
 

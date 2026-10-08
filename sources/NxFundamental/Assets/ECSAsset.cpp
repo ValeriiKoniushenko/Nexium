@@ -9,8 +9,8 @@
 
 #include "ECSAsset.h"
 
-#include "../PrivateModuleInfo.h"
 #include "Factory.h"
+#include "NxFundamental/PrivateModuleInfo.h"
 #include "NxFundamental/ResourceManagement/AtomicFile.h"
 #include "NxFundamental/Utils/Stringifier.h"
 #include "Utils/Functions.h"

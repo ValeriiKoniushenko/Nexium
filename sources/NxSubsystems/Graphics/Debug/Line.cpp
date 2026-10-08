@@ -9,9 +9,9 @@
 
 #include "Line.h"
 
-#include "../GraphicsComponents.h"
-#include "../ShaderManager.h"
-#include "../ShaderProgram.h"
+#include "NxSubsystems/Graphics/GraphicsComponents.h"
+#include "NxSubsystems/Graphics/ShaderManager.h"
+#include "NxSubsystems/Graphics/ShaderProgram.h"
 
 using namespace NX;
 using namespace Core;

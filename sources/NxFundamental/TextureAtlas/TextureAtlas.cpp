@@ -9,9 +9,9 @@
 
 #include "TextureAtlas.h"
 
-#include "../PrivateModuleInfo.h"
 #include "Core/Rect.h"
 #include "Core/String.h"
+#include "NxFundamental/PrivateModuleInfo.h"
 #include "RawBackend/Utils.h"
 #include "Rectpack2D/finders_interface.h"
 
@@ -23,8 +23,7 @@ using namespace rectpack2D;
 using namespace Core;
 using namespace RawBackend;
 
-// Pixel uploads and frame UVs preserve the source image orientation.
-using spaces_type = empty_spaces<false>;
+using spaces_type = empty_spaces<true>;
 using rect_type = output_rect_t<spaces_type>;
 
 namespace NX

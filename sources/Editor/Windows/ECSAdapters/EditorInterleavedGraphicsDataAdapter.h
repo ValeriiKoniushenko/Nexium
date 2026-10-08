@@ -11,8 +11,8 @@
 
 #pragma once
 
-#include "../NxECSBasedEditor.h"
 #include "Editor/GuiComponents/VerticalLayout.h"
+#include "Editor/Windows/NxECSBasedEditor.h"
 #include "Editor/Windows/ObjectPropertiesWindow.h"
 
 namespace NX

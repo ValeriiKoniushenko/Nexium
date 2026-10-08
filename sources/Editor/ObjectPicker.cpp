@@ -11,12 +11,13 @@
 
 #include "Editor/EditorIntegration.h"
 #include "Editor/Windows/GameViewport.h"
+#include "NxSubsystems/Graphics/ShaderManager.h"
 #include "NxWorld/Entities/Camera/Camera.h"
 #ifdef NEXIUM_ENABLE_3D_MODULE
     #include "NxWorld/Entities/Mesh/StaticMeshBundle.h"
 #endif
-#include "../NxWorld/Scene/SceneObjects/Rectangle/Rectangle.h"
 #include "NxWorld/Framework/GameInstance.h"
+#include "NxWorld/Scene/SceneObjects/Rectangle/Rectangle.h"
 
 #define GLM_ENABLE_EXPERIMENTAL
 #include "glm/gtx/string_cast.hpp"
@@ -84,7 +85,7 @@ namespace NX
     std::optional<Color3> SlowObjectPicker::drawingPreparations(Scene& scene, BaseCamera* camera,
                                                                 glm::vec2 pickPos)
     {
-        auto* shader = gGameInstance->shaderManager.getShaderProgram("objectIdentifier"_atom);
+        auto* shader = GetShaderManager().getShaderProgram("objectIdentifier"_atom);
         if (!Verify(shader)) [[unlikely]]
         {
             return std::nullopt;
