@@ -32,6 +32,13 @@ namespace NX
         }
     }
 
+    GameViewportEWC::~GameViewportEWC() = default;
+
+    void GameViewportEWC::SceneTabsDeleter::operator()(SceneTabs* tabs) const
+    {
+        delete tabs;
+    }
+
     const char* GameViewportEWC::getIcon()
     {
         return ICON_FA_VIDEO_CAMERA;
@@ -40,7 +47,14 @@ namespace NX
     void GameViewportEWC::onInitialize()
     {
         BaseFloatEWC::onInitialize();
-        _sceneTabs.initialize(*GetSceneManager());
+        _sceneTabs.reset(new SceneTabs);
+        _sceneTabs->initialize(*GetSceneManager());
+    }
+
+    void GameViewportEWC::onDeinitialize()
+    {
+        _sceneTabs.reset();
+        BaseFloatEWC::onDeinitialize();
     }
 
     void GameViewportEWC::onOpen()
@@ -90,7 +104,7 @@ namespace NX
             return;
         }
 
-        _sceneTabs.draw(*GetSceneManager());
+        _sceneTabs->draw(*GetSceneManager());
 
         if (!updateImageArea())
         {
