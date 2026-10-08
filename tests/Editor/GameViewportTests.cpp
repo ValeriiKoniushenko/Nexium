@@ -8,6 +8,7 @@
 //     http://www.apache.org/licenses/LICENSE-2.0
 
 #include "Editor/Windows/GameViewport.h"
+#include "ImGui/imgui.h"
 
 #include "gtest/gtest.h"
 
@@ -46,6 +47,13 @@ namespace
             ImGui::DestroyContext();
         }
     };
+
+    TEST_F(GameViewportTests, DeinitializationBeforeInitializationIsSafe)
+    {
+        TestGameViewport viewport;
+        EXPECT_NO_THROW(viewport.deinitialize());
+        EXPECT_NO_THROW(viewport.deinitialize());
+    }
 
     TEST_F(GameViewportTests, ImageAreaDoesNotOverwriteWindowGeometryOrNotifyWindowResize)
     {
