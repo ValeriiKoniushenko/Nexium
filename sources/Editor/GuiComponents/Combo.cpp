@@ -126,47 +126,57 @@ namespace NX::Gui
 
         if (ImGui::BeginCombo("", preview))
         {
-            drawPopupHeader();
-            for (std::size_t i = 0; i < _cache.size(); ++i)
-            {
-                if (!matchesItem(_cache[i].second))
-                {
-                    continue;
-                }
-                ImGui::PushID(static_cast<int>(i));
-                if (_drawItemAction)
-                {
-                    _drawItemAction(_cache[i].first);
-                    ImGui::SameLine();
-                }
-                const bool isSelected = (_currentIndex == i);
-                if (ImGui::Selectable(_cache.at(i).second.c_str(), isSelected))
-                {
-                    _currentIndex = i;
-                    _currentData = _cache.at(i).first;
-                    onSelect->trigger(_cache.at(i).first);
-                }
-                if (isSelected)
-                {
-                    ImGui::SetItemDefaultFocus();
-                }
-                ImGui::PopID();
-            }
+            drawPopupContent();
             ImGui::EndCombo();
         }
         ImGui::PopItemWidth();
     }
-    void ComboModelBased::drawPopupHeader()
+    void ComboModelBased::drawPopupContent()
     {
-        if (_drawPopupHeader)
+        for (std::size_t i = 0; i < _cache.size(); ++i)
         {
-            _drawPopupHeader();
+            const bool isSelected = (_currentIndex == i);
+            if (ImGui::Selectable(_cache.at(i).second.c_str(), isSelected))
+            {
+                _currentIndex = i;
+                _currentData = _cache.at(i).first;
+                onSelect->trigger(_cache.at(i).first);
+            }
+            if (isSelected)
+            {
+                ImGui::SetItemDefaultFocus();
+            }
         }
     }
 
-    bool ComboModelBased::matchesItem(const StringAtom& label) const
+    void SearchableComboBox::drawPopupContent()
     {
-        return !_itemFilter || _itemFilter(label);
+        drawPopupHeader();
+        for (std::size_t i = 0; i < _cache.size(); ++i)
+        {
+            if (!matchesItem(_cache[i].second))
+            {
+                continue;
+            }
+            ImGui::PushID(static_cast<int>(i));
+            if (_drawItemAction)
+            {
+                _drawItemAction(_cache[i].first);
+                ImGui::SameLine();
+            }
+            const bool isSelected = (_currentIndex == i);
+            if (ImGui::Selectable(_cache.at(i).second.c_str(), isSelected))
+            {
+                _currentIndex = i;
+                _currentData = _cache.at(i).first;
+                onSelect->trigger(_cache.at(i).first);
+            }
+            if (isSelected)
+            {
+                ImGui::SetItemDefaultFocus();
+            }
+            ImGui::PopID();
+        }
     }
 
     void SearchableComboBox::onInitialize()
@@ -188,13 +198,16 @@ namespace NX::Gui
         }
         _search.setWidth(ImGui::GetContentRegionAvail().x);
         _search.tick(0.f);
-        ComboModelBased::drawPopupHeader();
+        if (_drawPopupHeader)
+        {
+            _drawPopupHeader();
+        }
     }
 
     bool SearchableComboBox::matchesItem(const StringAtom& label) const
     {
         const auto& query = getSearchText();
-        return ComboModelBased::matchesItem(label)
+        return (!_itemFilter || _itemFilter(label))
                && (query.empty()
                    || ImStristr(label.c_str(), nullptr, query.c_str(), nullptr) != nullptr);
     }
