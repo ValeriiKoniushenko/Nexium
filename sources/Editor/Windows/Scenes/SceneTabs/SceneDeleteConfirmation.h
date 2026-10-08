@@ -12,6 +12,7 @@
 #include "Editor/GuiComponents/Button.h"
 #include "Editor/GuiComponents/HorizontalLayout.h"
 #include "Editor/GuiComponents/Label.h"
+#include "Editor/Windows/BaseWindow.h"
 #include "NxWorld/Scene/Scene/Scene.h"
 
 namespace NX
@@ -19,12 +20,23 @@ namespace NX
     class Scene;
     class SceneManager;
 
-    class SceneDeleteConfirmation final
+    CLASS();
+    class SceneDeleteConfirmation final : public BaseModalPopUp
     {
+        ECS_DECL_NO_CNSTR(SceneDeleteConfirmation, NX::BaseModalPopUp);
+
     public:
-        void initialize(SceneManager& scenes);
-        void request(Scene* scene) { _pendingScene = scene; }
-        void draw(SceneManager& scenes);
+        explicit SceneDeleteConfirmation(const StringAtom& name = ""_atom);
+        void open(Scene* scene);
+
+    protected:
+        void onOpen() override;
+        void onClose() override;
+        void onDraw() override;
+        [[nodiscard]] glm::vec2 getInitialPopupSize() const override;
+
+    private:
+        void closeConfirmation();
 
     private:
         Gui::HorizontalLayout _buttons;
@@ -32,7 +44,8 @@ namespace NX
         Gui::Button* _cancelButton = nullptr;
         Gui::Label _message;
         Gui::Label _warning;
-        DelegateSubscriberPoolGuard _subscriptions;
         Core::WeakPtr<Scene> _pendingScene;
     };
 } // namespace NX
+
+#include "SceneDeleteConfirmation.generated.h" // added by the code generator. Better don't move it.
