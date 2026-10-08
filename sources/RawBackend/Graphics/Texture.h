@@ -11,8 +11,8 @@
 
 #pragma once
 
-#include "../Image.h"
 #include "Platform/Graphics.h"
+#include "RawBackend/Image.h"
 
 #include <Core/IntrusivePtr.h>
 #include <filesystem>

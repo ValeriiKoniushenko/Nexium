@@ -9,7 +9,6 @@
 
 #include "AssetsManagerWindow.h"
 
-#include "../ModalCreateBlueprint.h"
 #include "Editor/EditorIntegration.h"
 #include "Editor/GuiComponents/Button.h"
 #include "Editor/GuiComponents/Input.h"
@@ -18,6 +17,7 @@
 #include "Editor/Windows/Editors/NxTextureEditor.h"
 #include "Editor/Windows/Editors/TextEditor.h"
 #include "Editor/Windows/ImageViewer.h"
+#include "Editor/Windows/ModalCreateBlueprint.h"
 #include "Editor/Windows/ModalPopUp.h"
 #include "Editor/Windows/NxECSBasedEditor.h"
 #include "Foundation/Configs.h"

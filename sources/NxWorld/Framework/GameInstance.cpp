@@ -9,15 +9,16 @@
 
 #include "GameInstance.h"
 
-#include "../Scene/SceneObjects/Rectangle/Rectangle.h"
 #include "Core/Size.h"
 #include "Foundation/Configs.h"
 #include "Foundation/Debug/Latency.h"
 #include "InputSystem.h"
+#include "NxSubsystems/Graphics/ShaderManager.h"
 #include "NxWorld/Animations/FrameByFrame/FrameByFrameAnimation.h"
 #include "NxWorld/Animations/FrameByFrame/FrameByFrameAnimator.h"
 #include "NxWorld/Entities/Camera/Camera.h"
 #include "NxWorld/PrivateModuleInfo.h"
+#include "NxWorld/Scene/SceneObjects/Rectangle/Rectangle.h"
 #include "Platform/Glfw.h"
 #include "Platform/Window.h"
 #include "spdlog/common.h"
@@ -154,11 +155,12 @@ namespace NX
         NX_LATENCY_POINT("AssetsManager - inited");
 
         //-------------------- SHADER MANAGER ---------------------
-        shaderManager.loadShaders(Foundation::Config::Path::shaders);
-        shaderManager.debugLog("Was loaded {} shaders."_f << shaderManager.countOfShaders());
-        for (const auto& notLoadedShader : shaderManager.getFailedShaders())
+        GetShaderManager().loadShaders(Foundation::Config::Path::shaders);
+        GetShaderManager().debugLog("Was loaded {} shaders."_f
+                                    << GetShaderManager().countOfShaders());
+        for (const auto& notLoadedShader : GetShaderManager().getFailedShaders())
         {
-            shaderManager.criticalLog(
+            GetShaderManager().criticalLog(
                 "Shader '{}' found but not loaded. It contains some error[s]. See above in the log"_f
                 << notLoadedShader);
         }
@@ -285,7 +287,7 @@ namespace NX
 
     void GameInstance::initializeShaders()
     {
-        auto* defaultShader = shaderManager.getShaderProgram("defaultTextured"_atom);
+        auto* defaultShader = GetShaderManager().getShaderProgram("defaultTextured"_atom);
         if (Verify(defaultShader))
         {
             defaultShader->setVertexAttributeCallback(
@@ -304,7 +306,7 @@ namespace NX
                 });
         }
 
-        auto* outlineShader = shaderManager.getShaderProgram("outline"_atom);
+        auto* outlineShader = GetShaderManager().getShaderProgram("outline"_atom);
         if (Verify(outlineShader))
         {
             outlineShader->setVertexAttributeCallback(
@@ -319,7 +321,7 @@ namespace NX
                 });
         }
 
-        auto* objectIdentifierShader = shaderManager.getShaderProgram("objectIdentifier"_atom);
+        auto* objectIdentifierShader = GetShaderManager().getShaderProgram("objectIdentifier"_atom);
         if (Verify(objectIdentifierShader))
         {
             objectIdentifierShader->setVertexAttributeCallback(
@@ -330,7 +332,7 @@ namespace NX
                 });
         }
 
-        auto* simpleColorShader = shaderManager.getShaderProgram("pickUpColorFiller"_atom);
+        auto* simpleColorShader = GetShaderManager().getShaderProgram("pickUpColorFiller"_atom);
         if (Verify(simpleColorShader))
         {
             simpleColorShader->setVertexAttributeCallback(
@@ -345,7 +347,7 @@ namespace NX
                 });
         }
 
-        auto* skyboxShader = shaderManager.getShaderProgram("skybox"_atom);
+        auto* skyboxShader = GetShaderManager().getShaderProgram("skybox"_atom);
         if (Verify(skyboxShader))
         {
             skyboxShader->setVertexAttributeCallback(
@@ -356,7 +358,7 @@ namespace NX
                 });
         }
 
-        auto* main2dShader = shaderManager.getShaderProgram("2d_rect"_atom);
+        auto* main2dShader = GetShaderManager().getShaderProgram("2d_rect"_atom);
         if (Verify(main2dShader))
         {
             main2dShader->setSetEventCallback(
@@ -375,7 +377,7 @@ namespace NX
                 });
         }
 
-        auto* lineShader = shaderManager.getShaderProgram("line"_atom);
+        auto* lineShader = GetShaderManager().getShaderProgram("line"_atom);
         if (Verify(lineShader))
         {
             lineShader->setSetEventCallback(

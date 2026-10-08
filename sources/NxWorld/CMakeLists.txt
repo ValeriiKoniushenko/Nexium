@@ -67,7 +67,6 @@ nexium_add_public_headers(Nexium_World
     NxWorld/Animations/FrameByFrame/FrameByFrameAnimator.h
     NxWorld/Animations/FrameByFrame/FrameByFrameAnimator.generated.h
     NxWorld/Assets/SkyboxAsset.h
-    NxWorld/Assets/SkyboxAsset.h
     NxWorld/Assets/SkyboxAsset.generated.h
     NxWorld/Entities/Actor.h
     NxWorld/Entities/Actor.generated.h

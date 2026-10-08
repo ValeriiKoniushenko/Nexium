@@ -11,7 +11,7 @@
 
 #pragma once
 
-#include "../../Foundation/Configs.h"
+#include "Foundation/Configs.h"
 #include "HorizontalLayout.h"
 #include "Input.h"
 #include "Label.h"

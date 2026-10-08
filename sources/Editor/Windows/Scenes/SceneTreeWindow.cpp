@@ -111,7 +111,7 @@ namespace NX
         }
 
         int32_t internalId = 0;
-        for (auto object : _scene->getObjects())
+        for (auto&& object : _scene->getObjects())
         {
             drawTreeNode(object.get(), internalId++);
         }

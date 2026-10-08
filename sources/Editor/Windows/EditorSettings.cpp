@@ -9,7 +9,6 @@
 
 #include "EditorSettings.h"
 
-#include "../../NxWorld/Scene/SceneObjects/Spectator/Spectator.h"
 #include "Editor/EditorIntegration.h"
 #include "Editor/GuiComponents/Button.h"
 #include "Editor/GuiComponents/HorizontalLayout.h"

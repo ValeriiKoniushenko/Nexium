@@ -13,6 +13,7 @@
 #include "Foundation/Debug/Latency.h"
 #include "Foundation/Debug/LatencyTerminalPrinter.h"
 #include "NxRuntime/GameUtils/FPSCounter.h"
+#include "NxSubsystems/Graphics/ShaderManager.h"
 #include "NxWorld/Framework/GameInstance.h"
 #include "NxWorld/Framework/InputSystem.h"
 #include "Platform/Glfw.h"
@@ -85,8 +86,8 @@ namespace NX
                 if (_gameInstance.world.currentCamera)
                 {
                     _gameInstance.scenes.getCurrentScene()->directDraw(
-                        _gameInstance.shaderManager.getShaderProgram("skybox"_atom),
-                        _gameInstance.shaderManager.getShaderProgram("grid"_atom));
+                        GetShaderManager().getShaderProgram("skybox"_atom),
+                        GetShaderManager().getShaderProgram("grid"_atom));
                     _gameInstance.tick(_gameInstance.world.getTimeDelta());
                 }
             }
@@ -109,8 +110,8 @@ namespace NX
                     glClear(clearBits);
 
                     _gameInstance.scenes.getCurrentScene()->directDraw(
-                        _gameInstance.shaderManager.getShaderProgram("skybox"_atom),
-                        _gameInstance.shaderManager.getShaderProgram("grid"_atom));
+                        GetShaderManager().getShaderProgram("skybox"_atom),
+                        GetShaderManager().getShaderProgram("grid"_atom));
                     _gameInstance.tick(_gameInstance.world.getTimeDelta());
                     integration->afterSceneDraw();
                 }

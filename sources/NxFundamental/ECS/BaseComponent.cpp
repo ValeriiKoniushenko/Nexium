@@ -9,7 +9,7 @@
 
 #include "BaseComponent.h"
 
-#include "../PrivateModuleInfo.h"
+#include "NxFundamental/PrivateModuleInfo.h"
 
 #include <set>
 

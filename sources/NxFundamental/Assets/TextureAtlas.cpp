@@ -9,9 +9,9 @@
 
 #include "TextureAtlas.h"
 
-#include "../PrivateModuleInfo.h"
 #include "Core/Rect.h"
 #include "Core/String.h"
+#include "NxFundamental/PrivateModuleInfo.h"
 #include "RawBackend/Utils.h"
 #include "Rectpack2D/finders_interface.h"
 
@@ -23,8 +23,7 @@ using namespace rectpack2D;
 using namespace Core;
 using namespace RawBackend;
 
-// Pixel uploads and frame UVs preserve the source image orientation.
-using spaces_type = empty_spaces<false>;
+using spaces_type = empty_spaces<true>;
 using rect_type = output_rect_t<spaces_type>;
 
 namespace NX
@@ -110,7 +109,7 @@ namespace NX
         const auto result_size = find_best_packing_dont_sort<spaces_type>(
             rectangles,
             make_finder_input(max_side, discard_step, report_successful, report_unsuccessful,
-                              rectpack2D::flipping_option::DISABLED));
+                              rectpack2D::flipping_option::ENABLED));
 
         if (discarded)
         {

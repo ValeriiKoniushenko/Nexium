@@ -9,7 +9,7 @@
 
 #include "ShaderProgram.h"
 
-#include "../PrivateModuleInfo.h"
+#include "NxSubsystems/PrivateModuleInfo.h"
 #include "ShaderProgramMeta.h"
 
 #include <array>

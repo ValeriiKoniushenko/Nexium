@@ -11,12 +11,12 @@
 
 #pragma once
 
-#include "../SceneObjects/Grid/Grid.h"
-#include "../SceneObjects/SceneObject.h"
 #include "Core/Delegate.h"
 #include "Core/IntrusivePtr.h"
 #include "NxFundamental/Assets/ECSAsset.h"
 #include "NxWorld/Assets/SkyboxAsset.h"
+#include "NxWorld/Scene/SceneObjects/Grid/Grid.h"
+#include "NxWorld/Scene/SceneObjects/SceneObject.h"
 
 #include <vector>
 

@@ -9,7 +9,7 @@
 
 #include "ShaderManager.h"
 
-#include "../PrivateModuleInfo.h"
+#include "NxSubsystems/PrivateModuleInfo.h"
 
 namespace NX
 {

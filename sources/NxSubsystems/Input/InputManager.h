@@ -11,10 +11,10 @@
 
 #pragma once
 
-#include "../PrivateModuleInfo.h"
 #include "Foundation/BaseLog.h"
 #include "Foundation/Interfaces/DataStream.h"
 #include "InputAction.h"
+#include "NxSubsystems/PrivateModuleInfo.h"
 
 #include <unordered_map>
 

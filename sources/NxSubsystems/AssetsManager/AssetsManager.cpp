@@ -9,8 +9,8 @@
 
 #include "AssetsManager.h"
 
-#include "../PrivateModuleInfo.h"
 #include "Foundation/Configs.h"
+#include "NxSubsystems/PrivateModuleInfo.h"
 
 #include <algorithm>
 #include <array>

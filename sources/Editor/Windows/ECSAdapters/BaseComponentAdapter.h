@@ -11,9 +11,9 @@
 
 #pragma once
 
-#include "../NxECSBasedEditor.h"
 #include "Editor/ForwardDeclarations.h"
 #include "Editor/GuiComponents/VerticalLayout.h"
+#include "Editor/Windows/NxECSBasedEditor.h"
 #include "NxFundamental/ECS/BaseComponent.h"
 
 namespace NX
