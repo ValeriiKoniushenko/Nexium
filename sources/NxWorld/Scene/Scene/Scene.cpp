@@ -191,7 +191,14 @@ namespace NX
         // TODO: optimize it! Absolutely slow.
         unifyObjectName(_sceneObjects, object);
         _sceneObjects.emplace_back(object);
-        object->initialize();
+        if (_isInitialized)
+        {
+            object->initialize();
+        }
+        else if (object->isInitialized())
+        {
+            object->deinitialize();
+        }
 
         onObjectAdded->trigger(object);
 
@@ -428,6 +435,13 @@ namespace NX
         {
             gGameInstance->resetCamera();
         }
+        for (auto&& object : _sceneObjects)
+        {
+            if (object->isInitialized())
+            {
+                object->deinitialize();
+            }
+        }
         _sceneObjects.swap(replacement._sceneObjects);
         _sceneName = std::move(replacement._sceneName);
         _uniqueCounterName = 0;
@@ -435,7 +449,14 @@ namespace NX
         replacement._sceneObjects.clear();
         for (auto& object : _sceneObjects)
         {
-            object->initialize();
+            if (_isInitialized)
+            {
+                object->initialize();
+            }
+            else if (object->isInitialized())
+            {
+                object->deinitialize();
+            }
             onObjectAdded->trigger(object.get());
             object->onAddedToScene();
         }
@@ -456,12 +477,40 @@ namespace NX
         return NxWorld::getLogger();
     }
 
+    Scene::~Scene()
+    {
+        deinitialize();
+    }
+
     void Scene::initialize()
     {
+        if (_isInitialized)
+        {
+            return;
+        }
+        _isInitialized = true;
+        for (auto&& object : _sceneObjects)
+        {
+            object->initialize();
+        }
         // auto asset =
         // GetAssetsManager()->getSkybox("data/assets/baked/skybox/default.nxsky"_atom); skybox =
         // NXSkybox{ dynamic_cast<SkyboxAsset*>(asset.get()) };
         grid.setPlane(glm::vec3(0.0f, 0.0f, -1.f), glm::vec3(0.0f, 0.0f, 1.0f));
+    }
+
+    void Scene::deinitialize()
+    {
+        if (!_isInitialized)
+        {
+            return;
+        }
+        _isInitialized = false;
+        for (auto&& object : _sceneObjects)
+        {
+            object->deinitialize();
+        }
+        _postDrawBuffer.clear();
     }
 
     void Scene::tick(float timeDelta)

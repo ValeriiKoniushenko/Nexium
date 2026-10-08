@@ -44,13 +44,15 @@ namespace NX
 
     public:
         Scene() = default;
-        ~Scene() override = default;
+        ~Scene() override;
         Scene(const Scene&) = delete;
         Scene& operator=(const Scene&) = delete;
         Scene(Scene&&) = delete;
         Scene& operator=(Scene&&) = delete;
 
         void initialize();
+        void deinitialize();
+        [[nodiscard]] bool isInitialized() const noexcept { return _isInitialized; }
 
         void tick(float timeDelta);
 
@@ -104,6 +106,7 @@ namespace NX
         std::vector<Actor*> _postDrawBuffer;
 
         uint32_t _uniqueCounterName = 0;
+        bool _isInitialized = false;
     };
 
     template<IsComponent T>

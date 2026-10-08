@@ -22,6 +22,33 @@ namespace NX
         removeAllScenes();
     }
 
+    SceneManager::~SceneManager()
+    {
+        for (auto* scene : _openScenes)
+        {
+            scene->deinitialize();
+        }
+    }
+
+    void SceneManager::restoreOpenScenes(std::vector<Scene*> opened, Scene* current)
+    {
+        for (auto* scene : opened)
+        {
+            scene->initialize();
+        }
+        auto previouslyOpened = std::move(_openScenes);
+        _openScenes = std::move(opened);
+        _currentScene = current;
+        onCurrentSceneChanged->trigger(_currentScene);
+        for (auto* scene : previouslyOpened)
+        {
+            if (!isSceneOpen(scene))
+            {
+                scene->deinitialize();
+            }
+        }
+    }
+
     Scene& SceneManager::createNewScene()
     {
         auto scene = Core::IntrusivePtr<Scene>(new Scene());
@@ -32,7 +59,6 @@ namespace NX
             name = Core::StringAtom::Intern("Scene_" + std::to_string(suffix++));
         } while (getScene(name));
         scene->setSceneName(name);
-        scene->initialize();
         _scenes.push_back(std::move(scene));
         GetCacheSystem().write(*_scenes.back());
         return *_scenes.back();
@@ -82,6 +108,7 @@ namespace NX
         {
             if (!isSceneOpen(scene))
             {
+                scene->initialize();
                 _openScenes.push_back(scene);
             }
             if (_currentScene != scene)
@@ -112,6 +139,7 @@ namespace NX
         {
             setCurrentScene(_openScenes[std::min(index, _openScenes.size() - 1)]);
         }
+        scene->deinitialize();
         return true;
     }
 
@@ -142,6 +170,7 @@ namespace NX
                                     : _openScenes.front();
             setCurrentScene(replacement);
         }
+        scene->deinitialize();
         _scenes.erase(it);
     }
 
@@ -151,9 +180,7 @@ namespace NX
         auto scene = Core::IntrusivePtr<Scene>(new Scene());
         replacement.push_back(std::move(scene));
         _scenes.swap(replacement);
-        _currentScene = _scenes.front().get();
-        _openScenes = { _currentScene };
-        onCurrentSceneChanged->trigger(_currentScene);
+        restoreOpenScenes({ _scenes.front().get() }, _scenes.front().get());
     }
 
     spdlog::logger* SceneManager::getLogger() const

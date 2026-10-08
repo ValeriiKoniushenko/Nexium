@@ -180,7 +180,6 @@ namespace NX
         }
 
         NX_LATENCY_POINT("ECS - inited");
-        gGameInstance->scenes.getCurrentScene()->initialize();
         _subscriptionPool << scenes.onCurrentSceneChanged->subscribeAndGetID(
             [this](Scene* scene) { bindCurrentScene(scene); });
         bindCurrentScene(scenes.getCurrentScene());
