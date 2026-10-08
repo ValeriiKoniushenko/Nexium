@@ -27,6 +27,10 @@ namespace NX
 
         [[nodiscard]] const char* getIcon() override;
         [[nodiscard]] bool blocksPicking() const noexcept { return _blocksPicking; }
+        [[nodiscard]] glm::vec2 getImagePosition() const noexcept { return _imagePosition; }
+        [[nodiscard]] FSize2 getImageSize() const noexcept { return _imageSize; }
+
+        Delegate<void(FSize2)>::Ptr onImageSizeChanged = Delegate<void(FSize2)>::Create();
 
     protected:
         void onInitialize() override;
@@ -34,8 +38,11 @@ namespace NX
         void onClose() override;
         void onUpdate() override;
         void onDraw() override;
+        [[nodiscard]] bool updateImageArea();
 
     private:
+        glm::vec2 _imagePosition{};
+        FSize2 _imageSize{};
         SceneGizmo _gizmo;
         bool _blocksPicking = false;
         SceneTabs _sceneTabs;
