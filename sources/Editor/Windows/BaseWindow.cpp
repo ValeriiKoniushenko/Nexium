@@ -273,10 +273,11 @@ namespace NX
             ImGui::OpenPopup(_caption.c_str());
             ImGui::SetNextWindowPos(ImGui::GetMainViewport()->GetCenter(), ImGuiCond_Appearing,
                                     glm::vec2(0.5f, 0.5f));
-            ImGui::SetNextWindowSize(glm::vec2(500, 600), ImGuiCond_Appearing);
+            ImGui::SetNextWindowSize(getInitialPopupSize(), ImGuiCond_Appearing);
             _hasOpenRequest = false;
         }
-        return ImGui::BeginPopupModal(_caption.c_str(), nullptr, ImGuiWindowFlags_NoCollapse);
+        return ImGui::BeginPopupModal(_caption.c_str(), nullptr,
+                                      _windowFlags | ImGuiWindowFlags_NoCollapse);
     }
 
     void BaseModalPopUp::onClose()

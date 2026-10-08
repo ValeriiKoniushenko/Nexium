@@ -180,6 +180,11 @@ namespace NX
         [[nodiscard]] bool beginWindowDraw() override;
 
     protected:
+        [[nodiscard]] virtual glm::vec2 getInitialPopupSize() const
+        {
+            return glm::vec2(500.f, 600.f);
+        }
+
         StringAtom _caption;
 
         bool _hasOpenRequest = false;

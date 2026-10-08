@@ -9,7 +9,10 @@
 
 #pragma once
 
-#include "SceneDeleteConfirmation.h"
+#include "Editor/GuiComponents/Button.h"
+#include "Editor/GuiComponents/HorizontalLayout.h"
+#include "Editor/GuiComponents/Label.h"
+#include "NxWorld/Scene/Scene/Scene.h"
 
 namespace NX
 {
@@ -38,7 +41,6 @@ namespace NX
         Gui::Label* _sceneLabel = nullptr;
         Gui::SearchableComboBox* _scenePicker = nullptr;
         Gui::Button _trashButton;
-        SceneDeleteConfirmation _deleteConfirmation;
         DelegateSubscriberPoolGuard _subscriptions;
         WeakPtr<const Scene> _actionScene;
     };

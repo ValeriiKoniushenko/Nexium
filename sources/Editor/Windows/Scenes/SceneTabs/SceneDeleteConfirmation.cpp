@@ -9,14 +9,39 @@
 
 #include "SceneDeleteConfirmation.h"
 
+#include "NxWorld/Framework/GameInstanceAccess.h"
 #include "NxWorld/Scene/Scene/SceneManager.h"
 
 #include <algorithm>
 
 namespace NX
 {
-    void SceneDeleteConfirmation::initialize(SceneManager& scenes)
+    ECS_IMPL(SceneDeleteConfirmation);
+
+    SceneDeleteConfirmation::SceneDeleteConfirmation(const StringAtom& name)
+        : BaseModalPopUp(componentType, name)
     {
+        _windowFlags |= ImGuiWindowFlags_NoResize;
+    }
+
+    void SceneDeleteConfirmation::open(Scene* scene)
+    {
+        if (!scene || _pendingScene)
+        {
+            return;
+        }
+        _pendingScene = scene;
+        BaseModalPopUp::open("Delete scene?"_atom);
+    }
+
+    glm::vec2 SceneDeleteConfirmation::getInitialPopupSize() const
+    {
+        return glm::vec2(420.f, 180.f);
+    }
+
+    void SceneDeleteConfirmation::onOpen()
+    {
+        BaseModalPopUp::onOpen();
         _message.setWidth(360.f);
         _message.setHorizontalAlign(Gui::Align::Center);
         _message.setTruncateLongText(false);
@@ -35,52 +60,49 @@ namespace NX
         _deleteButton->setButtonColor(Core::Color4(116, 52, 58, 255));
         _deleteButton->setButtonHoverColor(Core::Color4(160, 64, 70, 255));
         _deleteButton->setTextColor(Core::Color4(255, 215, 215, 255));
-        _subscriptions << _deleteButton->onClick->subscribeAndGetID(
-            [this, &scenes]
+        _subscriptionPool << _deleteButton->onClick->subscribeAndGetID(
+            [this]
             {
                 if (auto scene = _pendingScene.tryLoad())
                 {
-                    scenes.removeScene(scene.get());
+                    GetSceneManager()->removeScene(scene.get());
                 }
-                _pendingScene.reset();
-                ImGui::CloseCurrentPopup();
+                closeConfirmation();
             });
 
         _cancelButton = _buttons.addChildComponent<Gui::Button>("Cancel"_atom);
         _cancelButton->setWidth(110.f);
-        _subscriptions << _cancelButton->onClick->subscribeAndGetID(
-            [this]
-            {
-                _pendingScene.reset();
-                ImGui::CloseCurrentPopup();
-            });
+        _subscriptionPool << _cancelButton->onClick->subscribeAndGetID([this]
+                                                                       { closeConfirmation(); });
         _buttons.initialize();
     }
 
-    void SceneDeleteConfirmation::draw(SceneManager& scenes)
+    void SceneDeleteConfirmation::onClose()
     {
-        if (_pendingScene
-            && !std::ranges::any_of(scenes.getScenes(), [this](const auto& scene)
-                                    { return scene.get() == _pendingScene.get(); }))
-        {
-            _pendingScene.reset();
-        }
-        if (_pendingScene && !ImGui::IsPopupOpen("Delete scene?"_atom.c_str()))
-        {
-            ImGui::OpenPopup("Delete scene?"_atom.c_str());
-        }
+        BaseModalPopUp::onClose();
+        _pendingScene.reset();
+        _hasOpenRequest = false;
+        _buttons.removeAllChildren();
+        _deleteButton = nullptr;
+        _cancelButton = nullptr;
+    }
 
-        ImGui::SetNextWindowSize(glm::vec2(420.f, 180.f), ImGuiCond_Appearing);
-        if (!ImGui::BeginPopupModal("Delete scene?"_atom.c_str(), nullptr,
-                                    ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse))
-        {
-            return;
-        }
+    void SceneDeleteConfirmation::closeConfirmation()
+    {
+        ImGui::CloseCurrentPopup();
+        closeWindow();
+    }
+
+    void SceneDeleteConfirmation::onDraw()
+    {
+        BaseModalPopUp::onDraw();
+        auto& scenes = *GetSceneManager();
         auto pendingScene = _pendingScene.tryLoad();
-        if (!pendingScene)
+        if (!pendingScene
+            || !std::ranges::any_of(scenes.getScenes(), [&pendingScene](const auto& scene)
+                                    { return scene.get() == pendingScene.get(); }))
         {
-            ImGui::CloseCurrentPopup();
-            ImGui::EndPopup();
+            closeConfirmation();
             return;
         }
 
@@ -93,6 +115,5 @@ namespace NX
         _deleteButton->disableWidget(scenes.getScenes().size() == 1);
         _buttons.tick(0.f);
         ImGui::Dummy(glm::vec2(0.f, 0.f));
-        ImGui::EndPopup();
     }
 } // namespace NX

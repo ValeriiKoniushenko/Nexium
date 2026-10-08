@@ -9,10 +9,12 @@
 
 #include "SceneTabs.h"
 
+#include "Editor/EditorIntegration.h"
 #include "Editor/GuiComponents/Combo.h"
 #include "Editor/IconsFontAwesome.h"
 #include "ImGui/imgui_internal.h"
 #include "NxWorld/Scene/Scene/SceneManager.h"
+#include "SceneDeleteConfirmation.h"
 
 #include <algorithm>
 
@@ -74,7 +76,8 @@ namespace NX
             {
                 if (auto scene = _actionScene.tryLoad())
                 {
-                    _deleteConfirmation.request(const_cast<Scene*>(scene.get()));
+                    GetEditor()->tryToOpenWindow<SceneDeleteConfirmation>(
+                        ""_atom, const_cast<Scene*>(scene.get()));
                 }
             });
         _scenePicker->setItemActionDrawer(
@@ -101,14 +104,12 @@ namespace NX
             });
 
         _toolbar.initialize();
-        _deleteConfirmation.initialize(scenes);
     }
 
     void SceneTabs::draw(SceneManager& scenes)
     {
         drawScenePicker(scenes);
         drawTabs(scenes);
-        _deleteConfirmation.draw(scenes);
     }
 
     void SceneTabs::drawScenePicker(SceneManager& scenes)
