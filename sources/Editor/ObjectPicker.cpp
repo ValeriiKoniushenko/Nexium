@@ -54,11 +54,11 @@ namespace NX
             return {};
         }
 
-        const auto wndPos = wnd->getInnerPosition();
+        const auto wndPos = wnd->getImagePosition();
         auto pickPos = Mouse::GetPosition();
         pickPos.x -= wndPos.x;
         pickPos.y -= wndPos.y;
-        pickPos.y = wnd->getInnerWindowSize().height - pickPos.y - 1;
+        pickPos.y = wnd->getImageSize().height - pickPos.y - 1;
 
         return pickPos;
     }

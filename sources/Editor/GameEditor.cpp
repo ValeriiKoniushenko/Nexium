@@ -128,12 +128,12 @@ namespace NX
 
         if (auto* viewport = getWindow<GameViewportEWC>(); Verify(viewport))
         {
-            _subscriptionPool << viewport->onSizeChanged->subscribeAndGetID(
-                [](auto outer, auto inner)
+            _subscriptionPool << viewport->onImageSizeChanged->subscribeAndGetID(
+                [](auto imageSize)
                 {
                     if (gGameInstance->renderMode == GameInstance::RenderMode::Editor)
                     {
-                        GetEditor()->gameViewport.setRenderSize(static_cast<ISize2>(inner));
+                        GetEditor()->gameViewport.setRenderSize(static_cast<ISize2>(imageSize));
                         gGameInstance->updateViewport();
                     }
                 });
@@ -568,7 +568,8 @@ namespace NX
                     {
                         if (auto* comp = dynamic_cast<BaseComponent*>(obj.get()))
                         {
-                            gGameInstance->scenes.getCurrentScene()->deleteFromSceneOrFromObject(comp);
+                            gGameInstance->scenes.getCurrentScene()->deleteFromSceneOrFromObject(
+                                comp);
                         }
                     }
                 }

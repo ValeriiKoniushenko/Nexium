@@ -64,6 +64,24 @@ namespace NX
         }
     }
 
+    bool GameViewportEWC::updateImageArea()
+    {
+        _imagePosition = ImGui::GetCursorScreenPos();
+        const auto available = ImGui::GetContentRegionAvail();
+        if (available.x < 1.f || available.y < 1.f)
+        {
+            _imageSize = FSize2{};
+            return false;
+        }
+        const FSize2 imageSize{ available.x, available.y };
+        if (_imageSize != imageSize)
+        {
+            _imageSize = imageSize;
+            onImageSizeChanged->trigger(_imageSize);
+        }
+        return true;
+    }
+
     void GameViewportEWC::onDraw()
     {
         _blocksPicking = false;
@@ -74,25 +92,16 @@ namespace NX
 
         _sceneTabs.draw(*GetSceneManager());
 
-        // Picking and rendering use the image area below the scene tabs.
-        _innerPosition = ImGui::GetCursorScreenPos();
-        const auto available = ImGui::GetContentRegionAvail();
-        if (available.x < 1.f || available.y < 1.f)
+        if (!updateImageArea())
         {
             return;
-        }
-        const FSize2 imageSize{ available.x, available.y };
-        if (_innerSize != imageSize)
-        {
-            _innerSize = imageSize;
-            onSizeChanged->trigger(_size, _innerSize);
         }
 
         const auto& r = GetEditor()->gameViewport;
         const glm::vec2 renderSize = { static_cast<float>(r.getRenderSize().width),
                                        static_cast<float>(r.getRenderSize().height) };
 
-        const auto p = ImGui::GetCursorScreenPos();
+        const auto p = getImagePosition();
 
         ImGui::Image(r.getTextureId(), glm::vec2(renderSize.x, renderSize.y), glm::vec2(0.0f, 1.0f),
                      glm::vec2(1.0f, 0.0f));
