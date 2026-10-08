@@ -95,19 +95,6 @@ namespace NX::Gui
         /// the pointer to your data.
         void setSizeProvider(const std::function<std::size_t()>& callback);
 
-        void setPopupHeaderDrawer(std::function<void()> draw)
-        {
-            _drawPopupHeader = std::move(draw);
-        }
-        void setItemActionDrawer(std::function<void(const void*)> draw)
-        {
-            _drawItemAction = std::move(draw);
-        }
-        void setItemFilter(std::function<bool(const StringAtom&)> filter)
-        {
-            _itemFilter = std::move(filter);
-        }
-
         void setCurrentIndex(std::size_t i) noexcept;
 
         [[nodiscard]] std::size_t getCurrentIndex() const noexcept { return _currentIndex; }
@@ -121,26 +108,35 @@ namespace NX::Gui
     protected:
         void onDraw() override;
 
-        virtual void drawPopupHeader();
-        [[nodiscard]] virtual bool matchesItem(const StringAtom& label) const;
+        virtual void drawPopupContent();
 
     protected:
         std::function<const void*(std::size_t, StringAtom&)> _dataProvider;
         std::function<std::size_t()> _sizeProvider;
         std::vector<std::pair<const void*, StringAtom>> _cache;
-        std::function<void()> _drawPopupHeader;
-        std::function<void(const void*)> _drawItemAction;
-        std::function<bool(const StringAtom&)> _itemFilter;
         const void* _currentData = nullptr;
         std::size_t _currentIndex = 0;
     };
-    
+
     CLASS();
     class SearchableComboBox : public ComboModelBased
     {
         ECS_DECL(SearchableComboBox, NX::Gui::ComboModelBased);
 
     public:
+        void setPopupHeaderDrawer(std::function<void()> draw)
+        {
+            _drawPopupHeader = std::move(draw);
+        }
+        void setItemActionDrawer(std::function<void(const void*)> draw)
+        {
+            _drawItemAction = std::move(draw);
+        }
+        void setItemFilter(std::function<bool(const StringAtom&)> filter)
+        {
+            _itemFilter = std::move(filter);
+        }
+
         void setSearchText(std::string text) { _search.setInputtedData(std::move(text)); }
         [[nodiscard]] const std::string& getSearchText() const noexcept
         {
@@ -153,11 +149,15 @@ namespace NX::Gui
 
     protected:
         void onInitialize() override;
-        void drawPopupHeader() override;
-        [[nodiscard]] bool matchesItem(const StringAtom& label) const override;
+        void drawPopupContent() override;
+        void drawPopupHeader();
+        [[nodiscard]] bool matchesItem(const StringAtom& label) const;
 
     private:
         TextInput _search;
+        std::function<void()> _drawPopupHeader;
+        std::function<void(const void*)> _drawItemAction;
+        std::function<bool(const StringAtom&)> _itemFilter;
     };
 } // namespace NX::Gui
 

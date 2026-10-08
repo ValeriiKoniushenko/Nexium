@@ -13,6 +13,28 @@
 
 namespace
 {
+    template<class T>
+    concept HasPopupHeaderDrawer
+        = requires(T& combo, std::function<void()> draw) { combo.setPopupHeaderDrawer(draw); };
+
+    template<class T>
+    concept HasItemActionDrawer = requires(T& combo, std::function<void(const void*)> draw) {
+        combo.setItemActionDrawer(draw);
+    };
+
+    template<class T>
+    concept HasItemFilter
+        = requires(T& combo, std::function<bool(const Core::StringAtom&)> filter) {
+              combo.setItemFilter(filter);
+          };
+
+    static_assert(!HasPopupHeaderDrawer<NX::Gui::ComboModelBased>);
+    static_assert(!HasItemActionDrawer<NX::Gui::ComboModelBased>);
+    static_assert(!HasItemFilter<NX::Gui::ComboModelBased>);
+    static_assert(HasPopupHeaderDrawer<NX::Gui::SearchableComboBox>);
+    static_assert(HasItemActionDrawer<NX::Gui::SearchableComboBox>);
+    static_assert(HasItemFilter<NX::Gui::SearchableComboBox>);
+
     class TestSearchableComboBox : public NX::Gui::SearchableComboBox
     {
     public:
@@ -45,11 +67,16 @@ namespace
         combo.setCurrentIndex(0);
         combo.setItemFilter([](const Core::StringAtom& label)
                             { return label != "HiddenScene"_atom; });
+        EXPECT_TRUE(combo.matchesItem("MenuScene"_atom));
+        EXPECT_FALSE(combo.matchesItem("HiddenScene"_atom));
         combo.setSearchText("scene");
         EXPECT_TRUE(combo.matchesItem("MenuScene"_atom));
         EXPECT_FALSE(combo.matchesItem("HiddenScene"_atom));
         combo.setSearchText("missing");
         EXPECT_FALSE(combo.matchesItem("MenuScene"_atom));
+        combo.setItemFilter({});
+        combo.setSearchText("scene");
+        EXPECT_TRUE(combo.matchesItem("HiddenScene"_atom));
         EXPECT_EQ(combo.getCurrentIndex(), 0);
         EXPECT_EQ(combo.getCurrentData(), &data);
     }
