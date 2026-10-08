@@ -52,9 +52,7 @@ namespace NX
         {
             opened.push_back(selected);
         }
-        _openScenes = std::move(opened);
-        _currentScene = selected;
-        onCurrentSceneChanged->trigger(_currentScene);
+        restoreOpenScenes(std::move(opened), selected);
     }
 
     void SceneManager::importScenes(const std::filesystem::path& directory)
@@ -63,12 +61,12 @@ namespace NX
         {
             return;
         }
-        std::vector<std::filesystem::path> paths;
+        std::vector<std::string> paths;
         for (const auto& entry : std::filesystem::directory_iterator(directory))
         {
-            if (entry.is_regular_file() && entry.path().extension() == ".json")
+            if (entry.is_regular_file() && entry.path().extension().generic_string() == ".json")
             {
-                paths.push_back(entry.path());
+                paths.push_back(entry.path().generic_string());
             }
         }
         std::ranges::sort(paths);
@@ -86,15 +84,12 @@ namespace NX
             {
                 throw std::runtime_error("Empty or duplicate scene name.");
             }
-            scene->initialize();
             replacement.push_back(std::move(scene));
         }
         if (!replacement.empty())
         {
             _scenes.swap(replacement);
-            _currentScene = _scenes.front().get();
-            _openScenes = { _currentScene };
-            onCurrentSceneChanged->trigger(_currentScene);
+            restoreOpenScenes({ _scenes.front().get() }, _scenes.front().get());
         }
     }
 } // namespace NX

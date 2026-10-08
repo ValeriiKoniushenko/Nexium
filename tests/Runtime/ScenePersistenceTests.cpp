@@ -171,10 +171,14 @@ TEST_F(ScenePersistenceTest, SceneFilesPreserveObjectsInClosedScenes)
     auto* closed = restored.getScene("Default"_atom);
     ASSERT_NE(closed, nullptr);
     EXPECT_FALSE(restored.isSceneOpen(closed));
+    EXPECT_FALSE(closed->isInitialized());
     ASSERT_EQ(closed->getObjects().size(), 1);
     EXPECT_EQ(closed->getObjects()[0]->getComponentName(), "Retained"_atom);
     EXPECT_EQ(closed->getObjects()[0]->getPosition(), glm::vec3(12.f, 34.f, 0.f));
+    EXPECT_FALSE(closed->getObjects()[0]->isInitialized());
     ASSERT_TRUE(restored.setCurrentScene(closed));
+    EXPECT_TRUE(closed->isInitialized());
+    EXPECT_TRUE(closed->getObjects()[0]->isInitialized());
     EXPECT_EQ(restored.getCurrentScene(), closed);
 }
 
@@ -222,4 +226,25 @@ TEST_F(ScenePersistenceTest, MalformedTabsPreserveCurrentSession)
     EXPECT_THROW(manager.deserialize(data), std::exception);
     EXPECT_EQ(manager.getCurrentScene(), initial);
     EXPECT_EQ(manager.getOpenScenes().size(), 1u);
+}
+
+TEST_F(ScenePersistenceTest, RestoringTabsClosesAndReopensSceneComponents)
+{
+    NX::SceneManager manager;
+    auto* initial = manager.getCurrentScene();
+    auto object = NX::SceneObject::Create();
+    initial->addObjectToScene(object);
+    auto& added = manager.createNewScene();
+    ASSERT_TRUE(manager.setCurrentScene(&added));
+    const auto tabs = nlohmann::json{ { "formatVersion", 1 },
+                                      { "open", { added.getSceneName().c_str() } },
+                                      { "current", added.getSceneName().c_str() } };
+    auto data = RResourceStream<RJsonResourceStream>(tabs);
+    manager.deserialize(data);
+    EXPECT_FALSE(initial->isInitialized());
+    EXPECT_FALSE(object->isInitialized());
+    EXPECT_TRUE(added.isInitialized());
+    ASSERT_TRUE(manager.setCurrentScene(initial));
+    EXPECT_TRUE(initial->isInitialized());
+    EXPECT_TRUE(object->isInitialized());
 }

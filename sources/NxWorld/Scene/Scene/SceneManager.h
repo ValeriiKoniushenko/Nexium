@@ -26,7 +26,7 @@ namespace NX
         SceneManager(SceneManager&&) = delete;
         SceneManager& operator=(const SceneManager&) = delete;
         SceneManager& operator=(SceneManager&&) = delete;
-        ~SceneManager() override = default;
+        ~SceneManager() override;
 
         Scene& createNewScene();
         bool renameScene(Scene* scene, Core::StringAtom newName);
@@ -65,6 +65,8 @@ namespace NX
         [[nodiscard]] spdlog::logger* getLogger() const override;
 
     private:
+        void restoreOpenScenes(std::vector<Scene*> opened, Scene* current);
+
         std::vector<Core::IntrusivePtr<Scene>> _scenes;
         std::vector<Scene*> _openScenes;
         Scene* _currentScene = nullptr;
