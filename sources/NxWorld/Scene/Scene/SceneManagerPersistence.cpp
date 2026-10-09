@@ -27,9 +27,8 @@ namespace NX
         return data;
     }
 
-    void SceneManager::deserialize(RResourceStream<RJsonResourceStream>& stream)
+    void SceneManager::deserialize(const nlohmann::json& data)
     {
-        const auto& data = stream.getData();
         if (data.at("formatVersion") != 1 || !data.at("open").is_array())
         {
             throw std::runtime_error("Invalid scene tabs format.");

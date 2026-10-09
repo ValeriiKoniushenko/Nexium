@@ -41,7 +41,11 @@ namespace NX
         }
 
         [[nodiscard]] nlohmann::json serialize() const;
-        void deserialize(RResourceStream<RJsonResourceStream>& stream);
+        void deserialize(const nlohmann::json& data);
+        void deserialize(RResourceStream<RJsonResourceStream>& stream)
+        {
+            deserialize(stream.getData());
+        }
         void importScenes(const std::filesystem::path& directory);
 
         [[nodiscard]] std::filesystem::path getCacheDir() const override { return "cache"; }
