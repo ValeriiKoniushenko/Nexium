@@ -12,6 +12,7 @@
 #pragma once
 
 #include "BaseWindow.h"
+#include "Core/Delegate.h"
 #include "Editor/ForwardDeclarations.h"
 #include "Editor/GuiComponents/VerticalLayout.h"
 
@@ -24,6 +25,9 @@ namespace NX
         void spawn(const Core::StringAtom& label, float& value);
 
         void despawnEverything();
+
+    protected:
+        DelegateSubscriberPoolGuard _subscriptionPool;
     };
 
     CLASS();
