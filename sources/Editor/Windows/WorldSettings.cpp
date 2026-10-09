@@ -173,8 +173,7 @@ namespace NX
                 [](glm::vec3 value) { GetWorld()->lightning.sunDirection = value; });
         }
 
-        static int i = 1;
-        gg.spawn("Hello", i);
+        gg.spawn("Hello", GetWorld()->lightning.specularPow);
 
         if (Verify(_color3Input))
         {
@@ -262,6 +261,13 @@ namespace NX
     }
 
     void GuiGenerator::spawn(const Core::StringAtom& label, int& value)
+    {
+        auto* input = addChildComponent<Gui::LabelRow<Gui::IntInput>>();
+        input->label->setText(label);
+        input->label->setWidth(100.f);
+    }
+
+    void GuiGenerator::spawn(const Core::StringAtom& label, float& value)
     {
         auto* input = addChildComponent<Gui::LabelRow<Gui::IntInput>>();
         input->label->setText(label);

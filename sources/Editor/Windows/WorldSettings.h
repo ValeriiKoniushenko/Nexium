@@ -21,6 +21,7 @@ namespace NX
     {
     public:
         void spawn(const Core::StringAtom& label, int& value);
+        void spawn(const Core::StringAtom& label, float& value);
 
         void despawnEverything();
     };
