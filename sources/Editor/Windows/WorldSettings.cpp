@@ -11,6 +11,7 @@
 
 #include "Core/String.h"
 #include "Editor/EditorIntegration.h"
+#include "Editor/ForwardDeclarations.h"
 #include "Editor/GuiComponents/Button.h"
 #include "Editor/GuiComponents/HorizontalLayout.h"
 #include "Editor/GuiComponents/Input.h"
@@ -237,6 +238,8 @@ namespace NX
             _resetCameraButton->disableWidget(!GetWorld()->currentCamera);
         }
 
+        auto sss = GetWorld()->lightning.specularPow;
+
         if (_cameraInputField)
         {
             std::string str = "";
@@ -262,16 +265,21 @@ namespace NX
 
     void GuiGenerator::spawn(const Core::StringAtom& label, int& value)
     {
-        auto* input = addChildComponent<Gui::LabelRow<Gui::IntInput>>();
-        input->label->setText(label);
-        input->label->setWidth(100.f);
+        auto* c = addChildComponent<Gui::LabelRow<Gui::IntInput>>();
+        c->label->setText(label);
+        c->label->setWidth(100.f);
+        c->input->setInputtedData(value);
+        _subscriptionPool << c->input->onInput->subscribeAndGetID([&value](int in) { value = in; });
     }
 
     void GuiGenerator::spawn(const Core::StringAtom& label, float& value)
     {
-        auto* input = addChildComponent<Gui::LabelRow<Gui::IntInput>>();
-        input->label->setText(label);
-        input->label->setWidth(100.f);
+        auto* c = addChildComponent<Gui::LabelRow<Gui::FloatInput>>();
+        c->label->setText(label);
+        c->label->setWidth(100.f);
+        c->input->setInputtedData(value);
+        _subscriptionPool << c->input->onInput->subscribeAndGetID([&value](float in)
+                                                                  { value = in; });
     }
 
     void GuiGenerator::despawnEverything()
