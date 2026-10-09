@@ -164,10 +164,9 @@ TEST_F(ScenePersistenceTest, SceneFilesPreserveObjectsInClosedScenes)
         std::ofstream(root / (std::string(scene->getSceneName().c_str()) + ".json"))
             << scene->serialize().dump();
     }
-    auto data = RResourceStream<RJsonResourceStream>(tabs);
     NX::SceneManager restored;
     restored.importScenes(root);
-    restored.deserialize(data);
+    restored.deserialize(tabs);
     auto* closed = restored.getScene("Default"_atom);
     ASSERT_NE(closed, nullptr);
     EXPECT_FALSE(restored.isSceneOpen(closed));
@@ -209,8 +208,7 @@ TEST_F(ScenePersistenceTest, MissingSceneReferencesDoNotDiscardLoadedScenes)
     const nlohmann::json tabs = { { "formatVersion", 1 },
                                   { "open", { "DeletedScene", "Default" } },
                                   { "current", "DeletedScene" } };
-    auto data = RResourceStream<RJsonResourceStream>(tabs);
-    manager.deserialize(data);
+    manager.deserialize(tabs);
     EXPECT_EQ(manager.getCurrentScene(), initial);
     ASSERT_EQ(manager.getOpenScenes().size(), 1u);
     EXPECT_EQ(manager.getOpenScenes().front(), initial);
@@ -222,8 +220,7 @@ TEST_F(ScenePersistenceTest, MalformedTabsPreserveCurrentSession)
     auto* initial = manager.getCurrentScene();
     const nlohmann::json tabs
         = { { "formatVersion", 1 }, { "open", { "Default", 42 } }, { "current", "Default" } };
-    auto data = RResourceStream<RJsonResourceStream>(tabs);
-    EXPECT_THROW(manager.deserialize(data), std::exception);
+    EXPECT_THROW(manager.deserialize(tabs), std::exception);
     EXPECT_EQ(manager.getCurrentScene(), initial);
     EXPECT_EQ(manager.getOpenScenes().size(), 1u);
 }
@@ -239,12 +236,32 @@ TEST_F(ScenePersistenceTest, RestoringTabsClosesAndReopensSceneComponents)
     const auto tabs = nlohmann::json{ { "formatVersion", 1 },
                                       { "open", { added.getSceneName().c_str() } },
                                       { "current", added.getSceneName().c_str() } };
-    auto data = RResourceStream<RJsonResourceStream>(tabs);
-    manager.deserialize(data);
+    manager.deserialize(tabs);
     EXPECT_FALSE(initial->isInitialized());
     EXPECT_FALSE(object->isInitialized());
     EXPECT_TRUE(added.isInitialized());
     ASSERT_TRUE(manager.setCurrentScene(initial));
     EXPECT_TRUE(initial->isInitialized());
     EXPECT_TRUE(object->isInitialized());
+}
+
+TEST_F(ScenePersistenceTest, StreamAndJsonRestoreTheSameTabs)
+{
+    NX::SceneManager fromJson;
+    NX::SceneManager fromStream;
+    auto& jsonScene = fromJson.createNewScene();
+    auto& streamScene = fromStream.createNewScene();
+    ASSERT_EQ(jsonScene.getSceneName(), streamScene.getSceneName());
+    const nlohmann::json tabs = { { "formatVersion", 1 },
+                                  { "open", { jsonScene.getSceneName().c_str() } },
+                                  { "current", jsonScene.getSceneName().c_str() } };
+    fromJson.deserialize(tabs);
+    auto stream = RResourceStream<RJsonResourceStream>(tabs);
+    fromStream.deserialize(stream);
+    EXPECT_EQ(fromJson.serialize(), tabs);
+    EXPECT_EQ(fromStream.serialize(), fromJson.serialize());
+    EXPECT_FALSE(fromJson.getScene("Default"_atom)->isInitialized());
+    EXPECT_FALSE(fromStream.getScene("Default"_atom)->isInitialized());
+    EXPECT_TRUE(jsonScene.isInitialized());
+    EXPECT_TRUE(streamScene.isInitialized());
 }
