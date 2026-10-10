@@ -106,6 +106,9 @@ namespace NX::Gui
         ECS_TEMPLATE_COMPONENT_DECL(NumInput, BaseInput, Type)
 
     public:
+        using ValueType = Type;
+
+    public:
         void setInputtedData(Type data) { _buffer = data; }
         [[nodiscard]] Type getInputtedData() const noexcept { return _buffer; }
 
