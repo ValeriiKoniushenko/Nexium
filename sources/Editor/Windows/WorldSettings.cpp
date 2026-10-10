@@ -266,8 +266,4 @@ namespace NX
         gg.tick(GetWorld()->getTimeDelta());
     }
 
-    void GuiGenerator::despawnEverything()
-    {
-        removeAllChildren();
-    }
 } // namespace NX
