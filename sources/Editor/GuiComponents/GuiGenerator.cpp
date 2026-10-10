@@ -14,7 +14,7 @@
 namespace NX::Gui
 {
 
-    std::string GuiGenerator::NormalizeLabelName(const std::string& name)
+    Core::StringAtom GuiGenerator::NormalizeLabelName(const Core::StringAtom& name)
     {
         static auto isUpper
             = [](char c) { return std::isupper(static_cast<unsigned char>(c)) != 0; };
@@ -102,7 +102,7 @@ namespace NX::Gui
             result[0] = static_cast<char>(std::toupper(static_cast<unsigned char>(result[0])));
         }
 
-        return result;
+        return Core::StringAtom(result);
     }
 
     void GuiGenerator::despawnEverything()

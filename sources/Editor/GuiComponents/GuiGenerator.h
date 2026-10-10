@@ -21,7 +21,7 @@ namespace NX::Gui
     class GuiGenerator : public Gui::VerticalLayout
     {
     public:
-        [[nodiscard]] static std::string NormalizeLabelName(const std::string& name);
+        [[nodiscard]] static Core::StringAtom NormalizeLabelName(const Core::StringAtom& name);
 
         template<Utils::IsArithmetic T>
         void spawn(const Core::StringAtom& label, T& value, const RClassField& field)
@@ -30,7 +30,7 @@ namespace NX::Gui
             using GuiValType = std::conditional_t<std::is_integral_v<ValueType>, int, float>;
 
             auto* c = addChildComponent<Gui::LabelRow<Gui::NumInput<GuiValType>>>();
-            c->label->setText(label);
+            c->label->setText(NormalizeLabelName(label));
             c->label->setWidth(_labelWidth);
             c->input->setInputtedData(value);
             if (field.attributes.min)
