@@ -36,17 +36,17 @@ namespace NX::Gui
             if (field.attributes.min)
             {
                 const auto v = std::get<ValueType>(*field.attributes.min);
-                c->input->setMin(static_cast<ValueType>(v));
+                c->input->setMin(static_cast<GuiValType>(v));
             }
             if (field.attributes.max)
             {
                 const auto v = std::get<ValueType>(*field.attributes.max);
-                c->input->setMax(static_cast<ValueType>(v));
+                c->input->setMax(static_cast<GuiValType>(v));
             }
             if (field.attributes.step)
             {
-                const auto v = std::get<int64_t>(*field.attributes.step);
-                c->input->setStep(static_cast<ValueType>(v));
+                const auto v = std::get<ValueType>(*field.attributes.step);
+                c->input->setStep(static_cast<GuiValType>(v));
             }
             _subscriptionPool << c->input->onInput->subscribeAndGetID([&value](ValueType in)
                                                                       { value = in; });
@@ -58,7 +58,7 @@ namespace NX::Gui
         [[nodiscard]] float getLabelWidth() const noexcept { return _labelWidth; }
 
     protected:
-        float _labelWidth = 100.f;
+        float _labelWidth = 140.f;
         DelegateSubscriberPoolGuard _subscriptionPool;
     };
 
