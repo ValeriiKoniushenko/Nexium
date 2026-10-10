@@ -28,16 +28,16 @@ namespace NX
     {
         R_FRIEND(LightningProps);
 
-        FIELD();
+        FIELD(R::Min = 0.0, R::Max = 10.0, R::Step = 0.05);
         float ambientStrength = 1.f;
 
-        FIELD();
+        FIELD(R::Min = 0.0, R::Max = 10.0, R::Step = 0.05);
         float minLightStrength = 0.2f;
 
-        FIELD();
+        FIELD(R::Min = 0.0, R::Max = 10.0, R::Step = 0.05);
         float specularStrength = 0.5f;
 
-        FIELD(R::Min = 0.01, R::Max = 4096.0, R::Step = 2);
+        FIELD(R::Min = 0.01, R::Max = 4096.0, R::Step = 2.0);
         float specularPow = 32.f;
 
         FIELD();
