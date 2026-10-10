@@ -37,7 +37,7 @@ namespace NX
         FIELD();
         float specularStrength = 0.5f;
 
-        FIELD();
+        FIELD(R::Min = 0.01, R::Max = 4096.0, R::Step = 2);
         float specularPow = 32.f;
 
         FIELD();
