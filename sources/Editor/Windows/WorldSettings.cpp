@@ -186,6 +186,8 @@ namespace NX
                  fields.at("ambientStrength"));
         gg.spawn("specularPow", GetWorld()->lightning.specularPow, fields.at("specularPow"));
 
+        gg.spawn("sunDirection", GetWorld()->lightning.sunDirection, fields.at("sunDirection"));
+
         ////////////////////////////////////////////////
         if (Verify(_color3Input))
         {
