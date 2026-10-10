@@ -14,53 +14,12 @@
 #include "BaseWindow.h"
 #include "Core/Delegate.h"
 #include "Editor/ForwardDeclarations.h"
-#include "Editor/GuiComponents/Input.h"
-#include "Editor/GuiComponents/Label.h"
-#include "Editor/GuiComponents/LabelRow.h"
-#include "Editor/GuiComponents/VerticalLayout.h"
+#include "Editor/GuiComponents/GuiGenerator.h"
 
 #include <JustReflectMe/Number.h>
-#include <type_traits>
 
 namespace NX
 {
-    class GuiGenerator : public Gui::VerticalLayout
-    {
-    public:
-        template<Utils::IsArithmetic T>
-        void spawn(const Core::StringAtom& label, T& value, const RClassField& field)
-        {
-            using ValueType = std::conditional_t<std::is_integral_v<T>, int64_t, double>;
-            using GuiValType = std::conditional_t<std::is_integral_v<ValueType>, int, float>;
-
-            auto* c = addChildComponent<Gui::LabelRow<Gui::NumInput<GuiValType>>>();
-            c->label->setText(label);
-            c->label->setWidth(100.f);
-            c->input->setInputtedData(value);
-            if (field.attributes.min)
-            {
-                const auto v = std::get<ValueType>(*field.attributes.min);
-                c->input->setMin(static_cast<ValueType>(v));
-            }
-            if (field.attributes.max)
-            {
-                const auto v = std::get<ValueType>(*field.attributes.max);
-                c->input->setMax(static_cast<ValueType>(v));
-            }
-            if (field.attributes.step)
-            {
-                const auto v = std::get<int64_t>(*field.attributes.step);
-                c->input->setStep(static_cast<ValueType>(v));
-            }
-            _subscriptionPool << c->input->onInput->subscribeAndGetID([&value](ValueType in)
-                                                                      { value = in; });
-        }
-
-        void despawnEverything();
-
-    protected:
-        DelegateSubscriberPoolGuard _subscriptionPool;
-    };
 
     CLASS();
     class WorldSettingsEWC : public BaseFloatEWC
@@ -95,7 +54,7 @@ namespace NX
         Gui::FloatInput* _specularPow = nullptr;
         Gui::Float3Input* _sunDirection = nullptr;
 
-        GuiGenerator gg;
+        Gui::GuiGenerator gg;
     };
 } // namespace NX
 
