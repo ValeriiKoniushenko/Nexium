@@ -176,9 +176,17 @@ namespace NX
                 [](glm::vec3 value) { GetWorld()->lightning.sunDirection = value; });
         }
 
+        ////////////////////////////////////////////////
         static const auto fields = R<decltype(GetWorld()->lightning)>::GetFieldsMap();
+        gg.spawn("specularStrength", GetWorld()->lightning.specularStrength,
+                 fields.at("specularStrength"));
+        gg.spawn("minLightStrength", GetWorld()->lightning.minLightStrength,
+                 fields.at("minLightStrength"));
+        gg.spawn("ambientStrength", GetWorld()->lightning.ambientStrength,
+                 fields.at("ambientStrength"));
         gg.spawn("specularPow", GetWorld()->lightning.specularPow, fields.at("specularPow"));
 
+        ////////////////////////////////////////////////
         if (Verify(_color3Input))
         {
             _color3Input->setInputtedData(GetWorld()->lightning.color);
