@@ -26,6 +26,8 @@
 #include "NxWorld/Framework/World.h"
 #include "SceneTreeWindow.h"
 
+#include <JustReflectMe/Adapter.h>
+
 using namespace NX;
 
 namespace NX
@@ -174,7 +176,8 @@ namespace NX
                 [](glm::vec3 value) { GetWorld()->lightning.sunDirection = value; });
         }
 
-        gg.spawn("Hello", GetWorld()->lightning.specularPow);
+        static const auto fields = R<decltype(GetWorld()->lightning)>::GetFieldsMap();
+        gg.spawn("specularPow", GetWorld()->lightning.specularPow, fields.at("specularPow"));
 
         if (Verify(_color3Input))
         {
@@ -261,25 +264,6 @@ namespace NX
         }
 
         gg.tick(GetWorld()->getTimeDelta());
-    }
-
-    void GuiGenerator::spawn(const Core::StringAtom& label, int& value)
-    {
-        auto* c = addChildComponent<Gui::LabelRow<Gui::IntInput>>();
-        c->label->setText(label);
-        c->label->setWidth(100.f);
-        c->input->setInputtedData(value);
-        _subscriptionPool << c->input->onInput->subscribeAndGetID([&value](int in) { value = in; });
-    }
-
-    void GuiGenerator::spawn(const Core::StringAtom& label, float& value)
-    {
-        auto* c = addChildComponent<Gui::LabelRow<Gui::FloatInput>>();
-        c->label->setText(label);
-        c->label->setWidth(100.f);
-        c->input->setInputtedData(value);
-        _subscriptionPool << c->input->onInput->subscribeAndGetID([&value](float in)
-                                                                  { value = in; });
     }
 
     void GuiGenerator::despawnEverything()
