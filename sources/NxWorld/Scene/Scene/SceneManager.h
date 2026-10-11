@@ -29,7 +29,7 @@ namespace NX
         ~SceneManager() override;
 
         Scene& createNewScene();
-        bool renameScene(Scene* scene, Core::StringAtom newName);
+        bool renameScene(Scene* scene, const Core::StringAtom& newName);
         bool setCurrentScene(const Core::StringAtom& sceneName);
         bool setCurrentScene(Scene* scene);
 
@@ -52,7 +52,7 @@ namespace NX
         [[nodiscard]] StringAtom getCacheHash() const override { return "SceneTabs"_atom; }
 
         void removeAllScenes();
-        void removeScene(StringAtom sceneName);
+        void removeScene(const StringAtom& sceneName);
         void removeScene(Scene* scene);
 
         [[nodiscard]] const std::vector<Core::IntrusivePtr<Scene>>& getScenes() const noexcept
@@ -71,8 +71,8 @@ namespace NX
     private:
         void restoreOpenScenes(std::vector<Scene*> opened, Scene* current);
 
-        std::vector<Core::IntrusivePtr<Scene>> _scenes;
-        std::vector<Scene*> _openScenes;
+        std::vector<Core::IntrusivePtr<Scene>> _scenes{};
+        std::vector<Scene*> _openScenes{};
         Scene* _currentScene = nullptr;
     };
 

@@ -183,7 +183,7 @@ TEST_F(ScenePersistenceTest, SceneFilesPreserveObjectsInClosedScenes)
 
 TEST_F(ScenePersistenceTest, ImportsExistingSceneFilesWithoutDeletingThem)
 {
-    NX::Scene first;
+    const NX::Scene first;
     NX::Scene second;
     second.setSceneName("Another"_atom);
     std::ofstream(root / "Default.json") << first.serialize().dump();

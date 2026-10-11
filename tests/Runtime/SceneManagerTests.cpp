@@ -160,7 +160,7 @@ TEST(SceneManagerTests, ShutdownDeinitializesScenesRetainedElsewhere)
     Core::IntrusivePtr<NX::Scene> scene;
     Core::IntrusivePtr<SceneLifecycleObject> object = new SceneLifecycleObject;
     {
-        NX::SceneManager manager;
+        const NX::SceneManager manager;
         scene = manager.getCurrentScene();
         scene->addObjectToScene(object);
         ASSERT_TRUE(object->isInitialized());

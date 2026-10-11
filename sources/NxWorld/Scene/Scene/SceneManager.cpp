@@ -64,7 +64,7 @@ namespace NX
         return *_scenes.back();
     }
 
-    bool SceneManager::renameScene(Scene* scene, Core::StringAtom newName)
+    bool SceneManager::renameScene(Scene* scene, const Core::StringAtom& newName)
     {
         if (!scene || newName.isEmpty() || (getScene(newName) && getScene(newName) != scene))
         {
@@ -143,7 +143,7 @@ namespace NX
         return true;
     }
 
-    void SceneManager::removeScene(Core::StringAtom sceneName)
+    void SceneManager::removeScene(const Core::StringAtom& sceneName)
     {
         removeScene(getScene(sceneName));
     }

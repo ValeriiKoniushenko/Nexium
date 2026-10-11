@@ -36,7 +36,7 @@ namespace NX
 
     glm::vec2 SceneDeleteConfirmation::getInitialPopupSize() const
     {
-        return glm::vec2(420.f, 180.f);
+        return { 420.f, 180.f };
     }
 
     void SceneDeleteConfirmation::onOpen()
