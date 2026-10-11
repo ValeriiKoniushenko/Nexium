@@ -17,30 +17,77 @@
 #include "Editor/GuiComponents/LabelRow.h"
 #include "Editor/GuiComponents/VecInput.h"
 #include "Editor/GuiComponents/VerticalLayout.h"
+#include "NxFundamental/ECS/BaseComponent.h"
+
+#include <JustReflectMe/Adapter.h>
 
 namespace NX::Gui
 {
+
     class GuiGenerator : public Gui::VerticalLayout
     {
     public:
         [[nodiscard]] static Core::StringAtom NormalizeLabelName(const Core::StringAtom& name);
 
         template<Utils::IsArithmetic T>
-        void spawn(const Core::StringAtom& label, T& value, const RClassField& field);
+        void spawnArithmetic(const Core::StringAtom& label, T& value, const RClassField& field);
 
         template<glm::length_t L, typename T>
-        void spawn(const Core::StringAtom& label, glm::vec<L, T>& value, const RClassField& field);
+        void spawnGlmVec(const Core::StringAtom& label, glm::vec<L, T>& value,
+                         const RClassField& field);
 
-        void spawn(const Core::StringAtom& label, NormColor3& value, const RClassField& field);
+        void spawnNormColor3(const Core::StringAtom& label, NormColor3& value,
+                             const RClassField& field);
 
         void despawnEverything();
 
         void setLabelWidth(float v) noexcept;
         [[nodiscard]] float getLabelWidth() const noexcept { return _labelWidth; }
 
+        void spawnRouter(void* data, const char* type, const Core::StringAtom& label,
+                         const RClassField& field);
+
     protected:
         float _labelWidth = 140.f;
         DelegateSubscriberPoolGuard _subscriptionPool;
+    };
+
+    template<class T>
+    class ObjectBasedGuiGenerator : public GuiGenerator
+    {
+    public:
+        explicit ObjectBasedGuiGenerator(const std::function<T*()>& getter)
+        {
+            setObjectGetter(getter);
+        }
+
+        ObjectBasedGuiGenerator() = default;
+        ObjectBasedGuiGenerator(ObjectBasedGuiGenerator&&) = default;
+        ObjectBasedGuiGenerator(const ObjectBasedGuiGenerator&) = default;
+        ObjectBasedGuiGenerator& operator=(ObjectBasedGuiGenerator&&) = default;
+        ObjectBasedGuiGenerator& operator=(const ObjectBasedGuiGenerator&) = default;
+        ~ObjectBasedGuiGenerator() override = default;
+
+        void setObjectGetter(const std::function<T*()>& getter) { _objectGetter = getter; }
+        void generateGui()
+        {
+            auto* obj = _objectGetter();
+
+            if (!obj)
+            {
+                return;
+            }
+
+            const auto fields = R<T>::GetFieldsMap();
+            for (auto&& f : fields)
+            {
+                R<T>::GetField(*obj, f.first.c_str(), [&](void* data, const char* type)
+                               { spawnRouter(data, type, f.first.c_str(), f.second); });
+            }
+        }
+
+    protected:
+        std::function<T*()> _objectGetter;
     };
 
     // =======================================================
@@ -48,7 +95,8 @@ namespace NX::Gui
     // =======================================================
 
     template<Utils::IsArithmetic T>
-    void GuiGenerator::spawn(const Core::StringAtom& label, T& value, const RClassField& field)
+    void GuiGenerator::spawnArithmetic(const Core::StringAtom& label, T& value,
+                                       const RClassField& field)
     {
         using ValueType = std::conditional_t<std::is_integral_v<T>, int64_t, double>;
         using GuiValType = std::conditional_t<std::is_integral_v<ValueType>, int, float>;
@@ -77,8 +125,8 @@ namespace NX::Gui
     }
 
     template<glm::length_t L, typename T>
-    void GuiGenerator::spawn(const Core::StringAtom& label, glm::vec<L, T>& value,
-                             const RClassField& field)
+    void GuiGenerator::spawnGlmVec(const Core::StringAtom& label, glm::vec<L, T>& value,
+                                   const RClassField& field)
     {
         using ValueType = std::conditional_t<std::is_integral_v<T>, int64_t, double>;
         using GuiValType = std::conditional_t<std::is_integral_v<ValueType>, int, float>;
