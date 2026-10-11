@@ -11,6 +11,7 @@
 #include "NxWorld/Framework/GameInstance.h"
 
 #include "gtest/gtest.h"
+#include <array>
 
 namespace
 {
@@ -21,9 +22,9 @@ namespace
     protected:
         void SetUp() override
         {
-            char executable[] = "Nexium_Tests";
-            char* arguments[] = { executable };
-            gGameInstance = std::make_unique<NX::GameInstance>(1, arguments);
+            auto executable = std::to_array("Nexium_Tests");
+            std::array<char*, 1> arguments{ executable.data() };
+            gGameInstance = std::make_unique<NX::GameInstance>(1, arguments.data());
             ImGui::CreateContext();
             auto& io = ImGui::GetIO();
             io.IniFilename = nullptr;
