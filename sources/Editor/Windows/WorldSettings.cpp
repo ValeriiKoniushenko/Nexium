@@ -13,6 +13,7 @@
 #include "Editor/EditorIntegration.h"
 #include "Editor/ForwardDeclarations.h"
 #include "Editor/GuiComponents/Button.h"
+#include "Editor/GuiComponents/GuiGenerator.h"
 #include "Editor/GuiComponents/HorizontalLayout.h"
 #include "Editor/GuiComponents/Input.h"
 #include "Editor/GuiComponents/Label.h"
@@ -27,6 +28,7 @@
 #include "SceneTreeWindow.h"
 
 #include <JustReflectMe/Adapter.h>
+#include <memory>
 
 using namespace NX;
 
@@ -98,31 +100,50 @@ namespace NX
         // ===================== LIGHTNING =========================
 
         static const auto fields = R<decltype(GetWorld()->lightning)>::GetFieldsMap();
-        gg.spawn("color", GetWorld()->lightning.color, fields.at("color"));
-        gg.spawn("specularStrength", GetWorld()->lightning.specularStrength,
-                 fields.at("specularStrength"));
-        gg.spawn("minLightStrength", GetWorld()->lightning.minLightStrength,
-                 fields.at("minLightStrength"));
-        gg.spawn("ambientStrength", GetWorld()->lightning.ambientStrength,
-                 fields.at("ambientStrength"));
-        gg.spawn("specularPow", GetWorld()->lightning.specularPow, fields.at("specularPow"));
-        gg.spawn("sunDirection", GetWorld()->lightning.sunDirection, fields.at("sunDirection"));
+
+        Assert(!_lightningLayout);
+
+        using LigtningGuiT = Gui::ObjectBasedGuiGenerator<decltype(GetWorld()->lightning)>;
+        _lightningLayout = std::make_unique<LigtningGuiT>();
+
+        if (auto* l = dynamic_cast<LigtningGuiT*>(_lightningLayout.get()))
+        {
+            l->setObjectGetter([]() { return &GetWorld()->lightning; });
+            l->generateGui();
+        }
+        else
+        {
+            errorLogAndAssert(
+                "Impossible to create Gui::ObjectBasedGuiGenerator<decltype(GetWorld()->lightning) "
+                "to create GUI");
+        }
+
+        for (auto&& f : fields)
+        {
+            _lightningLayout->spawn(f.first.c_str(), GetWorld()->lightning.color, f.second);
+        }
+        // gg.spawn("color", GetWorld()->lightning.color, fields.at("color"));
+        // gg.spawn("specularStrength", GetWorld()->lightning.specularStrength,
+        //          fields.at("specularStrength"));
+        // gg.spawn("minLightStrength", GetWorld()->lightning.minLightStrength,
+        //          fields.at("minLightStrength"));
+        // gg.spawn("ambientStrength", GetWorld()->lightning.ambientStrength,
+        //          fields.at("ambientStrength"));
+        // gg.spawn("specularPow", GetWorld()->lightning.specularPow, fields.at("specularPow"));
+        //  gg.spawn("sunDirection", GetWorld()->lightning.sunDirection, fields.at("sunDirection"));
     }
 
     void WorldSettingsEWC::onClose()
     {
         BaseEWC::onClose();
 
-        gg.despawnEverything();
+        _lightningLayout->despawnEverything();
 
         _globalLayout.removeAllChildren();
         _cameraInputField = nullptr;
         _changeCameraButton = nullptr;
         _showCameraButton = nullptr;
         _resetCameraButton = nullptr;
-
-        _lightningLayout.removeAllChildren();
-        _color3Input = nullptr;
     }
 
     void WorldSettingsEWC::onDraw()
@@ -156,8 +177,7 @@ namespace NX
 
         if (Gui::CollapsingHeader("Lightning", ImGuiTreeNodeFlags_DefaultOpen))
         {
-            _lightningLayout.tick(GetWorld()->getTimeDelta());
-            gg.tick(GetWorld()->getTimeDelta());
+            _lightningLayout->tick(GetWorld()->getTimeDelta());
         }
     }
 
