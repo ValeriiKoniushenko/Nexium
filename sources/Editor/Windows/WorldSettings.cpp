@@ -105,77 +105,6 @@ namespace NX
             _subscriptionPool << _color3Input->onInput->subscribeAndGetID(
                 [](Color3 color) { GetWorld()->lightning.color = color.toNorm(); });
         }
-        {
-            auto* h = _lightningLayout.addChildComponent<Gui::HorizontalLayout>();
-            h->setHorizontalAlign(Gui::Align::SpaceBetween);
-            h->addChildComponent<Gui::Label>("Ambient strength");
-            _ambientStrength = h->addChildComponent<Gui::FloatInput>();
-            _ambientStrength->setInputtedData(GetWorld()->lightning.ambientStrength);
-            _ambientStrength->setMin(0.f);
-            _ambientStrength->setMax(10.f);
-            _ambientStrength->setStep(0.05f);
-
-            _subscriptionPool << _ambientStrength->onInput->subscribeAndGetID(
-                [](float value) { GetWorld()->lightning.ambientStrength = value; });
-        }
-        {
-            auto* h = _lightningLayout.addChildComponent<Gui::HorizontalLayout>();
-            h->setHorizontalAlign(Gui::Align::SpaceBetween);
-            h->addChildComponent<Gui::Label>("Min light strength");
-            _minLightStrength = h->addChildComponent<Gui::FloatInput>();
-            _minLightStrength->setInputtedData(GetWorld()->lightning.minLightStrength);
-            _minLightStrength->setMin(0.f);
-            _minLightStrength->setMax(10.f);
-            _minLightStrength->setStep(0.05f);
-            _subscriptionPool << _minLightStrength->onInput->subscribeAndGetID(
-                [](float value) { GetWorld()->lightning.minLightStrength = value; });
-        }
-        {
-            auto* h = _lightningLayout.addChildComponent<Gui::HorizontalLayout>();
-            h->setHorizontalAlign(Gui::Align::SpaceBetween);
-            h->addChildComponent<Gui::Label>("Specular strength");
-            _specularStrength = h->addChildComponent<Gui::FloatInput>();
-            _specularStrength->setMin(0.f);
-            _specularStrength->setMax(10.f);
-            _specularStrength->setStep(0.05f);
-
-            _specularStrength->setInputtedData(GetWorld()->lightning.specularStrength);
-            _subscriptionPool << _specularStrength->onInput->subscribeAndGetID(
-                [](float value) { GetWorld()->lightning.specularStrength = value; });
-        }
-        {
-            auto* h = _lightningLayout.addChildComponent<Gui::HorizontalLayout>();
-            h->setHorizontalAlign(Gui::Align::SpaceBetween);
-            h->addChildComponent<Gui::Label>("Specular pow");
-            _specularPow = h->addChildComponent<Gui::FloatInput>();
-            _specularPow->setMin(0.01f);
-            _specularPow->setMax(4096.f);
-            _specularPow->setStep(2.f);
-
-            _specularPow->setInputtedData(GetWorld()->lightning.specularPow);
-            _subscriptionPool << _specularPow->onInput->subscribeAndGetID(
-                [](float value) { GetWorld()->lightning.specularPow = value; });
-        }
-        {
-            auto* h = _lightningLayout.addChildComponent<Gui::HorizontalLayout>();
-            h->setHorizontalAlign(Gui::Align::SpaceBetween);
-            h->addChildComponent<Gui::Label>("Sun light direction");
-            _sunDirection = h->addChildComponent<Gui::Float3Input>();
-            _sunDirection->setFlex(Gui::Flex::Fixed);
-            _sunDirection->setWidth(240.f);
-
-            for (auto* i : _sunDirection->inputs)
-            {
-                i->setMin(-1.f);
-                i->setMax(1.f);
-                i->setStep(.01f);
-            }
-
-            _sunDirection->setInputtedData(GetWorld()->lightning.sunDirection);
-            _subscriptionPool << _sunDirection->onInput->subscribeAndGetID(
-                [](glm::vec3 value) { GetWorld()->lightning.sunDirection = value; });
-        }
-
         ////////////////////////////////////////////////
         static const auto fields = R<decltype(GetWorld()->lightning)>::GetFieldsMap();
         gg.spawn("specularStrength", GetWorld()->lightning.specularStrength,
@@ -185,34 +114,7 @@ namespace NX
         gg.spawn("ambientStrength", GetWorld()->lightning.ambientStrength,
                  fields.at("ambientStrength"));
         gg.spawn("specularPow", GetWorld()->lightning.specularPow, fields.at("specularPow"));
-
         gg.spawn("sunDirection", GetWorld()->lightning.sunDirection, fields.at("sunDirection"));
-
-        ////////////////////////////////////////////////
-        if (Verify(_color3Input))
-        {
-            _color3Input->setInputtedData(GetWorld()->lightning.color);
-        }
-        if (Verify(_ambientStrength))
-        {
-            _ambientStrength->setInputtedData(GetWorld()->lightning.ambientStrength);
-        }
-        if (Verify(_minLightStrength))
-        {
-            _minLightStrength->setInputtedData(GetWorld()->lightning.minLightStrength);
-        }
-        if (Verify(_specularStrength))
-        {
-            _specularStrength->setInputtedData(GetWorld()->lightning.specularStrength);
-        }
-        if (Verify(_specularPow))
-        {
-            _specularPow->setInputtedData(GetWorld()->lightning.specularPow);
-        }
-        if (Verify(_sunDirection))
-        {
-            _sunDirection->setInputtedData(GetWorld()->lightning.sunDirection);
-        }
     }
 
     void WorldSettingsEWC::onClose()
@@ -229,11 +131,6 @@ namespace NX
 
         _lightningLayout.removeAllChildren();
         _color3Input = nullptr;
-        _ambientStrength = nullptr;
-        _minLightStrength = nullptr;
-        _specularStrength = nullptr;
-        _specularPow = nullptr;
-        _sunDirection = nullptr;
     }
 
     void WorldSettingsEWC::onDraw()
@@ -250,9 +147,6 @@ namespace NX
         {
             _resetCameraButton->disableWidget(!GetWorld()->currentCamera);
         }
-
-        auto sss = GetWorld()->lightning.specularPow;
-
         if (_cameraInputField)
         {
             std::string str = "";
@@ -271,9 +165,8 @@ namespace NX
         if (Gui::CollapsingHeader("Lightning", ImGuiTreeNodeFlags_DefaultOpen))
         {
             _lightningLayout.tick(GetWorld()->getTimeDelta());
+            gg.tick(GetWorld()->getTimeDelta());
         }
-
-        gg.tick(GetWorld()->getTimeDelta());
     }
 
 } // namespace NX
