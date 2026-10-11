@@ -11,6 +11,8 @@
 
 #include "GuiGenerator.h"
 
+#include "Editor/GuiComponents/Input.h"
+
 namespace NX::Gui
 {
 
@@ -103,6 +105,18 @@ namespace NX::Gui
         }
 
         return Core::StringAtom(result);
+    }
+
+    void GuiGenerator::spawn(const Core::StringAtom& label, NormColor3& value,
+                             const RClassField& field)
+    {
+        auto* c = addChildComponent<Gui::LabelRow<Gui::Color3Input>>();
+        c->label->setText(NormalizeLabelName(label));
+        c->label->setWidth(_labelWidth);
+        c->input->setInputtedData(value);
+
+        _subscriptionPool << c->input->onInput->subscribeAndGetID([&value](auto in)
+                                                                  { value = in; });
     }
 
     void GuiGenerator::despawnEverything()

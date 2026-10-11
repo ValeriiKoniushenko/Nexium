@@ -96,17 +96,9 @@ namespace NX
         }
 
         // ===================== LIGHTNING =========================
-        {
-            auto* h = _lightningLayout.addChildComponent<Gui::HorizontalLayout>();
-            h->setHorizontalAlign(Gui::Align::SpaceBetween);
-            h->addChildComponent<Gui::Label>("Light color");
-            _color3Input = h->addChildComponent<Gui::Color3Input>();
-            _color3Input->setInputtedData(GetWorld()->lightning.color);
-            _subscriptionPool << _color3Input->onInput->subscribeAndGetID(
-                [](Color3 color) { GetWorld()->lightning.color = color.toNorm(); });
-        }
-        ////////////////////////////////////////////////
+
         static const auto fields = R<decltype(GetWorld()->lightning)>::GetFieldsMap();
+        gg.spawn("color", GetWorld()->lightning.color, fields.at("color"));
         gg.spawn("specularStrength", GetWorld()->lightning.specularStrength,
                  fields.at("specularStrength"));
         gg.spawn("minLightStrength", GetWorld()->lightning.minLightStrength,
