@@ -45,16 +45,7 @@ namespace NX
         Gui::Button* _showCameraButton = nullptr;
         Gui::Button* _resetCameraButton = nullptr;
 
-        // Lightning
-        Gui::VerticalLayout _lightningLayout;
-        Gui::Color3Input* _color3Input = nullptr;
-        Gui::FloatInput* _ambientStrength = nullptr;
-        Gui::FloatInput* _minLightStrength = nullptr;
-        Gui::FloatInput* _specularStrength = nullptr;
-        Gui::FloatInput* _specularPow = nullptr;
-        Gui::Float3Input* _sunDirection = nullptr;
-
-        Gui::GuiGenerator gg;
+        std::unique_ptr<Gui::GuiGenerator> _lightningLayout;
     };
 } // namespace NX
 

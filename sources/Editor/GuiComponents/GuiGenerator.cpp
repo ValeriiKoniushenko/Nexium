@@ -107,8 +107,8 @@ namespace NX::Gui
         return Core::StringAtom(result);
     }
 
-    void GuiGenerator::spawn(const Core::StringAtom& label, NormColor3& value,
-                             const RClassField& field)
+    void GuiGenerator::spawnNormColor3(const Core::StringAtom& label, NormColor3& value,
+                                       const RClassField& field)
     {
         auto* c = addChildComponent<Gui::LabelRow<Gui::Color3Input>>();
         c->label->setText(NormalizeLabelName(label));
@@ -129,4 +129,8 @@ namespace NX::Gui
         _labelWidth = std::max(5.f, v);
     }
 
+    void GuiGenerator::spawnRouter(void* data, const char* type, const Core::StringAtom& label,
+                                   const RClassField& field)
+    {
+    }
 } // namespace NX::Gui
