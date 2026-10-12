@@ -9,7 +9,9 @@
 
 #include "FreeTypeLibrary.h"
 
-namespace RawBackend
+#include "../PrivateModuleInfo.h"
+
+namespace RawBackend::Font
 {
 
     FreeTypeLibrary::FreeTypeLibrary()
@@ -31,10 +33,28 @@ namespace RawBackend
         ft = nullptr;
     }
 
-    bool FreeTypeLibrary::generateFace(const std::filesystem::path& path, FT_Long faceIndex,
-                                       FT_Face& face)
+    Face FreeTypeLibrary::generateFace(const std::filesystem::path& path, FT_Long faceIndex)
     {
-        return FT_New_Face(ft, path.generic_string().c_str(), faceIndex, &face);
+        Face out;
+        FT_Face face = nullptr;
+        if (auto err = FT_New_Face(ft, path.generic_string().c_str(), faceIndex, &face))
+        {
+            std::string msg = FT_Error_String(err);
+            if (msg.empty())
+            {
+                msg = "<undefined>";
+            }
+            criticalLogAndAssert("Impossible to generate a FT_Face: " + msg);
+
+            return {};
+        }
+        out._setFace(face);
+        return out;
+    }
+
+    spdlog::logger* FreeTypeLibrary::getLogger() const
+    {
+        return RawBackend::getLogger();
     }
 
     FreeTypeLibrary::~FreeTypeLibrary()
@@ -46,4 +66,39 @@ namespace RawBackend
     {
         return FreeTypeLibrary::Instance();
     }
-} // namespace RawBackend
+
+    Face::Face(Face&& other) noexcept
+    {
+        release();
+        swap(*this, other);
+    }
+
+    Face& Face::operator=(Face&& other) noexcept
+    {
+        if (this == &other) [[unlikely]]
+        {
+            return *this;
+        }
+
+        Face f(std::move(other));
+        swap(*this, f);
+        return *this;
+    }
+
+    void Face::_setFace(FT_Face face)
+    {
+        if (Verify(!_face.has_value()))
+        {
+            _face = face;
+        }
+    }
+
+    void Face::release()
+    {
+        if (_face)
+        {
+            FT_Done_Face(*_face);
+            _face = nullptr;
+        }
+    }
+} // namespace RawBackend::Font

@@ -11,15 +11,39 @@
 
 #pragma once
 
+#include "Core/IntrusivePtr.h"
 #include "Core/Singleton.h"
+#include "Foundation/BaseLog.h"
 #include "ft2build.h"
 #include FT_FREETYPE_H
 
 #include <filesystem>
 
-namespace RawBackend
+namespace RawBackend::Font
 {
-    class FreeTypeLibrary : public Core::Singleton<FreeTypeLibrary>
+    class Face : Core::IntrusiveRefCounter<Face>
+    {
+    public:
+        Face() = default;
+        ~Face() override = default;
+        Face(const Face&) = delete;
+        Face(Face&& other) noexcept;
+        Face& operator=(const Face&) = delete;
+        Face& operator=(Face&& other) noexcept;
+
+        [[nodiscard]] bool isValid() const noexcept { return _face.has_value(); }
+
+        void _setFace(FT_Face face);
+
+        friend void swap(Face& a, Face& b) noexcept { std::swap(a._face, b._face); }
+
+        void release();
+
+    private:
+        std::optional<FT_Face> _face = nullptr;
+    };
+
+    class FreeTypeLibrary : public Foundation::BaseLog, public Core::Singleton<FreeTypeLibrary>
     {
         SINGLETONS_FRIEND_NO_CNSTR(FreeTypeLibrary);
 
@@ -32,7 +56,10 @@ namespace RawBackend
         FreeTypeLibrary();
         ~FreeTypeLibrary() override;
 
-        bool generateFace(const std::filesystem::path& path, FT_Long faceIndex, FT_Face& face);
+        [[nodiscard]] Face generateFace(const std::filesystem::path& path, FT_Long faceIndex);
+
+        [[nodiscard]] const char* getPrefix() const override { return "FontBackend"; }
+        [[nodiscard]] spdlog::logger* getLogger() const override;
 
     private:
         void init();
@@ -44,4 +71,4 @@ namespace RawBackend
 
     [[nodiscard]] FreeTypeLibrary& GetFreeTypeLibrary();
 
-} // namespace RawBackend
+} // namespace RawBackend::Font
