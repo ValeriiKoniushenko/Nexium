@@ -377,8 +377,8 @@ namespace NX
             s->setSetEventCallback(
                 [](ShaderProgram::Event event)
                 {
-                    if ((event & ShaderProgram::Event::OnSetIndexAndVertexBuffer)
-                        == ShaderProgram::Event::OnSetIndexAndVertexBuffer)
+                    if ((event & ShaderProgram::Event::OnSetVertexBuffer)
+                        == ShaderProgram::Event::OnSetVertexBuffer)
                     {
                         glEnableVertexAttribArray(0);
                         glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(float), 0);

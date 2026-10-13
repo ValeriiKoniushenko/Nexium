@@ -40,7 +40,7 @@ namespace
 
         data.bindAllBuffers();
         glBufferData(GL_ARRAY_BUFFER, sizeof(LineVertex) * 2, nullptr, GL_STREAM_DRAW);
-        lineShader->callSetEvent(ShaderProgram::Event::OnSetIndexAndVertexBuffer);
+        lineShader->callSetEvent(ShaderProgram::Event::OnSetVertexBuffer);
 
         return data;
     }

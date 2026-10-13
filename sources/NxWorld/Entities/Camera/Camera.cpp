@@ -65,6 +65,7 @@ namespace NX
     {
         _isDirtyProjMatrix = true;
     }
+
     nlohmann::json BaseCamera::getTypeSpecificSceneDataAsJson() const
     {
         auto out = Actor::getTypeSpecificSceneDataAsJson();
@@ -73,6 +74,7 @@ namespace NX
         out["_far"] = _far;
         return out;
     }
+
     void BaseCamera::applyTypeSpecificSceneData(const nlohmann::json& data)
     {
         Actor::applyTypeSpecificSceneData(data);
