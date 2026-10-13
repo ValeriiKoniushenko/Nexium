@@ -20,7 +20,6 @@
 #include "NxWorld/Scene/Rectangle.h"
 #include "Platform/Glfw.h"
 #include "Platform/Window.h"
-#include "RawBackend/Fonts/FreeTypeLibrary.h"
 #include "spdlog/common.h"
 #include "spdlog/spdlog.h"
 
@@ -184,12 +183,6 @@ namespace NX
 
         NX_LATENCY_POINT("Resources - inited");
 
-        RawBackend::Font::Face face;
-        face.setSourcePath("data/internal/fonts/Inter/Inter_18pt-Black.ttf");
-        auto fn = face.getFacesNumber();
-        face.generateFace(0);
-        face.setPixelSize(48);
-
         NX_LATENCY_POINT("end");
     }
 
@@ -262,71 +255,90 @@ namespace NX
         auto* defaultShader = shaderManager.getShaderProgram("defaultTextured"_atom);
         if (Verify(defaultShader))
         {
-            defaultShader->setVertexAttributeCallback(
-                []
+            defaultShader->setSetEventCallback(
+                [](ShaderProgram::Event event)
                 {
-                    glEnableVertexAttribArray(0);
-                    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), nullptr);
+                    if (event & ShaderProgram::Event::OnSetVertexBuffer)
+                    {
+                        glEnableVertexAttribArray(0);
+                        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), nullptr);
 
-                    glEnableVertexAttribArray(1);
-                    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float),
-                                          reinterpret_cast<void*>(3 * sizeof(float)));
+                        glEnableVertexAttribArray(1);
+                        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float),
+                                              reinterpret_cast<void*>(3 * sizeof(float)));
 
-                    glEnableVertexAttribArray(2);
-                    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float),
-                                          reinterpret_cast<void*>(6 * sizeof(float)));
+                        glEnableVertexAttribArray(2);
+                        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float),
+                                              reinterpret_cast<void*>(6 * sizeof(float)));
+                    }
                 });
         }
 
         auto* outlineShader = shaderManager.getShaderProgram("outline"_atom);
         if (Verify(outlineShader))
         {
-            outlineShader->setVertexAttributeCallback(
-                []
+            outlineShader->setSetEventCallback(
+                [](ShaderProgram::Event event)
                 {
-                    glEnableVertexAttribArray(0);
-                    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), nullptr);
+                    if ((event & ShaderProgram::Event::OnSetVertexBuffer)
+                        == ShaderProgram::Event::OnSetVertexBuffer)
+                    {
+                        glEnableVertexAttribArray(0);
+                        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), nullptr);
 
-                    glEnableVertexAttribArray(1);
-                    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float),
-                                          reinterpret_cast<void*>(3 * sizeof(float)));
+                        glEnableVertexAttribArray(1);
+                        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float),
+                                              reinterpret_cast<void*>(3 * sizeof(float)));
+                    }
                 });
         }
 
         auto* objectIdentifierShader = shaderManager.getShaderProgram("objectIdentifier"_atom);
         if (Verify(objectIdentifierShader))
         {
-            objectIdentifierShader->setVertexAttributeCallback(
-                []
+            objectIdentifierShader->setSetEventCallback(
+                [](ShaderProgram::Event event)
                 {
-                    glEnableVertexAttribArray(0);
-                    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), nullptr);
+                    if ((event & ShaderProgram::Event::OnSetVertexBuffer)
+                        == ShaderProgram::Event::OnSetVertexBuffer)
+                    {
+                        glEnableVertexAttribArray(0);
+                        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), nullptr);
+                    }
                 });
         }
 
         auto* simpleColorShader = shaderManager.getShaderProgram("pickUpColorFiller"_atom);
         if (Verify(simpleColorShader))
         {
-            simpleColorShader->setVertexAttributeCallback(
-                []
+            simpleColorShader->setSetEventCallback(
+                [](ShaderProgram::Event event)
                 {
-                    glEnableVertexAttribArray(0);
-                    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), nullptr);
+                    if ((event & ShaderProgram::Event::OnSetVertexBuffer)
+                        == ShaderProgram::Event::OnSetVertexBuffer)
+                    {
+                        glEnableVertexAttribArray(0);
+                        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), nullptr);
 
-                    glEnableVertexAttribArray(2);
-                    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float),
-                                          reinterpret_cast<void*>(6 * sizeof(float)));
+                        glEnableVertexAttribArray(2);
+                        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float),
+                                              reinterpret_cast<void*>(6 * sizeof(float)));
+                    }
                 });
         }
 
         auto* skyboxShader = shaderManager.getShaderProgram("skybox"_atom);
         if (Verify(skyboxShader))
         {
-            skyboxShader->setVertexAttributeCallback(
-                []
+            skyboxShader->setSetEventCallback(
+                [](ShaderProgram::Event event)
                 {
-                    glEnableVertexAttribArray(0);
-                    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
+                    if ((event & ShaderProgram::Event::OnSetVertexBuffer)
+                        == ShaderProgram::Event::OnSetVertexBuffer)
+                    {
+                        glEnableVertexAttribArray(0);
+                        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
+                    }
                 });
         }
 
@@ -336,12 +348,14 @@ namespace NX
             main2dShader->setSetEventCallback(
                 [](ShaderProgram::Event event)
                 {
-                    if (event == ShaderProgram::Event::OnSetIndexAndVertexBuffer)
+                    if ((event & ShaderProgram::Event::OnSetVertexBuffer)
+                        == ShaderProgram::Event::OnSetVertexBuffer)
                     {
                         glEnableVertexAttribArray(0);
                         glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
                     }
-                    else if (event == ShaderProgram::Event::OnSetTextureVertexBuffer)
+                    else if ((event & ShaderProgram::Event::OnSetTextureVertexBuffer)
+                             == ShaderProgram::Event::OnSetTextureVertexBuffer)
                     {
                         glEnableVertexAttribArray(1);
                         glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), nullptr);
@@ -355,10 +369,26 @@ namespace NX
             lineShader->setSetEventCallback(
                 [](ShaderProgram::Event event)
                 {
-                    if (event == ShaderProgram::Event::OnSetIndexAndVertexBuffer)
+                    if ((event & ShaderProgram::Event::OnSetVertexBuffer)
+                        == ShaderProgram::Event::OnSetVertexBuffer)
                     {
                         glEnableVertexAttribArray(0);
                         glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), nullptr);
+                    }
+                });
+        }
+
+        auto* textShader = shaderManager.getShaderProgram("text"_atom);
+        if (Verify(lineShader))
+        {
+            textShader->setSetEventCallback(
+                [](ShaderProgram::Event event)
+                {
+                    if ((event & ShaderProgram::Event::OnSetIndexAndVertexBuffer)
+                        == ShaderProgram::Event::OnSetIndexAndVertexBuffer)
+                    {
+                        glEnableVertexAttribArray(0);
+                        glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(float), 0);
                     }
                 });
         }

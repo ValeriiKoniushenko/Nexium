@@ -235,7 +235,7 @@ namespace NX
             bindVAO();
             bindVBO();
             bindEBO();
-            _outlineShader->setupVertexAttribute();
+            _outlineShader->callSetEvent(ShaderProgram::Event::OnSetVertexBuffer);
         }
     }
 
