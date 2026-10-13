@@ -14,14 +14,19 @@
 #include "Core/IntrusivePtr.h"
 #include "Core/Singleton.h"
 #include "Foundation/BaseLog.h"
+#include "Foundation/BaseUsings.h"
 #include "ft2build.h"
+
+#include <cstdint>
 #include FT_FREETYPE_H
 
 #include <filesystem>
 
 namespace RawBackend::Font
 {
-    class Face : Core::IntrusiveRefCounter<Face>
+
+    /** It supports only variable fonts. */
+    class Face : public Foundation::BaseLog, public Core::IntrusiveRefCounter<Face>
     {
     public:
         constexpr static FT_Long NoFaces = -1;
@@ -46,12 +51,18 @@ namespace RawBackend::Font
         void setSourcePath(const std::filesystem::path& path);
         [[nodiscard]] FT_Long getFacesNumber();
         bool generateFace(FT_Long faceIndex);
+        bool setPixelSize(Core::UISize2 size);
+        bool setPixelSize(unsigned int height);
         void release();
+
+        [[nodiscard]] const char* getPrefix() const override { return "Face"; }
+        [[nodiscard]] spdlog::logger* getLogger() const override;
 
     private:
         void probe();
 
     private:
+        // Don't use std::filesystem::path to speed up work & data storing
         std::string _path;
         FT_Face _face = nullptr;
         FT_Long _faceNumber = NoFaces;

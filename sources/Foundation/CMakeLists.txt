@@ -28,6 +28,7 @@ target_sources(Nexium_Foundation PRIVATE
 nexium_add_public_headers(Nexium_Foundation
     Foundation/Configs.h
     Foundation/BaseLog.h
+    Foundation/BaseUsings.h
     Foundation/Interfaces/DataStream.h
     Foundation/Interfaces/IOutliner.h
     Foundation/Interfaces/IOutliner.generated.h

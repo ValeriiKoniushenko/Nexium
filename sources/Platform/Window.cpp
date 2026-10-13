@@ -83,7 +83,7 @@ namespace
 #ifndef _WIN32
     void SetWindowIcon(GLFWwindow* window)
     {
-        const auto path = Foundation::Config::Path::data / "internal/logo_192.png";
+        const auto path = Foundation::Config::Path::data / "internal/icons/logo_192.png";
         GLFWimage icon{};
         int channels = 0;
         icon.pixels = stbi_load(path.string().c_str(), &icon.width, &icon.height, &channels, 4);

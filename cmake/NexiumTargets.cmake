@@ -75,25 +75,25 @@ function(nexium_configure_application target)
             "${nexium_root}/sources/Platform/Resources/app.rc"
         )
     elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-        set(icon_source "${nexium_root}/data/internal/logo_192.png")
+        set(icon_source "${nexium_root}/data/internal/icons/logo_192.png")
         set(icon_output "$<TARGET_FILE_DIR:${target}>/${ARG_APPLICATION_ID}.png")
         set(desktop_output "$<TARGET_FILE_DIR:${target}>/${ARG_APPLICATION_ID}.desktop")
 
         add_custom_target(${target}_DesktopLauncher ALL
             COMMAND "${CMAKE_COMMAND}" -E copy_if_different
-                "${icon_source}" "${icon_output}"
+            "${icon_source}" "${icon_output}"
             COMMAND "${CMAKE_COMMAND}"
-                "-DNEXIUM_DESKTOP_FILE=${desktop_output}"
-                "-DNEXIUM_DESKTOP_EXECUTABLE=$<TARGET_FILE:${target}>"
-                "-DNEXIUM_DESKTOP_ICON=${icon_output}"
-                "-DNEXIUM_DESKTOP_NAME=${ARG_DISPLAY_NAME}"
-                "-DNEXIUM_DESKTOP_WM_CLASS=${ARG_APPLICATION_ID}"
-                "-DNEXIUM_DESKTOP_WORKING_DIRECTORY=${PROJECT_SOURCE_DIR}"
-                -P "${CMAKE_CURRENT_FUNCTION_LIST_DIR}/WriteDesktopEntry.cmake"
+            "-DNEXIUM_DESKTOP_FILE=${desktop_output}"
+            "-DNEXIUM_DESKTOP_EXECUTABLE=$<TARGET_FILE:${target}>"
+            "-DNEXIUM_DESKTOP_ICON=${icon_output}"
+            "-DNEXIUM_DESKTOP_NAME=${ARG_DISPLAY_NAME}"
+            "-DNEXIUM_DESKTOP_WM_CLASS=${ARG_APPLICATION_ID}"
+            "-DNEXIUM_DESKTOP_WORKING_DIRECTORY=${PROJECT_SOURCE_DIR}"
+            -P "${CMAKE_CURRENT_FUNCTION_LIST_DIR}/WriteDesktopEntry.cmake"
             DEPENDS
-                ${target}
-                "${icon_source}"
-                "${CMAKE_CURRENT_FUNCTION_LIST_DIR}/WriteDesktopEntry.cmake"
+            ${target}
+            "${icon_source}"
+            "${CMAKE_CURRENT_FUNCTION_LIST_DIR}/WriteDesktopEntry.cmake"
             COMMENT "Creating ${ARG_DISPLAY_NAME} desktop launcher"
             VERBATIM
         )
@@ -102,7 +102,7 @@ function(nexium_configure_application target)
         if(xdg_desktop_menu)
             add_custom_target(${target}_RegisterDesktopLauncher
                 COMMAND "${xdg_desktop_menu}" install --mode user --novendor
-                    "${desktop_output}"
+                "${desktop_output}"
                 DEPENDS ${target}_DesktopLauncher
                 COMMENT "Registering ${ARG_DISPLAY_NAME} with the desktop environment"
                 VERBATIM

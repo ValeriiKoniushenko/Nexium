@@ -20,6 +20,7 @@
 #include "NxWorld/Scene/Rectangle.h"
 #include "Platform/Glfw.h"
 #include "Platform/Window.h"
+#include "RawBackend/Fonts/FreeTypeLibrary.h"
 #include "spdlog/common.h"
 #include "spdlog/spdlog.h"
 
@@ -182,6 +183,12 @@ namespace NX
         loadCoreResources();
 
         NX_LATENCY_POINT("Resources - inited");
+
+        RawBackend::Font::Face face;
+        face.setSourcePath("data/internal/fonts/Inter/Inter_18pt-Black.ttf");
+        auto fn = face.getFacesNumber();
+        face.generateFace(0);
+        face.setPixelSize(48);
 
         NX_LATENCY_POINT("end");
     }
