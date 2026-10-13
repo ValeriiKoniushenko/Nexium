@@ -19,8 +19,7 @@ namespace NX
     ShaderProgram::ShaderProgram(ShaderProgram&& other) noexcept
         : _uniforms(std::move(other._uniforms)),
           _ubos(std::move(other._ubos)),
-          _setupVertexAttribute(std::move(other._setupVertexAttribute)),
-          _setEvent(std::move(other._setEvent)),
+          _setEvenCallback(std::move(other._setEvenCallback)),
           _name(std::move(other._name)),
           _vertexShaderId(other._vertexShaderId),
           _fragmentShaderId(other._fragmentShaderId),
@@ -134,32 +133,43 @@ namespace NX
         }
     }
 
-    void ShaderProgram::setupVertexAttribute()
+#if defined(NEXIUM_GRAPHICS_DEBUG)
+    void ShaderProgram::use() const
     {
-        if (!_setupVertexAttribute)
+        if (isEmpty())
         {
-            return;
+            criticalLogAndThrow("Impossible to use not-created shader program.");
         }
 
-        _setupVertexAttribute();
-    }
+        ++_usageNumber_Debug;
+        constexpr auto randomBigUsageTreshold = 100;
+        if (_usageNumber_Debug > randomBigUsageTreshold && !_setEvenCallbackHit_Debug)
+        {
+            using namespace Core;
+            LOG_ASSERT_ERROR_ONCE(
+                ("Looks like a shader {} never called an 'ShaderProgram::callSetEvent' to setup glEnableVertexAttribArray OR glVertexAttribPointer. It may lead to lack of render information."_f
+                 << _name)
+                    .c_str());
+        }
 
-    void ShaderProgram::setVertexAttributeCallback(std::function<void()>&& func)
-    {
-        _setupVertexAttribute = std::move(func);
+        glUseProgram(_shaderProgramId);
     }
+#endif
 
     void ShaderProgram::callSetEvent(Event event)
     {
-        if (_setEvent) [[likely]]
+        if (_setEvenCallback) [[likely]]
         {
-            _setEvent(event);
+            _setEvenCallback(event);
         }
+#if defined(NEXIUM_GRAPHICS_DEBUG)
+        _setEvenCallbackHit_Debug = true;
+#endif
     }
 
     void ShaderProgram::setSetEventCallback(std::function<void(Event)>&& func)
     {
-        _setEvent = std::move(func);
+        _setEvenCallback = std::move(func);
     }
 
     void ShaderProgram::clearOnlyShaderProgram()

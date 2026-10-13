@@ -69,7 +69,7 @@ namespace NX
             OnSetIndexBuffer = 1 << 0,
             OnSetVertexBuffer = 1 << 1,
             OnSetIndexAndVertexBuffer = OnSetIndexBuffer | OnSetVertexBuffer,
-            OnSetTextureVertexBuffer = 1 << 2
+            OnSetTextureVertexBuffer = 1 << 2,
         };
 
     public:
@@ -99,15 +99,9 @@ namespace NX
         void create(const Core::StringAtom& shaderName);
 
         void clear();
-#ifdef NEXIUM_GRAPHICS_DEBUG
-        void use() const noexcept
-        {
-            if (isEmpty())
-            {
-                criticalLogAndThrow("Impossible to use not-created shader program.");
-            }
-            glUseProgram(_shaderProgramId);
-        }
+
+#if defined(NEXIUM_GRAPHICS_DEBUG)
+        void use() const;
 #else
         void use() const noexcept { glUseProgram(_shaderProgramId); }
 #endif
@@ -171,10 +165,7 @@ namespace NX
             glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(T), &value);
         }
 
-        void setDataFromMeta(const ShaderProgramMeta& source);
-
-        void setupVertexAttribute();
-        void setVertexAttributeCallback(std::function<void()>&& func);
+        void setDataFromMeta(const ShaderProgramMeta& meta);
 
         void callSetEvent(Event event);
         void setSetEventCallback(std::function<void(Event)>&& func);
@@ -188,8 +179,7 @@ namespace NX
             swap(a._vertexShaderId, b._vertexShaderId);
             swap(a._fragmentShaderId, b._fragmentShaderId);
             swap(a._shaderProgramId, b._shaderProgramId);
-            swap(a._setupVertexAttribute, b._setupVertexAttribute);
-            swap(a._setEvent, b._setEvent);
+            swap(a._setEvenCallback, b._setEvenCallback);
         }
 
     protected:
@@ -199,13 +189,17 @@ namespace NX
         std::unordered_map<Core::StringAtom, GLint> _uniforms;
         std::unordered_map<Core::StringAtom, GLuint> _ubos;
 
-        std::function<void()> _setupVertexAttribute;
-        std::function<void(Event)> _setEvent;
+        std::function<void(Event)> _setEvenCallback;
         Core::StringAtom _name;
 
         GLuint _vertexShaderId = 0;
         GLuint _fragmentShaderId = 0;
         GLuint _shaderProgramId = 0;
+
+#if defined(NEXIUM_GRAPHICS_DEBUG)
+        mutable std::size_t _usageNumber_Debug = 0;
+        mutable bool _setEvenCallbackHit_Debug = false;
+#endif
 
     private:
         [[maybe_unused]] void debugUniform(const Core::StringAtom& name) const;

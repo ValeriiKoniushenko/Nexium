@@ -107,7 +107,9 @@ namespace NX
             bindEBO();
         }
 
+        void setVertexSubBuffer(std::size_t offset, const std::vector<float>& data);
         void setVertexBuffer(const std::vector<float>& data, GLenum usage = GL_STATIC_DRAW);
+        void reserveVertexBuffer(std::size_t bytes, GLenum usage = GL_STATIC_DRAW);
 
         void setIndexBuffer(const std::vector<GLuint>& data, GLenum usage = GL_STATIC_DRAW);
 

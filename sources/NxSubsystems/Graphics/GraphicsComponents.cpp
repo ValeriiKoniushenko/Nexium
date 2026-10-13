@@ -106,6 +106,17 @@ namespace NX
         }
     }
 
+    void BaseGraphicsData::setVertexSubBuffer(std::size_t offset, const std::vector<float>& data)
+    {
+        if (Verify(_vbo != 0 && _vao != 0)) [[likely]]
+        {
+            bindVAO();
+            bindVBO();
+            glBufferSubData(GL_ARRAY_BUFFER, static_cast<GLsizeiptr>(offset),
+                            static_cast<GLsizeiptr>(sizeof(float) * data.size()), data.data());
+        }
+    }
+
     void BaseGraphicsData::setVertexBuffer(const std::vector<float>& data, GLenum usage)
     {
         if (Verify(_vbo != 0 && _vao != 0)) [[likely]]
@@ -113,7 +124,18 @@ namespace NX
             bindVAO();
             bindVBO();
             glBufferData(GL_ARRAY_BUFFER, static_cast<GLsizeiptr>(sizeof(float) * data.size()),
-                         data.data(), GL_STATIC_DRAW);
+                         data.data(), usage);
+        }
+    }
+
+    void BaseGraphicsData::reserveVertexBuffer(std::size_t bytes,
+                                               GLenum usage /*  = GL_STATIC_DRAW */)
+    {
+        if (Verify(_vbo != 0 && _vao != 0)) [[likely]]
+        {
+            bindVAO();
+            bindVBO();
+            glBufferData(GL_ARRAY_BUFFER, static_cast<GLsizeiptr>(bytes), nullptr, usage);
         }
     }
 
@@ -124,8 +146,7 @@ namespace NX
             bindVAO();
             bindEBO();
             glBufferData(GL_ELEMENT_ARRAY_BUFFER,
-                         static_cast<GLsizeiptr>(sizeof(GLuint) * data.size()), data.data(),
-                         GL_STATIC_DRAW);
+                         static_cast<GLsizeiptr>(sizeof(GLuint) * data.size()), data.data(), usage);
             _triangleCount = static_cast<decltype(_triangleCount)>(data.size());
         }
     }
@@ -138,7 +159,7 @@ namespace NX
         if (!ignoreVertexAttribSetup && _vao != 0)
         {
             bindAllBuffers();
-            _shader->setupVertexAttribute();
+            _shader->callSetEvent(ShaderProgram::Event::OnSetVertexBuffer);
         }
     }
 
@@ -405,7 +426,7 @@ namespace NX
             bindVAO();
             bindTextureVBO();
             glBufferData(GL_ARRAY_BUFFER, static_cast<GLsizeiptr>(sizeof(float) * data.size()),
-                         data.data(), GL_STATIC_DRAW);
+                         data.data(), usage);
         }
     }
 
