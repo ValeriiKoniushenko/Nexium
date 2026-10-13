@@ -153,6 +153,23 @@ namespace RawBackend::Font
         _faceNumber = NoFaces;
     }
 
+    FT_GlyphSlot Face::loadChar(FT_ULong charCode, FT_Int32 loadFlags)
+    {
+        if (!isValid())
+        {
+            errorLogAndAssert("Can't load a character. Invalid font: " + _path);
+            return {};
+        }
+
+        if (auto err = FT_Load_Char(_face, charCode, loadFlags))
+        {
+            errorLogAndAssert(std::format("Error while loading a char: '{}'. Font: {}",
+                                          GetFreeTypeLibrary().getLastFtErrorString(err), _path));
+            return {};
+        }
+        return _face->glyph;
+    }
+
     void Face::probe()
     {
         if (!_path.empty() && _faceNumber == NoFaces)

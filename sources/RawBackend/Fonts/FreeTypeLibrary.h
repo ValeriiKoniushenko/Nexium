@@ -25,7 +25,7 @@
 namespace RawBackend::Font
 {
 
-    /** It supports only variable fonts. */
+    /// It supports only variable fonts.
     class Face : public Foundation::BaseLog, public Core::IntrusiveRefCounter<Face>
     {
     public:
@@ -54,6 +54,9 @@ namespace RawBackend::Font
         bool setPixelSize(Core::UISize2 size);
         bool setPixelSize(unsigned int height);
         void release();
+
+        /// Return non-owning pointer to a Glyph. This glyph will be released after next load.
+        [[nodiscard]] FT_GlyphSlot loadChar(FT_ULong charCode, FT_Int32 loadFlags);
 
         [[nodiscard]] const char* getPrefix() const override { return "Face"; }
         [[nodiscard]] spdlog::logger* getLogger() const override;
