@@ -24,6 +24,9 @@ namespace RawBackend::Font
     class Face : Core::IntrusiveRefCounter<Face>
     {
     public:
+        constexpr static FT_Long NoFaces = -1;
+
+    public:
         Face() = default;
         ~Face() override = default;
         Face(const Face&) = delete;
@@ -31,16 +34,27 @@ namespace RawBackend::Font
         Face& operator=(const Face&) = delete;
         Face& operator=(Face&& other) noexcept;
 
-        [[nodiscard]] bool isValid() const noexcept { return _face.has_value(); }
+        [[nodiscard]] bool isValid() const noexcept { return _face != nullptr; }
 
-        void _setFace(FT_Face face);
+        friend void swap(Face& a, Face& b) noexcept
+        {
+            std::swap(a._path, b._path);
+            std::swap(a._face, b._face);
+            std::swap(a._faceNumber, b._faceNumber);
+        }
 
-        friend void swap(Face& a, Face& b) noexcept { std::swap(a._face, b._face); }
-
+        void setSourcePath(const std::filesystem::path& path);
+        [[nodiscard]] FT_Long getFacesNumber();
+        bool generateFace(FT_Long faceIndex);
         void release();
 
     private:
-        std::optional<FT_Face> _face = nullptr;
+        void probe();
+
+    private:
+        std::string _path;
+        FT_Face _face = nullptr;
+        FT_Long _faceNumber = NoFaces;
     };
 
     class FreeTypeLibrary : public Foundation::BaseLog, public Core::Singleton<FreeTypeLibrary>
@@ -56,10 +70,11 @@ namespace RawBackend::Font
         FreeTypeLibrary();
         ~FreeTypeLibrary() override;
 
-        [[nodiscard]] Face generateFace(const std::filesystem::path& path, FT_Long faceIndex);
-
         [[nodiscard]] const char* getPrefix() const override { return "FontBackend"; }
         [[nodiscard]] spdlog::logger* getLogger() const override;
+
+        [[nodiscard]] std::string getLastFtErrorString(FT_Error err) const;
+        [[nodiscard]] FT_Face generateFace(const std::filesystem::path& path, FT_Long faceIndex);
 
     private:
         void init();

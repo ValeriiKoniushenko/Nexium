@@ -10,6 +10,7 @@
 #include "FreeTypeLibrary.h"
 
 #include "../PrivateModuleInfo.h"
+#include "freetype/freetype.h"
 
 namespace RawBackend::Font
 {
@@ -33,28 +34,19 @@ namespace RawBackend::Font
         ft = nullptr;
     }
 
-    Face FreeTypeLibrary::generateFace(const std::filesystem::path& path, FT_Long faceIndex)
-    {
-        Face out;
-        FT_Face face = nullptr;
-        if (auto err = FT_New_Face(ft, path.generic_string().c_str(), faceIndex, &face))
-        {
-            std::string msg = FT_Error_String(err);
-            if (msg.empty())
-            {
-                msg = "<undefined>";
-            }
-            criticalLogAndAssert("Impossible to generate a FT_Face: " + msg);
-
-            return {};
-        }
-        out._setFace(face);
-        return out;
-    }
-
     spdlog::logger* FreeTypeLibrary::getLogger() const
     {
         return RawBackend::getLogger();
+    }
+
+    std::string FreeTypeLibrary::getLastFtErrorString(FT_Error err) const
+    {
+        const char* msg = FT_Error_String(err);
+        if (!msg)
+        {
+            return {};
+        }
+        return { msg };
     }
 
     FreeTypeLibrary::~FreeTypeLibrary()
@@ -85,20 +77,74 @@ namespace RawBackend::Font
         return *this;
     }
 
-    void Face::_setFace(FT_Face face)
+    void Face::setSourcePath(const std::filesystem::path& path)
     {
-        if (Verify(!_face.has_value()))
+        release();
+        _path = path.generic_string();
+    }
+
+    FT_Long Face::getFacesNumber()
+    {
+        probe();
+        return _faceNumber;
+    }
+
+    bool Face::generateFace(FT_Long faceIndex)
+    {
+        if (_path.empty())
         {
-            _face = face;
+            return false;
         }
+
+        probe();
+        if (faceIndex >= _faceNumber)
+        {
+            Assert(false);
+            return false;
+        }
+
+        _face = FreeTypeLibrary::Instance().generateFace(_path, faceIndex);
+        return !!_face;
     }
 
     void Face::release()
     {
         if (_face)
         {
-            FT_Done_Face(*_face);
+            FT_Done_Face(_face);
             _face = nullptr;
         }
+        _path.clear();
+        _faceNumber = NoFaces;
     }
+
+    void Face::probe()
+    {
+        if (!_path.empty() && _faceNumber == NoFaces)
+        {
+            if (auto* f = FreeTypeLibrary::Instance().generateFace(_path, -1))
+            {
+                _faceNumber = f->num_faces;
+                FT_Done_Face(f);
+            }
+        }
+    }
+
+    FT_Face FreeTypeLibrary::generateFace(const std::filesystem::path& path, FT_Long faceIndex)
+    {
+        FT_Face face = nullptr;
+        if (auto err = FT_New_Face(ft, path.generic_string().c_str(), faceIndex, &face))
+        {
+            std::string msg = getLastFtErrorString(err);
+            if (msg.empty())
+            {
+                msg = "<undefined>";
+            }
+
+            criticalLogAndAssert("Impossible to generate a FT_Face: " + msg);
+            return {};
+        }
+        return face;
+    }
+
 } // namespace RawBackend::Font
