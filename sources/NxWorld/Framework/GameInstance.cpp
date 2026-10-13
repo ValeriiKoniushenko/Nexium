@@ -13,6 +13,7 @@
 #include "Foundation/Configs.h"
 #include "Foundation/Debug/Latency.h"
 #include "InputSystem.h"
+#include "NxSubsystems/Graphics/ShaderProgram.h"
 #include "NxWorld/Animations/FrameByFrame/FrameByFrameAnimation.h"
 #include "NxWorld/Animations/FrameByFrame/FrameByFrameAnimator.h"
 #include "NxWorld/Entities/Camera/Camera.h"
@@ -252,10 +253,9 @@ namespace NX
 
     void GameInstance::initializeShaders()
     {
-        auto* defaultShader = shaderManager.getShaderProgram("defaultTextured"_atom);
-        if (Verify(defaultShader))
+        if (auto* s = shaderManager.getShaderProgram("defaultTextured"_atom); Verify(s))
         {
-            defaultShader->setSetEventCallback(
+            s->setSetEventCallback(
                 [](ShaderProgram::Event event)
                 {
                     if (event & ShaderProgram::Event::OnSetVertexBuffer)
@@ -274,10 +274,9 @@ namespace NX
                 });
         }
 
-        auto* outlineShader = shaderManager.getShaderProgram("outline"_atom);
-        if (Verify(outlineShader))
+        if (auto* s = shaderManager.getShaderProgram("outline"_atom); Verify(s))
         {
-            outlineShader->setSetEventCallback(
+            s->setSetEventCallback(
                 [](ShaderProgram::Event event)
                 {
                     if ((event & ShaderProgram::Event::OnSetVertexBuffer)
@@ -293,10 +292,9 @@ namespace NX
                 });
         }
 
-        auto* objectIdentifierShader = shaderManager.getShaderProgram("objectIdentifier"_atom);
-        if (Verify(objectIdentifierShader))
+        if (auto* s = shaderManager.getShaderProgram("objectIdentifier"_atom); Verify(s))
         {
-            objectIdentifierShader->setSetEventCallback(
+            s->setSetEventCallback(
                 [](ShaderProgram::Event event)
                 {
                     if ((event & ShaderProgram::Event::OnSetVertexBuffer)
@@ -308,10 +306,9 @@ namespace NX
                 });
         }
 
-        auto* simpleColorShader = shaderManager.getShaderProgram("pickUpColorFiller"_atom);
-        if (Verify(simpleColorShader))
+        if (auto* s = shaderManager.getShaderProgram("pickUpColorFiller"_atom); Verify(s))
         {
-            simpleColorShader->setSetEventCallback(
+            s->setSetEventCallback(
                 [](ShaderProgram::Event event)
                 {
                     if ((event & ShaderProgram::Event::OnSetVertexBuffer)
@@ -327,10 +324,9 @@ namespace NX
                 });
         }
 
-        auto* skyboxShader = shaderManager.getShaderProgram("skybox"_atom);
-        if (Verify(skyboxShader))
+        if (auto* s = shaderManager.getShaderProgram("skybox"_atom); Verify(s))
         {
-            skyboxShader->setSetEventCallback(
+            s->setSetEventCallback(
                 [](ShaderProgram::Event event)
                 {
                     if ((event & ShaderProgram::Event::OnSetVertexBuffer)
@@ -342,10 +338,9 @@ namespace NX
                 });
         }
 
-        auto* main2dShader = shaderManager.getShaderProgram("2d_rect"_atom);
-        if (Verify(main2dShader))
+        if (auto* s = shaderManager.getShaderProgram("2d_rect"_atom); Verify(s))
         {
-            main2dShader->setSetEventCallback(
+            s->setSetEventCallback(
                 [](ShaderProgram::Event event)
                 {
                     if ((event & ShaderProgram::Event::OnSetVertexBuffer)
@@ -363,10 +358,9 @@ namespace NX
                 });
         }
 
-        auto* lineShader = shaderManager.getShaderProgram("line"_atom);
-        if (Verify(lineShader))
+        if (auto* s = shaderManager.getShaderProgram("line"_atom); Verify(s))
         {
-            lineShader->setSetEventCallback(
+            s->setSetEventCallback(
                 [](ShaderProgram::Event event)
                 {
                     if ((event & ShaderProgram::Event::OnSetVertexBuffer)
@@ -378,10 +372,9 @@ namespace NX
                 });
         }
 
-        auto* textShader = shaderManager.getShaderProgram("text"_atom);
-        if (Verify(lineShader))
+        if (auto* s = shaderManager.getShaderProgram("text"_atom); Verify(s))
         {
-            textShader->setSetEventCallback(
+            s->setSetEventCallback(
                 [](ShaderProgram::Event event)
                 {
                     if ((event & ShaderProgram::Event::OnSetIndexAndVertexBuffer)
@@ -391,6 +384,13 @@ namespace NX
                         glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(float), 0);
                     }
                 });
+        }
+
+        if (auto* s = shaderManager.getShaderProgram("grid"_atom); Verify(s))
+        {
+            // Fake event to suprress debug tracker. This shader doesn't use any Vertex stuff. So,
+            // it's totally safe.
+            s->callSetEvent(ShaderProgram::Event::None);
         }
 
         onLoadShaders();
