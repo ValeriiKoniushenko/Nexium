@@ -20,6 +20,7 @@ namespace NX
 {
     class BaseGraphicsData;
 }
+
 namespace NX::SceneObj
 {
 
