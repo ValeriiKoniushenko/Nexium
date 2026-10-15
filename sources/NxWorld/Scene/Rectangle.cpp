@@ -125,6 +125,9 @@ namespace NX::SceneObj
 
     void Rectangle::onDraw(BaseCamera& camera)
     {
+        auto delta = gGameInstance->world.getTimeDelta();
+        moveUp(sin(clock() / 7000.f) * 200.f * delta);
+
         static BaseGraphicsData gcd = GetDefaultGraphicsData(GetDefaultDrawRectSize());
         tryToRecalculateMatrices();
 

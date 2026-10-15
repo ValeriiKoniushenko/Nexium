@@ -15,7 +15,9 @@
 #include "NxRuntime/GameUtils/FPSCounter.h"
 #include "NxWorld/Framework/GameInstance.h"
 #include "NxWorld/Framework/InputSystem.h"
+#include "NxWorld/Scene/Rectangle.h"
 #include "Platform/Glfw.h"
+#include "Platform/Keyboard.h"
 
 #include <chrono>
 #include <thread>
@@ -69,6 +71,16 @@ namespace NX
                                                   ? InputContext::Gameplay
                                                   : InputContext::Editor);
             GetInputSystem().processEvents();
+
+            if (Platform::Keyboard::IsKeyPressed(Platform::Keyboard::Key::Y))
+            {
+                auto rect = SceneObj::Rectangle::Create();
+                rect->setRotationZ(rand() % 360);
+                rect->setPosition(GPos3(rand() % 6000 - 3000, rand() % 6000 - 3000, 0));
+
+                _gameInstance.gameScene.addObjectToScene(rect);
+                std::this_thread::sleep_for(std::chrono::milliseconds(10));
+            }
 
             if (!_gameInstance.isEditorMode())
             {
