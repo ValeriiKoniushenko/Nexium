@@ -85,8 +85,6 @@ namespace NX
         characters.resize(128);
         charText.resize(128);
 
-        glPixelStorei(GL_UNPACK_ALIGNMENT, 1); // disable byte-alignment restriction
-
         std::string skippedGlyphs;
         for (unsigned char c = 0; c < 128; c++)
         {
