@@ -11,6 +11,7 @@
 
 #include "NxSubsystems/Graphics/ShaderProgram.h"
 #include "NxSubsystems/PrivateModuleInfo.h"
+#include "NxWorld/Entities/Camera/Camera.h"
 #include "RawBackend/Fonts/FreeTypeLibrary.h"
 
 namespace NX
@@ -72,7 +73,7 @@ namespace NX
             return false;
         }
 
-        _glyphs.reserve(128);
+        _glyphs.resize(128);
 
         // TODO: move it to the OpenGL abstraction
         GLint prev{};
@@ -114,18 +115,59 @@ namespace NX
             rawText.generateMipmap(GL_LINEAR, GL_LINEAR);
         }
         _face->release();
-        glPixelStorei(GL_UNPACK_ALIGNMENT, prev);
 
-        // BaseGraphicsData g;
-        // g.generate();
-        // g.setShader(shader);
-        // shader->callSetEvent(ShaderProgram::Event::OnSetVertexBuffer);
+        _graphicsData.generate();
+        _graphicsData.setShader(shader);
+        shader->callSetEvent(ShaderProgram::Event::OnSetVertexBuffer);
+        _graphicsData.reserveVertexBuffer(sizeof(float) * 6 * 4, GL_DYNAMIC_DRAW);
+
+        glPixelStorei(GL_UNPACK_ALIGNMENT, prev);
 
         return true;
     }
 
+    void Face::drawText(std::string_view text, glm::vec2 pos, BaseCamera& camera)
+    {
+        auto* shader = _graphicsData.getShader();
+        shader->use();
+        camera.invalidateCameraMatrices();
+        shader->setUniform("uProj"_atom, camera.getMatrix());
+        shader->setUniform("uPos"_atom, pos);
+
+        glActiveTexture(GL_TEXTURE0);
+        int xOffset = 0;
+
+        for (char c : text)
+        {
+            const auto& ch = _glyphs[c].glyph;
+
+            const auto xpos = static_cast<float>(xOffset + ch.bearing.width);
+            const auto ypos = (static_cast<float>(ch.size.height - ch.bearing.height));
+            const auto w = static_cast<float>(ch.size.width);
+            const auto h = static_cast<float>(ch.size.height);
+
+            // clang-format off
+            std::vector<float> vertices = {
+                xpos,       ypos + h,       0.f, 0.f,
+                xpos,       ypos,           0.f, 1.f,
+                xpos + w,   ypos,           1.f, 1.f,
+                xpos,       ypos + h,       0.f, 0.f,
+                xpos + w,   ypos,           1.f, 1.f,
+                xpos + w,   ypos + h,       1.f, 0.f,
+            };
+            // clang-format on
+
+            _glyphs[c].texture.bind();
+            _graphicsData.setVertexSubBuffer(0, vertices);
+
+            glDrawArrays(GL_TRIANGLES, 0, 6);
+            xOffset += ch.advance >> 6;
+        }
+    }
+
     void Face::release()
     {
+        _graphicsData.clear();
         _face->release();
         _glyphs.clear();
     }

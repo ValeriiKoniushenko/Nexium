@@ -14,6 +14,7 @@
 #include "Core/IntrusivePtr.h"
 #include "Foundation/BaseLog.h"
 #include "Foundation/BaseUsings.h"
+#include "NxSubsystems/Graphics/GraphicsComponents.h"
 #include "RawBackend/Graphics/Texture.h"
 
 #include <filesystem>
@@ -27,6 +28,7 @@ namespace RawBackend::Font
 namespace NX
 {
     class ShaderProgram;
+    class BaseCamera;
 
     /// How do Fonts work:
     /// It's going from the lowest abstraction layer: RawBackend::Font
@@ -83,10 +85,13 @@ namespace NX
 
         bool generateTextureASCIIGlyphs(ShaderProgram* shader);
 
+        void drawText(std::string_view text, glm::vec2 pos, BaseCamera& camera);
+
         void release();
 
         friend void swap(Face& a, Face& b) noexcept
         {
+            std::swap(a._graphicsData, b._graphicsData);
             std::swap(a._face, b._face);
             std::swap(a._glyphs, b._glyphs);
         }
@@ -95,6 +100,7 @@ namespace NX
         [[nodiscard]] spdlog::logger* getLogger() const override;
 
     protected:
+        BaseGraphicsData _graphicsData;
         std::unique_ptr<RawBackend::Font::Face> _face;
 
         std::vector<Glyph> _glyphs;
