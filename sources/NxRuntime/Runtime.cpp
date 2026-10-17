@@ -9,26 +9,11 @@
 
 #include "Runtime.h"
 
-#include "Core/Size.h"
 #include "Core/Timer.h"
-#include "Foundation/Debug/Latency.h"
 #include "Foundation/Debug/LatencyTerminalPrinter.h"
 #include "NxRuntime/GameUtils/FPSCounter.h"
-#include "NxSubsystems/Graphics/Font.h"
-#include "NxSubsystems/Graphics/GraphicsComponents.h"
-#include "NxSubsystems/Graphics/ShaderManager.h"
-#include "NxSubsystems/Graphics/ShaderProgram.h"
-#include "NxWorld/Entities/Camera/Camera.h"
 #include "NxWorld/Framework/GameInstance.h"
 #include "NxWorld/Framework/InputSystem.h"
-#include "NxWorld/Scene/Rectangle.h"
-#include "NxWorld/Scene/SceneObject.h"
-#include "Platform/Glfw.h"
-#include "Platform/Graphics.h"
-#include "Platform/Keyboard.h"
-#include "RawBackend/Fonts/FreeTypeLibrary.h"
-#include "RawBackend/Graphics/Texture.h"
-#include "freetype/freetype.h"
 
 #include <chrono>
 #include <thread>
@@ -68,12 +53,6 @@ namespace NX
         glGetIntegerv(GL_UNPACK_ALIGNMENT, &prev);
         glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
-        NX::Face nxFace;
-        nxFace.setSourcePath("data/internal/fonts/Inter/Inter_18pt-Black.ttf");
-        nxFace.generateFace(0);
-        nxFace.setPixelSize(48);
-        nxFace.generateTextureASCIIGlyphs(NX::GetShaderManager().getShaderProgram("text"_atom));
-
         glClearColor(0.45f, 0.55f, 0.60f, 1.00f);
         glEnable(GL_BLEND);
         glEnable(GL_DEPTH_TEST);
@@ -81,9 +60,6 @@ namespace NX
         glEnable(GL_STENCIL_TEST);
 
         constexpr int clearBits = GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT;
-
-        OrthographicCamera uiCamera;
-        uiCamera.setNear(0.f);
 
         NX_LATENCY_POINT("while loop - pre-start");
         while (!_gameInstance.window->shouldClose())
@@ -106,11 +82,6 @@ namespace NX
                 {
                     integration->updateInput();
                 }
-
-                NX_LATENCY_POINT("Before text");
-                nxFace.drawText("Hello world!", glm::vec2(100, 100), uiCamera);
-                nxFace.drawText("Hello world!", glm::vec2(0, 100), uiCamera);
-                NX_LATENCY_POINT("After text");
 
                 if (_gameInstance.world.currentCamera)
                 {

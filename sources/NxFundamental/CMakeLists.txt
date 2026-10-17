@@ -118,7 +118,7 @@ nexium_add_public_headers(Nexium_Fundamental_TextureAtlas
 target_link_libraries(Nexium_Fundamental_TextureAtlas
     PUBLIC
     Nexium::Foundation
-    Nexium::RawBackend
+    Nexium::RawBackend::Common
     Core::Rectpack2D
     PRIVATE Nexium_Fundamental_PrivateModule
 )

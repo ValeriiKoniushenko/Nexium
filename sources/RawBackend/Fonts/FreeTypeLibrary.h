@@ -7,7 +7,7 @@
 //
 //     http://www.apache.org/licenses/LICENSE-2.0
 
-// Module: Nexium::RawBackend::Graphics
+// Module: Nexium::RawBackend::Fonts
 
 #pragma once
 

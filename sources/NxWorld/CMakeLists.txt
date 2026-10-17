@@ -98,18 +98,18 @@ nexium_add_public_headers(Nexium_World
 )
 target_link_libraries(Nexium_World
     PUBLIC
-        Nexium::World::Animation
-        Nexium::Fundamental::Assets
-        Nexium::Fundamental::ECS
-        Nexium::Subsystem::AssetsManager
-        Nexium::Subsystem::Graphics
-        Nexium::Subsystem::Input
-        Nexium::Platform::Graphics
-        Nexium::Platform::Input
-        Nexium::RawBackend
+    Nexium::World::Animation
+    Nexium::Fundamental::Assets
+    Nexium::Fundamental::ECS
+    Nexium::Subsystem::AssetsManager
+    Nexium::Subsystem::Graphics
+    Nexium::Subsystem::Input
+    Nexium::Platform::Graphics
+    Nexium::Platform::Input
+    Nexium::RawBackend::Common
     PRIVATE
-        ${MODULE_PRIVATE_TARGET}
-        spdlog::spdlog
+    ${MODULE_PRIVATE_TARGET}
+    spdlog::spdlog
 )
 target_precompile_headers(Nexium_World PRIVATE WorldPCH.h)
 

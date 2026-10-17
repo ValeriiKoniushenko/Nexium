@@ -67,7 +67,7 @@ namespace NX
 
     public:
         Face();
-        ~Face() override = default;
+        ~Face() override;
         Face(const Face&) = delete;
         Face& operator=(const Face&) = delete;
         Face(Face&&) noexcept;

@@ -51,23 +51,22 @@ target_link_libraries(Nexium_RawBackend_Fonts
 )
 
 # ================ RawBackend =================
-add_library(Nexium_RawBackend STATIC)
-add_library(Nexium::RawBackend ALIAS Nexium_RawBackend)
-target_sources(Nexium_RawBackend PRIVATE
+add_library(Nexium_RawBackend_Common STATIC)
+add_library(Nexium::RawBackend::Common ALIAS Nexium_RawBackend_Common)
+target_sources(Nexium_RawBackend_Common PRIVATE
     IDrawable.cpp
     Image.cpp
     Utils.cpp
 )
-nexium_add_public_headers(Nexium_RawBackend
+nexium_add_public_headers(Nexium_RawBackend_Common
     RawBackend/IDrawable.h
     RawBackend/Image.h
     RawBackend/Utils.h
 )
 
-target_link_libraries(Nexium_RawBackend
+target_link_libraries(Nexium_RawBackend_Common
     PUBLIC
     Nexium::RawBackend::Graphics
-    Nexium::RawBackend::Fonts
     PRIVATE
     Core::Stb
     ${MODULE_PRIVATE_TARGET}
@@ -76,8 +75,8 @@ target_link_libraries(Nexium_RawBackend
 # =========================================
 
 nexium_configure_target(${MODULE_PRIVATE_TARGET})
-nexium_configure_target(Nexium_RawBackend)
+nexium_configure_target(Nexium_RawBackend_Common)
 
-add_dependencies(Nexium_RawBackend CodeGenerator)
+add_dependencies(Nexium_RawBackend_Common CodeGenerator)
 add_dependencies(Nexium_RawBackend_Fonts CodeGenerator)
 add_dependencies(Nexium_RawBackend_Graphics CodeGenerator)

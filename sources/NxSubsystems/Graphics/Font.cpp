@@ -21,6 +21,10 @@ namespace NX
     {
     }
 
+    Face::~Face()
+    {
+    }
+
     Face::Face(Face&& other) noexcept
     {
         release();

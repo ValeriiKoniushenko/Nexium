@@ -78,7 +78,7 @@ target_link_libraries(Nexium_Subsystem_AssetsManager
     Nexium::Subsystem::Graphics
     Nexium::Fundamental::Assets
     Nexium::Fundamental::TextureAtlas
-    Nexium::RawBackend
+    Nexium::RawBackend::Common
     PRIVATE
     ${MODULE_PRIVATE_TARGET}
 )
