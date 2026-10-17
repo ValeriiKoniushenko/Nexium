@@ -14,6 +14,8 @@
 #include "NxWorld/Entities/Camera/Camera.h"
 #include "RawBackend/Fonts/FreeTypeLibrary.h"
 
+#include <exception>
+
 namespace NX
 {
     Face::Face()
@@ -27,7 +29,20 @@ namespace NX
 
     Face::Face(Face&& other) noexcept
     {
-        release();
+        using namespace std::string_literals;
+        try
+        {
+            release();
+        }
+        catch (std::exception& ex)
+        {
+            errorLog("Exception at 'Face::Face(Face&& other)': "s + ex.what());
+        }
+        catch (...)
+        {
+            errorLog("Unkown exception at 'Face::Face(Face&& other)'");
+        }
+
         swap(*this, other);
     }
 
@@ -144,7 +159,7 @@ namespace NX
         glActiveTexture(GL_TEXTURE0);
         int xOffset = 0;
 
-        for (char c : text)
+        for (const char c : text)
         {
             const auto& ch = _glyphs[c].glyph;
 
