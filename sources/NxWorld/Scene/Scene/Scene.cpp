@@ -9,6 +9,7 @@
 
 #include "Scene.h"
 
+#include "Foundation/Debug/Latency.h"
 #include "NxWorld/Entities/Actor.h"
 #include "NxWorld/Entities/Camera/Camera.h"
 #ifdef NEXIUM_ENABLE_3D_MODULE
@@ -202,6 +203,7 @@ namespace NX
             object->deinitialize();
         }
 
+        selectCameraFrom(*object);
         onObjectAdded->trigger(object);
 
         object->onAddedToScene();
@@ -349,6 +351,7 @@ namespace NX
 
     nlohmann::json Scene::serialize() const
     {
+        NX_LATENCY_POINT("Scene serialization started");
         auto json = R<Scene>::Serialize(*this).getData();
         json["formatVersion"] = 1;
         json[StreamData::sceneObjects] = nlohmann::json::array();
@@ -361,11 +364,13 @@ namespace NX
             }
             json[StreamData::sceneObjects].push_back(std::move(state));
         }
+        NX_LATENCY_POINT("Scene serialization finished");
         return json;
     }
 
     void Scene::deserialize(RResourceStream<RJsonResourceStream>& data)
     {
+        NX_LATENCY_POINT("Scene deserialization started");
         const auto& json = data.getData();
         const auto version = json.value("formatVersion", nlohmann::json(0));
         if (!version.is_number_integer() || version < 0 || version > 1)
@@ -433,10 +438,8 @@ namespace NX
             replacement._sceneObjects.push_back(std::move(object));
         }
 
-        if (gGameInstance && gGameInstance->scenes.getCurrentScene() == this)
-        {
-            gGameInstance->resetCamera();
-        }
+        const bool wasActive = _isActive;
+        deactivate();
         for (auto&& object : _sceneObjects)
         {
             if (object->isInitialized())
@@ -462,6 +465,11 @@ namespace NX
             onObjectAdded->trigger(object.get());
             object->onAddedToScene();
         }
+        if (wasActive)
+        {
+            activate();
+        }
+        NX_LATENCY_POINT("Scene deserialization finished");
     }
 
     std::filesystem::path Scene::getCacheDir() const
@@ -484,12 +492,59 @@ namespace NX
         deinitialize();
     }
 
+    void Scene::activate()
+    {
+        _isActive = true;
+        if (GetGameScene() != this)
+        {
+            return;
+        }
+        gGameInstance->resetCamera();
+        for (auto& object : _sceneObjects)
+        {
+            selectCameraFrom(*object);
+        }
+    }
+
+    void Scene::deactivate()
+    {
+        if (!_isActive)
+        {
+            return;
+        }
+        _isActive = false;
+        if (GetGameScene() == this)
+        {
+            gGameInstance->resetCamera();
+        }
+    }
+
+    void Scene::selectCameraFrom(SceneObject& object)
+    {
+        auto* world = GetWorld();
+        if (GetGameScene() != this || !world || world->currentCamera)
+        {
+            return;
+        }
+        object.forEach(
+            [world](BaseComponent* component)
+            {
+                if (auto* camera = dynamic_cast<BaseCamera*>(component))
+                {
+                    world->currentCamera = camera;
+                    return false;
+                }
+                return true;
+            });
+    }
+
     void Scene::initialize()
     {
         if (_isInitialized)
         {
             return;
         }
+        NX_LATENCY_POINT("Scene initialization started");
         _isInitialized = true;
         for (auto&& object : _sceneObjects)
         {
@@ -504,10 +559,12 @@ namespace NX
         nxFace.generateFace(0);
         nxFace.setPixelSize(48);
         nxFace.generateTextureASCIIGlyphs(NX::GetShaderManager().getShaderProgram("text"_atom));
+        NX_LATENCY_POINT("Scene initialization finished");
     }
 
     void Scene::deinitialize()
     {
+        deactivate();
         if (!_isInitialized)
         {
             return;

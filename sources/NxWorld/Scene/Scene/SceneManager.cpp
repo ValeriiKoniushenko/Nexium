@@ -9,6 +9,7 @@
 
 #include "SceneManager.h"
 
+#include "Foundation/Debug/Latency.h"
 #include "NxFundamental/ResourceManagement/DataStream.h"
 #include "NxWorld/PrivateModuleInfo.h"
 
@@ -25,6 +26,7 @@ namespace NX
 
     SceneManager::~SceneManager()
     {
+        _currentScene->deactivate();
         for (auto* scene : _openScenes)
         {
             scene->deinitialize();
@@ -33,13 +35,19 @@ namespace NX
 
     void SceneManager::restoreOpenedScenes(std::vector<Scene*> opened, Scene* current)
     {
+        NX_LATENCY_POINT("Restore opened scenes - start");
         for (auto* scene : opened)
         {
             scene->initialize();
         }
         auto previouslyOpened = std::move(_openScenes);
         _openScenes = std::move(opened);
+        if (_currentScene)
+        {
+            _currentScene->deactivate();
+        }
         _currentScene = current;
+        _currentScene->activate();
         onCurrentSceneChanged->trigger(_currentScene);
         for (auto* scene : previouslyOpened)
         {
@@ -48,6 +56,7 @@ namespace NX
                 scene->deinitialize();
             }
         }
+        NX_LATENCY_POINT("Restore opened scenes - end");
     }
 
     Scene& SceneManager::createNewScene()
@@ -114,7 +123,9 @@ namespace NX
             }
             if (_currentScene != scene)
             {
+                _currentScene->deactivate();
                 _currentScene = scene;
+                _currentScene->activate();
                 onCurrentSceneChanged->trigger(_currentScene);
             }
             return true;

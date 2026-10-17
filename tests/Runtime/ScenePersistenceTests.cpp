@@ -8,6 +8,7 @@
 //     http://www.apache.org/licenses/LICENSE-2.0
 
 #include "Foundation/Configs.h"
+#include "NxWorld/Entities/Camera/Camera.h"
 #include "NxWorld/Framework/GameInstance.h"
 #include "NxWorld/Scene/Scene/Scene.h"
 
@@ -264,4 +265,44 @@ TEST_F(ScenePersistenceTest, StreamAndJsonRestoreTheSameTabs)
     EXPECT_FALSE(fromStream.getScene("Default"_atom)->isInitialized());
     EXPECT_TRUE(jsonScene.isInitialized());
     EXPECT_TRUE(streamScene.isInitialized());
+}
+
+TEST_F(ScenePersistenceTest, SceneOwnsCameraSelectionWithoutGameInstanceInitialization)
+{
+    auto& manager = gGameInstance->scenes;
+    auto* initial = manager.getCurrentScene();
+    auto first = NX::SceneObject::Create();
+    auto* firstCamera = first->addChildComponent<NX::OrthographicCamera>("FirstCamera"_atom);
+    initial->addObjectToScene(first);
+    EXPECT_EQ(gGameInstance->world.currentCamera, firstCamera);
+
+    auto& next = manager.createNewScene();
+    auto second = NX::SceneObject::Create();
+    auto* secondCamera = second->addChildComponent<NX::OrthographicCamera>("SecondCamera"_atom);
+    next.addObjectToScene(second);
+    EXPECT_EQ(gGameInstance->world.currentCamera, firstCamera);
+    ASSERT_TRUE(manager.setCurrentScene(&next));
+    EXPECT_EQ(gGameInstance->world.currentCamera, secondCamera);
+    ASSERT_TRUE(manager.removeScene(&next));
+    EXPECT_EQ(gGameInstance->world.currentCamera, firstCamera);
+}
+
+TEST_F(ScenePersistenceTest, ReloadingCurrentSceneSelectsReplacementCamera)
+{
+    auto* scene = gGameInstance->scenes.getCurrentScene();
+    auto original = NX::SceneObject::Create();
+    auto* oldCamera = original->addChildComponent<NX::OrthographicCamera>("OriginalCamera"_atom);
+    scene->addObjectToScene(original);
+    ASSERT_EQ(gGameInstance->world.currentCamera, oldCamera);
+    const auto saved = scene->serialize();
+    auto stream = RResourceStream<RJsonResourceStream>(saved);
+    scene->deserialize(stream);
+    ASSERT_NE(gGameInstance->world.currentCamera, nullptr);
+    EXPECT_NE(gGameInstance->world.currentCamera, oldCamera);
+    EXPECT_EQ(gGameInstance->world.currentCamera,
+              scene->getObjects().front()->findFirstChildOf<NX::OrthographicCamera>());
+
+    auto empty = RResourceStream<RJsonResourceStream>(NX::Scene{}.serialize());
+    scene->deserialize(empty);
+    EXPECT_EQ(gGameInstance->world.currentCamera, nullptr);
 }
