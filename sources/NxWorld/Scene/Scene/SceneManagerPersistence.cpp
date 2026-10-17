@@ -8,6 +8,7 @@
 //     http://www.apache.org/licenses/LICENSE-2.0
 
 #include "SceneManager.h"
+#include "SceneTabsState.h"
 
 #include <algorithm>
 #include <fstream>
@@ -17,27 +18,30 @@ namespace NX
 {
     nlohmann::json SceneManager::serialize() const
     {
-        auto data = nlohmann::json{ { "formatVersion", 1 },
-                                    { "open", nlohmann::json::array() },
-                                    { "current", _currentScene->getSceneName().c_str() } };
+        SceneTabsState state;
+        state.current = _currentScene->getSceneName();
         for (const auto* scene : _openScenes)
         {
-            data["open"].push_back(scene->getSceneName().c_str());
+            state.open.push_back(scene->getSceneName());
         }
-        return data;
+        return R<SceneTabsState>::Serialize(state).getData();
     }
 
     void SceneManager::deserialize(const nlohmann::json& data)
     {
-        if (data.at("formatVersion") != 1 || !data.at("open").is_array())
+        if (!data.at("formatVersion").is_number_integer() || data.at("formatVersion") != 1
+            || !data.at("open").is_array())
         {
             throw std::runtime_error("Invalid scene tabs format.");
         }
-        auto* selected = getScene(Core::StringAtom::Intern(data.at("current").get<std::string>()));
+        SceneTabsState state;
+        const auto stream = RResourceStream<RJsonResourceStream>(data);
+        R<SceneTabsState>::Deserialize(stream, state);
+        auto* selected = getScene(state.current);
         std::vector<Scene*> opened;
-        for (const auto& name : data.at("open"))
+        for (const auto& name : state.open)
         {
-            auto* scene = getScene(Core::StringAtom::Intern(name.get<std::string>()));
+            auto* scene = getScene(name);
             if (scene && std::ranges::find(opened, scene) == opened.end())
             {
                 opened.push_back(scene);
