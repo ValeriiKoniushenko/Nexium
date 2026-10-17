@@ -151,10 +151,8 @@ namespace NX
         window->create(Foundation::Config::defaultWindowName,
                        Foundation::Config::defaultWindowSize);
         GetInputSystem().initialize(*window);
-        _subscriptionPool << window->onResize->subscribeAndGetID([this](Core::ISize2 newSize)
-                                                                 { updateViewport(); });
-        glfwSetFramebufferSizeCallback(window->getRawWindow(), [](GLFWwindow*, int, int)
-                                       { gGameInstance->updateViewport(); });
+        _subscriptionPool << window->onFramebufferResize->subscribeAndGetID([this](Core::ISize2)
+                                                                            { updateViewport(); });
 
         NX_LATENCY_POINT("Window - inited");
 

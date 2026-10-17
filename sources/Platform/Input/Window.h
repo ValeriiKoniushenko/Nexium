@@ -127,6 +127,7 @@ namespace Platform
         static void pollEvent();
 
         [[nodiscard]] Core::ISize2 getSize() const;
+        [[nodiscard]] Core::ISize2 getFramebufferSize() const noexcept { return _framebufferSize; }
 
         void setCursorPosition(float x, float y);
 
@@ -183,6 +184,10 @@ namespace Platform
         Core::Delegate<void(Core::ISize2)>::Ptr onResize
             = Core::Delegate<void(Core::ISize2)>::Create();
 
+        /// @param ISize2 new framebuffer size in pixels, which can differ from the window size.
+        Core::Delegate<void(Core::ISize2)>::Ptr onFramebufferResize
+            = Core::Delegate<void(Core::ISize2)>::Create();
+
     protected:
         Core::DelegateSubscriberPoolGuard _subscriptionPool;
         GLFWwindow* _window{};
@@ -200,7 +205,10 @@ namespace Platform
         bool _swapInterval = true;
 
     private:
+        static void WindowSizeCallback(GLFWwindow*, int width, int height);
+        static void FramebufferSizeCallback(GLFWwindow*, int width, int height);
         void registerEvents();
+        Core::ISize2 _framebufferSize{};
         bool _isFocused = false;
         bool _isIconified = false;
     };

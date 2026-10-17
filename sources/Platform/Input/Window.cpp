@@ -65,11 +65,6 @@ namespace
         GetWindow().onMouseWheel->trigger(glm::vec2(static_cast<float>(x), static_cast<float>(y)));
     }
 
-    void WindowSizeCallback(auto*, int width, int height)
-    {
-        GetWindow().onResize->trigger(ISize2(width, height));
-    }
-
     void WindowFocusCallback(GLFWwindow*, int focused)
     {
         GetWindow().onFocusChanged->trigger(focused == GLFW_TRUE);
@@ -182,6 +177,7 @@ namespace Platform
         glfwSetCursorEnterCallback(_window, CursorEnterHandler);
         glfwSetScrollCallback(_window, MouseScrollHandler);
         glfwSetWindowSizeCallback(_window, WindowSizeCallback);
+        glfwSetFramebufferSizeCallback(_window, FramebufferSizeCallback);
         glfwSetWindowFocusCallback(_window, WindowFocusCallback);
         glfwSetWindowIconifyCallback(_window, WindowIconifyCallback);
         _isFocused = glfwGetWindowAttrib(_window, GLFW_FOCUSED) == GLFW_TRUE;
@@ -194,6 +190,7 @@ namespace Platform
 
         registerEvents();
         glfwGetWindowSize(_window, &_size.width, &_size.height);
+        glfwGetFramebufferSize(_window, &_framebufferSize.width, &_framebufferSize.height);
 
 #ifdef _WIN32
         HWND hwnd = glfwGetWin32Window(_window);
@@ -234,6 +231,7 @@ namespace Platform
     {
         _isFocused = false;
         _isIconified = false;
+        _framebufferSize = {};
         glfwDestroyWindow(_window);
         glfwTerminate();
     }
@@ -255,9 +253,7 @@ namespace Platform
 
     void Window::updateViewport()
     {
-        ISize2 framebufferSize;
-        glfwGetFramebufferSize(_window, &framebufferSize.width, &framebufferSize.height);
-        glViewport(0, 0, framebufferSize.width, framebufferSize.height);
+        glViewport(0, 0, _framebufferSize.width, _framebufferSize.height);
     }
 
     void Window::clear(int code)
@@ -297,9 +293,22 @@ namespace Platform
                                                             : CursorMode::Normal);
     }
 
+    void Window::WindowSizeCallback(GLFWwindow*, int width, int height)
+    {
+        auto& window = GetWindow();
+        window._size = ISize2(width, height);
+        window.onResize->trigger(window._size);
+    }
+
+    void Window::FramebufferSizeCallback(GLFWwindow*, int width, int height)
+    {
+        auto& window = GetWindow();
+        window._framebufferSize = ISize2(width, height);
+        window.onFramebufferResize->trigger(window._framebufferSize);
+    }
+
     void Window::registerEvents()
     {
-        _subscriptionPool << onResize->subscribeAndGetID([this](ISize2 size) { _size = size; });
         _subscriptionPool << onFocusChanged->subscribeAndGetID([this](bool focused)
                                                                { _isFocused = focused; });
         _subscriptionPool << onIconifyChanged->subscribeAndGetID([this](bool iconified)
