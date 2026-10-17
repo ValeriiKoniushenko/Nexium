@@ -36,6 +36,7 @@ namespace NX::Gui
     class Layout;
     class ListModelBased;
     class ListView;
+    class SearchableComboBox;
     class Separator;
     class Spacer;
     class TextInput;

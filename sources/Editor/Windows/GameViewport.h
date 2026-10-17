@@ -13,13 +13,12 @@
 
 #include "BaseWindow.h"
 #include "Editor/SceneGizmo.h"
+#include "Scenes/SceneTabs/SceneTabs.h"
 
 #include <memory>
 
 namespace NX
 {
-    class SceneTabs;
-
     CLASS();
     class GameViewportEWC : public BaseFloatEWC
     {
@@ -50,13 +49,7 @@ namespace NX
         FSize2 _imageSize{};
         SceneGizmo _gizmo;
         bool _blocksPicking = false;
-        // ECS_DECL_NO_CNSTR defines an inline constructor, so deletion needs a complete type
-        // only in the implementation file.
-        struct SceneTabsDeleter
-        {
-            void operator()(SceneTabs* tabs) const;
-        };
-        std::unique_ptr<SceneTabs, SceneTabsDeleter> _sceneTabs;
+        std::unique_ptr<SceneTabs> _sceneTabs;
     };
 } // namespace NX
 

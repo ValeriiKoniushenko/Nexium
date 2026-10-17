@@ -15,7 +15,6 @@
 #include "NxWorld/Entities/Camera/Camera.h"
 #include "NxWorld/Framework/GameInstanceAccess.h"
 #include "NxWorld/Framework/World.h"
-#include "Scenes/SceneTabs/SceneTabs.h"
 
 using namespace NX;
 
@@ -34,11 +33,6 @@ namespace NX
 
     GameViewportEWC::~GameViewportEWC() = default;
 
-    void GameViewportEWC::SceneTabsDeleter::operator()(SceneTabs* tabs) const
-    {
-        delete tabs;
-    }
-
     const char* GameViewportEWC::getIcon()
     {
         return ICON_FA_VIDEO_CAMERA;
@@ -47,14 +41,14 @@ namespace NX
     void GameViewportEWC::onInitialize()
     {
         BaseFloatEWC::onInitialize();
-        _sceneTabs.reset(new SceneTabs);
+        _sceneTabs = std::make_unique<SceneTabs>();
         _sceneTabs->initialize(*GetSceneManager());
     }
 
     void GameViewportEWC::onDeinitialize()
     {
-        _sceneTabs.reset();
         BaseFloatEWC::onDeinitialize();
+        _sceneTabs.reset();
     }
 
     void GameViewportEWC::onOpen()
