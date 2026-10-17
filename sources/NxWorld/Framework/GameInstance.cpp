@@ -393,6 +393,13 @@ namespace NX
             s->callSetEvent(ShaderProgram::Event::None);
         }
 
+        if (auto* s = shaderManager.getShaderProgram("line"_atom); Verify(s))
+        {
+            // Fake event to suprress debug tracker. This shader doesn't use any Vertex stuff. So,
+            // it's totally safe.
+            s->callSetEvent(ShaderProgram::Event::None);
+        }
+
         onLoadShaders();
     }
 

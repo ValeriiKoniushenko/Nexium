@@ -147,7 +147,7 @@ namespace NX
         {
             using namespace Core;
             LOG_ASSERT_ERROR_ONCE(
-                ("Looks like a shader {} never called an 'ShaderProgram::callSetEvent' to setup glEnableVertexAttribArray OR glVertexAttribPointer. It may lead to lack of render information."_f
+                ("Looks like a shader '{}' never called an 'ShaderProgram::callSetEvent' to setup glEnableVertexAttribArray OR glVertexAttribPointer. It may lead to lack of render information."_f
                  << _name)
                     .c_str());
         }

@@ -115,6 +115,8 @@ namespace NX
 
         auto& camera = *world->currentCamera;
 
+        nxFace.drawText("Hello world", glm::vec2(0.f), camera);
+
         if (gGameInstance->isEditorMode())
         {
             grid.draw(gridShader, &camera);
@@ -338,7 +340,7 @@ namespace NX
         return nullptr;
     }
 
-    [[nodiscard]] nlohmann::json Scene::serialize() const
+    nlohmann::json Scene::serialize() const
     {
         auto json = R<Scene>::Serialize(*this).getData();
         json["formatVersion"] = 1;
@@ -462,6 +464,11 @@ namespace NX
         // GetAssetsManager()->getSkybox("data/assets/baked/skybox/default.nxsky"_atom); skybox =
         // NXSkybox{ dynamic_cast<SkyboxAsset*>(asset.get()) };
         grid.setPlane(glm::vec3(0.0f, 0.0f, -1.f), glm::vec3(0.0f, 0.0f, 1.0f));
+
+        nxFace.setSourcePath("data/internal/fonts/Inter/Inter_18pt-Black.ttf");
+        nxFace.generateFace(0);
+        nxFace.setPixelSize(48);
+        nxFace.generateTextureASCIIGlyphs(NX::GetShaderManager().getShaderProgram("text"_atom));
     }
 
     void Scene::tick(float timeDelta)

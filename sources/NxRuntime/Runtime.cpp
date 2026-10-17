@@ -49,13 +49,9 @@ namespace NX
         fps.start();
         Core::FStopwatch clock;
 
-        GLint prev{};
-        glGetIntegerv(GL_UNPACK_ALIGNMENT, &prev);
-        glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-
         glClearColor(0.45f, 0.55f, 0.60f, 1.00f);
         glEnable(GL_BLEND);
-        glEnable(GL_DEPTH_TEST);
+        glDisable(GL_DEPTH_TEST);
         glEnable(GL_CULL_FACE);
         glEnable(GL_STENCIL_TEST);
 
