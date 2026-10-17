@@ -13,6 +13,7 @@
 #include "Editor/IconsFontAwesome.h"
 #include "Editor/Windows/AssetsExplorer/AssetsManagerWindow.h"
 #include "Editor/Windows/ModalAssetsSearchPopUp.h"
+#include "Foundation/Debug/Latency.h"
 #include "ImGui/imgui.h"
 #include "ImGui/misc/cpp/imgui_stdlib.h"
 #include "NxWorld/Entities/Actor.h"
@@ -39,6 +40,10 @@ namespace NX
         : BaseFloatEWC(componentType, name),
           _commonTreeFlags(ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth)
     {
+        if (name.isEmpty())
+        {
+            setComponentName("Scene"_atom);
+        }
     }
 
     void SceneTreeWindowEWC::highlightSpecificObject(const SceneObject* obj)
@@ -57,9 +62,8 @@ namespace NX
 
     void SceneTreeWindowEWC::onInitialize()
     {
+        NX_LATENCY_POINT("Scene tree initialization - start");
         BaseFloatEWC::onInitialize();
-        setComponentName("Scene"_atom);
-
         setScene(gGameInstance->scenes.getCurrentScene());
         _subscriptionPool << GetSceneManager()->onCurrentSceneChanged->subscribeAndGetID(
             [this](Scene* scene)
@@ -82,6 +86,7 @@ namespace NX
                     selectedObject = nullptr;
                 }
             });
+        NX_LATENCY_POINT("Scene tree initialization - end");
     }
 
     void SceneTreeWindowEWC::onDraw()
