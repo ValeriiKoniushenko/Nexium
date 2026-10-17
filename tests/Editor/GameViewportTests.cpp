@@ -18,7 +18,7 @@ namespace
     {
     public:
         void updateWindowArea() { BaseFloatEWC::onUpdate(); }
-        using GameViewportEWC::updateImageArea;
+        using GameViewportEWC::updateCanvasArea;
     };
 
     class GameViewportTests : public ::testing::Test
@@ -51,24 +51,25 @@ namespace
     TEST_F(GameViewportTests, DeinitializationBeforeInitializationIsSafe)
     {
         TestGameViewport viewport;
-        EXPECT_NO_THROW(viewport.deinitialize());
-        EXPECT_NO_THROW(viewport.deinitialize());
+        viewport.deinitialize();
+        viewport.deinitialize();
+        EXPECT_FALSE(viewport.isInitialized());
     }
 
-    TEST_F(GameViewportTests, ImageAreaDoesNotOverwriteWindowGeometryOrNotifyWindowResize)
+    TEST_F(GameViewportTests, CanvasAreaDoesNotOverwriteWindowGeometryOrNotifyWindowResize)
     {
         TestGameViewport viewport;
         Core::DelegateSubscriberPoolGuard subscriptions;
         int windowResizeCount = 0;
-        int imageResizeCount = 0;
-        NX::FSize2 notifiedImageSize{};
+        int canvasResizeCount = 0;
+        NX::FSize2 notifiedCanvasSize{};
         subscriptions << viewport.onSizeChanged->subscribeAndGetID([&](auto, auto)
                                                                    { ++windowResizeCount; });
-        subscriptions << viewport.onImageSizeChanged->subscribeAndGetID(
+        subscriptions << viewport.onCanvasSizeChanged->subscribeAndGetID(
             [&](auto size)
             {
-                ++imageResizeCount;
-                notifiedImageSize = size;
+                ++canvasResizeCount;
+                notifiedCanvasSize = size;
             });
         viewport.updateWindowArea();
         ASSERT_EQ(windowResizeCount, 1);
@@ -76,43 +77,64 @@ namespace
         const auto windowSize = viewport.getInnerWindowSize();
 
         ImGui::Dummy(glm::vec2(200, 50));
-        const auto imagePosition = ImGui::GetCursorScreenPos();
+        const auto canvasPosition = ImGui::GetCursorScreenPos();
         const auto available = ImGui::GetContentRegionAvail();
-        ASSERT_TRUE(viewport.updateImageArea());
+        ASSERT_TRUE(viewport.updateCanvasArea());
         EXPECT_EQ(viewport.getInnerPosition(), windowPosition);
         EXPECT_EQ(viewport.getInnerWindowSize(), windowSize);
         EXPECT_EQ(windowResizeCount, 1);
-        EXPECT_EQ(viewport.getImagePosition(), imagePosition);
-        EXPECT_GT(viewport.getImagePosition().y, windowPosition.y);
-        EXPECT_EQ(viewport.getImageSize(), NX::FSize2(available.x, available.y));
-        EXPECT_EQ(notifiedImageSize, viewport.getImageSize());
-        EXPECT_EQ(imageResizeCount, 1);
+        EXPECT_EQ(viewport.getCanvasPosition(), canvasPosition);
+        EXPECT_GT(viewport.getCanvasPosition().y, windowPosition.y);
+        EXPECT_EQ(viewport.getCanvasSize(), NX::FSize2(available.x, available.y));
+        EXPECT_EQ(notifiedCanvasSize, viewport.getCanvasSize());
+        EXPECT_EQ(canvasResizeCount, 1);
 
-        ASSERT_TRUE(viewport.updateImageArea());
-        EXPECT_EQ(imageResizeCount, 1);
+        ASSERT_TRUE(viewport.updateCanvasArea());
+        EXPECT_EQ(canvasResizeCount, 1);
         ImGui::Dummy(glm::vec2(200, 30));
-        ASSERT_TRUE(viewport.updateImageArea());
-        EXPECT_EQ(imageResizeCount, 2);
+        ASSERT_TRUE(viewport.updateCanvasArea());
+        EXPECT_EQ(canvasResizeCount, 2);
         EXPECT_EQ(windowResizeCount, 1);
         EXPECT_EQ(viewport.getInnerWindowSize(), windowSize);
     }
 
-    TEST_F(GameViewportTests, EmptyImageAreaDoesNotRequestFramebufferResize)
+    TEST_F(GameViewportTests, EmptyCanvasAreaDoesNotRequestFramebufferResize)
     {
         TestGameViewport viewport;
         viewport.updateWindowArea();
         const auto windowPosition = viewport.getInnerPosition();
         const auto windowSize = viewport.getInnerWindowSize();
         Core::DelegateSubscriberPoolGuard subscriptions;
-        int imageResizeCount = 0;
-        subscriptions << viewport.onImageSizeChanged->subscribeAndGetID([&](auto)
-                                                                        { ++imageResizeCount; });
+        int canvasResizeCount = 0;
+        subscriptions << viewport.onCanvasSizeChanged->subscribeAndGetID([&](auto)
+                                                                         { ++canvasResizeCount; });
         ImGui::Dummy(glm::vec2(200, 500));
 
-        EXPECT_FALSE(viewport.updateImageArea());
-        EXPECT_EQ(imageResizeCount, 0);
-        EXPECT_EQ(viewport.getImageSize(), NX::FSize2{});
+        EXPECT_FALSE(viewport.updateCanvasArea());
+        EXPECT_EQ(canvasResizeCount, 0);
+        EXPECT_EQ(viewport.getCanvasSize(), NX::FSize2{});
         EXPECT_EQ(viewport.getInnerPosition(), windowPosition);
         EXPECT_EQ(viewport.getInnerWindowSize(), windowSize);
+    }
+
+    TEST_F(GameViewportTests, CanvasShapeChangeNotifiesEvenWhenAreaIsUnchanged)
+    {
+        TestGameViewport viewport;
+        Core::DelegateSubscriberPoolGuard subscriptions;
+        int resizeCount = 0;
+        subscriptions << viewport.onCanvasSizeChanged->subscribeAndGetID([&](auto)
+                                                                         { ++resizeCount; });
+        const auto regionEnd = ImGui::GetCursorScreenPos() + ImGui::GetContentRegionAvail();
+
+        ImGui::SetCursorScreenPos(regionEnd - glm::vec2(200.f, 100.f));
+        ASSERT_TRUE(viewport.updateCanvasArea());
+        EXPECT_EQ(resizeCount, 1);
+
+        ImGui::SetCursorScreenPos(regionEnd - glm::vec2(100.f, 200.f));
+        ASSERT_TRUE(viewport.updateCanvasArea());
+        EXPECT_EQ(resizeCount, 2);
+        EXPECT_FLOAT_EQ(viewport.getCanvasSize().width, 100.f);
+        EXPECT_FLOAT_EQ(viewport.getCanvasSize().height, 200.f);
+        ImGui::Dummy(glm::vec2{});
     }
 } // namespace

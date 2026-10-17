@@ -72,20 +72,20 @@ namespace NX
         }
     }
 
-    bool GameViewportEWC::updateImageArea()
+    bool GameViewportEWC::updateCanvasArea()
     {
-        _imagePosition = ImGui::GetCursorScreenPos();
+        _canvasPosition = ImGui::GetCursorScreenPos();
         const auto available = ImGui::GetContentRegionAvail();
         if (available.x < 1.f || available.y < 1.f)
         {
-            _imageSize = FSize2{};
+            _canvasSize = FSize2{};
             return false;
         }
-        const FSize2 imageSize{ available.x, available.y };
-        if (_imageSize != imageSize)
+        const FSize2 canvasSize{ available.x, available.y };
+        if (_canvasSize.width != canvasSize.width || _canvasSize.height != canvasSize.height)
         {
-            _imageSize = imageSize;
-            onImageSizeChanged->trigger(_imageSize);
+            _canvasSize = canvasSize;
+            onCanvasSizeChanged->trigger(_canvasSize);
         }
         return true;
     }
@@ -100,16 +100,16 @@ namespace NX
 
         _sceneTabs->draw(*GetSceneManager());
 
-        if (!updateImageArea())
+        if (!updateCanvasArea())
         {
             return;
         }
 
-        const auto& r = GetEditor()->gameViewport;
+        const auto& r = GetEditor()->sceneRenderTarget;
         const glm::vec2 renderSize = { static_cast<float>(r.getRenderSize().width),
                                        static_cast<float>(r.getRenderSize().height) };
 
-        const auto p = getImagePosition();
+        const auto p = getCanvasPosition();
 
         ImGui::Image(r.getTextureId(), glm::vec2(renderSize.x, renderSize.y), glm::vec2(0.0f, 1.0f),
                      glm::vec2(1.0f, 0.0f));
