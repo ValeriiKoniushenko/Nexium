@@ -53,7 +53,7 @@ namespace NX
 
         void toggleRenderMode();
 
-        void saveAllToCache();
+        void saveAllToCache(CacheWriteMode mode = CacheWriteMode::Explicit);
 
         void setApplicationIntegration(ApplicationIntegration* integration) noexcept;
         [[nodiscard]] ApplicationIntegration* getApplicationIntegration() const noexcept
@@ -93,8 +93,6 @@ namespace NX
         void initializeShaders();
 
     private:
-        bool _canSaveSceneLibrary = true;
-
         ApplicationIntegration* _applicationIntegration = nullptr;
 
         // Timeout in seconds. 0 - no timeout

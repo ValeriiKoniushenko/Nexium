@@ -205,37 +205,21 @@ namespace NX
             _applicationIntegration->readFromCache();
         }
         GetCacheSystem().tryRead(Platform::GetWindow());
-        try
-        {
-            scenes.importScenes(Foundation::Config::Path::data / "scenes");
-            GetCacheSystem().tryRead(scenes);
-        }
-        catch (const std::exception& error)
-        {
-            _canSaveSceneLibrary = false;
-            errorLog("Cannot load scene files: {}"_f << error.what());
-        }
+        scenes.readFromCache();
         GetCacheSystem().tryRead(*GetWorld());
         onInitializeReadCache();
     }
 
-    void GameInstance::saveAllToCache()
+    void GameInstance::saveAllToCache(CacheWriteMode mode)
     {
         if (_applicationIntegration)
         {
             _applicationIntegration->writeToCache();
         }
 
-        GetCacheSystem().write(*GetWorld());
-        if (_canSaveSceneLibrary)
-        {
-            for (const auto& scene : scenes.getScenes())
-            {
-                GetCacheSystem().write(*scene);
-            }
-            GetCacheSystem().write(scenes);
-        }
-        GetCacheSystem().write(Platform::GetWindow());
+        GetCacheSystem().write(*GetWorld(), mode);
+        scenes.writeToCache(mode);
+        GetCacheSystem().write(Platform::GetWindow(), mode);
 
         onSaveAll();
     }

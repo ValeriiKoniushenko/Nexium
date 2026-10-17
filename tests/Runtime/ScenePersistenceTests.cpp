@@ -8,6 +8,7 @@
 //     http://www.apache.org/licenses/LICENSE-2.0
 
 #include "Foundation/Configs.h"
+#include "NxFundamental/ResourceManagement/AtomicFile.h"
 #include "NxWorld/Entities/Camera/Camera.h"
 #include "NxWorld/Framework/GameInstance.h"
 #include "NxWorld/Scene/Scene/Scene.h"
@@ -15,6 +16,7 @@
 #include "gtest/gtest.h"
 #include <chrono>
 #include <fstream>
+#include <optional>
 
 namespace
 {
@@ -36,6 +38,17 @@ namespace
         void TearDown() override
         {
             gGameInstance.reset();
+            for (const auto& [path, contents] : savedFiles)
+            {
+                if (contents)
+                {
+                    NX::WriteFileAtomically(path, *contents);
+                }
+                else
+                {
+                    std::filesystem::remove(path);
+                }
+            }
             std::filesystem::remove_all(root);
         }
 
@@ -55,7 +68,20 @@ namespace
                     .generic_string());
         }
 
+        void preserveFile(const std::filesystem::path& path)
+        {
+            std::optional<std::string> contents;
+            if (std::filesystem::exists(path))
+            {
+                std::ifstream file(path, std::ios::binary);
+                contents = std::string(std::istreambuf_iterator<char>(file),
+                                       std::istreambuf_iterator<char>());
+            }
+            savedFiles.emplace_back(path, std::move(contents));
+        }
+
         std::filesystem::path root;
+        std::vector<std::pair<std::filesystem::path, std::optional<std::string>>> savedFiles;
     };
 } // namespace
 
@@ -335,4 +361,33 @@ TEST_F(ScenePersistenceTest, InvalidReflectedTabFieldsPreserveCurrentSession)
         EXPECT_THROW(manager.deserialize(tabs), std::exception);
         EXPECT_EQ(manager.serialize(), valid);
     }
+}
+
+TEST_F(ScenePersistenceTest, ExplicitSceneSaveRecoversFailedImportAndReenablesAutosave)
+{
+    NX::SceneManager manager;
+    auto* scene = manager.getCurrentScene();
+    scene->setSceneName(Core::StringAtom::Intern(root.filename().generic_string()));
+    const auto sceneFile = Foundation::Config::Path::data / "scenes"
+                           / (scene->getSceneName().toStdString() + ".json");
+    preserveFile(sceneFile);
+    preserveFile(Foundation::Config::Path::data / "cache" / "SceneTabs.json");
+    std::filesystem::create_directories(sceneFile.parent_path());
+    NX::WriteFileAtomically(sceneFile, "unreadable scene");
+    std::ofstream(root / "Broken.json") << "unreadable scene";
+    ASSERT_THROW(manager.importScenes(root), std::exception);
+    EXPECT_TRUE(manager.hasImportError());
+    EXPECT_FALSE(manager.writeToCache());
+    {
+        std::ifstream file(sceneFile);
+        const std::string contents{ std::istreambuf_iterator<char>(file),
+                                    std::istreambuf_iterator<char>() };
+        EXPECT_EQ(contents, "unreadable scene");
+    }
+    ASSERT_TRUE(manager.writeToCache(NX::CacheWriteMode::Explicit));
+    EXPECT_FALSE(manager.hasImportError());
+    scene->addObjectToScene(NX::SceneObject::Create());
+    ASSERT_TRUE(manager.writeToCache());
+    std::ifstream file(sceneFile);
+    EXPECT_EQ(nlohmann::json::parse(file).at("sceneObjects").size(), 1u);
 }

@@ -11,6 +11,7 @@
 
 #include "Core/Delegate.h"
 #include "Core/String.h"
+#include "NxFundamental/ResourceManagement/DataStream.h"
 #include "Scene.h"
 
 #include <memory>
@@ -47,6 +48,9 @@ namespace NX
             deserialize(stream.getData());
         }
         void importScenes(const std::filesystem::path& directory);
+        void readFromCache();
+        bool writeToCache(CacheWriteMode mode = CacheWriteMode::Automatic);
+        [[nodiscard]] bool hasImportError() const noexcept { return _importFailed; }
 
         [[nodiscard]] std::filesystem::path getCacheDir() const override { return "cache"; }
         [[nodiscard]] StringAtom getCacheHash() const override { return "SceneTabs"_atom; }
@@ -74,6 +78,7 @@ namespace NX
         std::vector<Core::IntrusivePtr<Scene>> _scenes{};
         std::vector<Scene*> _openScenes{};
         Scene* _currentScene = nullptr;
+        bool _importFailed = false;
     };
 
 } // namespace NX

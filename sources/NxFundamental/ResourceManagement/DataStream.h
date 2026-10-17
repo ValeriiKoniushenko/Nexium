@@ -19,6 +19,7 @@
 #include "NxFundamental/Utils/Stringifier.h"
 #include "nlohmann/json.hpp"
 
+#include <concepts>
 #include <fstream>
 #include <functional>
 #include <unordered_set>
@@ -27,6 +28,12 @@ namespace NX
 {
     class DataStream;
 
+    enum class CacheWriteMode
+    {
+        Automatic,
+        Explicit
+    };
+
     class CacheSystem : public Foundation::BaseLog, public Core::Singleton<CacheSystem>
     {
         SINGLETONS_FRIEND(CacheSystem);
@@ -34,20 +41,22 @@ namespace NX
     public:
         ~CacheSystem() override = default;
 
-        template<Foundation::IsDataIO T>
-        void write(const T& data)
+        template<Foundation::IsDataIO T, std::same_as<CacheWriteMode> Mode = CacheWriteMode>
+        bool write(const T& data, Mode mode = CacheWriteMode::Automatic)
         {
             if constexpr (requires { data.serialize(); })
             {
-                write(data, data.serialize());
+                return write(data, data.serialize(), mode);
             }
             else
             {
-                write(data, R<T>::template Serialize<RJsonResourceStream>(data).getData());
+                return write(data, R<T>::template Serialize<RJsonResourceStream>(data).getData(),
+                             mode);
             }
         }
 
-        void write(const Foundation::IDataIO& data, const nlohmann::json& json);
+        bool write(const Foundation::IDataIO& data, const nlohmann::json& json,
+                   CacheWriteMode mode = CacheWriteMode::Automatic);
 
         template<Foundation::IsDataIO T>
         void read(T& data)
