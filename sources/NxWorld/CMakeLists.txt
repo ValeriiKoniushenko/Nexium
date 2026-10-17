@@ -83,6 +83,8 @@ nexium_add_public_headers(Nexium_World_Base
     NxWorld/Scene/SceneObjects/SceneObject.generated.h
     NxWorld/Scene/SceneObjects/Spectator/Spectator.h
     NxWorld/Scene/Scene/SceneManager.h
+    NxWorld/Scene/Scene/SceneTabsState.h
+    NxWorld/Scene/Scene/SceneTabsState.generated.h
     NxWorld/Scene/SceneObjects/Spectator/Spectator.generated.h
 )
 target_link_libraries(Nexium_World_Base

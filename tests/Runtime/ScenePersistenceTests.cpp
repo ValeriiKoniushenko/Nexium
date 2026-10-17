@@ -306,3 +306,33 @@ TEST_F(ScenePersistenceTest, ReloadingCurrentSceneSelectsReplacementCamera)
     scene->deserialize(empty);
     EXPECT_EQ(gGameInstance->world.currentCamera, nullptr);
 }
+
+TEST_F(ScenePersistenceTest, InvalidReflectedTabFieldsPreserveCurrentSession)
+{
+    NX::SceneManager manager;
+    auto* initial = manager.getCurrentScene();
+    const auto valid = manager.serialize();
+    for (const auto* field : { "formatVersion", "open", "current" })
+    {
+        auto missing = valid;
+        missing.erase(field);
+        EXPECT_THROW(manager.deserialize(missing), std::exception);
+        EXPECT_EQ(manager.getCurrentScene(), initial);
+        EXPECT_EQ(manager.serialize(), valid);
+    }
+    for (const auto& invalid :
+         { nlohmann::json(1.5), nlohmann::json("1"), nlohmann::json(4'294'967'297ULL) })
+    {
+        auto tabs = valid;
+        tabs["formatVersion"] = invalid;
+        EXPECT_THROW(manager.deserialize(tabs), std::exception);
+        EXPECT_EQ(manager.serialize(), valid);
+    }
+    for (const auto* field : { "open", "current" })
+    {
+        auto tabs = valid;
+        tabs[field] = 42;
+        EXPECT_THROW(manager.deserialize(tabs), std::exception);
+        EXPECT_EQ(manager.serialize(), valid);
+    }
+}
