@@ -418,15 +418,15 @@ namespace NX
             auto object = Core::DynamicCast<SceneObject>(component);
             if (!object || object->getComponentType() != state.assetType)
             {
-                errorLog(
-                    "It seems that the registered asset/object '{}' on the scene was corrupted in the refrenced file. Absense of the vital information. Referenced asset path: '{}'"_f
-                    << (state.name.empty() ? Stringify::gcDefaultNoneString.data() : state.name)
-                    << state.referenceAsset);
+                throw std::runtime_error("Cannot restore scene object '" + state.name
+                                         + "' of type '" + state.assetType.toStdString()
+                                         + "' from asset '" + state.referenceAsset.toStdString()
+                                         + "'.");
             }
             const auto name = Core::StringAtom::MakeFrom(state.name);
             if (name.isEmpty() || nameExists(replacement._sceneObjects, name))
             {
-                errorLog("Empty or duplicate scene object name: " + state.name);
+                throw std::runtime_error("Empty or duplicate scene object name: " + state.name);
             }
             object->setComponentName(name);
             object->applyTypeSpecificSceneData(state.typeSpecificData);

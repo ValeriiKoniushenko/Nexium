@@ -87,11 +87,15 @@ namespace NX
             auto scene = Core::IntrusivePtr<Scene>(new Scene());
             scene->deserialize(stream);
             const auto name = scene->getSceneName();
-            if (name.isEmpty()
-                || std::ranges::any_of(replacement, [&name](const auto& existing)
-                                       { return existing->getSceneName() == name; }))
+            if (name.isEmpty())
             {
-                throw std::runtime_error("Empty or duplicate scene name.");
+                throw std::runtime_error("Empty scene name in file: " + path);
+            }
+            if (std::ranges::any_of(replacement, [&name](const auto& existing)
+                                    { return existing->getSceneName() == name; }))
+            {
+                throw std::runtime_error("Duplicate scene name '" + name.toStdString()
+                                         + "' in file: " + path);
             }
             replacement.push_back(std::move(scene));
         }
