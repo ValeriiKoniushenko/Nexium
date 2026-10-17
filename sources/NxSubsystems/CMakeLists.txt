@@ -16,6 +16,7 @@ add_library(Nexium_Subsystem_Graphics STATIC)
 add_library(Nexium::Subsystem::Graphics ALIAS Nexium_Subsystem_Graphics)
 target_sources(Nexium_Subsystem_Graphics PRIVATE
     Graphics/Debug/Line.cpp
+    Graphics/Font.cpp
     Graphics/GraphicsComponents.cpp
     Graphics/ShaderManager.cpp
     Graphics/ShaderProgram.cpp
@@ -23,6 +24,7 @@ target_sources(Nexium_Subsystem_Graphics PRIVATE
 )
 nexium_add_public_headers(Nexium_Subsystem_Graphics
     NxSubsystems/Graphics/Debug/Line.h
+    NxSubsystems/Graphics/Font.h
     NxSubsystems/Graphics/GraphicsComponents.h
     NxSubsystems/Graphics/GraphicsComponents.generated.h
     NxSubsystems/Graphics/ShaderManager.h
@@ -37,6 +39,7 @@ target_link_libraries(Nexium_Subsystem_Graphics
     Nexium::Platform::Graphics
     Nexium::Fundamental::ResourceManagement
     PRIVATE
+    Nexium::RawBackend::Fonts
     Utils::Utils
     ${MODULE_PRIVATE_TARGET}
 )
@@ -70,8 +73,8 @@ nexium_add_public_headers(Nexium_Subsystem_AssetsManager
     NxSubsystems/AssetsManager/TextureAsset.h
     NxSubsystems/AssetsManager/TextureAsset.generated.h
 )
-target_link_libraries(Nexium_Subsystem_AssetsManager 
-    PUBLIC 
+target_link_libraries(Nexium_Subsystem_AssetsManager
+    PUBLIC
     Nexium::Subsystem::Graphics
     Nexium::Fundamental::Assets
     Nexium::Fundamental::TextureAtlas
@@ -99,8 +102,8 @@ nexium_add_public_headers(Nexium_Subsystem_Input
     NxSubsystems/Input/InputTypes.generated.h
     NxSubsystems/PrivateModuleInfo.h
 )
-target_link_libraries(Nexium_Subsystem_Input 
-    PUBLIC 
+target_link_libraries(Nexium_Subsystem_Input
+    PUBLIC
     Nexium::Foundation
     Nexium::Platform::Input
     PRIVATE

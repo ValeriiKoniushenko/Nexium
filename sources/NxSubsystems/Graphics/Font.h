@@ -14,9 +14,14 @@
 #include "Core/IntrusivePtr.h"
 #include "Foundation/BaseLog.h"
 #include "Foundation/BaseUsings.h"
-#include "RawBackend/Fonts/FreeTypeLibrary.h"
 
 #include <filesystem>
+#include <memory>
+
+namespace RawBackend::Font
+{
+    class Face;
+}
 
 namespace NX
 {
@@ -50,16 +55,21 @@ namespace NX
         };
 
     public:
-        Face() = default;
-        virtual ~Face() = default;
+        Face();
+        ~Face() override = default;
         Face(const Face&) = delete;
         Face& operator=(const Face&) = delete;
         Face(Face&&) noexcept;
         Face& operator=(Face&&) noexcept;
 
         void setSourcePath(const std::filesystem::path& path);
+
+        /// Before call of this function the source path must be set.
         [[nodiscard]] std::size_t getFacesNumber();
+
+        /// Before call of this function the source path must be set.
         bool generateFace(std::size_t faceIndex);
+
         bool setPixelSize(Core::UISize2 size);
         bool setPixelSize(std::size_t height);
 
@@ -67,8 +77,11 @@ namespace NX
 
         friend void swap(Face& a, Face& b) noexcept { std::swap(a._face, b._face); }
 
+        [[nodiscard]] const char* getPrefix() const override { return "Face"; }
+        [[nodiscard]] spdlog::logger* getLogger() const override;
+
     protected:
-        RawBackend::Font::Face _face;
+        std::unique_ptr<RawBackend::Font::Face> _face;
     };
 
 } // namespace NX
