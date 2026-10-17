@@ -10,8 +10,12 @@
 #include "SceneTabs.h"
 
 #include "Editor/EditorIntegration.h"
+#include "Editor/GuiComponents/Button.h"
 #include "Editor/GuiComponents/Combo.h"
+#include "Editor/GuiComponents/HorizontalLayout.h"
+#include "Editor/GuiComponents/Label.h"
 #include "Editor/IconsFontAwesome.h"
+#include "Foundation/Debug/Latency.h"
 #include "ImGui/imgui_internal.h"
 #include "NxWorld/Scene/Scene/SceneManager.h"
 #include "SceneDeleteConfirmation.h"
@@ -20,6 +24,15 @@
 
 namespace NX
 {
+    struct SceneTabs::State
+    {
+        Gui::HorizontalLayout toolbar;
+        Gui::SearchableComboBox* scenePicker = nullptr;
+        Gui::Button trashButton;
+        DelegateSubscriberPoolGuard subscriptions;
+        WeakPtr<const Scene> actionScene;
+    };
+
     namespace
     {
         StringAtom makeTabLabel(const Scene& scene)
@@ -42,68 +55,79 @@ namespace NX
         }
     } // namespace
 
+    SceneTabs::SceneTabs()
+        : _state(std::make_unique<State>())
+    {
+    }
+
+    SceneTabs::~SceneTabs() = default;
+
     void SceneTabs::initialize(SceneManager& scenes)
     {
-        if (_scenePicker)
+        if (_state->scenePicker)
         {
             return;
         }
-        _toolbar.setFitContent(true);
-        _toolbar.setPaddings(4.f, 4.f, 2.f, 2.f);
-        _toolbar.setHorizontalAlign(Gui::Align::Left);
-        _sceneLabel = _toolbar.addChildComponent<Gui::Label>("Scenes"_atom);
-        _sceneLabel->setTextColor(Core::Color4_LightGray);
-        _sceneLabel->setWidth(54.f);
-        _scenePicker = _toolbar.addChildComponent<Gui::SearchableComboBox>("Scenes"_atom);
-        _scenePicker->setWidth(220.f);
-        _scenePicker->setSizeProvider([&scenes] { return scenes.getScenes().size(); });
-        _scenePicker->setDataProvider(
+        NX_LATENCY_POINT("Scene tabs initialization - start");
+        _state->toolbar.setFitContent(true);
+        _state->toolbar.setPaddings(4.f, 4.f, 2.f, 2.f);
+        _state->toolbar.setHorizontalAlign(Gui::Align::Left);
+        auto* sceneLabel = _state->toolbar.addChildComponent<Gui::Label>("Scenes"_atom);
+        sceneLabel->setTextColor(Core::Color4_LightGray);
+        sceneLabel->setWidth(54.f);
+        _state->scenePicker
+            = _state->toolbar.addChildComponent<Gui::SearchableComboBox>("Scenes"_atom);
+        _state->scenePicker->setWidth(220.f);
+        _state->scenePicker->setSizeProvider([&scenes] { return scenes.getScenes().size(); });
+        _state->scenePicker->setDataProvider(
             [&scenes](std::size_t index, StringAtom& label) -> const void*
             {
                 const auto* scene = scenes.getScenes()[index].get();
                 label = scene->getSceneName();
                 return scene;
             });
-        _scenePicker->setSearchPlaceholder("Filter scenes..."_atom);
-        _trashButton.setText(ICON_FA_TRASH ""_atom);
-        _trashButton.setWidth(28.f);
-        _trashButton.setButtonColor(Core::Color4(72, 52, 56, 255));
-        _trashButton.setButtonHoverColor(Core::Color4(128, 60, 66, 255));
-        _trashButton.setTextColor(Core::Color4(235, 150, 150, 255));
-        _trashButton.initialize();
-        _subscriptions << _trashButton.onClick->subscribeAndGetID(
+        _state->scenePicker->setSearchPlaceholder("Filter scenes..."_atom);
+        _state->trashButton.setText(ICON_FA_TRASH ""_atom);
+        _state->trashButton.setWidth(28.f);
+        _state->trashButton.setButtonColor(Core::Color4(72, 52, 56, 255));
+        _state->trashButton.setButtonHoverColor(Core::Color4(128, 60, 66, 255));
+        _state->trashButton.setTextColor(Core::Color4(235, 150, 150, 255));
+        _state->trashButton.initialize();
+        _state->subscriptions << _state->trashButton.onClick->subscribeAndGetID(
             [this]
             {
-                if (auto scene = _actionScene.tryLoad())
+                if (auto scene = _state->actionScene.tryLoad())
                 {
                     GetEditor()->tryToOpenWindow<SceneDeleteConfirmation>(
                         ""_atom, const_cast<Scene*>(scene.get()));
                 }
             });
-        _scenePicker->setItemActionDrawer(
+        _state->scenePicker->setItemActionDrawer(
             [this, &scenes](const void* data)
             {
-                _actionScene = static_cast<const Scene*>(data);
-                _trashButton.disableWidget(scenes.getScenes().size() == 1);
-                _trashButton.tick(0.f);
-                _actionScene.reset();
+                _state->actionScene = static_cast<const Scene*>(data);
+                _state->trashButton.disableWidget(scenes.getScenes().size() == 1);
+                _state->trashButton.tick(0.f);
+                _state->actionScene.reset();
             });
-        _subscriptions << _scenePicker->onSelect->subscribeAndGetID(
+        _state->subscriptions << _state->scenePicker->onSelect->subscribeAndGetID(
             [&scenes](const void* data)
             { scenes.setCurrentScene(const_cast<Scene*>(static_cast<const Scene*>(data))); });
-        auto* createButton = _toolbar.addChildComponent<Gui::Button>(ICON_FA_PLUS "  New"_atom);
+        auto* createButton
+            = _state->toolbar.addChildComponent<Gui::Button>(ICON_FA_PLUS "  New"_atom);
         createButton->setWidth(76.f);
         createButton->setButtonColor(Core::Color4(54, 86, 68, 255));
         createButton->setButtonHoverColor(Core::Color4(70, 116, 88, 255));
         createButton->setTextColor(Core::Color4(185, 235, 195, 255));
-        _subscriptions << createButton->onClick->subscribeAndGetID(
+        _state->subscriptions << createButton->onClick->subscribeAndGetID(
             [&scenes]
             {
                 auto& scene = scenes.createNewScene();
                 scenes.setCurrentScene(&scene);
             });
 
-        _toolbar.initialize();
+        _state->toolbar.initialize();
+        NX_LATENCY_POINT("Scene tabs initialization - end");
     }
 
     void SceneTabs::draw(SceneManager& scenes)
@@ -117,8 +141,8 @@ namespace NX
         const auto& allScenes = scenes.getScenes();
         const auto it = std::ranges::find_if(allScenes, [&scenes](const auto& scene)
                                              { return scene.get() == scenes.getCurrentScene(); });
-        _scenePicker->setCurrentIndex(static_cast<std::size_t>(it - allScenes.begin()));
-        _toolbar.tick(0.f);
+        _state->scenePicker->setCurrentIndex(static_cast<std::size_t>(it - allScenes.begin()));
+        _state->toolbar.tick(0.f);
     }
 
     void SceneTabs::drawTabs(SceneManager& scenes)
