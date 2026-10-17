@@ -68,10 +68,13 @@ namespace NX
         glGetIntegerv(GL_UNPACK_ALIGNMENT, &prev);
         glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
+        auto* shader = NX::GetShaderManager().getShaderProgram("text"_atom);
+
         NX::Face nxFace;
         nxFace.setSourcePath("data/internal/fonts/Inter/Inter_18pt-Black.ttf");
         nxFace.generateFace(0);
         nxFace.setPixelSize(48);
+        nxFace.generateTextureASCIIGlyphs(shader);
 
         RawBackend::Font::Face face;
         face.setSourcePath("data/internal/fonts/Inter/Inter_18pt-Black.ttf");
@@ -128,8 +131,6 @@ namespace NX
         face.release();
         glPixelStorei(GL_UNPACK_ALIGNMENT, prev);
 
-        auto* shader = NX::GetShaderManager().getShaderProgram("text"_atom);
-
         BaseGraphicsData g;
         g.generate();
         g.setShader(shader);
@@ -147,8 +148,6 @@ namespace NX
 
         OrthographicCamera uiCamera;
         uiCamera.setNear(0.f);
-
-        NX::SceneObj::Rectangle charRect;
 
         NX_LATENCY_POINT("while loop - pre-start");
         while (!_gameInstance.window->shouldClose())
@@ -172,9 +171,10 @@ namespace NX
                     integration->updateInput();
                 }
 
-                shader->use();
+                auto ss = g.getShader();
+                ss->use();
                 uiCamera.invalidateCameraMatrices();
-                shader->setUniform("uProj"_atom, uiCamera.getMatrix());
+                ss->setUniform("uProj"_atom, uiCamera.getMatrix());
 
                 glActiveTexture(GL_TEXTURE0);
                 const std::string text = "Hello world";

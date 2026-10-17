@@ -149,7 +149,10 @@ namespace RawBackend::Font
             FT_Done_Face(_face);
             _face = nullptr;
         }
-        _path.clear();
+
+        // Shouldn't be cleared. It should only realease data
+        // _path.clear();
+
         _faceNumber = NoFaces;
     }
 

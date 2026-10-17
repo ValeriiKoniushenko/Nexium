@@ -49,6 +49,8 @@ namespace RawBackend::Font
         }
 
         void setSourcePath(const std::filesystem::path& path);
+        [[nodiscard]] std::string getSourcePath() const { return _path; }
+
         [[nodiscard]] FT_Long getFacesNumber();
         bool generateFace(FT_Long faceIndex);
         bool setPixelSize(Core::UISize2 size);

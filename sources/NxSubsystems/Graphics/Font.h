@@ -14,6 +14,7 @@
 #include "Core/IntrusivePtr.h"
 #include "Foundation/BaseLog.h"
 #include "Foundation/BaseUsings.h"
+#include "RawBackend/Graphics/Texture.h"
 
 #include <filesystem>
 #include <memory>
@@ -25,6 +26,8 @@ namespace RawBackend::Font
 
 namespace NX
 {
+    class ShaderProgram;
+
     /// How do Fonts work:
     /// It's going from the lowest abstraction layer: RawBackend::Font
     /// This layer (RawBackend) describes the minimum to be able to work with Font data:
@@ -47,11 +50,17 @@ namespace NX
     class Face : public Foundation::BaseLog, public Core::IntrusiveRefCounter<Face>
     {
     public:
-        struct Glyph
+        struct GlyphSize
         {
             Core::UISize2 size;   // Size of glyph
             Core::ISize2 bearing; // Offset from baseline to left/top of glyph
             int advance = 0;      // Offset to advance to next glyph
+        };
+
+        struct Glyph
+        {
+            GlyphSize glyph;
+            RawBackend::Texture texture;
         };
 
     public:
@@ -72,15 +81,23 @@ namespace NX
         bool setPixelSize(Core::UISize2 size);
         bool setPixelSize(std::size_t height);
 
+        bool generateTextureASCIIGlyphs(ShaderProgram* shader);
+
         void release();
 
-        friend void swap(Face& a, Face& b) noexcept { std::swap(a._face, b._face); }
+        friend void swap(Face& a, Face& b) noexcept
+        {
+            std::swap(a._face, b._face);
+            std::swap(a._glyphs, b._glyphs);
+        }
 
         [[nodiscard]] const char* getPrefix() const override { return "Face"; }
         [[nodiscard]] spdlog::logger* getLogger() const override;
 
     protected:
         std::unique_ptr<RawBackend::Font::Face> _face;
+
+        std::vector<Glyph> _glyphs;
     };
 
 } // namespace NX
