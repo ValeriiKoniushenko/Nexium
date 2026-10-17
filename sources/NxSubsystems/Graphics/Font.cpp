@@ -130,7 +130,10 @@ namespace NX
     {
         auto* shader = _graphicsData.getShader();
         shader->use();
+
+        // The line below must be optimized
         camera.invalidateCameraMatrices();
+
         shader->setUniform("uProj"_atom, camera.getMatrix());
         shader->setUniform("uPos"_atom, pos);
 
