@@ -14,6 +14,7 @@
 #include "Foundation/Debug/Latency.h"
 #include "Foundation/Debug/LatencyTerminalPrinter.h"
 #include "NxRuntime/GameUtils/FPSCounter.h"
+#include "NxSubsystems/Graphics/Font.h"
 #include "NxSubsystems/Graphics/GraphicsComponents.h"
 #include "NxSubsystems/Graphics/ShaderManager.h"
 #include "NxSubsystems/Graphics/ShaderProgram.h"
@@ -67,9 +68,13 @@ namespace NX
         glGetIntegerv(GL_UNPACK_ALIGNMENT, &prev);
         glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
+        NX::Face nxFace;
+        nxFace.setSourcePath("data/internal/fonts/Inter/Inter_18pt-Black.ttf");
+        nxFace.generateFace(0);
+        nxFace.setPixelSize(48);
+
         RawBackend::Font::Face face;
         face.setSourcePath("data/internal/fonts/Inter/Inter_18pt-Black.ttf");
-        auto fn = face.getFacesNumber();
         face.generateFace(0);
         face.setPixelSize(48);
 

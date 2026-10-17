@@ -69,7 +69,6 @@ namespace NX
 
         /// Before call of this function the source path must be set.
         bool generateFace(std::size_t faceIndex);
-
         bool setPixelSize(Core::UISize2 size);
         bool setPixelSize(std::size_t height);
 
