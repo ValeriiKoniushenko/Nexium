@@ -38,19 +38,19 @@ namespace
     class TestSearchableComboBox : public NX::Gui::SearchableComboBox
     {
     public:
-        using SearchableComboBox::matchesItem;
+        using SearchableComboBox::matchedItem;
     };
 
     TEST(SearchableComboBox, MatchesSubstringWithoutCase)
     {
         TestSearchableComboBox combo;
-        EXPECT_TRUE(combo.matchesItem("MenuScene"_atom));
+        EXPECT_TRUE(combo.matchedItem("MenuScene"_atom));
         combo.setSearchText("uSc");
-        EXPECT_TRUE(combo.matchesItem("MenuScene"_atom));
-        EXPECT_FALSE(combo.matchesItem("GameScene"_atom));
-        EXPECT_FALSE(combo.matchesItem(""_atom));
+        EXPECT_TRUE(combo.matchedItem("MenuScene"_atom));
+        EXPECT_FALSE(combo.matchedItem("GameScene"_atom));
+        EXPECT_FALSE(combo.matchedItem(""_atom));
         combo.setSearchText("");
-        EXPECT_TRUE(combo.matchesItem("GameScene"_atom));
+        EXPECT_TRUE(combo.matchedItem("GameScene"_atom));
     }
 
     TEST(SearchableComboBox, ComposesSearchWithCustomFilterAndPreservesSelection)
@@ -67,16 +67,16 @@ namespace
         combo.setCurrentIndex(0);
         combo.setItemFilter([](const Core::StringAtom& label)
                             { return label != "HiddenScene"_atom; });
-        EXPECT_TRUE(combo.matchesItem("MenuScene"_atom));
-        EXPECT_FALSE(combo.matchesItem("HiddenScene"_atom));
+        EXPECT_TRUE(combo.matchedItem("MenuScene"_atom));
+        EXPECT_FALSE(combo.matchedItem("HiddenScene"_atom));
         combo.setSearchText("scene");
-        EXPECT_TRUE(combo.matchesItem("MenuScene"_atom));
-        EXPECT_FALSE(combo.matchesItem("HiddenScene"_atom));
+        EXPECT_TRUE(combo.matchedItem("MenuScene"_atom));
+        EXPECT_FALSE(combo.matchedItem("HiddenScene"_atom));
         combo.setSearchText("missing");
-        EXPECT_FALSE(combo.matchesItem("MenuScene"_atom));
+        EXPECT_FALSE(combo.matchedItem("MenuScene"_atom));
         combo.setItemFilter({});
         combo.setSearchText("scene");
-        EXPECT_TRUE(combo.matchesItem("HiddenScene"_atom));
+        EXPECT_TRUE(combo.matchedItem("HiddenScene"_atom));
         EXPECT_EQ(combo.getCurrentIndex(), 0);
         EXPECT_EQ(combo.getCurrentData(), &data);
     }

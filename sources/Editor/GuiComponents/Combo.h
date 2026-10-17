@@ -34,6 +34,7 @@ namespace NX::Gui
 
     protected:
         void onInitialize() override;
+        virtual void drawPopupContent() = 0;
 
     protected:
         FIELD();
@@ -67,6 +68,7 @@ namespace NX::Gui
 
     protected:
         void onDraw() override;
+        void drawPopupContent() override;
 
     protected:
         std::vector<StringAtom> _items;
@@ -108,7 +110,7 @@ namespace NX::Gui
     protected:
         void onDraw() override;
 
-        virtual void drawPopupContent();
+        void drawPopupContent() override;
 
     protected:
         std::function<const void*(std::size_t, StringAtom&)> _dataProvider;
@@ -151,7 +153,7 @@ namespace NX::Gui
         void onInitialize() override;
         void drawPopupContent() override;
         void drawPopupHeader();
-        [[nodiscard]] bool matchesItem(const StringAtom& label) const;
+        [[nodiscard]] bool matchedItem(const StringAtom& label) const;
 
     private:
         TextInput _search;
