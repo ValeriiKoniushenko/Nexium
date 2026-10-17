@@ -51,7 +51,7 @@ namespace NX
         {
             opened.push_back(selected);
         }
-        restoreOpenScenes(std::move(opened), selected);
+        restoreOpenedScenes(std::move(opened), selected);
     }
 
     void SceneManager::importScenes(const std::filesystem::path& directory)
@@ -88,7 +88,7 @@ namespace NX
         if (!replacement.empty())
         {
             _scenes.swap(replacement);
-            restoreOpenScenes({ _scenes.front().get() }, _scenes.front().get());
+            restoreOpenedScenes({ _scenes.front().get() }, _scenes.front().get());
         }
     }
 } // namespace NX

@@ -59,14 +59,62 @@ TEST(SceneManagerTests, SwitchesAndRemovesScenesWithoutBecomingEmpty)
     EXPECT_EQ(manager.getCurrentScene(), &added);
     EXPECT_FALSE(manager.setCurrentScene("missing"_atom));
     EXPECT_EQ(manager.getCurrentScene(), &added);
-    manager.removeScene("missing"_atom);
+    EXPECT_FALSE(manager.removeScene("missing"_atom));
     EXPECT_EQ(manager.getCurrentScene(), &added);
-    manager.removeScene(name);
+    EXPECT_TRUE(manager.removeScene(name));
     EXPECT_EQ(manager.getScene(name), nullptr);
     EXPECT_EQ(manager.getCurrentScene(), initial);
-    manager.removeScene("Default"_atom);
+    EXPECT_FALSE(manager.removeScene("Default"_atom));
     EXPECT_EQ(manager.getScenes().size(), 1);
     EXPECT_EQ(manager.getCurrentScene(), initial);
+}
+
+TEST(SceneManagerTests, ClosingCurrentSceneSelectsNextThenPreviousTab)
+{
+    NX::SceneManager manager;
+    auto* first = manager.getCurrentScene();
+    auto& middle = manager.createNewScene();
+    auto& last = manager.createNewScene();
+    ASSERT_TRUE(manager.setCurrentScene(&middle));
+    ASSERT_TRUE(manager.setCurrentScene(&last));
+    ASSERT_TRUE(manager.setCurrentScene(&middle));
+
+    EXPECT_TRUE(manager.closeScene(&middle));
+    EXPECT_EQ(manager.getCurrentScene(), &last);
+    EXPECT_TRUE(manager.closeScene(&last));
+    EXPECT_EQ(manager.getCurrentScene(), first);
+    EXPECT_FALSE(manager.closeScene(first));
+}
+
+TEST(SceneManagerTests, RemovingCurrentSceneSelectsAdjacentOpenTab)
+{
+    NX::SceneManager manager;
+    auto* first = manager.getCurrentScene();
+    auto& middle = manager.createNewScene();
+    auto& last = manager.createNewScene();
+    ASSERT_TRUE(manager.setCurrentScene(&middle));
+    ASSERT_TRUE(manager.setCurrentScene(&last));
+    ASSERT_TRUE(manager.setCurrentScene(&middle));
+
+    EXPECT_TRUE(manager.removeScene(&middle));
+    EXPECT_EQ(manager.getCurrentScene(), &last);
+    EXPECT_TRUE(manager.removeScene(&last));
+    EXPECT_EQ(manager.getCurrentScene(), first);
+    EXPECT_FALSE(manager.removeScene(nullptr));
+    EXPECT_FALSE(manager.removeScene(first));
+}
+
+TEST(SceneManagerTests, RemovingOnlyOpenSceneOpensAnotherOwnedScene)
+{
+    NX::SceneManager manager;
+    auto* first = manager.getCurrentScene();
+    auto& replacement = manager.createNewScene();
+
+    EXPECT_TRUE(manager.removeScene(first));
+    EXPECT_EQ(manager.getCurrentScene(), &replacement);
+    EXPECT_TRUE(replacement.isInitialized());
+    ASSERT_EQ(manager.getOpenScenes().size(), 1);
+    EXPECT_EQ(manager.getOpenScenes().front(), &replacement);
 }
 
 TEST(SceneManagerTests, RemovesInactiveSceneAndResetsToDefault)
@@ -79,7 +127,7 @@ TEST(SceneManagerTests, RemovesInactiveSceneAndResetsToDefault)
     EXPECT_EQ(manager.getScenes().size(), 1);
     EXPECT_EQ(manager.getCurrentScene(), &added);
     EXPECT_EQ(manager.getScene("Default"_atom), nullptr);
-    manager.removeAllScenes();
+    manager.resetScenes();
     ASSERT_NE(manager.getCurrentScene(), nullptr);
     EXPECT_EQ(manager.getScene("Default"_atom), manager.getCurrentScene());
     EXPECT_EQ(manager.getScene(name), nullptr);
@@ -148,7 +196,7 @@ TEST(SceneManagerTests, DeinitializesRetainedSceneOnRemovalAndReset)
 
     scene = manager.getCurrentScene();
     scene->addObjectToScene(object);
-    manager.removeAllScenes();
+    manager.resetScenes();
     EXPECT_FALSE(scene->isInitialized());
     EXPECT_FALSE(object->isInitialized());
     EXPECT_EQ(object->deinitializationCount, 2);

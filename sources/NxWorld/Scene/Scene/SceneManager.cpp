@@ -13,13 +13,14 @@
 #include "NxWorld/PrivateModuleInfo.h"
 
 #include <algorithm>
+#include <iterator>
 #include <string>
 
 namespace NX
 {
     SceneManager::SceneManager()
     {
-        removeAllScenes();
+        resetScenes();
     }
 
     SceneManager::~SceneManager()
@@ -30,7 +31,7 @@ namespace NX
         }
     }
 
-    void SceneManager::restoreOpenScenes(std::vector<Scene*> opened, Scene* current)
+    void SceneManager::restoreOpenedScenes(std::vector<Scene*> opened, Scene* current)
     {
         for (auto* scene : opened)
         {
@@ -133,54 +134,65 @@ namespace NX
         {
             return false;
         }
-        const auto index = static_cast<std::size_t>(it - _openScenes.begin());
-        _openScenes.erase(it);
+        const auto next = _openScenes.erase(it);
         if (_currentScene == scene)
         {
-            setCurrentScene(_openScenes[std::min(index, _openScenes.size() - 1)]);
+            setCurrentScene(next == _openScenes.end() ? _openScenes.back() : *next);
         }
         scene->deinitialize();
         return true;
     }
 
-    void SceneManager::removeScene(const Core::StringAtom& sceneName)
+    bool SceneManager::removeScene(const Core::StringAtom& sceneName)
     {
-        removeScene(getScene(sceneName));
+        return removeScene(getScene(sceneName));
     }
 
-    void SceneManager::removeScene(Scene* scene)
+    bool SceneManager::removeScene(Scene* scene)
     {
         if (_scenes.size() == 1)
         {
             // At least one scene must always exist.
-            return;
+            return false;
         }
         const auto it = std::ranges::find_if(_scenes, [scene](const auto& owned)
                                              { return owned.get() == scene; });
         if (it == _scenes.end())
         {
-            return;
+            return false;
         }
         GetCacheSystem().clearCache(*scene);
-        std::erase(_openScenes, scene);
+        auto* replacement = _currentScene;
+        const auto opened = std::ranges::find(_openScenes, scene);
+        if (opened != _openScenes.end())
+        {
+            const auto next = _openScenes.erase(opened);
+            if (scene == _currentScene && !_openScenes.empty())
+            {
+                replacement = next == _openScenes.end() ? _openScenes.back() : *next;
+            }
+        }
         if (scene == _currentScene)
         {
-            auto* replacement = _openScenes.empty()
-                                    ? (it == _scenes.begin() ? _scenes[1] : _scenes.front()).get()
-                                    : _openScenes.front();
+            if (_openScenes.empty())
+            {
+                const auto next = std::next(it);
+                replacement = (next == _scenes.end() ? _scenes.front() : *next).get();
+            }
             setCurrentScene(replacement);
         }
         scene->deinitialize();
         _scenes.erase(it);
+        return true;
     }
 
-    void SceneManager::removeAllScenes()
+    void SceneManager::resetScenes()
     {
         std::vector<Core::IntrusivePtr<Scene>> replacement;
         auto scene = Core::IntrusivePtr<Scene>(new Scene());
         replacement.push_back(std::move(scene));
         _scenes.swap(replacement);
-        restoreOpenScenes({ _scenes.front().get() }, _scenes.front().get());
+        restoreOpenedScenes({ _scenes.front().get() }, _scenes.front().get());
     }
 
     spdlog::logger* SceneManager::getLogger() const
