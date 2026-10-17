@@ -81,7 +81,7 @@ namespace NX
             Code,
             Image,
             Folder,
-            NxFile
+            NxFile,
         };
 
     public:
@@ -98,6 +98,7 @@ namespace NX
 
         [[nodiscard]] static NodeType GetNodeType(const std::filesystem::directory_entry& entry);
 
+        // TODO: move it to another module
         static void OpenPathFromOSExplorer(const std::filesystem::path& path);
 
         // ================= MAIN ======================
