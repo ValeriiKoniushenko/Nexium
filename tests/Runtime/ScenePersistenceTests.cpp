@@ -333,6 +333,33 @@ TEST_F(ScenePersistenceTest, ReloadingCurrentSceneSelectsReplacementCamera)
     EXPECT_EQ(gGameInstance->world.currentCamera, nullptr);
 }
 
+TEST_F(ScenePersistenceTest, DuplicateImportNamesIdentifyNameAndFileAndCanRecover)
+{
+    NX::Scene source;
+    source.setSceneName("Duplicated"_atom);
+    std::ofstream(root / "First.json") << source.serialize().dump();
+    std::ofstream(root / "Second.json") << source.serialize().dump();
+    NX::SceneManager manager;
+    auto* initial = manager.getCurrentScene();
+    try
+    {
+        manager.importScenes(root);
+        FAIL() << "Expected duplicate scene names to fail import";
+    }
+    catch (const std::runtime_error& error)
+    {
+        const std::string message = error.what();
+        EXPECT_NE(message.find("Duplicated"), std::string::npos);
+        EXPECT_NE(message.find((root / "Second.json").generic_string()), std::string::npos);
+    }
+    EXPECT_TRUE(manager.hasImportError());
+    EXPECT_EQ(manager.getCurrentScene(), initial);
+    std::filesystem::remove(root / "Second.json");
+    ASSERT_NO_THROW(manager.importScenes(root));
+    EXPECT_FALSE(manager.hasImportError());
+    EXPECT_NE(manager.getScene("Duplicated"_atom), nullptr);
+}
+
 TEST_F(ScenePersistenceTest, InvalidReflectedTabFieldsPreserveCurrentSession)
 {
     NX::SceneManager manager;
@@ -360,6 +387,28 @@ TEST_F(ScenePersistenceTest, InvalidReflectedTabFieldsPreserveCurrentSession)
         tabs[field] = 42;
         EXPECT_THROW(manager.deserialize(tabs), std::exception);
         EXPECT_EQ(manager.serialize(), valid);
+    }
+}
+
+TEST_F(ScenePersistenceTest, InvalidObjectReferencesAndNamesPreserveAuthoredScene)
+{
+    NX::Scene scene;
+    auto object = NX::SceneObject::Create();
+    object->setComponentName("Kept"_atom);
+    scene.addObjectToScene(object);
+    const auto saved = scene.serialize();
+    auto duplicate = saved;
+    duplicate["sceneObjects"].push_back(duplicate["sceneObjects"].front());
+    auto emptyName = saved;
+    emptyName["sceneObjects"][0]["name"] = "";
+    auto missingObject = saved;
+    missingObject["sceneObjects"][0].erase("componentData");
+    for (const auto& invalid : { duplicate, emptyName, missingObject })
+    {
+        auto stream = RResourceStream<RJsonResourceStream>(invalid);
+        EXPECT_THROW(scene.deserialize(stream), std::runtime_error);
+        EXPECT_EQ(scene.serialize(), saved);
+        EXPECT_EQ(scene.getObjects().front().get(), object.get());
     }
 }
 
