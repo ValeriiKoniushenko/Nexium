@@ -77,7 +77,7 @@ namespace NX
         ImGuiIO& io = ImGui::GetIO();
         io.IniFilename = nullptr;
 
-        gameViewport.generate();
+        sceneRenderTarget.generate();
 
         setupImGuiStyles();
         setupShortcuts();
@@ -134,12 +134,13 @@ namespace NX
 
         if (auto* viewport = getWindow<GameViewportEWC>(); Verify(viewport))
         {
-            _subscriptionPool << viewport->onImageSizeChanged->subscribeAndGetID(
-                [](auto imageSize)
+            _subscriptionPool << viewport->onCanvasSizeChanged->subscribeAndGetID(
+                [this](auto canvasSize)
                 {
                     if (gGameInstance->renderMode == GameInstance::RenderMode::Editor)
                     {
-                        GetEditor()->gameViewport.setRenderSize(static_cast<ISize2>(imageSize));
+                        // The ImGui canvas and the scene's offscreen framebuffer are separate.
+                        sceneRenderTarget.setRenderSize(static_cast<ISize2>(canvasSize));
                         gGameInstance->updateViewport();
                     }
                 });

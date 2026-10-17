@@ -89,22 +89,22 @@ namespace NX
 
     void EditorIntegration::beforeSceneDraw()
     {
-        _editor.gameViewport.callMePreDraw();
+        _editor.sceneRenderTarget.callMePreDraw();
     }
 
     void EditorIntegration::afterSceneDraw()
     {
-        _editor.gameViewport.callMeAfterDraw();
+        _editor.sceneRenderTarget.callMeAfterDraw();
     }
 
     void EditorIntegration::clearSceneRenderTarget()
     {
-        _editor.gameViewport.clearCanvas();
+        _editor.sceneRenderTarget.clearCanvas();
     }
 
     ISize2 EditorIntegration::getRenderSize() const
     {
-        return _editor.gameViewport.getRenderSize();
+        return _editor.sceneRenderTarget.getRenderSize();
     }
 
     EditorIntegration* GetEditorIntegration()

@@ -142,7 +142,7 @@ namespace NX
         Editor::NotificationPopUpManager notifications;
         NX::KeyboardInputManger keyboardInput;
         NX::MouseInputManger mouseInput;
-        NX::RenderTargetToTexture gameViewport;
+        NX::RenderTargetToTexture sceneRenderTarget;
 
     protected:
         void setupImGuiStyles();

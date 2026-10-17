@@ -30,10 +30,10 @@ namespace NX
 
         [[nodiscard]] const char* getIcon() override;
         [[nodiscard]] bool blocksPicking() const noexcept { return _blocksPicking; }
-        [[nodiscard]] glm::vec2 getImagePosition() const noexcept { return _imagePosition; }
-        [[nodiscard]] FSize2 getImageSize() const noexcept { return _imageSize; }
+        [[nodiscard]] glm::vec2 getCanvasPosition() const noexcept { return _canvasPosition; }
+        [[nodiscard]] FSize2 getCanvasSize() const noexcept { return _canvasSize; }
 
-        Delegate<void(FSize2)>::Ptr onImageSizeChanged = Delegate<void(FSize2)>::Create();
+        Delegate<void(FSize2)>::Ptr onCanvasSizeChanged = Delegate<void(FSize2)>::Create();
 
     protected:
         void onInitialize() override;
@@ -42,11 +42,11 @@ namespace NX
         void onClose() override;
         void onUpdate() override;
         void onDraw() override;
-        [[nodiscard]] bool updateImageArea();
+        [[nodiscard]] bool updateCanvasArea();
 
     private:
-        glm::vec2 _imagePosition{};
-        FSize2 _imageSize{};
+        glm::vec2 _canvasPosition{};
+        FSize2 _canvasSize{};
         SceneGizmo _gizmo;
         bool _blocksPicking = false;
         std::unique_ptr<SceneTabs> _sceneTabs;
