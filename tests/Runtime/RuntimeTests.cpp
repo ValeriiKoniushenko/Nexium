@@ -103,7 +103,7 @@ TEST(RuntimeTests, SceneChangesClearSelectionWithoutEditorWindows)
     EXPECT_TRUE(selector.getSelectedObjects().empty());
 
     selector.selectSingleObject(object.get());
-    scenes.removeAllScenes();
+    scenes.resetScenes();
     EXPECT_TRUE(selector.getSelectedObjects().empty());
 }
 

@@ -51,9 +51,9 @@ namespace NX
         [[nodiscard]] std::filesystem::path getCacheDir() const override { return "cache"; }
         [[nodiscard]] StringAtom getCacheHash() const override { return "SceneTabs"_atom; }
 
-        void removeAllScenes();
-        void removeScene(const StringAtom& sceneName);
-        void removeScene(Scene* scene);
+        void resetScenes();
+        bool removeScene(const StringAtom& sceneName);
+        bool removeScene(Scene* scene);
 
         [[nodiscard]] const std::vector<Core::IntrusivePtr<Scene>>& getScenes() const noexcept
         {
@@ -69,7 +69,7 @@ namespace NX
         [[nodiscard]] spdlog::logger* getLogger() const override;
 
     private:
-        void restoreOpenScenes(std::vector<Scene*> opened, Scene* current);
+        void restoreOpenedScenes(std::vector<Scene*> opened, Scene* current);
 
         std::vector<Core::IntrusivePtr<Scene>> _scenes{};
         std::vector<Scene*> _openScenes{};
