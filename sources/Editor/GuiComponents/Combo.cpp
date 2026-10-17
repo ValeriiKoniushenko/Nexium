@@ -56,22 +56,27 @@ namespace NX::Gui
 
         if (ImGui::BeginCombo("", preview.c_str()))
         {
-            for (std::size_t i = 0; i < _items.size(); ++i)
-            {
-                const bool isSelected = (_currentItem == i);
-                if (ImGui::Selectable(_items.at(i).c_str(), isSelected))
-                {
-                    _currentItem = i;
-                    onSelect->trigger(_items.at(i));
-                }
-                if (isSelected)
-                {
-                    ImGui::SetItemDefaultFocus();
-                }
-            }
+            drawPopupContent();
             ImGui::EndCombo();
         }
         ImGui::PopItemWidth();
+    }
+
+    void ComboView::drawPopupContent()
+    {
+        for (std::size_t i = 0; i < _items.size(); ++i)
+        {
+            const bool isSelected = (_currentItem == i);
+            if (ImGui::Selectable(_items.at(i).c_str(), isSelected))
+            {
+                _currentItem = i;
+                onSelect->trigger(_items.at(i));
+            }
+            if (isSelected)
+            {
+                ImGui::SetItemDefaultFocus();
+            }
+        }
     }
 
     void ComboModelBased::setDataProvider(
@@ -154,7 +159,7 @@ namespace NX::Gui
         drawPopupHeader();
         for (std::size_t i = 0; i < _cache.size(); ++i)
         {
-            if (!matchesItem(_cache[i].second))
+            if (!matchedItem(_cache[i].second))
             {
                 continue;
             }
@@ -204,7 +209,7 @@ namespace NX::Gui
         }
     }
 
-    bool SearchableComboBox::matchesItem(const StringAtom& label) const
+    bool SearchableComboBox::matchedItem(const StringAtom& label) const
     {
         const auto& query = getSearchText();
         return (!_itemFilter || _itemFilter(label))
