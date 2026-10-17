@@ -7,6 +7,8 @@
 //
 //     http://www.apache.org/licenses/LICENSE-2.0
 
+#include "Foundation/Configs.h"
+#include "Foundation/Debug/Latency.h"
 #include "SceneManager.h"
 #include "SceneTabsState.h"
 
@@ -59,9 +61,13 @@ namespace NX
     }
 
     void SceneManager::importScenes(const std::filesystem::path& directory)
+    try
     {
+        NX_LATENCY_POINT("Scene import started");
         if (!std::filesystem::exists(directory))
         {
+            _importFailed = false;
+            NX_LATENCY_POINT("Scene import finished");
             return;
         }
         std::vector<std::string> paths;
@@ -94,5 +100,49 @@ namespace NX
             _scenes.swap(replacement);
             restoreOpenedScenes({ _scenes.front().get() }, _scenes.front().get());
         }
+        _importFailed = false;
+        NX_LATENCY_POINT("Scene import finished");
+    }
+    catch (...)
+    {
+        _importFailed = true;
+        throw;
+    }
+
+    void SceneManager::readFromCache()
+    {
+        try
+        {
+            importScenes(Foundation::Config::Path::data / "scenes");
+            GetCacheSystem().tryRead(*this);
+        }
+        catch (const std::exception& error)
+        {
+            errorLog("Cannot load scene files: {}"_f << error.what());
+        }
+    }
+
+    bool SceneManager::writeToCache(CacheWriteMode mode)
+    {
+        if (mode == CacheWriteMode::Automatic && _importFailed)
+        {
+            warnLog(
+                "Scene autosave skipped after an import failure. Reload or explicitly save to "
+                "recover.");
+            return false;
+        }
+        NX_LATENCY_POINT("Scene library save started");
+        bool saved = true;
+        for (const auto& scene : _scenes)
+        {
+            saved = GetCacheSystem().write(*scene, mode) && saved;
+        }
+        saved = GetCacheSystem().write(*this, mode) && saved;
+        if (saved)
+        {
+            _importFailed = false;
+        }
+        NX_LATENCY_POINT("Scene library save finished");
+        return saved;
     }
 } // namespace NX

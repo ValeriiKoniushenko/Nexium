@@ -213,3 +213,17 @@ TEST_F(AtomicFileTest, FailedLoadBlocksAutosaveUntilSuccessfulReload)
     cache.write(document, { { "value", 43 } });
     EXPECT_EQ(nlohmann::json::parse(read(path))["value"], 43);
 }
+
+TEST_F(AtomicFileTest, ExplicitSaveRecoversAfterFailedLoadAndReenablesAutosave)
+{
+    TestDocument document;
+    document.directory = root;
+    const auto path = root / "document.json";
+    NX::WriteFileAtomically(path, "unreadable document");
+    auto& cache = NX::GetCacheSystem();
+    cache.read(document);
+    cache.write(document, { { "value", 42 } }, NX::CacheWriteMode::Explicit);
+    EXPECT_EQ(nlohmann::json::parse(read(path))["value"], 42);
+    cache.write(document, { { "value", 43 } });
+    EXPECT_EQ(nlohmann::json::parse(read(path))["value"], 43);
+}

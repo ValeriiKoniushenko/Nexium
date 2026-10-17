@@ -21,17 +21,18 @@ namespace fs = std::filesystem;
 namespace NX
 {
 
-    void CacheSystem::write(const IDataIO& data, const nlohmann::json& json)
+    bool CacheSystem::write(const IDataIO& data, const nlohmann::json& json, CacheWriteMode mode)
     {
-        if (_failedReads.contains(getPath(data)))
+        if (mode == CacheWriteMode::Automatic && _failedReads.contains(getPath(data)))
         {
-            errorLog("Save blocked after a failed load: {}. Reload successfully before saving."_f
-                     << getPath(data));
-            return;
+            errorLog(
+                "Autosave blocked after a failed load: {}. Reload or explicitly save to recover."_f
+                << getPath(data));
+            return false;
         }
         if (!createCacheDirIfNotExist(data))
         {
-            return;
+            return false;
         }
 
         const auto str = json.dump(4);
@@ -39,12 +40,15 @@ namespace NX
         try
         {
             WriteFileAtomically(getPath(data), str);
+            _failedReads.erase(getPath(data));
+            return true;
         }
         catch (const std::filesystem::filesystem_error& error)
         {
             errorLog("Can't save object {}. Path: {}. Details: {}"_f
                      << data.getCacheHash() << getPath(data) << error.what());
         }
+        return false;
     }
 
     bool CacheSystem::hasCache(const IDataIO& data) const

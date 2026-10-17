@@ -30,7 +30,7 @@ namespace NX
     {
         _gameInstance.initialize();
         runMainLoop();
-        _gameInstance.saveAllToCache();
+        _gameInstance.saveAllToCache(CacheWriteMode::Automatic);
 
 #if defined(NEXIUM_DEBUG)
         const Foundation::Latency::Report r(Foundation::Latency::gCollector);
