@@ -52,6 +52,8 @@ namespace NX
 
         void initialize();
         void deinitialize();
+        void activate();
+        void deactivate();
         [[nodiscard]] bool isInitialized() const noexcept { return _isInitialized; }
 
         void tick(float timeDelta);
@@ -100,6 +102,7 @@ namespace NX
 
     private:
         void internal_addObjectToScene(SceneObject* object);
+        void selectCameraFrom(SceneObject& object);
 
     private:
         // TODO: get rid of it, deprecated
@@ -107,6 +110,7 @@ namespace NX
 
         uint32_t _uniqueCounterName = 0;
         bool _isInitialized = false;
+        bool _isActive = false;
     };
 
     template<IsComponent T>

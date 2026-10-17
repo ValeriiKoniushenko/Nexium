@@ -49,12 +49,20 @@ namespace NX
 
     Scene* GetGameScene()
     {
-        return gGameInstance ? gGameInstance->scenes.getCurrentScene() : nullptr;
+        if (gGameInstance) [[likely]]
+        {
+            return gGameInstance->scenes.getCurrentScene();
+        }
+        return nullptr;
     }
 
     SceneManager* GetSceneManager()
     {
-        return gGameInstance ? &gGameInstance->scenes : nullptr;
+        if (gGameInstance) [[likely]]
+        {
+            return &gGameInstance->scenes;
+        }
+        return nullptr;
     }
 
     bool IsEditorMode()
@@ -180,9 +188,6 @@ namespace NX
         }
 
         NX_LATENCY_POINT("ECS - inited");
-        _subscriptionPool << scenes.onCurrentSceneChanged->subscribeAndGetID(
-            [this](Scene* scene) { bindCurrentScene(scene); });
-        bindCurrentScene(scenes.getCurrentScene());
         NX_LATENCY_POINT("Scene - inited");
 
         startUpReadCache();
@@ -191,18 +196,6 @@ namespace NX
         NX_LATENCY_POINT("Resources - inited");
 
         NX_LATENCY_POINT("end");
-    }
-
-    void GameInstance::bindCurrentScene(Scene* scene)
-    {
-        _sceneSubscriptionPool.clearAndReleaseAll();
-        resetCamera();
-        _sceneSubscriptionPool << scene->onObjectAdded->subscribeAndGetID(
-            [this](SceneObject* obj) { internal_onAddObjectToScene(obj); });
-        for (const auto& object : scene->getObjects())
-        {
-            internal_onAddObjectToScene(object.get());
-        }
     }
 
     void GameInstance::startUpReadCache()
@@ -396,23 +389,6 @@ namespace NX
     Core::StringAtom GameInstance::getCacheHash() const
     {
         return "GameInstance"_atom;
-    }
-
-    void GameInstance::internal_onAddObjectToScene(SceneObject* obj)
-    {
-        if (!world.currentCamera)
-        {
-            obj->forEach(
-                [this](BaseComponent* obj)
-                {
-                    if (auto* camera = dynamic_cast<BaseCamera*>(obj))
-                    {
-                        world.currentCamera = camera;
-                        return false;
-                    }
-                    return true;
-                });
-        }
     }
 
     void GameInstance::loadCoreResources()
