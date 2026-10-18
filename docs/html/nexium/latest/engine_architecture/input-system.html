@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <title>Input System :: Nexium Engine</title>
     <link rel="prev" href="ecs-overview.html">
-    <link rel="next" href="editor.html">
-    <meta name="generator" content="Antora 3.1.15">
+    <link rel="next" href="input/actions-and-bindings.html">
+    <meta name="generator" content="Antora 3.2.1">
     <link rel="stylesheet" href="../../../_/css/site.css">
   </head>
   <body class="article">
@@ -106,7 +106,34 @@
     <a class="nav-link" href="ecs-overview.html">ECS Overview</a>
   </li>
   <li class="nav-item is-current-page" data-depth="2">
+    <button class="nav-item-toggle"></button>
     <a class="nav-link" href="input-system.html">Input System</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="input/actions-and-bindings.html">Actions and Bindings</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="input/contexts.html">Contexts and Routing</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="input/controllers.html">Controller Hierarchy and Ownership</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="input/custom-controllers.html">Creating Custom Controllers</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="input/lifecycle-and-integration.html">Frame Lifecycle and Integration</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="input/serialization-and-editor.html">Serialization and Binding Editor</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="input/api-reference.html">API Reference</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="input/troubleshooting.html">Troubleshooting and Verification</a>
+  </li>
+</ul>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="editor.html">Editor Structure</a>
@@ -217,7 +244,7 @@
     <li><a href="input-system.html">Input System</a></li>
   </ul>
 </nav>
-<div class="edit-this-page"><a href="file:///home/valerii/workspace/Nexium//docs/nexium/modules/engine_architecture/pages/input-system.adoc">Edit this Page</a></div>
+<div class="edit-this-page"><a href="file:///home/alex/Desktop/nexium//docs/nexium/modules/engine_architecture/pages/input-system.adoc">Edit this Page</a></div>
 </div>
   <div class="content">
 <aside class="toc sidebar" data-title="Contents" data-levels="2">
@@ -225,63 +252,40 @@
 </aside>
 <article class="doc">
 <h1 class="page">Input System</h1>
+<div id="toc" class="toc">
+<div id="toctitle">Table of Contents</div>
+<ul class="sectlevel1">
+<li><a href="#_reading_guide">Reading guide</a></li>
+<li><a href="#_the_complete_path">The complete path</a></li>
+<li><a href="#_responsibilities">Responsibilities</a></li>
+<li><a href="#_first_working_example">First working example</a></li>
+<li><a href="#_core_contracts">Core contracts</a></li>
+<li><a href="#_implementation_map">Implementation map</a></li>
+</ul>
+</div>
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>Platform supplies window events, keyboard/button state, cursor position, and drag tracking.
-Two input layers sit on top of it, and both are live:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><code>NX::InputSystem</code> (NxWorld) routes keyboard <strong>events</strong> to <code>InputController</code> components,
-filtered by an active input context. This is the newer path.</p>
-</li>
-<li>
-<p><code>NxSubsystems/Input</code> maps <strong>polled</strong> key state to named <code>InputAction</code> objects owned by
-<code>KeyboardInputManger</code> / <code>MouseInputManger</code>. Mouse handling and most editor shortcuts
-still use it.</p>
-</li>
-</ul>
+<p>Nexium routes window events through a shared input system into named actions on ECS
+components. Each binding defines its physical chord and its activation rule.
+Gameplay reads <code>isActive("Run"_atom)</code> without needing to know whether Run means a
+press, release, or held key.</p>
 </div>
 <div class="paragraph">
-<p>New keyboard bindings should use <code>InputController</code>. The polled managers remain the only
-path for mouse move/drag/click.</p>
+<p>Domain controllers decide what to do with actions. Context layers decide which
+controllers may receive them. The runtime remembers accepted presses, clears frame
+pulses, and cancels interrupted actions without manufacturing releases.</p>
+</div>
+<div class="paragraph">
+<p>This section describes <code>sources/NxWorld/Framework/Input/</code> and
+<code>sources/NxSubsystems/Input/</code>. Legacy polling managers still exist; see
+<a href="input/lifecycle-and-integration.html" class="xref page">Integration</a> for their remaining uses.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_event_routing_inputsystem_and_inputcontroller"><a class="anchor" href="#_event_routing_inputsystem_and_inputcontroller"></a>Event routing: InputSystem and InputController</h2>
+<h2 id="_reading_guide"><a class="anchor" href="#_reading_guide"></a>Reading guide</h2>
 <div class="sectionbody">
-<div class="paragraph">
-<p><code>GetInputSystem()</code> is a <code>Core::Singleton</code>. <code>GameInstance::initialize()</code> calls
-<code>initialize(window)</code> on it, which subscribes to the window&#8217;s key events. Each frame Runtime
-sets the active context and then drains the queue:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">GetInputSystem().setActiveContext(gameInstance.isApplicationViewportFocused()
-                                      ? InputContext::Gameplay
-                                      : InputContext::Editor);
-GetInputSystem().processEvents();</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p><code>InputContext</code> is <code>Editor</code> or <code>Gameplay</code>, and <code>Editor</code> is the startup default. Controllers
-register themselves into the list for their own context, and <code>processEvents()</code> dispatches
-only to the controllers of the active context. Switching context rebuilds that routed list
-immediately and releases the actions the previous controllers were holding.</p>
-</div>
-<div class="paragraph">
-<p>This is a context switch, not a stack: there is no per-event consumption, no priority
-between controllers in the same context, and no modal capture.</p>
-</div>
-<div class="sect2">
-<h3 id="_bindings_and_chords"><a class="anchor" href="#_bindings_and_chords"></a>Bindings and chords</h3>
-<div class="paragraph">
-<p><code>InputController</code> is a reflected <code>BaseComponent</code> (<code>ECS_DECL</code>), so bindings persist with the
-component tree. A binding is an action name, a <code>KeyChord</code>, and a trigger:</p>
-</div>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 33.3333%;">
@@ -289,102 +293,148 @@ component tree. A binding is an action name, a <code>KeyChord</code>, and a trig
 </colgroup>
 <thead>
 <tr>
-<th class="tableblock halign-left valign-top">Element</th>
-<th class="tableblock halign-left valign-top">Meaning</th>
+<th class="tableblock halign-left valign-top">Page</th>
+<th class="tableblock halign-left valign-top">What it answers</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>action</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Core::StringAtom</code> name reported back in <code>InputActionEvent</code>.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="input/actions-and-bindings.html" class="xref page">Actions and bindings</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Chords, triggers, values, callbacks, and multiple bindings.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>KeyChord::triggerKey</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The key whose press completes the chord.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="input/contexts.html" class="xref page">Contexts and routing</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Modal windows, text fields, global shortcuts, holds, and pointer ownership.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>KeyChord::requiredKeys</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Keys that must already be held, for example Left Control and Left Shift.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="input/controllers.html" class="xref page">Controller hierarchy and ownership</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">BaseController, GameController, HumanController, AIController, and EditorController.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>InputActionTrigger</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>OnPress</code>, <code>OnRelease</code>, or <code>WhileHeld</code>.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="input/custom-controllers.html" class="xref page">Creating custom controllers</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Implementing, registering, initializing, and using a custom controller.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="input/lifecycle-and-integration.html" class="xref page">Frame lifecycle and integration</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Runtime order and editor, Player, and Spectator consumers.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="input/serialization-and-editor.html" class="xref page">Serialization and binding editor</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Saved configuration, runtime state, cloning, recording, and rebinding.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="input/api-reference.html" class="xref page">API reference</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Declarations, defaults, return values, and preconditions.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="input/troubleshooting.html" class="xref page">Troubleshooting and verification</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Diagnosis and the executable tests that establish each contract.</p></td>
 </tr>
 </tbody>
 </table>
-<div class="paragraph">
-<p><code>bind()</code> takes an optional callback; the controller also exposes an <code>onAction</code> delegate that
-receives every <code>InputActionEvent</code>. <code>isActionPressed()</code> and <code>getActionModifiers()</code> give the
-current state, and <code>InputModifier</code> is a bitmask of Shift/Control/Alt/Super. When several
-bindings match one event, <code>findBestBinding()</code> picks one, so more specific chords win over a
-bare key. <code>setBindings()</code> replaces the list wholesale, and <code>_bindings</code> is a <code>FIELD()</code>, so
-serialized controllers round-trip through JRM; <code>from_json</code> still accepts legacy modifier
-fields. The editor exposes these under <code>Editor/Windows/Editors/InputBindings</code>.</p>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_the_complete_path"><a class="anchor" href="#_the_complete_path"></a>The complete path</h2>
+<div class="sectionbody">
+<div class="imageblock">
+<div class="content">
+<img src="_images/input-pipeline.svg" alt="Collection" width="device state" height="contexts">
+</div>
+<div class="title">Figure 1. Window events become controller-local action state.</div>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Platform publishes keyboard, mouse-button, pointer-position, and wheel events.</p>
+</li>
+<li>
+<p><code>InputCollector</code> queues them. Focus loss invokes reset immediately.</p>
+</li>
+<li>
+<p><code>InputDeviceState</code> updates physical state, normalizes chord keys, reconstructs
+modifiers, and calculates pointer deltas.</p>
+</li>
+<li>
+<p><code>InputRouter</code> visits context layers in priority order and resolves one binding
+per receiving component for each press, movement, or wheel event.</p>
+</li>
+<li>
+<p>Each <code>InputController</code> has an independent <code>InputActionRuntime</code>, containing
+accepted button bindings, persistent holds, and frame transients.</p>
+</li>
+<li>
+<p>Consumers poll <code>isActive()</code> / <code>getActionValue()</code> or receive synchronous callbacks.</p>
+</li>
+</ol>
 </div>
 <div class="paragraph">
-<p>Chords are written with the left-hand modifier keys. <code>InputSystem</code> normalizes the right
-Shift/Control/Alt/Super keys to their left equivalents when queueing an event, so a chord
-declared with <code>Left_Control</code> also matches the right Control key.</p>
-</div>
+<p>Physical state is updated even while capture or a blocking context suppresses
+actions. This lets the system observe real releases and clear held buttons correctly.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_polled_actions_inputaction"><a class="anchor" href="#_polled_actions_inputaction"></a>Polled actions: InputAction</h2>
+<h2 id="_responsibilities"><a class="anchor" href="#_responsibilities"></a>Responsibilities</h2>
 <div class="sectionbody">
-<div class="paragraph">
-<p><code>KeyboardInputManger</code> and <code>MouseInputManger</code> own intrusive action references indexed by
-<code>Core::StringAtom</code> names. "Manger" is the current API spelling.
-<code>getOrCreate()</code> reuses the existing name; it does not change that action&#8217;s key binding.</p>
-</div>
-<div class="paragraph">
-<p><code>InputAction::update()</code> polls its key, applies repeat/frequency limits, snapshots left
-Shift/Alt/Ctrl, and passes that snapshot to <code>onPress</code>.
-Repeat defaults to enabled with zero delay. Disable repeat for one notification per press;
-frequency limits use elapsed <code>system_clock</code> milliseconds.</p>
-</div>
-<div class="paragraph">
-<p>Mouse actions also provide:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><code>onMouseClick</code>: current position on a qualifying press, using the same repeat policy.</p>
-</li>
-<li>
-<p><code>onMove</code>: position delta after the first sample establishes a baseline.</p>
-</li>
-<li>
-<p><code>onDrag</code>: position delta while Platform reports dragging and the action&#8217;s button condition matches.</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>A mouse click here is a press notification, not release detection.</p>
-</div>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
-<col style="width: 33.3333%;">
-<col style="width: 66.6667%;">
+<col style="width: 22.2222%;">
+<col style="width: 44.4444%;">
+<col style="width: 33.3334%;">
 </colgroup>
 <thead>
 <tr>
-<th class="tableblock halign-left valign-top">Owner</th>
-<th class="tableblock halign-left valign-top">Update path</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Responsibility</th>
+<th class="tableblock halign-left valign-top">Boundary</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">GameEditor</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Keyboard and mouse mappings after drawing editor windows.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>InputCollector</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Subscribe to one window, queue events, invoke focus-loss reset.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">No action resolution or context selection.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">EditorIntegration in GameOnly mode</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Editor keyboard mappings only.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>InputDeviceState</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Physical buttons, normalized chord snapshots, modifiers, pointer baseline.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">No binding configuration or callbacks.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Spectator</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Its own keyboard and mouse mappings during its scene tick.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>InputMap</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Editable configuration, minimum validation, most-specific chord resolution.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">No active state, Platform subscriptions, or ECS lifetime.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>InputContextStack</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Base, optional global, and temporary overlay layers.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">No callback dispatch or component ownership.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>InputRouter</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Non-owning registrations, layer priority, blocked holds, pointer ownership.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">No movement or AI decisions.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>InputActionRuntime</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Accepted bindings, holds, frame pulses, modifiers, values.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">No Platform subscriptions or layer priority.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>InputController</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Bindings, action queries, handlers, serialization, ECS registration.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">No actor possession or gameplay behavior.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>InputSystem</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Coordinate collector, device state, contexts, router; expose the engine entry point.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Does not own registered components or domain controllers.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Domain controllers</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Translate input or AI decisions into behavior; GameController tracks an actor.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Do not parse raw hardware events or duplicate context routing.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>NxECSBasedEditor</code></p></td>
@@ -393,73 +443,154 @@ frequency limits use elapsed <code>system_clock</code> milliseconds.</p>
 </tbody>
 </table>
 <div class="paragraph">
-<p>Editor scene ticks require viewport focus. These polled actions are not filtered by
-<code>InputContext</code>, so a shortcut that must not fire during gameplay has to check focus itself —
-as the Delete shortcut does with <code>isApplicationViewportFocused()</code>.</p>
+<p><code>GetInputSystem()</code> returns the application singleton. The current system is not
+partitioned into per-player/per-window instances. Processing and callbacks run
+synchronously on the calling runtime thread.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_editor_shortcuts"><a class="anchor" href="#_editor_shortcuts"></a>Editor shortcuts</h2>
+<h2 id="_first_working_example"><a class="anchor" href="#_first_working_example"></a>First working example</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p><code>GameEditor::setupShortcuts()</code> installs:</p>
+<p>This test gives Gameplay and Editor the same W binding. Switching the base context
+cancels the gameplay hold; only a fresh W press activates the editor action.</p>
 </div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">TEST_F(InputControllerTests, RoutesContextsAndReleasesHeldActions)
+{
+    auto game = InputController::Create("Game"_atom, InputContext::Gameplay);
+    auto editor = InputController::Create("Editor"_atom, InputContext::Editor);
+    game-&gt;bind("Move"_atom, KeyChord::Exact(Key::W), InputActionTrigger::WhileHeld);
+    editor-&gt;bind("Move"_atom, KeyChord::Exact(Key::W), InputActionTrigger::WhileHeld);
+    key(Key::W, State::Pressed);
+    frame();
+    EXPECT_TRUE(game-&gt;isActive("Move"_atom));
+    EXPECT_FALSE(editor-&gt;isActive("Move"_atom));
+    frame();
+    EXPECT_TRUE(game-&gt;isActive("Move"_atom));
+    GetInputSystem().setActiveContext(InputContext::Editor);
+    EXPECT_FALSE(game-&gt;isActive("Move"_atom));
+    key(Key::W, State::Released);
+    key(Key::W, State::Pressed);
+    frame();
+    EXPECT_TRUE(editor-&gt;isActive("Move"_atom));
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The fixture initializes <code>GetInputSystem()</code> with <code>Platform::GetWindow()</code>, selects
+Gameplay, and resets input around each test. <code>key()</code> publishes a window event;
+<code>frame()</code> calls <code>processEvents()</code>. Production code uses Runtime&#8217;s existing loop.</p>
+</div>
+<div class="paragraph">
+<p>For an actor-facing example reading <code>isActive("Run"_atom)</code>, see
+<a href="input/custom-controllers.html" class="xref page">Creating custom controllers</a>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_core_contracts"><a class="anchor" href="#_core_contracts"></a>Core contracts</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>Trigger semantics belong to the binding. <code>isActive()</code> is the boolean action query.</p>
+</li>
+<li>
+<p>Press/release pulses last until the next <code>processEvents()</code> begins.</p>
+</li>
+<li>
+<p>WhileHeld persists only while its accepted chord remains valid.</p>
+</li>
+<li>
+<p>Same-context controllers may receive the same input. Priority is between layers,
+not an exclusive winner between controllers within a layer.</p>
+</li>
+<li>
+<p>ConsumeMatched stops lower layers on a match. BlockLower also stops unmatched
+input on its selected channels.</p>
+</li>
+<li>
+<p>Cancellation clears runtime state silently; it never manufactures OnRelease.</p>
+</li>
+<li>
+<p>A held button does not become a new press after a context switch. Held modifiers
+remain available with a fresh trigger key.</p>
+</li>
+<li>
+<p>InputMap copies contain configuration only; runtime state remains independent.</p>
+</li>
+<li>
+<p>Possession uses a weak actor reference and does not transfer actor ownership.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_implementation_map"><a class="anchor" href="#_implementation_map"></a>Implementation map</h2>
+<div class="sectionbody">
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
-<col style="width: 28.5714%;">
-<col style="width: 28.5714%;">
-<col style="width: 42.8572%;">
+<col style="width: 42.8571%;">
+<col style="width: 57.1429%;">
 </colgroup>
 <thead>
 <tr>
-<th class="tableblock halign-left valign-top">Shortcut</th>
-<th class="tableblock halign-left valign-top">Action</th>
-<th class="tableblock halign-left valign-top">Path</th>
+<th class="tableblock halign-left valign-top">Location</th>
+<th class="tableblock halign-left valign-top">Contents</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">F1</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Toggle render mode</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Polled keyboard action, non-repeatable.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>sources/NxSubsystems/Input/InputTypes.{h,cpp}</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Contexts, channels, buttons, chords, triggers, events, modifiers, recording capture.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">F12</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Close the application</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Polled keyboard action.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>sources/NxWorld/Framework/Input/</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Controller hierarchy and routed input implementation.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Escape</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Clear selection</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Polled keyboard action.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>sources/NxRuntime/Runtime.cpp</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Frame ordering and integration hook.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Delete</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Delete selected objects from the scene</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Polled keyboard action; requires no modifiers and a focused viewport.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>sources/Editor/EditorIntegration.cpp</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Viewport, text-input, modal, and global-shortcut policy.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Left Ctrl + Left Shift + S</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Save all</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>InputController</code> chord in the <code>Editor</code> context.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>sources/Editor/GameEditor.cpp</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Editor/viewport action consumers.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>sources/NxWorld/Scene/Spectator.cpp</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2D/3D camera maps and behavior.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>game-example/Player.cpp</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Movement polling from a descendant InputController.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>tests/ECSTests/InputControllerTests.cpp</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Runtime, binding, callback, capture, serialization, and modifier contracts.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>tests/ECSTests/InputRoutingTests.cpp</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Context policies, cancellation, pointer ownership, routing mutation.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>tests/ECSTests/ControllerHierarchyTests.cpp</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Hierarchy, possession, child ownership, cloning, custom controller example.</p></td>
 </tr>
 </tbody>
 </table>
-<div class="paragraph">
-<p>Render-mode switching uses the same scene; see <a href="lifecycle.html" class="xref page">Application Lifecycle</a>.</p>
-</div>
-<div class="paragraph">
-<p>Implementation: <code>NxWorld/Framework/{InputSystem,InputController}.{h,cpp}</code>,
-<code>NxSubsystems/Input/{InputAction,InputManager,InputTypes}.{h,cpp}</code>,
-<code>Editor/GameEditor.cpp</code>, and <code>NxWorld/Scene/Spectator.cpp</code>.
-Checks: <code>tests/ECSTests/InputControllerTests.cpp</code>.</p>
-</div>
 </div>
 </div>
 <nav class="pagination">
   <span class="prev"><a href="ecs-overview.html">ECS Overview</a></span>
-  <span class="next"><a href="editor.html">Editor Structure</a></span>
+  <span class="next"><a href="input/actions-and-bindings.html">Actions and Bindings</a></span>
 </nav>
 </article>
   </div>

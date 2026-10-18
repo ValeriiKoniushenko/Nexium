@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1130" height="625" viewBox="0 0 1130 625" role="img" aria-labelledby="title desc">
+<title id="title">Persistent configuration and live relationships</title><desc id="desc">Saving editable bindings does not persist action acceptance, handlers, or possession.</desc>
+<defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#506177" stroke-width="1.6"/></marker><marker id="inherit" markerWidth="14" markerHeight="14" refX="12" refY="7" orient="auto"><path d="M1 1 L12 7 L1 13 Z" fill="white" stroke="#506177" stroke-width="1.4"/></marker></defs>
+<style>text{font-family:DejaVu Sans,Arial,sans-serif;fill:#20324a}.title{font-size:24px;font-weight:700}.subtitle{font-size:14px;fill:#53667c}.node{font-size:17px;font-weight:700}.body{font-size:14px}.label{font-size:13px;fill:#42556c}.small{font-size:12px;fill:#53667c}.head{font-size:15px;font-weight:700}</style>
+<rect width="1130" height="625" fill="#fff"/><rect x="1" y="1" width="1128" height="623" rx="12" fill="none" stroke="#d9e0e9"/>
+<text x="28" y="42" class="title" text-anchor="start">Persistent configuration and live relationships</text>
+<text x="28" y="69" class="subtitle" text-anchor="start">Saving editable bindings does not persist action acceptance, handlers, or possession.</text>
+<rect x="40" y="125" width="285" height="160" rx="9" fill="#f4eeff" stroke="#8056ad" stroke-width="1.6"/>
+<text x="56" y="154" class="node" text-anchor="start">InputBindingsEditor</text>
+<text x="56" y="182" class="body" text-anchor="start">Edit local vector</text>
+<text x="56" y="203" class="body" text-anchor="start">Apply with setBindings</text>
+<text x="56" y="224" class="body" text-anchor="start">Mark owner dirty</text>
+<rect x="420" y="125" width="285" height="160" rx="9" fill="#edf5ff" stroke="#3a68ad" stroke-width="1.6"/>
+<text x="436" y="154" class="node" text-anchor="start">InputController</text>
+<text x="436" y="182" class="body" text-anchor="start">_bindings + _inputContext</text>
+<text x="436" y="203" class="body" text-anchor="start">speed + mouseSensitivity</text>
+<text x="436" y="224" class="body" text-anchor="start">Reflected component tree</text>
+<rect x="800" y="125" width="285" height="160" rx="9" fill="#f3f5f8" stroke="#738094" stroke-width="1.6"/>
+<text x="816" y="154" class="node" text-anchor="start">Asset / scene storage</text>
+<text x="816" y="182" class="body" text-anchor="start">JRM component serialization</text>
+<text x="816" y="203" class="body" text-anchor="start">Custom InputBinding JSON</text>
+<text x="816" y="224" class="body" text-anchor="start">Save through owning asset</text>
+<polyline points="325,205 420,205" fill="none" stroke="#506177" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<text x="373" y="187" class="label" text-anchor="middle">apply</text>
+<polyline points="705,205 800,205" fill="none" stroke="#506177" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<text x="753" y="187" class="label" text-anchor="middle">save</text>
+<rect x="40" y="390" width="285" height="145" rx="9" fill="#fff1ef" stroke="#bc5449" stroke-width="1.6"/>
+<text x="56" y="419" class="node" text-anchor="start">Configuration edit</text>
+<text x="56" y="447" class="body" text-anchor="start">Cancel accepted state</text>
+<text x="56" y="468" class="body" text-anchor="start">Preserve callbacks</text>
+<text x="56" y="489" class="body" text-anchor="start">Quarantine existing holds</text>
+<polyline points="182,285 182,390" fill="none" stroke="#506177" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<rect x="420" y="390" width="665" height="145" rx="9" fill="#f3f5f8" stroke="#738094" stroke-width="1.6"/>
+<text x="436" y="419" class="node" text-anchor="start">Runtime-only relationships</text>
+<text x="436" y="447" class="body" text-anchor="start">Accepted holds and pulses; values; callback/delegate listeners</text>
+<text x="436" y="468" class="body" text-anchor="start">Router registration and gesture ownership; actor possession</text>
+<text x="436" y="489" class="body" text-anchor="start">Restored/clone objects initialize and reattach behavior explicitly</text>
+<text x="28" y="583" class="small" text-anchor="start">Clones copy map configuration but receive an independent runtime. Human/Editor reuse their restored direct input child.</text>
+</svg>

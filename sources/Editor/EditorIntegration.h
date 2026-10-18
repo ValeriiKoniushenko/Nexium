@@ -13,6 +13,7 @@
 
 #include "GameEditor.h"
 #include "NxWorld/Framework/ApplicationIntegration.h"
+#include "NxWorld/Framework/Input/InputSystem.h"
 #include "ObjectPicker.h"
 #include "ObjectSelectorManager.h"
 
@@ -34,6 +35,7 @@ namespace NX
         void initialize() override;
         void readFromCache() override;
         void writeToCache() override;
+        void updateInputRouting() override;
         void updateInput() override;
         void tick(float delta) override;
         void updateSceneInteraction(NX::Scene& scene) override;
@@ -55,6 +57,10 @@ namespace NX
         GameEditor _editor;
         ObjectSelectorManager _objectSelectorManager;
         ObjectPickerAggregator _objectPicker;
+        std::optional<InputContextGuard> _textInputContext;
+        std::optional<InputContextGuard> _modalContext;
+        std::optional<InputContextGuard> _viewportHoverContext;
+        std::optional<InputContextGuard> _pointerCaptureContext;
     };
 
     [[nodiscard]] EditorIntegration* GetEditorIntegration();

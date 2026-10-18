@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1140" height="630" viewBox="0 0 1140 630" role="img" aria-labelledby="title desc">
+<title id="title">Configuration versus action state</title><desc id="desc">One InputMap can be copied into several input components; their runtimes never become shared.</desc>
+<defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#506177" stroke-width="1.6"/></marker><marker id="inherit" markerWidth="14" markerHeight="14" refX="12" refY="7" orient="auto"><path d="M1 1 L12 7 L1 13 Z" fill="white" stroke="#506177" stroke-width="1.4"/></marker></defs>
+<style>text{font-family:DejaVu Sans,Arial,sans-serif;fill:#20324a}.title{font-size:24px;font-weight:700}.subtitle{font-size:14px;fill:#53667c}.node{font-size:17px;font-weight:700}.body{font-size:14px}.label{font-size:13px;fill:#42556c}.small{font-size:12px;fill:#53667c}.head{font-size:15px;font-weight:700}</style>
+<rect width="1140" height="630" fill="#fff"/><rect x="1" y="1" width="1138" height="628" rx="12" fill="none" stroke="#d9e0e9"/>
+<text x="28" y="42" class="title" text-anchor="start">Configuration versus action state</text>
+<text x="28" y="69" class="subtitle" text-anchor="start">One InputMap can be copied into several input components; their runtimes never become shared.</text>
+<rect x="55" y="110" width="430" height="200" rx="9" fill="#edf5ff" stroke="#3a68ad" stroke-width="1.6"/>
+<text x="71" y="139" class="node" text-anchor="start">InputBinding</text>
+<text x="71" y="167" class="body" text-anchor="start">action: StringAtom</text>
+<text x="71" y="188" class="body" text-anchor="start">chord: trigger + required held buttons</text>
+<text x="71" y="209" class="body" text-anchor="start">trigger: OnPress / WhileHeld / OnRelease</text>
+<text x="71" y="230" class="body" text-anchor="start">source: Button / PointerMove / Wheel</text>
+<rect x="705" y="110" width="370" height="200" rx="9" fill="#edf5ff" stroke="#3a68ad" stroke-width="1.6"/>
+<text x="721" y="139" class="node" text-anchor="start">InputMap</text>
+<text x="721" y="167" class="body" text-anchor="start">Editable vector of bindings</text>
+<text x="721" y="188" class="body" text-anchor="start">Minimum validity check</text>
+<text x="721" y="209" class="body" text-anchor="start">Most-specific match, first tie</text>
+<polyline points="485,205 705,205" fill="none" stroke="#506177" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<text x="595" y="188" class="label" text-anchor="middle">configuration entry</text>
+<rect x="55" y="400" width="450" height="155" rx="9" fill="#edf5ff" stroke="#3a68ad" stroke-width="1.6"/>
+<text x="71" y="429" class="node" text-anchor="start">Controller A runtime</text>
+<text x="71" y="457" class="body" text-anchor="start">Accepted bindings, held state, pulses</text>
+<text x="71" y="478" class="body" text-anchor="start">Aggregated values and modifier snapshots</text>
+<rect x="665" y="400" width="410" height="155" rx="9" fill="#edf5ff" stroke="#3a68ad" stroke-width="1.6"/>
+<text x="681" y="429" class="node" text-anchor="start">Controller B runtime</text>
+<text x="681" y="457" class="body" text-anchor="start">Own accepted bindings and pulses</text>
+<text x="681" y="478" class="body" text-anchor="start">Independent action state</text>
+<polyline points="830,310 830,350 280,350 280,400" fill="none" stroke="#506177" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<text x="513" y="339" class="label" text-anchor="middle">copy into A</text>
+<polyline points="925,310 925,400" fill="none" stroke="#506177" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<text x="997" y="365" class="label" text-anchor="middle">copy into B</text>
+<text x="28" y="597" class="small" text-anchor="start">Changing bindings cancels old acceptance. Action callbacks are separate from the editable binding vector.</text>
+</svg>

@@ -10,7 +10,7 @@
 #include "Player.h"
 
 #include "NxWorld/Animations/FrameByFrame/FrameByFrameAnimator.h"
-#include "NxWorld/Framework/InputController.h"
+#include "NxWorld/Framework/Input/InputController.h"
 
 using namespace Core;
 using namespace NX;
@@ -21,6 +21,7 @@ void Player::onTick(float delta)
 {
     SceneObj::RectangleAnimated::onTick(delta);
 
+    // tag::input-player-polling[]
     const auto* _input = findFirstChildOf<InputController>();
     auto* _animator = findFirstChildOf<Animation::FrameByFrameAnimator>();
 
@@ -29,15 +30,16 @@ void Player::onTick(float delta)
         return;
     }
 
-    const int horizontal = static_cast<int>(_input->isActionPressed("Move right"_atom))
-                           - static_cast<int>(_input->isActionPressed("Move left"_atom));
-    const int vertical = static_cast<int>(_input->isActionPressed("Move up"_atom))
-                         - static_cast<int>(_input->isActionPressed("Move down"_atom));
+    const int horizontal = static_cast<int>(_input->isActive("Move right"_atom))
+                           - static_cast<int>(_input->isActive("Move left"_atom));
+    const int vertical = static_cast<int>(_input->isActive("Move up"_atom))
+                         - static_cast<int>(_input->isActive("Move down"_atom));
 
     constexpr float diagonalFactor = 0.70710678f;
     const float movementFactor = horizontal != 0 && vertical != 0 ? diagonalFactor : 1.f;
     moveRight(static_cast<float>(horizontal) * _movementSpeed * movementFactor * delta);
     moveUp(static_cast<float>(vertical) * _movementSpeed * movementFactor * delta);
+    // end::input-player-polling[]
 
     StringAtom animation;
     if (vertical > 0)

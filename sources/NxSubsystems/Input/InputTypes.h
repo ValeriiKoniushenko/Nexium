@@ -12,6 +12,7 @@
 #include "Core/String.h"
 #include "Platform/Keyboard.h"
 #include "Platform/Mouse.h"
+#include "glm/vec2.hpp"
 
 #include <cstddef>
 #include <cstdint>
@@ -20,11 +21,35 @@
 
 namespace NX
 {
+    // tag::input-enums[]
     ENUM_CLASS();
     enum class InputContext : std::uint8_t
     {
         Editor,
-        Gameplay
+        Gameplay,
+        EditorViewport,
+        Modal,
+        TextInput,
+        BindingCapture
+    };
+
+    enum class InputChannel : std::uint8_t
+    {
+        Keyboard = 1,
+        Pointer = 2, // mouse
+        All = 3
+    };
+
+    [[nodiscard]] constexpr bool hasInputChannel(InputChannel mask, InputChannel channel) noexcept
+    {
+        return (static_cast<std::uint8_t>(mask) & static_cast<std::uint8_t>(channel)) != 0;
+    }
+
+    enum class InputEventType : std::uint8_t
+    {
+        Button,
+        PointerMove,
+        Wheel
     };
 
     ENUM_CLASS();
@@ -37,7 +62,9 @@ namespace NX
         Super = 1 << 3,
         All = (1 << 4) - 1
     };
+    // end::input-enums[]
 
+    // tag::input-button-api[]
     class InputButton
     {
     public:
@@ -87,10 +114,15 @@ namespace NX
             = Platform::Keyboard::Key::None;
     };
 
+    [[nodiscard]] InputButton NormalizeInputButton(InputButton button) noexcept;
+    [[nodiscard]] bool IsInputModifier(InputButton button) noexcept;
+    // end::input-button-api[]
+
     /// @brief RAII guard that suspends input actions while recording a shortcut.
     /// All instances share capture state: actions remain suspended while any guard exists.
     /// After the last guard is destroyed, suspension continues until all tracked held
     /// keyboard keys and mouse buttons are released or resetButtons() clears them.
+    // tag::input-capture-api[]
     class InputCapture
     {
     public:
@@ -110,6 +142,7 @@ namespace NX
 
         /// Clears button tracking and pending releases without ending live captures.
         static void resetButtons();
+        // end::input-capture-api[]
 
     private:
         static std::size_t _captureCount;
@@ -117,6 +150,7 @@ namespace NX
         static std::vector<InputButton> _heldButtons;
     };
 
+    // tag::input-chord[]
     struct KeyChord
     {
         /// Keyboard key or mouse button that completes the chord and triggers its action.
@@ -131,7 +165,9 @@ namespace NX
 
         [[nodiscard]] bool contains(InputButton key) const;
     };
+    // end::input-chord[]
 
+    // tag::input-trigger[]
     ENUM_CLASS();
     enum class InputActionTrigger : std::uint8_t
     {
@@ -139,7 +175,9 @@ namespace NX
         OnPress,
         OnRelease
     };
+    // end::input-trigger[]
 
+    // tag::input-events[]
     struct KeyInputEvent
     {
         InputButton key;
@@ -147,12 +185,32 @@ namespace NX
         InputModifier modifiers = InputModifier::None;
         int scancode = 0;
         std::vector<InputButton> pressedKeys;
+        InputEventType type = InputEventType::Button;
+        glm::vec2 value{};
+        glm::vec2 position{};
+
+        [[nodiscard]] bool isButtonEventType() const { return type == InputEventType::Button; }
+        [[nodiscard]] bool isPointerMoveEventType() const
+        {
+            return type == InputEventType::PointerMove;
+        }
+
+        [[nodiscard]] bool isKeyStatePressed() const
+        {
+            return state == Platform::Keyboard::KeyState::Pressed;
+        }
     };
 
     struct InputActionEvent
     {
         Core::StringAtom action;
         Platform::Keyboard::KeyState state = Platform::Keyboard::KeyState::None;
+        glm::vec2 value{};
+        glm::vec2 position{};
+        bool canceled = false;
+        InputModifier modifiers = InputModifier::None;
+
+        [[nodiscard]] constexpr bool isCanceled() const noexcept { return canceled; }
 
         [[nodiscard]] constexpr bool isPressed() const noexcept
         {
@@ -169,6 +227,7 @@ namespace NX
             return state == Platform::Keyboard::KeyState::Repeated;
         }
     };
+    // end::input-events[]
 } // namespace NX
 
 // Keep bitwise operators in the global namespace, consistently with Core::Tag operators.

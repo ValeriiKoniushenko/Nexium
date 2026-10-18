@@ -42,6 +42,21 @@ namespace NX
         return _gameInstance;
     }
 
+    void Runtime::processInputEvents()
+    {
+        Platform::Window::pollEvent();
+        if (auto* integration = _gameInstance.getApplicationIntegration())
+        {
+            integration->updateInputRouting();
+        }
+        else
+        {
+            GetInputSystem().setActiveContext(InputContext::Gameplay);
+            GetInputSystem().setGlobalContext(std::nullopt);
+        }
+        GetInputSystem().processEvents();
+    }
+
     void Runtime::runMainLoop()
     {
         NX_LATENCY_POINT("start");
@@ -62,11 +77,8 @@ namespace NX
         {
             NX_LATENCY_POINT("loop - start");
             clock.start();
-            Platform::Window::pollEvent();
-            GetInputSystem().setActiveContext(_gameInstance.isApplicationViewportFocused()
-                                                  ? InputContext::Gameplay
-                                                  : InputContext::Editor);
-            GetInputSystem().processEvents();
+
+            processInputEvents();
 
             if (!_gameInstance.isEditorMode())
             {

@@ -13,7 +13,7 @@
 #include "BindingsListWidget.h"
 #include "Editor/Windows/BaseWindow.h"
 #include "NxFundamental/Assets/ECSAsset.h"
-#include "NxWorld/Framework/InputController.h"
+#include "NxWorld/Framework/Input/InputController.h"
 
 #include <optional>
 

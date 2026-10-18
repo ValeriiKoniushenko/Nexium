@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1210" height="810" viewBox="0 0 1210 810" role="img" aria-labelledby="title desc">
+<title id="title">Runtime frame sequence</title><desc id="desc">Input policy and queued events are processed before scene behavior and the next editor UI frame.</desc>
+<defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#506177" stroke-width="1.6"/></marker><marker id="inherit" markerWidth="14" markerHeight="14" refX="12" refY="7" orient="auto"><path d="M1 1 L12 7 L1 13 Z" fill="white" stroke="#506177" stroke-width="1.4"/></marker></defs>
+<style>text{font-family:DejaVu Sans,Arial,sans-serif;fill:#20324a}.title{font-size:24px;font-weight:700}.subtitle{font-size:14px;fill:#53667c}.node{font-size:17px;font-weight:700}.body{font-size:14px}.label{font-size:13px;fill:#42556c}.small{font-size:12px;fill:#53667c}.head{font-size:15px;font-weight:700}</style>
+<rect width="1210" height="810" fill="#fff"/><rect x="1" y="1" width="1208" height="808" rx="12" fill="none" stroke="#d9e0e9"/>
+<text x="28" y="42" class="title" text-anchor="start">Runtime frame sequence</text>
+<text x="28" y="69" class="subtitle" text-anchor="start">Input policy and queued events are processed before scene behavior and the next editor UI frame.</text>
+<rect x="22" y="104" width="156" height="46" rx="7" fill="#edf5ff" stroke="#8ca8d1"/>
+<text x="100" y="133" class="head" text-anchor="middle">Runtime</text>
+<line x1="100" y1="155" x2="100" y2="726" stroke="#c5cdd8" stroke-dasharray="5 5"/>
+<rect x="207" y="104" width="156" height="46" rx="7" fill="#edf5ff" stroke="#8ca8d1"/>
+<text x="285" y="133" class="head" text-anchor="middle">Platform</text>
+<line x1="285" y1="155" x2="285" y2="726" stroke="#c5cdd8" stroke-dasharray="5 5"/>
+<rect x="392" y="104" width="156" height="46" rx="7" fill="#edf5ff" stroke="#8ca8d1"/>
+<text x="470" y="133" class="head" text-anchor="middle">Collector</text>
+<line x1="470" y1="155" x2="470" y2="726" stroke="#c5cdd8" stroke-dasharray="5 5"/>
+<rect x="597" y="104" width="156" height="46" rx="7" fill="#edf5ff" stroke="#8ca8d1"/>
+<text x="675" y="133" class="head" text-anchor="middle">Integration</text>
+<line x1="675" y1="155" x2="675" y2="726" stroke="#c5cdd8" stroke-dasharray="5 5"/>
+<rect x="807" y="104" width="156" height="46" rx="7" fill="#edf5ff" stroke="#8ca8d1"/>
+<text x="885" y="133" class="head" text-anchor="middle">InputSystem</text>
+<line x1="885" y1="155" x2="885" y2="726" stroke="#c5cdd8" stroke-dasharray="5 5"/>
+<rect x="1012" y="104" width="156" height="46" rx="7" fill="#edf5ff" stroke="#8ca8d1"/>
+<text x="1090" y="133" class="head" text-anchor="middle">Scene / UI</text>
+<line x1="1090" y1="155" x2="1090" y2="726" stroke="#c5cdd8" stroke-dasharray="5 5"/>
+<polyline points="100,192 285,192" fill="none" stroke="#506177" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<text x="193" y="181" class="label" text-anchor="middle">poll events</text>
+<polyline points="285,260 470,260" fill="none" stroke="#506177" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<text x="378" y="249" class="label" text-anchor="middle">queue input</text>
+<polyline points="100,332 675,332" fill="none" stroke="#506177" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<text x="388" y="321" class="label" text-anchor="middle">updateInputRouting()</text>
+<polyline points="675,402 885,402" fill="none" stroke="#506177" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<text x="780" y="391" class="label" text-anchor="middle">publish layers</text>
+<polyline points="100,472 885,472" fill="none" stroke="#506177" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<text x="493" y="461" class="label" text-anchor="middle">processEvents(): synchronize, clear pulses, drain FIFO</text>
+<polyline points="885,542 1090,542" fill="none" stroke="#506177" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<text x="988" y="531" class="label" text-anchor="middle">action callbacks</text>
+<polyline points="100,613 1090,613" fill="none" stroke="#506177" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<text x="595" y="602" class="label" text-anchor="middle">scene tick / action polling, then editor UI and scene drawing</text>
+<polyline points="100,684 285,684" fill="none" stroke="#506177" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<text x="193" y="673" class="label" text-anchor="middle">swap / timing</text>
+<text x="28" y="770" class="small" text-anchor="start">Editor scene tick requires viewport focus. Routing uses the last published UI focus/hover/capture state at its pre-input boundary.</text>
+</svg>

@@ -135,6 +135,7 @@ namespace NX
     void NxECSBasedEditorEWC::onInitialize()
     {
         NxEditorBaseEditorEWC::onInitialize();
+        registerEditorAdapters();
     }
 
     void NxECSBasedEditorEWC::onOpen()

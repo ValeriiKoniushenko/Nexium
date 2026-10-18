@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Frame Lifecycle and Integration :: Nexium Engine</title>
+    <link rel="prev" href="custom-controllers.html">
+    <link rel="next" href="serialization-and-editor.html">
+    <meta name="generator" content="Antora 3.2.1">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="../../../..">Nexium Engine</a>
+      <button class="navbar-burger" aria-controls="topbar-nav" aria-expanded="false" aria-label="Toggle main menu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Products</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="#">Product A</a>
+            <a class="navbar-item" href="#">Product B</a>
+            <a class="navbar-item" href="#">Product C</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Services</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="#">Service A</a>
+            <a class="navbar-item" href="#">Service B</a>
+            <a class="navbar-item" href="#">Service C</a>
+          </div>
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="button is-primary" href="#">Download</a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="nexium" data-version="latest">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <button class="nav-menu-toggle" aria-label="Toggle expand/collapse all" style="display: none"></button>
+    <h3 class="title"><a href="../../index.html">Nexium Engine Documentation</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../../index.html">Overview</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../getting-started.html">Getting Started</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../installation.html">Installation</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Engine Architecture</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../index.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../architecture-review.html">Architecture and Migration Review</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ue5-alignment.html">UE5 Patterns for Nexium</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../module-graph.html">Module Graph</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../lifecycle.html">Application Lifecycle</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../threading.html">Threading Model</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../memory.html">Memory Model</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../resource-system.html">Resource System</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../file-io.html">File I/O</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ecs-overview.html">ECS Overview</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../input-system.html">Input System</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="actions-and-bindings.html">Actions and Bindings</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="contexts.html">Contexts and Routing</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="controllers.html">Controller Hierarchy and Ownership</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="custom-controllers.html">Creating Custom Controllers</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="3">
+    <a class="nav-link" href="lifecycle-and-integration.html">Frame Lifecycle and Integration</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="serialization-and-editor.html">Serialization and Binding Editor</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="api-reference.html">API Reference</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="troubleshooting.html">Troubleshooting and Verification</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Rendering</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../rendering/index.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../rendering/pipeline.html">Rendering Pipeline</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../rendering/renderer-architecture.html">Rendering Responsibilities</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Materials</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../rendering/materials/shader-system.html">Shader System</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Gameplay</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../gameplay/index.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../gameplay/scenes.html">Scenes</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../gameplay/components.html">Components</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../gameplay/scripting.html">Gameplay Hooks</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../gameplay/prefabs.html">Blueprint Templates</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Build &amp; Toolchain</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../build/index.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../build/cmake-structure.html">CMake Structure</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../build/ci-cd.html">CI/CD</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../about/index.html">About</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Nexium Engine Documentation</span>
+    <span class="version">latest</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <div class="title"><a href="../../index.html">Nexium Engine Documentation</a></div>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../../index.html">latest</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../index.html">Nexium Engine Documentation</a></li>
+    <li>Engine Architecture</li>
+    <li><a href="../input-system.html">Input System</a></li>
+    <li><a href="lifecycle-and-integration.html">Frame Lifecycle and Integration</a></li>
+  </ul>
+</nav>
+<div class="edit-this-page"><a href="file:///home/alex/Desktop/nexium//docs/nexium/modules/engine_architecture/pages/input/lifecycle-and-integration.adoc">Edit this Page</a></div>
+</div>
+  <div class="content">
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">Frame Lifecycle and Integration</h1>
+<div id="toc" class="toc">
+<div id="toctitle">Table of Contents</div>
+<ul class="sectlevel1">
+<li><a href="#_startup_and_registration">Startup and registration</a></li>
+<li><a href="#_runtime_frame_order">Runtime frame order</a></li>
+<li><a href="#_inside_processevents">Inside processEvents</a></li>
+<li><a href="#_editor_routing_policy">Editor routing policy</a></li>
+<li><a href="#_editor_commands_and_viewport_actions">Editor commands and viewport actions</a></li>
+<li><a href="#_spectator_camera_consumers">Spectator camera consumers</a></li>
+<li><a href="#_player_consumer">Player consumer</a></li>
+<li><a href="#_focus_loss_and_reset">Focus loss and reset</a></li>
+<li><a href="#_threading_and_mutation">Threading and mutation</a></li>
+<li><a href="#_legacy_boundary">Legacy boundary</a></li>
+</ul>
+</div>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>Input is processed once in Runtime before scene/controller behavior is ticked.
+ApplicationIntegration supplies context policy at that boundary. Individual domain
+controllers consume already-routed actions rather than polling hardware themselves.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_startup_and_registration"><a class="anchor" href="#_startup_and_registration"></a>Startup and registration</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><code>GameInstance::initialize()</code> creates the Platform window, then initializes the input
+system with that window. InputCollector installs keyboard, mouse-button, pointer,
+wheel, and focus subscriptions. Its initialization is idempotent.</p>
+</div>
+<div class="paragraph">
+<p>The collector is currently bound to one window; it is not a window-switching API.
+Do not initialize the same singleton with different windows expecting independent
+input streams.</p>
+</div>
+<div class="paragraph">
+<p>InputController registers itself during onInitialize. onDeinitialize and its
+destructor unregister it. Registration does not retain a strong owner.
+Repeated registration of the same pointer is ignored.</p>
+</div>
+<div class="paragraph">
+<p>The named/context <code>InputController::Create(name, context)</code> overload initializes
+the component before returning. The macro-provided no-argument Create only
+allocates; initialize it or attach it through a lifecycle path that initializes children.
+HumanController/EditorController mutable getInput ensures initialization and child creation.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_runtime_frame_order"><a class="anchor" href="#_runtime_frame_order"></a>Runtime frame order</h2>
+<div class="sectionbody">
+<div class="imageblock">
+<div class="content">
+<img src="../_images/input-frame-sequence.svg" alt="Platform poll" width="routing policy" height="input processing">
+</div>
+<div class="title">Figure 1. The input frame precedes scene behavior and the editor&#8217;s new UI frame.</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">Platform::Window::pollEvent();
+if (auto* integration = _gameInstance.getApplicationIntegration())
+{
+    integration-&gt;updateInputRouting();
+}
+else
+{
+    GetInputSystem().setActiveContext(InputContext::Gameplay);
+    GetInputSystem().setGlobalContext(std::nullopt);
+}
+GetInputSystem().processEvents();</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The order is:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Poll window events; collector subscriptions enqueue input.</p>
+</li>
+<li>
+<p>Call integration <code>updateInputRouting()</code>, or select Gameplay/no global without integration.</p>
+</li>
+<li>
+<p>Call <code>processEvents()</code> to clear old pulses, update device state, and dispatch queued events.</p>
+</li>
+<li>
+<p>Tick the scene in GameOnly, or only while the viewport is focused in Editor.</p>
+</li>
+<li>
+<p>Update/draw the editor and scene using the appropriate rendering path.</p>
+</li>
+<li>
+<p>Tick GameInstance when a camera exists, swap buffers, and record frame duration.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>The scene uses the previous measured frame delta; the first delta is zero.
+Input callbacks can run even if scene ticking is gated by viewport focus.
+Camera movement implemented through held-action polling requires its component
+to tick; pointer callbacks can run during input processing.</p>
+</div>
+<div class="paragraph">
+<p>Do not call processEvents again from an individual controller or an editor widget.
+A second call starts another input frame and clears Press/Release/pointer pulses.
+Likewise, components should not subscribe to raw hardware simply to recreate
+semantic actions already covered by the routed system.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_inside_processevents"><a class="anchor" href="#_inside_processevents"></a>Inside processEvents</h2>
+<div class="sectionbody">
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Synchronize registrations with context availability and physical held state.</p>
+</li>
+<li>
+<p>Clear each controller&#8217;s previous transients while retaining valid held bindings.</p>
+</li>
+<li>
+<p>Drain queued events in FIFO order.</p>
+</li>
+<li>
+<p>For each Button event, update global recording-capture tracking.</p>
+</li>
+<li>
+<p>Apply the event to device state, even while capture is active.</p>
+</li>
+<li>
+<p>Remove released buttons from router quarantine and gesture ownership.</p>
+</li>
+<li>
+<p>If recording capture was active before or after tracking the event, cancel actions
+and suppress delivery; otherwise route it through the layers.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>Checking capture both before and after the update suppresses the final release
+that clears a recording fence. That release does not leak into normal actions.
+Pointer samples still establish/update the physical baseline while suppressed.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_editor_routing_policy"><a class="anchor" href="#_editor_routing_policy"></a>Editor routing policy</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><code>EditorIntegration::updateInputRouting()</code> owns the engine/editor choice of contexts.
+It uses editor visibility, viewport focus/hover, ImGui capture flags, active modals,
+and router pointer ownership.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 42.8571%;">
+<col style="width: 57.1429%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Condition</th>
+<th class="tableblock halign-left valign-top">Base/global selection</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Editor visible and viewport focused</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Base EditorViewport.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Editor visible without viewport focus</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Base Editor.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">GameOnly or editor not visible</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Base Gameplay.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Editor is enabled, including GameOnly with an attached editor</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Global Editor, allowing shortcuts such as F1 to return.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Editor disabled</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">No global Editor layer.</p></td>
+</tr>
+</tbody>
+</table>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 30%;">
+<col style="width: 30%;">
+<col style="width: 40%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Overlay</th>
+<th class="tableblock halign-left valign-top">Policy/channels</th>
+<th class="tableblock halign-left valign-top">When used</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Viewport hover</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ConsumeMatched / Pointer</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Visible editor, unfocused viewport, and viewport hovered or an accepted pointer gesture exists.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Text entry</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">BlockLower / Keyboard</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">WantTextInput, or WantCaptureKeyboard outside a focused viewport.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">UI pointer capture</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">BlockLower / Pointer, with TextInput identity</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">WantCaptureMouse outside the hovered viewport, while no routed gesture owns the pointer.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Modal</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">BlockLower / All</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Visible editor and a top-most ImGui modal exists; lower temporary editor overlays are removed.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>ImGui capture flags and viewport state are the last published UI state at this
+pre-input point. The editor&#8217;s new UI frame is built later.
+This is the current ordering, not a guarantee that every newly opened widget is
+reflected in routing before its first draw.</p>
+</div>
+<div class="paragraph">
+<p>Overlay guards are retained as members and updated only when their conditions
+change. A modal removes the hover/text/pointer guards before pushing its All blocker.
+InputSystem synchronizes cancellation immediately when these guards change.</p>
+</div>
+<div class="paragraph">
+<p>The complete integration hook is included from source for policy maintenance:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">void EditorIntegration::updateInputRouting()
+{
+    auto&amp; input = GetInputSystem();
+    const bool editorVisible = _editor.isEnabled() &amp;&amp; _runtime.getGameInstance().isEditorMode();
+    const auto* viewport = _editor.getWindow&lt;GameViewportEWC&gt;();
+    const bool viewportFocused = editorVisible &amp;&amp; viewport &amp;&amp; viewport-&gt;isFocused();
+    const bool viewportHovered = editorVisible &amp;&amp; viewport &amp;&amp; viewport-&gt;isHovered();
+    input.setActiveContext(
+        editorVisible ? (viewportFocused ? InputContext::EditorViewport : InputContext::Editor)
+                      : InputContext::Gameplay);
+    input.setGlobalContext(_editor.isEnabled() ? std::optional{ InputContext::Editor }
+                                               : std::nullopt);
+
+    const auto setOverlay =
+        [&amp;input](std::optional&lt;InputContextGuard&gt;&amp; guard, bool enabled, InputContextLayer layer)
+    {
+        if (enabled &amp;&amp; !guard)
+        {
+            guard.emplace(input.pushContext(layer));
+        }
+        else if (!enabled)
+        {
+            guard.reset();
+        }
+    };
+    const auto&amp; io = ImGui::GetIO();
+    const bool modalOpen = editorVisible &amp;&amp; ImGui::GetTopMostPopupModal();
+    if (modalOpen)
+    {
+        _viewportHoverContext.reset();
+        _textInputContext.reset();
+        _pointerCaptureContext.reset();
+        setOverlay(
+            _modalContext, true,
+            { .context = InputContext::Modal, .policy = InputContextPolicy::BlockLower });
+        return;
+    }
+    _modalContext.reset();
+    const bool pointerCaptured = input.hasPointerCapture();
+    setOverlay(_viewportHoverContext,
+               editorVisible &amp;&amp; (viewportHovered || pointerCaptured) &amp;&amp; !viewportFocused,
+               { .context = InputContext::EditorViewport, .channels = InputChannel::Pointer });
+    setOverlay(_textInputContext,
+               editorVisible
+                   &amp;&amp; (io.WantTextInput || (io.WantCaptureKeyboard &amp;&amp; !viewportFocused)),
+               { .context = InputContext::TextInput,
+                 .policy = InputContextPolicy::BlockLower,
+                 .channels = InputChannel::Keyboard });
+    setOverlay(_pointerCaptureContext,
+               editorVisible &amp;&amp; io.WantCaptureMouse &amp;&amp; !viewportHovered &amp;&amp; !pointerCaptured,
+               { .context = InputContext::TextInput,
+                 .policy = InputContextPolicy::BlockLower,
+                 .channels = InputChannel::Pointer });
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><code>EditorIntegration::updateInput()</code> currently has an empty implementation. It remains
+an integration hook; routed input is already processed before the scene tick.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_editor_commands_and_viewport_actions"><a class="anchor" href="#_editor_commands_and_viewport_actions"></a>Editor commands and viewport actions</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>GameEditor owns separate EditorControllers for shortcuts and viewport interactions.
+The viewport controller changes its child&#8217;s context to EditorViewport.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 22.2222%;">
+<col style="width: 33.3333%;">
+<col style="width: 44.4445%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Input</th>
+<th class="tableblock halign-left valign-top">Context/action</th>
+<th class="tableblock halign-left valign-top">Behavior</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">F12</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Editor / Close editor</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Close the window.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Control+Shift+S</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Editor / Save all</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Save GameInstance state to cache.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">F1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Editor / Toggle render mode</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Switch the shared scene&#8217;s editor/game rendering path.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Escape</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Editor / Cancel action</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Clear selected objects.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Delete</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">EditorViewport / Del object from scene</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Delete selected components only when the callback reports no modifiers.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Left mouse</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">EditorViewport / Select object</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OnPress pulse polled after UI drawing, with current viewport/gizmo/drag-drop checks.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">_editorController = new EditorController("Editor shortcuts"_atom);
+_viewportController = new EditorController("Editor viewport"_atom);
+auto&amp; editorInput = _editorController-&gt;getInput();
+auto&amp; viewportInput = _viewportController-&gt;getInput();
+viewportInput.setInputContext(InputContext::EditorViewport);
+editorInput.bind("Close editor"_atom, KeyChord::Exact(Keyboard::Key::F12),
+                 [](const InputActionEvent&amp;) { GetWindow().close(); });
+editorInput.bind(
+    "Save all"_atom,
+    KeyChord{ .triggerKey = Keyboard::Key::S,
+              .requiredKeys = { Keyboard::Key::Left_Control, Keyboard::Key::Left_Shift } },
+    [](const InputActionEvent&amp;) { gGameInstance-&gt;saveAllToCache(); });
+
+viewportInput.bind(
+    "Del object from scene"_atom, KeyChord::Exact(Keyboard::Key::Delete),
+    [](const InputActionEvent&amp; event)
+    {
+        if (event.modifiers == InputModifier::None)
+        {
+            for (auto&amp;&amp; obj :
+                 GetObjectSelectorManager()-&gt;getSelectedObjects() | std::views::values)
+            {
+                if (auto* comp = dynamic_cast&lt;BaseComponent*&gt;(obj.get()))
+                {
+                    gGameInstance-&gt;gameScene.deleteFromSceneOrFromObject(comp);
+                }
+            }
+        }
+    });
+
+editorInput.bind("Toggle render mode"_atom, KeyChord::Exact(Keyboard::Key::F1),
+                 [](const InputActionEvent&amp;) { gGameInstance-&gt;toggleRenderMode(); });
+editorInput.bind("Cancel action"_atom, KeyChord::Exact(Keyboard::Key::Escape),
+                 [](const InputActionEvent&amp;)
+                 { GetObjectSelectorManager()-&gt;deselectAllAndClear(); });
+viewportInput.bind("Select object"_atom, KeyChord::Exact(Mouse::Key::Left));</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Selection is deliberately a consumer check as well as a routed action. A pulse
+does not automatically imply picking should occur over a gizmo or drag/drop target.
+Editor scene ticking requires viewport focus, while pointer hover routing may
+still permit viewport interaction without keyboard focus.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_spectator_camera_consumers"><a class="anchor" href="#_spectator_camera_consumers"></a>Spectator camera consumers</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>BaseSpectator reuses an existing descendant input component when available.
+Otherwise it creates an EditorController for EditorViewport in editor mode or a
+HumanController in Gameplay for game mode. The human controller possesses the
+spectator Actor. Reinitialization restores that possession rather than replacing
+the configured map.</p>
+</div>
+<div class="paragraph">
+<p>Spectator3D defaults include:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>W/S forward/backward; A/D left/right; R/F up/down, all WhileHeld.</p>
+</li>
+<li>
+<p>Shift fast movement and Control slow movement.</p>
+</li>
+<li>
+<p>RMB-gated PointerMove for rotation.</p>
+</li>
+<li>
+<p>Wheel for camera scrolling.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Spectator2D uses middle-button PointerMove for panning and wheel input for
+camera movement/zoom, with modifiers handled by the consumer.
+Callbacks apply sensitivity, speed, modifier scaling, and camera-specific constraints.
+InputController&#8217;s reflected speed/sensitivity values are settings consumed here;
+the core runtime does not transform action values using them.</p>
+</div>
+<div class="paragraph">
+<p>Defaults are installed only when the map is empty. Handlers are restored independently
+on initialization, so user-edited bindings survive deinitialization/reinitialization.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_player_consumer"><a class="anchor" href="#_player_consumer"></a>Player consumer</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The sample Player searches for a descendant InputController and polls semantic
+movement actions. It computes horizontal/vertical intent, applies diagonal
+normalization and delta time, and selects an animation.
+It does not need actor possession to use action input.
+See <a href="custom-controllers.html#direct-composition" class="xref page">Direct composition</a>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_focus_loss_and_reset"><a class="anchor" href="#_focus_loss_and_reset"></a>Focus loss and reset</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Focus loss invokes resetInput from the collector&#8217;s focus subscription, without
+waiting for the next scene tick. It clears queued events, held physical buttons,
+pointer baseline, action state, gesture ownership, quarantine, and the recording
+release fence. A focus loss followed by focus gain before the next frame still
+discards previously queued/held input.</p>
+</div>
+<div class="paragraph">
+<p>Reset preserves binding configuration, handlers, registrations, context layers,
+and live InputCapture guards. It is not a shutdown or map-clear operation.
+After resetting the pointer baseline, the next cursor sample yields zero delta.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_threading_and_mutation"><a class="anchor" href="#_threading_and_mutation"></a>Threading and mutation</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The normal path is single-threaded synchronous dispatch in Runtime.
+The implementation provides no locking around map editing, context changes,
+registrations, or InputCapture&#8217;s static state.
+Do these operations on the same thread as input processing.</p>
+</div>
+<div class="paragraph">
+<p>Callback-time changes on that thread are supported through handle snapshots,
+registration IDs, and binding/runtime revisions. Destruction or revision changes
+invalidate queued recipients without keeping every pending component alive.
+Current emission retains its own component/delegate as needed.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_legacy_boundary"><a class="anchor" href="#_legacy_boundary"></a>Legacy boundary</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><code>KeyboardInputManger</code>, <code>MouseInputManger</code>, and <code>InputAction</code> still exist in
+NxSubsystems/Input. Some editor-local paths, such as NxECSBasedEditor shortcuts,
+still use legacy managers; ImGui also has local input handling.
+Their repeat/frequency behavior belongs to the old polling implementation.</p>
+</div>
+<div class="paragraph">
+<p>The context stack governs routed InputController actions. It is not automatically
+a universal filter for every raw Platform subscriber or ImGui interaction.
+The binding recorder intentionally observes raw events while routed actions are
+suppressed. InputCapture also gates legacy actions.
+When migrating an old consumer, replace its raw/polling action behavior with a
+configured input component and assign its intended context explicitly.</p>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="custom-controllers.html">Creating Custom Controllers</a></span>
+  <span class="next"><a href="serialization-and-editor.html">Serialization and Binding Editor</a></span>
+</nav>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script id="site-script" src="../../../../_/js/site.js" data-ui-root-path="../../../../_"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

@@ -1,0 +1,214 @@
+= Input Troubleshooting and Verification
+:toc:
+:toclevels: 3
+
+Start from the semantic action and its owning InputController, then work outward:
+configuration, lifecycle/enable state, context policy, physical event, and consumer timing.
+The same physical button can be valid in one map and unavailable in another.
+
+== An action is never active
+
+. Confirm the exact StringAtom name matches the binding and consumer.
+. Confirm Button has a non-None trigger, or the intended PointerMove/Wheel source.
+. Confirm the component initialized and is still owned; router registration is non-owning.
+. Confirm `isInputEnabled()` and every ancestor's enable state.
+. Confirm the context is present and not blocked/consumed by a higher layer.
+. Confirm a fresh Press occurred after initialization, context switch, or rebinding.
+. Confirm Runtime processes input before the consumer reads it.
+. For pointer movement, remember the first sample has zero delta and mouse gates
+  need a valid accepted press after becoming available.
+
+`isInputEnabled()` can be true in an inactive context. That query is not proof of
+routing availability. Conversely, disabling a domain controller gates its owned child.
+
+== A command fires twice
+
+[cols="3,5",options="header"]
+|===
+|Cause |Correction
+|Two controllers in one context bind the same input
+|Enable only intended consumers or assign separate contexts.
+|Callback and pulse polling both execute the command
+|Choose one execution path.
+|Several simulation ticks read one OnPress pulse
+|Consume/queue commands at the simulation boundary; action reads do not consume pulses.
+|Duplicate delegate subscriptions after reinitialization
+|Own/release subscription IDs and install handlers deliberately.
+|A legacy/raw subscriber also handles the same input
+|Audit remaining legacy and ImGui-local consumers; routed contexts do not filter all raw subscribers.
+|===
+
+OS Button Repeat does not retrigger routed actions. If repeats appear, check legacy
+polling behavior or your own consumer update logic.
+
+== A held action does not resume after a modal
+
+That is expected. Cancellation discards the accepted hold, and the already-held
+non-modifier button remains quarantined until release.
+Release and press again. No synthetic Press is created when the modal closes.
+
+If a hold seems stuck after release, check whether another binding for the same
+action remains accepted. Activity is OR across contributing bindings.
+Physical left/right modifiers also remain logically held until both sides are released.
+
+== OnRelease does not run
+
+An OnRelease binding needs an accepted earlier Press. It does not fire if:
+
+* Its context was unavailable on Press.
+* A higher layer consumed that Press.
+* Capture suppressed the gesture.
+* The binding was canceled by modal/context/enable/focus/map changes.
+* The component was destroyed/deinitialized.
+
+Cancellation emits neither OnRelease nor a canceled event.
+Use explicit interaction cleanup when canceled gestures need domain-level cleanup.
+
+OnRelease may run when a required key is released before the trigger: the accepted
+chord has ended. Decide whether that rule fits the command you configure.
+
+== Rebinding appears ineffective
+
+`bind()` replaces the first entry with the same action, and false can mean a valid
+replacement. Do not treat every false as a rejected configuration.
+Use setBindings for alternate bindings of one action.
+
+`getInputMap()` returns a copy; editing it requires setInputMap to apply.
+`setBindings()` preserves handlers but cancels holds, even for equal configuration.
+Renaming an action does not rename its callback or consumer atom.
+Release any already-held trigger before trying the new binding.
+
+== Camera movement is missing or jumps
+
+* First pointer sample only establishes a baseline. Focus loss resets that baseline.
+* Input values are window-coordinate deltas/scroll offsets, not world coordinates.
+* Router pointer ownership is not OS cursor locking.
+* Current editor routing uses previously published focus/hover/ImGui state.
+* Scene tick is gated by viewport focus; callbacks and held polling have different timing.
+* Apply sensitivity and delta time exactly where the behavior needs them. The input
+  layer does not scale raw deltas.
+
+After modal cancellation, an old held RMB does not restore look ownership. Release
+and press again. Use hasPointerCapture only as an ownership query, not as proof
+that every mouse event is delivered.
+
+== A clone/restored controller is inactive
+
+Initialize the clone, reinstall callbacks/subscriptions, and restore actor possession.
+Runtime action state is intentionally fresh, and possession is not copied.
+Human/Editor mutable getInput creates/reuses a direct child; const getInput requires
+that child already exists and aborts if absent.
+
+Ensure defaults do not overwrite a restored map. Spectator installs defaults only
+when its vector is empty; that convention needs extra state if intentionally empty
+maps should stay empty.
+
+== Recording leaves gameplay suppressed
+
+Check live InputCapture guards and physical buttons still awaiting release.
+The fence intentionally outlives the last guard until all tracked holds end.
+Both modifier sides count. Focus loss/reset clears tracking, but a live guard
+still suppresses actions.
+
+BindingCapture context identity alone does not start or stop recording.
+The widget owns a separate guard and raw subscriptions.
+
+== Callback mutation
+
+A callback may destroy or rebind another controller, switch context, or disable
+input. Later pending recipients are revalidated and may be skipped.
+This is supported synchronous mutation, not permission to edit input from another thread.
+Do not retain raw actor/component pointers across uncertain ownership changes.
+
+The action-specific callback runs before onAction. Current emission copies its
+callback/delegate, so editing the handler inside that callback affects subsequent
+events rather than replacing the call already in progress.
+
+== Executable contract map
+
+These test names identify focused regression coverage. Full-suite execution remains
+required for final verification.
+
+[cols="3,5",options="header"]
+|===
+|Contract |Tests
+|Context switches and held state
+|InputControllerTests.RoutesContextsAndReleasesHeldActions;
+InputControllerTests.DisableAndReenableDoesNotLeaveStuckKeys
+|Specificity and modifier aliases
+|InputControllerTests.MostSpecificChordWinsAndRightModifiersWork;
+InputControllerTests.ReleasingOneModifierSideKeepsHeldChordWhileOtherSideIsHeld
+|Pulse lifetime / same-frame taps
+|InputControllerTests.ReleaseTriggerLastsOneFrame;
+InputControllerTests.PressAndReleaseWithinOneFramePreserveConfiguredPulses
+|Alternate bindings
+|InputControllerTests.DuplicateActionsUseTheActivatedBindingsReleaseTrigger;
+InputControllerTests.ReleasingOneBindingKeepsAnotherBindingOfTheSameActionHeld
+|Same-context delivery
+|InputControllerTests.SameContextControllersMayUseTheSamePhysicalButton;
+InputRoutingTests.ConsumingLayerDeliversToAllItsControllersAndPassesUnmatchedInput
+|Modal/selective cancellation
+|InputRoutingTests.ModalBlocksUnmatchedInputAndCancelsWithoutReleaseAction;
+InputRoutingTests.ConsumingOverlayCancelsOnlyShadowedHeldBindings
+|Text-input channels
+|InputRoutingTests.TextInputBlocksKeyboardWhilePointerRemainsAvailable
+|Pointer ownership
+|InputRoutingTests.DragRequiresAcceptedPressAndModalCancelsItsOwnership
+|Mutation safety
+|InputControllerTests.CallbackCanDestroyAnotherRegisteredController;
+InputControllerTests.CallbackMayReleaseItsOwnControllerAndStillDeliverDelegate;
+InputRoutingTests.ContextSwitchInsideCallbackSkipsOtherRecipients;
+InputRoutingTests.RebindingAnotherRecipientInvalidatesPreviouslySelectedBinding
+|Rebinding / callbacks
+|InputControllerTests.EditingBindingsPreservesCallbacksAndResetsHeldState;
+InputControllerTests.TemporarilyRemovingAnActionDoesNotUnregisterItsCallback
+|Capture / focus loss
+|InputControllerTests.CaptureWaitsForBothModifierSidesToBeReleased;
+InputControllerTests.FocusLossClearsInputCaptureReleaseFence;
+InputControllerTests.FocusLossClearsHeldAndQueuedInputEvenIfFocusReturnsBeforeNextFrame
+|Serialization / map independence
+|InputControllerTests.BindingSerializationPreservesChordAndTrigger;
+InputControllerTests.MouseSupportPreservesLegacyKeyboardSerialization;
+InputControllerTests.ReusedInputMapDoesNotShareRuntimeState
+|Hierarchy / ownership
+|ControllerHierarchyTests.ControllersFollowRequestedHierarchyAndRegisterWithFactory;
+ControllerHierarchyTests.PossessionDoesNotKeepActorAliveOrTransferToClone
+|Custom controller
+|ControllerHierarchyTests.CustomHumanControllerRegistersAndDrivesItsPossessedActor
+|Preserving edited defaults
+|InputRoutingTests.SpectatorInitializationPreservesItsCustomInputMap
+|===
+
+== Repository verification commands
+
+From the repository root, use the configured Debug build:
+
+. Build with `cmake --build build --parallel`.
+. Run the full suite with `build/bin/Nexium_Tests`.
+. Run the graphical smoke check with `build/bin/TemplateGame --timeout 5`.
+
+Tests are run directly; this project does not register them with CTest.
+For focused iteration, pass a GoogleTest filter to the executable, then run the
+complete suite before reporting a behavior change verified.
+TemplateGame requires a working graphical/OpenGL session; report an unavailable
+smoke check explicitly.
+
+New/changed reflected types trigger JRM code generation in the normal build.
+Follow the repository's build, codegen, lint-and-format, and verification-run
+workflows when modifying implementation.
+
+For this documentation, source snippets are live tagged includes. Run the required
+site build from `docs/` with `npx antora --fetch antora-playbook.yml`.
+
+== Current extension limits
+
+The current implementation provides one application-level input system, keyboard/
+mouse bindings, enum contexts, synchronous dispatch, and weak actor possession.
+It does not yet supply gamepad/analog processors, per-player device assignment,
+OS pointer locking, arbitrary runtime context names, explicit cancellation
+notifications, built-in AI behavior, replay/network transport, or automatic
+exclusive controller selection.
+
+Keep extensions in the layer that owns their responsibility: devices in collection/
+device modeling, routing policy in contexts/router, value processing in an explicit
+processing layer or consumer, and gameplay rules in domain controllers/actors.

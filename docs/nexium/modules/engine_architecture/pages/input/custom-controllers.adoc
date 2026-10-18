@@ -1,0 +1,191 @@
+= Creating Custom Controllers
+:toc:
+:toclevels: 3
+
+Start by choosing the command source and the controlled domain object.
+HumanController already supplies possession and a reusable InputController child.
+AIController supplies possession without hardware input.
+EditorController supplies action input without requiring an Actor.
+
+This guide uses the compiled TestHumanController as a minimal complete example.
+It is intentionally small: binding configuration and input routing remain in their
+existing classes, while the custom controller translates Run into actor movement.
+
+== 1. Define the component
+
+[source,cpp]
+----
+include::example$input-tests/TestHumanController.h[tag=input-custom-human,indent=0]
+----
+
+The example:
+
+* Derives from HumanController.
+* Uses `CLASS()` for JustReflectMe and `ECS_DECL` for component facilities.
+* Forwards onTick to its base.
+* Checks the weak actor pointer before acting.
+* Reads `isActive("Run"_atom)` rather than inspecting W or a trigger rule.
+* Applies delta time at the behavior layer.
+
+The source header includes `TestHumanController.generated.h` after the declaration.
+Generated JRM files are produced by CodeGenerator; do not hand-write their contents.
+JRM is the engine's reflection system, separate from native C++ reflection.
+
+== 2. Register the implementation
+
+The implementation translation unit contains:
+
+[source,cpp]
+----
+include::example$input-tests/ControllerHierarchyTests.cpp[tag=input-custom-registration,indent=0]
+----
+
+Use the ECS macro rather than adding a manual entry to a central component list.
+Ensure the implementation translation unit is included in the owning target.
+The registration is tested with the global component factory in the usage example below.
+
+For an engine component, use the appropriate sources target and CMake source list.
+For a game component, use the game's target. The example registration lives in the
+test translation unit because TestHumanController belongs only to the test suite.
+
+== 3. Initialize, configure, possess, and tick
+
+[source,cpp]
+----
+include::example$input-tests/ControllerHierarchyTests.cpp[tag=input-custom-human-usage,indent=0]
+----
+
+Mutable `getInput()` initializes the controller and ensures its direct input child
+exists. The child's Gameplay context is appropriate for this fixture.
+Run is configured as WhileHeld; the controller never asks whether Run is a Press
+or Release action.
+
+`pressW()` publishes W Press to the Platform window and processes one input frame.
+The test ticks the controller explicitly and checks actor movement. Production
+code normally attaches the controller to a component tree that is initialized and
+ticked by the scene, or supplies another explicit owner/update path.
+
+Possession alone does not arrange ticking. Input initialization alone does not
+arrange actor behavior. Keep both lifetimes clear.
+
+After unpossessing, the same active input no longer moves the actor because the
+behavior checks `getControlledActor()` first.
+
+== 4. Separate configuration from handlers
+
+Default bindings should be installed only when the map is empty or when a deliberate
+configuration migration applies. Replacing bindings unconditionally in every
+onInitialize would overwrite deserialized or user-edited maps.
+
+Behavior handlers should be reinstalled on initialization because clones and
+deserialized components do not persist callbacks/delegate listeners.
+Use `setActionCallback()` so installing a callback does not also replace a binding.
+For held movement, polling can avoid registering a callback entirely.
+
+The existing Spectator follows this pattern:
+
+. Reuse its existing controller/input child.
+. Install default bindings only when the binding vector is empty.
+. Restore action handlers on every initialization.
+. Poll held movement actions during its scene tick.
+
+An empty map is also the spectator's “install defaults” signal. If intentional
+empty maps must survive initialization in your game, add an explicit configuration
+state/version rather than relying on that convention.
+
+== 5. Pick a delivery style for each action
+
+[cols="3,3,4",options="header"]
+|===
+|Behavior |Typical binding |Consumer
+|Walking/running while held
+|Button, WhileHeld
+|Poll isActive each tick; apply delta and movement rules.
+|Jump/menu/save command
+|Button, OnPress
+|Callback for each accepted press, or poll once in the input frame.
+|Release-to-confirm
+|Button, OnRelease
+|Callback or frame pulse; account for silent cancellation.
+|Camera look/pan
+|PointerMove, optionally mouse-gated
+|Individual callback delta or frame-total getActionValue.
+|Zoom/scroll
+|Wheel, optionally gated
+|Callback offset or frame-total getActionValue.
+|===
+
+If you both handle a callback and poll the same pulse, you can execute a command
+twice. Pick one behavior path or explicitly coordinate them.
+If several simulation ticks run during one input frame, an OnPress pulse remains
+true for all those reads; implement command consumption at the simulation boundary
+if your game needs exactly one execution.
+
+== 6. Make context ownership explicit
+
+Use separate contexts for separate interaction modes, and temporary BlockLower
+layers for modal/text entry.
+If two controllers in Gameplay should not move simultaneously, disable the inactive
+one explicitly rather than depending on registration order.
+
+For a custom editor tool, derive from EditorController and assign EditorViewport
+when it should participate in viewport interaction.
+The context assignment does not supply GUI focus logic by itself; EditorIntegration
+publishes the active layers before processing input.
+
+Keep the returned InputContextGuard for as long as an overlay is active. A temporary
+discarded guard cannot represent a persistent tool mode.
+See xref:input/contexts.adoc[Contexts and routing].
+
+== AI and alternative command sources
+
+For AI, derive from AIController, preserve the base lifecycle, and implement decisions
+in the game. Read the possessed actor, check its lifetime, and issue domain behavior.
+Do not fabricate Platform events to make AI look like a keyboard user.
+
+For replay/network sources, derive from GameController if actor possession is
+needed. Add command production/consumption with explicit authority and timing rules.
+There is currently no built-in replay stream, network controller, AI action injector,
+or universal command-buffer abstraction.
+
+If human, AI, and replay must share complex movement rules, move those rules into
+an actor/domain service and let each controller produce intentions for it.
+That is a game-level design extension; the existing hierarchy does not require
+adding hardware methods to GameController.
+
+[[direct-composition]]
+== Direct composition for non-Actor consumers
+
+The sample Player is an animated rectangle component. It uses a descendant
+InputController directly rather than GameController possession.
+Its movement logic polls semantic actions and handles diagonals at the consumer layer:
+
+[source,cpp]
+----
+include::example$consumers/Player.cpp[tag=input-player-polling,indent=0]
+----
+
+This is appropriate when the object is not an Actor or does not need the possession
+contract. Do not force every input consumer into HumanController inheritance.
+
+== Lifetime and extension checklist
+
+. Give the controller/input child a real intrusive owner.
+. Include the implementation translation unit in the target and use ECS registration.
+. Initialize before const input access.
+. Preserve configured input children and maps on repeated initialization.
+. Reinstall callbacks after clone/deserialization; avoid duplicate delegate listeners.
+. Check possessed-actor lifetime before each behavior operation.
+. Keep contexts and overlay guards owned by the interaction that selects them.
+. Unpossess/deinitialize explicitly when cleanup hooks must run.
+. Test behavior through Platform events and processEvents, not private runtime mutation.
+
+== Build and verify a new reflected controller
+
+Normal CMake builds run CodeGenerator. After adding a reflected type, build the
+configured target and the tests, then run the full suite.
+For stale metadata, the repository's codegen workflow removes `.jrm/cache.data`
+and rebuilds CodeGenerator; generated headers must not be edited manually.
+
+See xref:build:cmake-structure.adoc[CMake infrastructure] and
+xref:input/troubleshooting.adoc[Verification] for repository commands.

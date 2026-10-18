@@ -1,0 +1,207 @@
+= Contexts and Routing
+:toc:
+:toclevels: 3
+
+Contexts separate commands sharing physical input. Temporary layers let modals
+and text fields block selected channels without rewriting controller maps.
+Context identity is independent of inheritance: a HumanController defaults to
+Gameplay and an EditorController to Editor, but their input-child contexts can change.
+
+== Context identity, channels, and policies
+
+The enum contains Editor, Gameplay, EditorViewport, Modal, TextInput, and
+BindingCapture. New context identities require extending this enum; they are not
+arbitrary runtime strings.
+
+Keyboard covers keyboard-triggered Button events. Pointer covers mouse buttons,
+PointerMove, and Wheel. All selects both.
+
+[source,cpp]
+----
+include::example$engine-input/InputContextStack.h[tag=input-context-layer,indent=0]
+----
+
+[cols="2,4,4",options="header"]
+|===
+|Policy |Matching input |Unmatched input
+|ConsumeMatched
+|Deliver to all eligible matching controllers in the layer, then stop lower layers.
+|Continue to lower layers on this channel.
+|BlockLower
+|Deliver to eligible matches, then stop lower layers.
+|Stop lower layers on this channel anyway.
+|===
+
+A match is a resolved binding or a mouse press reserving a matching pointer gesture.
+BlockLower does not need any registered controller to prevent lower input.
+
+== Stack order
+
+. Newest temporary overlay first, followed by older overlays.
+. Optional global context, when different from the base.
+. Active/base context.
+
+Base and global use ConsumeMatched and All. The stack initially has Editor as its
+base and no global. Runtime selects Gameplay without an application integration.
+
+.Keyboard and Pointer traverse the same stack with different channel masks.
+image::input-context-stack.svg[Overlay, global and base order with keyboard-only text blocking]
+
+“Global” means above the base, not immune to overlays. Modals can block global
+shortcuts. Identical global/base identities are emitted only once. Overlays are
+not deduplicated. Controllers match enum identity rather than a particular layer ID;
+avoid accidental duplicate layers with the same identity.
+
+== Same-context collisions
+
+Two eligible controllers in one context can both bind W and both receive it.
+There is no per-controller priority or exclusive player/camera election.
+Choose which components are enabled, use `setInputEnabled()`, or assign separate
+contexts when exclusivity is needed.
+
+The direct same-context contract is covered by this test:
+
+[source,cpp]
+----
+include::example$input-tests/InputControllerTests.cpp[tag=input-same-context,indent=0]
+----
+
+This test shows same-layer delivery and unmatched passthrough:
+
+[source,cpp]
+----
+include::example$input-tests/InputRoutingTests.cpp[tag=input-consume-matched,indent=0]
+----
+
+Delivery remains subject to callback-time mutation. A callback may destroy,
+disable, rebind, or change the context of a later recipient; that recipient is
+checked again and can be skipped.
+
+== RAII overlays
+
+`pushContext(layer)` returns a move-only `InputContextGuard`. Store it for the
+interaction's lifetime. Destruction or `reset()` removes its own overlay.
+Discarding it immediately also closes the overlay immediately.
+
+Layer IDs allow guards to move or close out of order. Resetting an empty/moved-from
+guard is harmless. A guard borrows its InputSystem; the system must outlive it.
+
+[source,cpp]
+----
+include::example$input-tests/InputRoutingTests.cpp[tag=input-guard-lifetime,indent=0]
+----
+
+== Text entry and channel isolation
+
+A BlockLower Keyboard overlay cancels keyboard actions below it while allowing
+pointer events to continue:
+
+[source,cpp]
+----
+include::example$input-tests/InputRoutingTests.cpp[tag=input-text-input,indent=0]
+----
+
+This is a filter for the event's source/trigger channel, not for each required
+button in a mixed chord.
+
+== Modals and cancellation
+
+BlockLower All cancels lower holds and pending OnRelease bindings. Closing the
+modal does not resume the old gesture:
+
+[source,cpp]
+----
+include::example$input-tests/InputRoutingTests.cpp[tag=input-modal,indent=0]
+----
+
+The S release emits no callback because its accepted binding was canceled.
+W needs a real release followed by a fresh press.
+
+=== ConsumeMatched cancels only shadowed holds
+
+A consuming overlay does not cancel every lower hold. The router checks lower
+bindings against higher enabled maps and cancels bindings shadowed by a match.
+Unrelated holds can continue:
+
+[source,cpp]
+----
+include::example$input-tests/InputRoutingTests.cpp[tag=input-selective-cancel,indent=0]
+----
+
+The menu claims W; the gameplay W hold ends. D remains active. The newly opened
+menu receives no synthetic W press.
+
+== Held-button quarantine
+
+When a registration/channel becomes available or unavailable, already-held
+non-modifier buttons are blocked for that registration until physical release.
+Rebinding refresh applies this protection too. Blocked buttons are removed from
+the component's chord snapshot, so old presses cannot satisfy a new gate.
+
+.Interruption clears acceptance; only a new physical press reactivates an action.
+image::input-cancellation.svg[Hold, cancellation, quarantine, physical release and new press]
+
+Shift, Control, Alt, and Super are exempt. Holding Control while switching context
+and then freshly pressing S can invoke Control+S. Physical left/right sides remain
+independent in device tracking.
+
+InputSystem context setters and guard changes synchronize immediately. The router
+also synchronizes at frame start and before each event.
+Ancestor component enable changes are checked by queries and the next synchronization;
+`setInputEnabled()` explicitly cancels and refreshes immediately.
+
+== Release ownership
+
+Release does not resolve a new binding in the currently active context. It is sent
+to registered runtimes, which end only bindings that accepted an earlier Press.
+Canceled bindings are no longer in that accepted set.
+This ownership is implemented by controller-local accepted-binding state rather
+than a central press-ID ledger.
+
+[[pointer-ownership]]
+== Pointer ownership
+
+A mouse-gated PointerMove binding reserves a gesture when its mouse Press is
+accepted. No separate Button action is required.
+While a gesture is captured, PointerMove is limited to registrations with accepted
+pointer-button ownership. Wheel does not use that capture filter.
+
+.An accepted press reserves movement until release or interruption.
+image::input-pointer-capture.svg[Mouse press reservation, captured movement and cancellation]
+
+`hasPointerCapture()` lets integration keep viewport pointer routing available
+while the cursor leaves the viewport during dragging.
+This is routing ownership; it does not lock/hide the cursor or grab it at OS level.
+
+Modal blocking, disabling, recording capture, and rebinding can clear ownership.
+Closing the interruption does not restore it:
+
+[source,cpp]
+----
+include::example$input-tests/InputRoutingTests.cpp[tag=input-drag-ownership,indent=0]
+----
+
+== Availability versus enable state
+
+`InputContextStack::isAvailable(context, channel)` asks whether a matching layer is
+reachable before an earlier BlockLower layer. The matching layer is checked before
+its own blocking policy. The query does not resolve maps or predict consumption
+by an earlier ConsumeMatched layer for a particular event.
+
+`InputController::isInputEnabled()` checks its explicit flag and enabled ancestors.
+It does not report context availability. `isActive()` reports runtime state subject
+to that enable check.
+
+== Recording capture
+
+`InputCapture` is separate from context guards and pointer ownership. It suspends
+routed actions globally during recording. Its guards are neither copyable nor movable;
+all instances share a capture count.
+
+After the last guard ends, input remains suppressed until all tracked held buttons
+are released. Left/right modifier sides are distinct. `resetButtons()` clears
+the release fence but does not terminate live guards.
+
+BindingCapture's enum value alone does not start a recorder. The existing binding
+widget uses InputCapture plus window subscriptions; see
+xref:input/serialization-and-editor.adoc#recording[Binding recording].

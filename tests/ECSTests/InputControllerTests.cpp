@@ -7,8 +7,8 @@
 //
 //     http://www.apache.org/licenses/LICENSE-2.0
 
-#include "NxWorld/Framework/InputController.h"
-#include "NxWorld/Framework/InputSystem.h"
+#include "NxWorld/Framework/Input/InputController.h"
+#include "NxWorld/Framework/Input/InputSystem.h"
 #include "Platform/Window.h"
 
 #include "gtest/gtest.h"
@@ -49,6 +49,7 @@ namespace
     };
 } // namespace
 
+// tag::input-context-switch[]
 TEST_F(InputControllerTests, RoutesContextsAndReleasesHeldActions)
 {
     auto game = InputController::Create("Game"_atom, InputContext::Gameplay);
@@ -57,18 +58,20 @@ TEST_F(InputControllerTests, RoutesContextsAndReleasesHeldActions)
     editor->bind("Move"_atom, KeyChord::Exact(Key::W), InputActionTrigger::WhileHeld);
     key(Key::W, State::Pressed);
     frame();
-    EXPECT_TRUE(game->isActionPressed("Move"_atom));
-    EXPECT_FALSE(editor->isActionPressed("Move"_atom));
+    EXPECT_TRUE(game->isActive("Move"_atom));
+    EXPECT_FALSE(editor->isActive("Move"_atom));
     frame();
-    EXPECT_TRUE(game->isActionPressed("Move"_atom));
+    EXPECT_TRUE(game->isActive("Move"_atom));
     GetInputSystem().setActiveContext(InputContext::Editor);
-    EXPECT_FALSE(game->isActionPressed("Move"_atom));
+    EXPECT_FALSE(game->isActive("Move"_atom));
     key(Key::W, State::Released);
     key(Key::W, State::Pressed);
     frame();
-    EXPECT_TRUE(editor->isActionPressed("Move"_atom));
+    EXPECT_TRUE(editor->isActive("Move"_atom));
 }
+// end::input-context-switch[]
 
+// tag::input-specificity[]
 TEST_F(InputControllerTests, MostSpecificChordWinsAndRightModifiersWork)
 {
     auto controller = InputController::Create("Game"_atom, InputContext::Gameplay);
@@ -83,27 +86,30 @@ TEST_F(InputControllerTests, MostSpecificChordWinsAndRightModifiersWork)
     key(Key::S, State::Pressed, GLFW_MOD_CONTROL | GLFW_MOD_SHIFT);
     frame();
     EXPECT_EQ(saved, 1);
-    EXPECT_TRUE(controller->isActionPressed("Save"_atom));
-    EXPECT_FALSE(controller->isActionPressed("Plain"_atom));
+    EXPECT_TRUE(controller->isActive("Save"_atom));
+    EXPECT_FALSE(controller->isActive("Plain"_atom));
     key(Key::S, State::Repeated);
     frame();
     EXPECT_EQ(saved, 1);
-    EXPECT_FALSE(controller->isActionPressed("Save"_atom));
+    EXPECT_FALSE(controller->isActive("Save"_atom));
 }
+// end::input-specificity[]
 
+// tag::input-release-pulse[]
 TEST_F(InputControllerTests, ReleaseTriggerLastsOneFrame)
 {
     auto controller = InputController::Create("Game"_atom, InputContext::Gameplay);
     controller->bind("Release"_atom, KeyChord::Exact(Key::W), InputActionTrigger::OnRelease);
     key(Key::W, State::Pressed);
     frame();
-    EXPECT_FALSE(controller->isActionPressed("Release"_atom));
+    EXPECT_FALSE(controller->isActive("Release"_atom));
     key(Key::W, State::Released);
     frame();
-    EXPECT_TRUE(controller->isActionPressed("Release"_atom));
+    EXPECT_TRUE(controller->isActive("Release"_atom));
     frame();
-    EXPECT_FALSE(controller->isActionPressed("Release"_atom));
+    EXPECT_FALSE(controller->isActive("Release"_atom));
 }
+// end::input-release-pulse[]
 
 TEST_F(InputControllerTests, DisableAndReenableDoesNotLeaveStuckKeys)
 {
@@ -114,15 +120,16 @@ TEST_F(InputControllerTests, DisableAndReenableDoesNotLeaveStuckKeys)
     controller->disable();
     key(Key::W, State::Released);
     frame();
-    EXPECT_FALSE(controller->isActionPressed("Move"_atom));
+    EXPECT_FALSE(controller->isActive("Move"_atom));
     controller->enable();
     key(Key::W, State::Pressed);
     frame();
-    EXPECT_TRUE(controller->isActionPressed("Move"_atom));
+    EXPECT_TRUE(controller->isActive("Move"_atom));
     GetInputSystem().resetInput();
-    EXPECT_FALSE(controller->isActionPressed("Move"_atom));
+    EXPECT_FALSE(controller->isActive("Move"_atom));
 }
 
+// tag::input-binding-serialization[]
 TEST_F(InputControllerTests, BindingSerializationPreservesChordAndTrigger)
 {
     const InputController::Binding binding{ .action = "Save"_atom,
@@ -141,6 +148,7 @@ TEST_F(InputControllerTests, BindingSerializationPreservesChordAndTrigger)
     EXPECT_EQ(TagHelper::ToTag("InputController"), Tag_InputController);
     EXPECT_EQ(controller->serialize()["_bindings"][0], json);
 }
+// end::input-binding-serialization[]
 
 TEST_F(InputControllerTests, CallbackCanDestroyAnotherRegisteredController)
 {
@@ -155,6 +163,7 @@ TEST_F(InputControllerTests, CallbackCanDestroyAnotherRegisteredController)
     EXPECT_EQ(calls, 0);
 }
 
+// tag::input-edit-bindings[]
 TEST_F(InputControllerTests, EditingBindingsPreservesCallbacksAndResetsHeldState)
 {
     auto controller = InputController::Create("Game"_atom, InputContext::Gameplay);
@@ -166,13 +175,14 @@ TEST_F(InputControllerTests, EditingBindingsPreservesCallbacksAndResetsHeldState
     frame();
     EXPECT_EQ(calls, 1);
     controller->setBindings(controller->getBindings());
-    EXPECT_FALSE(controller->isActionPressed("Move"_atom));
+    EXPECT_FALSE(controller->isActive("Move"_atom));
     ASSERT_EQ(controller->getBindings().size(), 1);
     key(Key::W, State::Released);
     key(Key::W, State::Pressed);
     frame();
     EXPECT_EQ(calls, 2);
 }
+// end::input-edit-bindings[]
 
 TEST_F(InputControllerTests, DuplicateActionsUseTheActivatedBindingsReleaseTrigger)
 {
@@ -188,28 +198,29 @@ TEST_F(InputControllerTests, DuplicateActionsUseTheActivatedBindingsReleaseTrigg
                                 .trigger = InputActionTrigger::OnRelease } });
     key(Key::Enter, State::Pressed);
     frame();
-    EXPECT_FALSE(controller->isActionPressed("Jump"_atom));
+    EXPECT_FALSE(controller->isActive("Jump"_atom));
     key(Key::Enter, State::Released);
     frame();
     EXPECT_EQ(releases, 1);
-    EXPECT_TRUE(controller->isActionPressed("Jump"_atom));
+    EXPECT_TRUE(controller->isActive("Jump"_atom));
     frame();
-    EXPECT_FALSE(controller->isActionPressed("Jump"_atom));
+    EXPECT_FALSE(controller->isActive("Jump"_atom));
 
     key(Key::Space, State::Pressed);
     key(Key::Enter, State::Pressed);
     frame();
-    EXPECT_TRUE(controller->isActionPressed("Jump"_atom));
+    EXPECT_TRUE(controller->isActive("Jump"_atom));
     key(Key::Enter, State::Released);
     frame();
     EXPECT_EQ(releases, 2);
     frame();
-    EXPECT_TRUE(controller->isActionPressed("Jump"_atom));
+    EXPECT_TRUE(controller->isActive("Jump"_atom));
     key(Key::Space, State::Released);
     frame();
-    EXPECT_FALSE(controller->isActionPressed("Jump"_atom));
+    EXPECT_FALSE(controller->isActive("Jump"_atom));
 }
 
+// tag::input-multiple-bindings[]
 TEST_F(InputControllerTests, ReleasingOneBindingKeepsAnotherBindingOfTheSameActionHeld)
 {
     auto controller = InputController::Create("Game"_atom, InputContext::Gameplay);
@@ -222,14 +233,15 @@ TEST_F(InputControllerTests, ReleasingOneBindingKeepsAnotherBindingOfTheSameActi
     key(Key::W, State::Pressed);
     mouse(MouseButton::Left, MouseState::Press);
     frame();
-    EXPECT_TRUE(controller->isActionPressed("Move"_atom));
+    EXPECT_TRUE(controller->isActive("Move"_atom));
     mouse(MouseButton::Left, MouseState::Release);
     frame();
-    EXPECT_TRUE(controller->isActionPressed("Move"_atom));
+    EXPECT_TRUE(controller->isActive("Move"_atom));
     key(Key::W, State::Released);
     frame();
-    EXPECT_FALSE(controller->isActionPressed("Move"_atom));
+    EXPECT_FALSE(controller->isActive("Move"_atom));
 }
+// end::input-multiple-bindings[]
 
 TEST_F(InputControllerTests, TemporarilyRemovingAnActionDoesNotUnregisterItsCallback)
 {
@@ -271,13 +283,34 @@ TEST_F(InputControllerTests, CloneHasIndependentRuntimeStateAndRegistersOnInitia
     auto clonedBase = original->clone();
     auto* clone = dynamic_cast<InputController*>(clonedBase.get());
     ASSERT_NE(clone, nullptr);
-    EXPECT_FALSE(clone->isActionPressed("Move"_atom));
+    EXPECT_FALSE(clone->isActive("Move"_atom));
     EXPECT_NE(clone->onAction.get(), original->onAction.get());
     clone->initialize();
     key(Key::W, State::Released);
     key(Key::W, State::Pressed);
     frame();
-    EXPECT_TRUE(clone->isActionPressed("Move"_atom));
+    EXPECT_TRUE(clone->isActive("Move"_atom));
+}
+
+TEST_F(InputControllerTests, CloneAndSerializationPreserveMovementSettings)
+{
+    auto original = InputController::Create("Original"_atom, InputContext::Gameplay);
+    EXPECT_FLOAT_EQ(original->speed, 600.f);
+    EXPECT_FLOAT_EQ(original->mouseSensitivity, 0.5f);
+    original->speed = 1200.f;
+    original->mouseSensitivity = 0.25f;
+
+    auto clonedBase = original->clone();
+    const auto* clone = dynamic_cast<InputController*>(clonedBase.get());
+    ASSERT_NE(clone, nullptr);
+    EXPECT_FLOAT_EQ(clone->speed, original->speed);
+    EXPECT_FLOAT_EQ(clone->mouseSensitivity, original->mouseSensitivity);
+
+    RResourceStream<RJsonResourceStream> stream(original->serialize());
+    auto restored = InputController::Create();
+    restored->deserialize(stream);
+    EXPECT_FLOAT_EQ(restored->speed, original->speed);
+    EXPECT_FLOAT_EQ(restored->mouseSensitivity, original->mouseSensitivity);
 }
 
 TEST_F(InputControllerTests, DeserializedComponentReceivesInput)
@@ -289,9 +322,9 @@ TEST_F(InputControllerTests, DeserializedComponentReceivesInput)
     restored->deserialize(stream);
     key(Key::W, State::Pressed);
     frame();
-    EXPECT_TRUE(restored->isActionPressed("Move"_atom));
+    EXPECT_TRUE(restored->isActive("Move"_atom));
     restored->deserialize(stream);
-    EXPECT_FALSE(restored->isActionPressed("Move"_atom));
+    EXPECT_FALSE(restored->isActive("Move"_atom));
 }
 
 TEST_F(InputControllerTests, FocusLossClearsHeldAndQueuedInputEvenIfFocusReturnsBeforeNextFrame)
@@ -301,16 +334,16 @@ TEST_F(InputControllerTests, FocusLossClearsHeldAndQueuedInputEvenIfFocusReturns
     controller->bind("Queued"_atom, KeyChord::Exact(Key::S));
     key(Key::W, State::Pressed);
     frame();
-    ASSERT_TRUE(controller->isActionPressed("Move"_atom));
+    ASSERT_TRUE(controller->isActive("Move"_atom));
     key(Key::S, State::Pressed);
     Platform::GetWindow().onFocusChanged->trigger(false);
-    EXPECT_FALSE(controller->isActionPressed("Move"_atom));
+    EXPECT_FALSE(controller->isActive("Move"_atom));
     Platform::GetWindow().onFocusChanged->trigger(true);
     frame();
-    EXPECT_FALSE(controller->isActionPressed("Queued"_atom));
+    EXPECT_FALSE(controller->isActive("Queued"_atom));
     key(Key::W, State::Pressed);
     frame();
-    EXPECT_TRUE(controller->isActionPressed("Move"_atom));
+    EXPECT_TRUE(controller->isActive("Move"_atom));
 }
 
 TEST_F(InputControllerTests, ReleasingRequiredKeyEndsHeldChord)
@@ -321,10 +354,10 @@ TEST_F(InputControllerTests, ReleasingRequiredKeyEndsHeldChord)
     key(Key::Left_Control, State::Pressed);
     key(Key::W, State::Pressed);
     frame();
-    EXPECT_TRUE(controller->isActionPressed("Move"_atom));
+    EXPECT_TRUE(controller->isActive("Move"_atom));
     key(Key::Left_Control, State::Released);
     frame();
-    EXPECT_FALSE(controller->isActionPressed("Move"_atom));
+    EXPECT_FALSE(controller->isActive("Move"_atom));
 }
 
 TEST_F(InputControllerTests, RoutesAllEightMouseButtons)
@@ -344,10 +377,10 @@ TEST_F(InputControllerTests, RoutesAllEightMouseButtons)
                          });
         mouse(button, MouseState::Press);
         frame();
-        EXPECT_TRUE(controller->isActionPressed("Click"_atom));
+        EXPECT_TRUE(controller->isActive("Click"_atom));
         mouse(button, MouseState::Release);
         frame();
-        EXPECT_FALSE(controller->isActionPressed("Click"_atom));
+        EXPECT_FALSE(controller->isActive("Click"_atom));
     }
     EXPECT_EQ(calls, buttons.size());
 }
@@ -359,10 +392,10 @@ TEST_F(InputControllerTests, MouseAndKeyboardCodesRemainDistinct)
     const auto overlappingKeyboardCode = static_cast<Key>(static_cast<int>(MouseButton::Left));
     key(overlappingKeyboardCode, State::Pressed);
     frame();
-    EXPECT_FALSE(controller->isActionPressed("Click"_atom));
+    EXPECT_FALSE(controller->isActive("Click"_atom));
     mouse(MouseButton::Left, MouseState::Press);
     frame();
-    EXPECT_TRUE(controller->isActionPressed("Click"_atom));
+    EXPECT_TRUE(controller->isActive("Click"_atom));
 }
 
 TEST_F(InputControllerTests, RejectsEmptyKeyboardAndMouseTriggers)
@@ -384,8 +417,8 @@ TEST_F(InputControllerTests, MostSpecificMouseChordWinsAndRightModifiersWork)
     key(Key::Right_Shift, State::Pressed);
     mouse(MouseButton::Left, MouseState::Press, GLFW_MOD_CONTROL | GLFW_MOD_SHIFT);
     frame();
-    EXPECT_TRUE(controller->isActionPressed("Modified"_atom));
-    EXPECT_FALSE(controller->isActionPressed("Plain"_atom));
+    EXPECT_TRUE(controller->isActive("Modified"_atom));
+    EXPECT_FALSE(controller->isActive("Plain"_atom));
     EXPECT_EQ(controller->getActionModifiers("Modified"_atom),
               InputModifier::Control | InputModifier::Shift);
 }
@@ -400,15 +433,15 @@ TEST_F(InputControllerTests, KeyboardTriggerCanRequireMouseAndKeyboardButtons)
     key(Key::Left_Control, State::Pressed);
     key(Key::W, State::Pressed);
     frame();
-    EXPECT_FALSE(controller->isActionPressed("Move"_atom));
+    EXPECT_FALSE(controller->isActive("Move"_atom));
     key(Key::W, State::Released);
     mouse(MouseButton::Right, MouseState::Press);
     key(Key::W, State::Pressed);
     frame();
-    EXPECT_TRUE(controller->isActionPressed("Move"_atom));
+    EXPECT_TRUE(controller->isActive("Move"_atom));
     mouse(MouseButton::Right, MouseState::Release);
     frame();
-    EXPECT_FALSE(controller->isActionPressed("Move"_atom));
+    EXPECT_FALSE(controller->isActive("Move"_atom));
 }
 
 TEST_F(InputControllerTests, MouseTriggerCanRequireAnotherMouseButtonAndKeyboard)
@@ -421,15 +454,15 @@ TEST_F(InputControllerTests, MouseTriggerCanRequireAnotherMouseButtonAndKeyboard
     mouse(MouseButton::Right, MouseState::Press);
     mouse(MouseButton::Left, MouseState::Press);
     frame();
-    EXPECT_FALSE(controller->isActionPressed("Drag"_atom));
+    EXPECT_FALSE(controller->isActive("Drag"_atom));
     mouse(MouseButton::Left, MouseState::Release);
     key(Key::Left_Control, State::Pressed);
     mouse(MouseButton::Left, MouseState::Press);
     frame();
-    EXPECT_TRUE(controller->isActionPressed("Drag"_atom));
+    EXPECT_TRUE(controller->isActive("Drag"_atom));
     key(Key::Left_Control, State::Released);
     frame();
-    EXPECT_FALSE(controller->isActionPressed("Drag"_atom));
+    EXPECT_FALSE(controller->isActive("Drag"_atom));
 }
 
 TEST_F(InputControllerTests, MouseReleaseTriggerLastsOneFrame)
@@ -446,14 +479,14 @@ TEST_F(InputControllerTests, MouseReleaseTriggerLastsOneFrame)
         InputActionTrigger::OnRelease);
     mouse(MouseButton::Middle, MouseState::Press);
     frame();
-    EXPECT_FALSE(controller->isActionPressed("Release"_atom));
+    EXPECT_FALSE(controller->isActive("Release"_atom));
     EXPECT_EQ(released, 0);
     mouse(MouseButton::Middle, MouseState::Release);
     frame();
-    EXPECT_TRUE(controller->isActionPressed("Release"_atom));
+    EXPECT_TRUE(controller->isActive("Release"_atom));
     EXPECT_EQ(released, 1);
     frame();
-    EXPECT_FALSE(controller->isActionPressed("Release"_atom));
+    EXPECT_FALSE(controller->isActive("Release"_atom));
 }
 
 TEST_F(InputControllerTests, RoutesMouseContextsAndReleasesHeldActions)
@@ -464,19 +497,19 @@ TEST_F(InputControllerTests, RoutesMouseContextsAndReleasesHeldActions)
     editor->bind("Drag"_atom, KeyChord::Exact(MouseButton::Right), InputActionTrigger::WhileHeld);
     mouse(MouseButton::Right, MouseState::Press);
     frame();
-    EXPECT_TRUE(game->isActionPressed("Drag"_atom));
-    EXPECT_FALSE(editor->isActionPressed("Drag"_atom));
+    EXPECT_TRUE(game->isActive("Drag"_atom));
+    EXPECT_FALSE(editor->isActive("Drag"_atom));
     frame();
-    EXPECT_TRUE(game->isActionPressed("Drag"_atom));
+    EXPECT_TRUE(game->isActive("Drag"_atom));
     GetInputSystem().setActiveContext(InputContext::Editor);
-    EXPECT_FALSE(game->isActionPressed("Drag"_atom));
+    EXPECT_FALSE(game->isActive("Drag"_atom));
     mouse(MouseButton::Right, MouseState::Release);
     mouse(MouseButton::Right, MouseState::Press);
     frame();
-    EXPECT_TRUE(editor->isActionPressed("Drag"_atom));
+    EXPECT_TRUE(editor->isActive("Drag"_atom));
     mouse(MouseButton::Right, MouseState::Release);
     frame();
-    EXPECT_FALSE(editor->isActionPressed("Drag"_atom));
+    EXPECT_FALSE(editor->isActive("Drag"_atom));
 }
 
 TEST_F(InputControllerTests, FocusLossClearsHeldAndQueuedMouseInput)
@@ -489,21 +522,21 @@ TEST_F(InputControllerTests, FocusLossClearsHeldAndQueuedMouseInput)
     key(Key::Left_Control, State::Pressed);
     mouse(MouseButton::Right, MouseState::Press);
     frame();
-    ASSERT_TRUE(controller->isActionPressed("Drag"_atom));
+    ASSERT_TRUE(controller->isActive("Drag"_atom));
     mouse(MouseButton::Left, MouseState::Press);
     Platform::GetWindow().onFocusChanged->trigger(false);
-    EXPECT_FALSE(controller->isActionPressed("Drag"_atom));
+    EXPECT_FALSE(controller->isActive("Drag"_atom));
     Platform::GetWindow().onFocusChanged->trigger(true);
     frame();
-    EXPECT_FALSE(controller->isActionPressed("Queued"_atom));
+    EXPECT_FALSE(controller->isActive("Queued"_atom));
     mouse(MouseButton::Right, MouseState::Press);
     frame();
-    EXPECT_FALSE(controller->isActionPressed("Drag"_atom));
+    EXPECT_FALSE(controller->isActive("Drag"_atom));
     key(Key::Left_Control, State::Pressed);
     mouse(MouseButton::Right, MouseState::Release);
     mouse(MouseButton::Right, MouseState::Press);
     frame();
-    EXPECT_TRUE(controller->isActionPressed("Drag"_atom));
+    EXPECT_TRUE(controller->isActive("Drag"_atom));
 }
 
 TEST_F(InputControllerTests, MouseSerializationPreservesMixedChordAndTrigger)
@@ -543,6 +576,7 @@ TEST_F(InputControllerTests, MouseSerializationPreservesMixedChordAndTrigger)
     EXPECT_EQ(restored.chord.requiredKeys, binding.chord.requiredKeys);
 }
 
+// tag::input-legacy-json[]
 TEST_F(InputControllerTests, MouseSupportPreservesLegacyKeyboardSerialization)
 {
     const nlohmann::json legacy{
@@ -562,6 +596,7 @@ TEST_F(InputControllerTests, MouseSupportPreservesLegacyKeyboardSerialization)
     EXPECT_EQ(serialized["requiredKeys"],
               (nlohmann::json::array({ "Left_Shift", "Left_Alt", "Left_Control" })));
 }
+// end::input-legacy-json[]
 
 TEST_F(InputControllerTests, DeserializedMouseComponentReceivesInput)
 {
@@ -572,9 +607,9 @@ TEST_F(InputControllerTests, DeserializedMouseComponentReceivesInput)
     restored->deserialize(stream);
     mouse(MouseButton::_4, MouseState::Press);
     frame();
-    EXPECT_TRUE(restored->isActionPressed("Drag"_atom));
+    EXPECT_TRUE(restored->isActive("Drag"_atom));
     restored->deserialize(stream);
-    EXPECT_FALSE(restored->isActionPressed("Drag"_atom));
+    EXPECT_FALSE(restored->isActive("Drag"_atom));
 }
 
 TEST_F(InputControllerTests, CaptureSuppressesMouseChordUntilRecordedButtonsAreReleased)
@@ -594,7 +629,7 @@ TEST_F(InputControllerTests, CaptureSuppressesMouseChordUntilRecordedButtonsAreR
         mouse(MouseButton::Left, MouseState::Press, GLFW_MOD_CONTROL);
         key(Key::Enter, State::Pressed);
         frame();
-        EXPECT_FALSE(controller->isActionPressed("ModifiedClick"_atom));
+        EXPECT_FALSE(controller->isActive("ModifiedClick"_atom));
         EXPECT_EQ(clicked, 0);
         EXPECT_EQ(confirmed, 0);
     }
@@ -612,7 +647,7 @@ TEST_F(InputControllerTests, CaptureSuppressesMouseChordUntilRecordedButtonsAreR
     key(Key::Right_Control, State::Pressed);
     mouse(MouseButton::Left, MouseState::Press, GLFW_MOD_CONTROL);
     frame();
-    EXPECT_TRUE(controller->isActionPressed("ModifiedClick"_atom));
+    EXPECT_TRUE(controller->isActive("ModifiedClick"_atom));
     EXPECT_EQ(clicked, 1);
     key(Key::Enter, State::Pressed);
     key(Key::Enter, State::Released);
@@ -632,11 +667,11 @@ TEST_F(InputControllerTests, CaptureReleasesHeldAndPendingReleaseActionsWithoutN
     mouse(MouseButton::Right, MouseState::Press);
     key(Key::W, State::Pressed);
     frame();
-    ASSERT_TRUE(controller->isActionPressed("Drag"_atom));
+    ASSERT_TRUE(controller->isActive("Drag"_atom));
     {
         InputCapture capture;
         frame();
-        EXPECT_FALSE(controller->isActionPressed("Drag"_atom));
+        EXPECT_FALSE(controller->isActive("Drag"_atom));
         mouse(MouseButton::Right, MouseState::Release);
         key(Key::W, State::Released);
         frame();
@@ -645,7 +680,7 @@ TEST_F(InputControllerTests, CaptureReleasesHeldAndPendingReleaseActionsWithoutN
     EXPECT_FALSE(InputCapture::isActive());
     mouse(MouseButton::Right, MouseState::Press);
     frame();
-    EXPECT_TRUE(controller->isActionPressed("Drag"_atom));
+    EXPECT_TRUE(controller->isActive("Drag"_atom));
 }
 
 TEST_F(InputControllerTests, CaptureWaitsForBothModifierSidesToBeReleased)
@@ -694,5 +729,140 @@ TEST_F(InputControllerTests, FocusLossClearsInputCaptureReleaseFence)
     Platform::GetWindow().onFocusChanged->trigger(true);
     mouse(MouseButton::Left, MouseState::Press);
     frame();
-    EXPECT_TRUE(controller->isActionPressed("Click"_atom));
+    EXPECT_TRUE(controller->isActive("Click"_atom));
+}
+
+TEST_F(InputControllerTests, PressAndReleaseWithinOneFramePreserveConfiguredPulses)
+{
+    auto controller = InputController::Create("Game"_atom, InputContext::Gameplay);
+    controller->bind("Press"_atom, KeyChord::Exact(Key::W), InputActionTrigger::OnPress);
+    controller->bind("Release"_atom, KeyChord::Exact(Key::S), InputActionTrigger::OnRelease);
+    controller->bind("Held"_atom, KeyChord::Exact(Key::A), InputActionTrigger::WhileHeld);
+    key(Key::W, State::Pressed);
+    key(Key::W, State::Released);
+    key(Key::S, State::Pressed);
+    key(Key::S, State::Released);
+    key(Key::A, State::Pressed);
+    key(Key::A, State::Released);
+    frame();
+    EXPECT_TRUE(controller->isActive("Press"_atom));
+    EXPECT_TRUE(controller->isActive("Release"_atom));
+    EXPECT_FALSE(controller->isActive("Held"_atom));
+    frame();
+    EXPECT_FALSE(controller->isActive("Press"_atom));
+    EXPECT_FALSE(controller->isActive("Release"_atom));
+}
+
+// tag::input-same-context[]
+TEST_F(InputControllerTests, SameContextControllersMayUseTheSamePhysicalButton)
+{
+    auto player = InputController::Create("Player"_atom, InputContext::Gameplay);
+    auto camera = InputController::Create("Camera"_atom, InputContext::Gameplay);
+    player->bind("Move"_atom, KeyChord::Exact(Key::W), InputActionTrigger::WhileHeld);
+    camera->bind("Fly"_atom, KeyChord::Exact(Key::W), InputActionTrigger::WhileHeld);
+    key(Key::W, State::Pressed);
+    frame();
+    EXPECT_TRUE(player->isActive("Move"_atom));
+    EXPECT_TRUE(camera->isActive("Fly"_atom));
+    player->setInputEnabled(false);
+    EXPECT_FALSE(player->isActive("Move"_atom));
+    EXPECT_TRUE(camera->isActive("Fly"_atom));
+}
+// end::input-same-context[]
+
+TEST_F(InputControllerTests, DisablingInputCancelsWithoutFiringRelease)
+{
+    auto controller = InputController::Create("Game"_atom, InputContext::Gameplay);
+    int releases = 0;
+    controller->bind("Held"_atom, KeyChord::Exact(Key::W), InputActionTrigger::WhileHeld);
+    controller->bind(
+        "Release"_atom, KeyChord::Exact(Key::S), [&](const InputActionEvent&) { ++releases; },
+        InputActionTrigger::OnRelease);
+    key(Key::W, State::Pressed);
+    key(Key::S, State::Pressed);
+    frame();
+    ASSERT_TRUE(controller->isActive("Held"_atom));
+    controller->setInputEnabled(false);
+    EXPECT_FALSE(controller->isActive("Held"_atom));
+    controller->setInputEnabled(true);
+    EXPECT_FALSE(controller->isActive("Held"_atom));
+    key(Key::W, State::Released);
+    key(Key::S, State::Released);
+    frame();
+    EXPECT_FALSE(controller->isActive("Release"_atom));
+    EXPECT_EQ(releases, 0);
+}
+
+TEST_F(InputControllerTests, CallbackMayReleaseItsOwnControllerAndStillDeliverDelegate)
+{
+    auto controller = InputController::Create("Game"_atom, InputContext::Gameplay);
+    int delegates = 0;
+    auto actionDelegate = controller->onAction;
+    auto subscriber
+        = actionDelegate->subscribeAndGetID([&](const InputActionEvent&) { ++delegates; });
+    controller->bind("Destroy"_atom, KeyChord::Exact(Key::W),
+                     [&](const InputActionEvent&) { controller = nullptr; });
+    key(Key::W, State::Pressed);
+    frame();
+    EXPECT_EQ(controller.get(), nullptr);
+    EXPECT_EQ(delegates, 1);
+    actionDelegate->unsubscribe(subscriber);
+}
+
+TEST_F(InputControllerTests, CallbackMayEditItsOwnBindingsAndHandler)
+{
+    auto controller = InputController::Create("Game"_atom, InputContext::Gameplay);
+    int calls = 0;
+    controller->bind("Edit"_atom, KeyChord::Exact(Key::W),
+                     [&](const InputActionEvent&)
+                     {
+                         ++calls;
+                         controller->clearBindings();
+                         controller->setActionCallback("Edit"_atom, {});
+                     });
+    key(Key::W, State::Pressed);
+    frame();
+    EXPECT_EQ(calls, 1);
+    EXPECT_TRUE(controller->getBindings().empty());
+    EXPECT_FALSE(controller->isActive("Edit"_atom));
+}
+
+// tag::input-map-reuse[]
+TEST_F(InputControllerTests, ReusedInputMapDoesNotShareRuntimeState)
+{
+    InputMap map;
+    map.bind({ .action = "Move"_atom,
+               .chord = KeyChord::Exact(Key::W),
+               .trigger = InputActionTrigger::WhileHeld });
+    auto first = InputController::Create("First"_atom, InputContext::Gameplay);
+    auto second = InputController::Create("Second"_atom, InputContext::Gameplay);
+    first->setInputMap(map);
+    second->setInputMap(map);
+    key(Key::W, State::Pressed);
+    frame();
+    EXPECT_TRUE(first->isActive("Move"_atom));
+    EXPECT_TRUE(second->isActive("Move"_atom));
+    first->clearBindings();
+    EXPECT_FALSE(first->isActive("Move"_atom));
+    EXPECT_TRUE(second->isActive("Move"_atom));
+    EXPECT_EQ(map.getBindings().size(), 1);
+}
+// end::input-map-reuse[]
+
+TEST_F(InputControllerTests, ReleasingOneModifierSideKeepsHeldChordWhileOtherSideIsHeld)
+{
+    auto controller = InputController::Create("Game"_atom, InputContext::Gameplay);
+    controller->bind("Move"_atom, { .triggerKey = Key::W, .requiredKeys = { Key::Left_Control } },
+                     InputActionTrigger::WhileHeld);
+    key(Key::Left_Control, State::Pressed);
+    key(Key::Right_Control, State::Pressed);
+    key(Key::W, State::Pressed);
+    frame();
+    EXPECT_TRUE(controller->isActive("Move"_atom));
+    key(Key::Left_Control, State::Released);
+    frame();
+    EXPECT_TRUE(controller->isActive("Move"_atom));
+    key(Key::Right_Control, State::Released);
+    frame();
+    EXPECT_FALSE(controller->isActive("Move"_atom));
 }

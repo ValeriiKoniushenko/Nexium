@@ -20,16 +20,23 @@ independent concurrent game instances.
 
 == Each frame
 
-Window events are polled first, then the active input context is set from viewport focus and
-the queued key events are dispatched (see xref:input-system.adoc[Input System]).
+Window events are polled first. The integration then selects input contexts through
+`updateInputRouting()`; without an integration, Runtime selects Gameplay with no global
+context. `GetInputSystem().processEvents()` runs before scene ticking, so controllers
+read the current input frame's actions. See
+xref:input/lifecycle-and-integration.adoc[Input frame lifecycle] for the complete pipeline.
+
 Updates use the previous frame's measured delta; the first delta is zero.
 
 [cols="2,3,3",options="header"]
 |===
 |Operation |GameOnly |Editor
+|Input processing |Gameplay plus integration-defined global/overlay contexts, if attached.
+|Editor/viewport base, global shortcuts, and modal/text/pointer overlays selected by integration.
 |Scene tick |Every frame. |Only while the viewport is focused.
-|Integration update |`updateInput()`, if an integration is attached. |`tick(delta)`: editor windows and keyboard/mouse actions.
-|Drawing |Scene to the window. |`updateSceneInteraction()` (picking/gizmos), `beforeSceneDraw()`, then Scene to the viewport texture.
+|Integration update |The updateInput hook, if attached; currently empty in EditorIntegration.
+|Editor windows and action consumers after scene ticking.
+|Drawing |Scene to the window. |Picking, then Scene to the viewport texture.
 |GameInstance tick |After Scene drawing, if a camera exists. |After Scene drawing, if a camera exists.
 |===
 

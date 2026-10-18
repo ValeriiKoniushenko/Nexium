@@ -10,7 +10,7 @@
 #pragma once
 
 #include "Core/Delegate.h"
-#include "NxWorld/Framework/InputController.h"
+#include "NxWorld/Framework/Input/InputController.h"
 
 #include <optional>
 #include <string>

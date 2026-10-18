@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Creating Custom Controllers :: Nexium Engine</title>
+    <link rel="prev" href="controllers.html">
+    <link rel="next" href="lifecycle-and-integration.html">
+    <meta name="generator" content="Antora 3.2.1">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="../../../..">Nexium Engine</a>
+      <button class="navbar-burger" aria-controls="topbar-nav" aria-expanded="false" aria-label="Toggle main menu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Products</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="#">Product A</a>
+            <a class="navbar-item" href="#">Product B</a>
+            <a class="navbar-item" href="#">Product C</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Services</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="#">Service A</a>
+            <a class="navbar-item" href="#">Service B</a>
+            <a class="navbar-item" href="#">Service C</a>
+          </div>
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="button is-primary" href="#">Download</a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="nexium" data-version="latest">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <button class="nav-menu-toggle" aria-label="Toggle expand/collapse all" style="display: none"></button>
+    <h3 class="title"><a href="../../index.html">Nexium Engine Documentation</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../../index.html">Overview</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../getting-started.html">Getting Started</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../installation.html">Installation</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Engine Architecture</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../index.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../architecture-review.html">Architecture and Migration Review</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ue5-alignment.html">UE5 Patterns for Nexium</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../module-graph.html">Module Graph</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../lifecycle.html">Application Lifecycle</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../threading.html">Threading Model</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../memory.html">Memory Model</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../resource-system.html">Resource System</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../file-io.html">File I/O</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ecs-overview.html">ECS Overview</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../input-system.html">Input System</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="actions-and-bindings.html">Actions and Bindings</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="contexts.html">Contexts and Routing</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="controllers.html">Controller Hierarchy and Ownership</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="3">
+    <a class="nav-link" href="custom-controllers.html">Creating Custom Controllers</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="lifecycle-and-integration.html">Frame Lifecycle and Integration</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="serialization-and-editor.html">Serialization and Binding Editor</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="api-reference.html">API Reference</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="troubleshooting.html">Troubleshooting and Verification</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Rendering</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../rendering/index.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../rendering/pipeline.html">Rendering Pipeline</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../rendering/renderer-architecture.html">Rendering Responsibilities</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Materials</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../rendering/materials/shader-system.html">Shader System</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Gameplay</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../gameplay/index.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../gameplay/scenes.html">Scenes</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../gameplay/components.html">Components</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../gameplay/scripting.html">Gameplay Hooks</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../gameplay/prefabs.html">Blueprint Templates</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Build &amp; Toolchain</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../build/index.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../build/cmake-structure.html">CMake Structure</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../build/ci-cd.html">CI/CD</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../about/index.html">About</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Nexium Engine Documentation</span>
+    <span class="version">latest</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <div class="title"><a href="../../index.html">Nexium Engine Documentation</a></div>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../../index.html">latest</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../index.html">Nexium Engine Documentation</a></li>
+    <li>Engine Architecture</li>
+    <li><a href="../input-system.html">Input System</a></li>
+    <li><a href="custom-controllers.html">Creating Custom Controllers</a></li>
+  </ul>
+</nav>
+<div class="edit-this-page"><a href="file:///home/alex/Desktop/nexium//docs/nexium/modules/engine_architecture/pages/input/custom-controllers.adoc">Edit this Page</a></div>
+</div>
+  <div class="content">
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">Creating Custom Controllers</h1>
+<div id="toc" class="toc">
+<div id="toctitle">Table of Contents</div>
+<ul class="sectlevel1">
+<li><a href="#_1_define_the_component">1. Define the component</a></li>
+<li><a href="#_2_register_the_implementation">2. Register the implementation</a></li>
+<li><a href="#_3_initialize_configure_possess_and_tick">3. Initialize, configure, possess, and tick</a></li>
+<li><a href="#_4_separate_configuration_from_handlers">4. Separate configuration from handlers</a></li>
+<li><a href="#_5_pick_a_delivery_style_for_each_action">5. Pick a delivery style for each action</a></li>
+<li><a href="#_6_make_context_ownership_explicit">6. Make context ownership explicit</a></li>
+<li><a href="#_ai_and_alternative_command_sources">AI and alternative command sources</a></li>
+<li><a href="#direct-composition">Direct composition for non-Actor consumers</a></li>
+<li><a href="#_lifetime_and_extension_checklist">Lifetime and extension checklist</a></li>
+<li><a href="#_build_and_verify_a_new_reflected_controller">Build and verify a new reflected controller</a></li>
+</ul>
+</div>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>Start by choosing the command source and the controlled domain object.
+HumanController already supplies possession and a reusable InputController child.
+AIController supplies possession without hardware input.
+EditorController supplies action input without requiring an Actor.</p>
+</div>
+<div class="paragraph">
+<p>This guide uses the compiled TestHumanController as a minimal complete example.
+It is intentionally small: binding configuration and input routing remain in their
+existing classes, while the custom controller translates Run into actor movement.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_1_define_the_component"><a class="anchor" href="#_1_define_the_component"></a>1. Define the component</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">CLASS();
+class TestHumanController : public HumanController
+{
+    ECS_DECL(TestHumanController, NX::HumanController);
+
+protected:
+    void onTick(float delta) override
+    {
+        HumanController::onTick(delta);
+        if (auto* actor = getControlledActor(); actor &amp;&amp; getInput().isActive("Run"_atom))
+        {
+            actor-&gt;moveRight(delta);
+        }
+    }
+};</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The example:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Derives from HumanController.</p>
+</li>
+<li>
+<p>Uses <code>CLASS()</code> for JustReflectMe and <code>ECS_DECL</code> for component facilities.</p>
+</li>
+<li>
+<p>Forwards onTick to its base.</p>
+</li>
+<li>
+<p>Checks the weak actor pointer before acting.</p>
+</li>
+<li>
+<p>Reads <code>isActive("Run"_atom)</code> rather than inspecting W or a trigger rule.</p>
+</li>
+<li>
+<p>Applies delta time at the behavior layer.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The source header includes <code>TestHumanController.generated.h</code> after the declaration.
+Generated JRM files are produced by CodeGenerator; do not hand-write their contents.
+JRM is the engine&#8217;s reflection system, separate from native C++ reflection.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_2_register_the_implementation"><a class="anchor" href="#_2_register_the_implementation"></a>2. Register the implementation</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The implementation translation unit contains:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">ECS_IMPL(TestHumanController);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Use the ECS macro rather than adding a manual entry to a central component list.
+Ensure the implementation translation unit is included in the owning target.
+The registration is tested with the global component factory in the usage example below.</p>
+</div>
+<div class="paragraph">
+<p>For an engine component, use the appropriate sources target and CMake source list.
+For a game component, use the game&#8217;s target. The example registration lives in the
+test translation unit because TestHumanController belongs only to the test suite.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_3_initialize_configure_possess_and_tick"><a class="anchor" href="#_3_initialize_configure_possess_and_tick"></a>3. Initialize, configure, possess, and tick</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">TEST_F(ControllerHierarchyTests, CustomHumanControllerRegistersAndDrivesItsPossessedActor)
+{
+    auto controller = TestHumanController::Create();
+    auto actor = Actor::Create();
+    actor-&gt;setPosition({ 0.f, 0.f, 0.f });
+    controller-&gt;possess(actor.get());
+    controller-&gt;getInput().bind("Run"_atom, KeyChord::Exact(Platform::Keyboard::Key::W),
+                                InputActionTrigger::WhileHeld);
+    EXPECT_TRUE(GetGlobalComponentFactory().containsSuchType(TestHumanController::componentType));
+    pressW();
+    controller-&gt;tick(2.f);
+    EXPECT_EQ(actor-&gt;getPosition().x, 2.f);
+    controller-&gt;unpossess();
+    controller-&gt;tick(2.f);
+    EXPECT_EQ(actor-&gt;getPosition().x, 2.f);
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Mutable <code>getInput()</code> initializes the controller and ensures its direct input child
+exists. The child&#8217;s Gameplay context is appropriate for this fixture.
+Run is configured as WhileHeld; the controller never asks whether Run is a Press
+or Release action.</p>
+</div>
+<div class="paragraph">
+<p><code>pressW()</code> publishes W Press to the Platform window and processes one input frame.
+The test ticks the controller explicitly and checks actor movement. Production
+code normally attaches the controller to a component tree that is initialized and
+ticked by the scene, or supplies another explicit owner/update path.</p>
+</div>
+<div class="paragraph">
+<p>Possession alone does not arrange ticking. Input initialization alone does not
+arrange actor behavior. Keep both lifetimes clear.</p>
+</div>
+<div class="paragraph">
+<p>After unpossessing, the same active input no longer moves the actor because the
+behavior checks <code>getControlledActor()</code> first.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_4_separate_configuration_from_handlers"><a class="anchor" href="#_4_separate_configuration_from_handlers"></a>4. Separate configuration from handlers</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Default bindings should be installed only when the map is empty or when a deliberate
+configuration migration applies. Replacing bindings unconditionally in every
+onInitialize would overwrite deserialized or user-edited maps.</p>
+</div>
+<div class="paragraph">
+<p>Behavior handlers should be reinstalled on initialization because clones and
+deserialized components do not persist callbacks/delegate listeners.
+Use <code>setActionCallback()</code> so installing a callback does not also replace a binding.
+For held movement, polling can avoid registering a callback entirely.</p>
+</div>
+<div class="paragraph">
+<p>The existing Spectator follows this pattern:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Reuse its existing controller/input child.</p>
+</li>
+<li>
+<p>Install default bindings only when the binding vector is empty.</p>
+</li>
+<li>
+<p>Restore action handlers on every initialization.</p>
+</li>
+<li>
+<p>Poll held movement actions during its scene tick.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>An empty map is also the spectator&#8217;s “install defaults” signal. If intentional
+empty maps must survive initialization in your game, add an explicit configuration
+state/version rather than relying on that convention.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_5_pick_a_delivery_style_for_each_action"><a class="anchor" href="#_5_pick_a_delivery_style_for_each_action"></a>5. Pick a delivery style for each action</h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 30%;">
+<col style="width: 30%;">
+<col style="width: 40%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Behavior</th>
+<th class="tableblock halign-left valign-top">Typical binding</th>
+<th class="tableblock halign-left valign-top">Consumer</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Walking/running while held</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Button, WhileHeld</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Poll isActive each tick; apply delta and movement rules.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Jump/menu/save command</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Button, OnPress</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Callback for each accepted press, or poll once in the input frame.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Release-to-confirm</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Button, OnRelease</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Callback or frame pulse; account for silent cancellation.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Camera look/pan</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">PointerMove, optionally mouse-gated</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Individual callback delta or frame-total getActionValue.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Zoom/scroll</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Wheel, optionally gated</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Callback offset or frame-total getActionValue.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>If you both handle a callback and poll the same pulse, you can execute a command
+twice. Pick one behavior path or explicitly coordinate them.
+If several simulation ticks run during one input frame, an OnPress pulse remains
+true for all those reads; implement command consumption at the simulation boundary
+if your game needs exactly one execution.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_6_make_context_ownership_explicit"><a class="anchor" href="#_6_make_context_ownership_explicit"></a>6. Make context ownership explicit</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Use separate contexts for separate interaction modes, and temporary BlockLower
+layers for modal/text entry.
+If two controllers in Gameplay should not move simultaneously, disable the inactive
+one explicitly rather than depending on registration order.</p>
+</div>
+<div class="paragraph">
+<p>For a custom editor tool, derive from EditorController and assign EditorViewport
+when it should participate in viewport interaction.
+The context assignment does not supply GUI focus logic by itself; EditorIntegration
+publishes the active layers before processing input.</p>
+</div>
+<div class="paragraph">
+<p>Keep the returned InputContextGuard for as long as an overlay is active. A temporary
+discarded guard cannot represent a persistent tool mode.
+See <a href="contexts.html" class="xref page">Contexts and routing</a>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_ai_and_alternative_command_sources"><a class="anchor" href="#_ai_and_alternative_command_sources"></a>AI and alternative command sources</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>For AI, derive from AIController, preserve the base lifecycle, and implement decisions
+in the game. Read the possessed actor, check its lifetime, and issue domain behavior.
+Do not fabricate Platform events to make AI look like a keyboard user.</p>
+</div>
+<div class="paragraph">
+<p>For replay/network sources, derive from GameController if actor possession is
+needed. Add command production/consumption with explicit authority and timing rules.
+There is currently no built-in replay stream, network controller, AI action injector,
+or universal command-buffer abstraction.</p>
+</div>
+<div class="paragraph">
+<p>If human, AI, and replay must share complex movement rules, move those rules into
+an actor/domain service and let each controller produce intentions for it.
+That is a game-level design extension; the existing hierarchy does not require
+adding hardware methods to GameController.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="direct-composition"><a class="anchor" href="#direct-composition"></a>Direct composition for non-Actor consumers</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The sample Player is an animated rectangle component. It uses a descendant
+InputController directly rather than GameController possession.
+Its movement logic polls semantic actions and handles diagonals at the consumer layer:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">const auto* _input = findFirstChildOf&lt;InputController&gt;();
+auto* _animator = findFirstChildOf&lt;Animation::FrameByFrameAnimator&gt;();
+
+if (!_input || !_input-&gt;isEnabled())
+{
+    return;
+}
+
+const int horizontal = static_cast&lt;int&gt;(_input-&gt;isActive("Move right"_atom))
+                       - static_cast&lt;int&gt;(_input-&gt;isActive("Move left"_atom));
+const int vertical = static_cast&lt;int&gt;(_input-&gt;isActive("Move up"_atom))
+                     - static_cast&lt;int&gt;(_input-&gt;isActive("Move down"_atom));
+
+constexpr float diagonalFactor = 0.70710678f;
+const float movementFactor = horizontal != 0 &amp;&amp; vertical != 0 ? diagonalFactor : 1.f;
+moveRight(static_cast&lt;float&gt;(horizontal) * _movementSpeed * movementFactor * delta);
+moveUp(static_cast&lt;float&gt;(vertical) * _movementSpeed * movementFactor * delta);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This is appropriate when the object is not an Actor or does not need the possession
+contract. Do not force every input consumer into HumanController inheritance.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_lifetime_and_extension_checklist"><a class="anchor" href="#_lifetime_and_extension_checklist"></a>Lifetime and extension checklist</h2>
+<div class="sectionbody">
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Give the controller/input child a real intrusive owner.</p>
+</li>
+<li>
+<p>Include the implementation translation unit in the target and use ECS registration.</p>
+</li>
+<li>
+<p>Initialize before const input access.</p>
+</li>
+<li>
+<p>Preserve configured input children and maps on repeated initialization.</p>
+</li>
+<li>
+<p>Reinstall callbacks after clone/deserialization; avoid duplicate delegate listeners.</p>
+</li>
+<li>
+<p>Check possessed-actor lifetime before each behavior operation.</p>
+</li>
+<li>
+<p>Keep contexts and overlay guards owned by the interaction that selects them.</p>
+</li>
+<li>
+<p>Unpossess/deinitialize explicitly when cleanup hooks must run.</p>
+</li>
+<li>
+<p>Test behavior through Platform events and processEvents, not private runtime mutation.</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_build_and_verify_a_new_reflected_controller"><a class="anchor" href="#_build_and_verify_a_new_reflected_controller"></a>Build and verify a new reflected controller</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Normal CMake builds run CodeGenerator. After adding a reflected type, build the
+configured target and the tests, then run the full suite.
+For stale metadata, the repository&#8217;s codegen workflow removes <code>.jrm/cache.data</code>
+and rebuilds CodeGenerator; generated headers must not be edited manually.</p>
+</div>
+<div class="paragraph">
+<p>See <a href="../../build/cmake-structure.html" class="xref page">CMake infrastructure</a> and
+<a href="troubleshooting.html" class="xref page">Verification</a> for repository commands.</p>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="controllers.html">Controller Hierarchy and Ownership</a></span>
+  <span class="next"><a href="lifecycle-and-integration.html">Frame Lifecycle and Integration</a></span>
+</nav>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script id="site-script" src="../../../../_/js/site.js" data-ui-root-path="../../../../_"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

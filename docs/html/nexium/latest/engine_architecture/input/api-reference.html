@@ -1,0 +1,1187 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Input API Reference :: Nexium Engine</title>
+    <link rel="prev" href="serialization-and-editor.html">
+    <link rel="next" href="troubleshooting.html">
+    <meta name="generator" content="Antora 3.2.1">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="../../../..">Nexium Engine</a>
+      <button class="navbar-burger" aria-controls="topbar-nav" aria-expanded="false" aria-label="Toggle main menu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Products</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="#">Product A</a>
+            <a class="navbar-item" href="#">Product B</a>
+            <a class="navbar-item" href="#">Product C</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Services</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="#">Service A</a>
+            <a class="navbar-item" href="#">Service B</a>
+            <a class="navbar-item" href="#">Service C</a>
+          </div>
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="button is-primary" href="#">Download</a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="nexium" data-version="latest">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <button class="nav-menu-toggle" aria-label="Toggle expand/collapse all" style="display: none"></button>
+    <h3 class="title"><a href="../../index.html">Nexium Engine Documentation</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../../index.html">Overview</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../getting-started.html">Getting Started</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../installation.html">Installation</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Engine Architecture</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../index.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../architecture-review.html">Architecture and Migration Review</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ue5-alignment.html">UE5 Patterns for Nexium</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../module-graph.html">Module Graph</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../lifecycle.html">Application Lifecycle</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../threading.html">Threading Model</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../memory.html">Memory Model</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../resource-system.html">Resource System</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../file-io.html">File I/O</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ecs-overview.html">ECS Overview</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../input-system.html">Input System</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="actions-and-bindings.html">Actions and Bindings</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="contexts.html">Contexts and Routing</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="controllers.html">Controller Hierarchy and Ownership</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="custom-controllers.html">Creating Custom Controllers</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="lifecycle-and-integration.html">Frame Lifecycle and Integration</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="serialization-and-editor.html">Serialization and Binding Editor</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="3">
+    <a class="nav-link" href="api-reference.html">API Reference</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="troubleshooting.html">Troubleshooting and Verification</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Rendering</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../rendering/index.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../rendering/pipeline.html">Rendering Pipeline</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../rendering/renderer-architecture.html">Rendering Responsibilities</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Materials</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../rendering/materials/shader-system.html">Shader System</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Gameplay</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../gameplay/index.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../gameplay/scenes.html">Scenes</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../gameplay/components.html">Components</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../gameplay/scripting.html">Gameplay Hooks</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../gameplay/prefabs.html">Blueprint Templates</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Build &amp; Toolchain</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../build/index.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../build/cmake-structure.html">CMake Structure</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../build/ci-cd.html">CI/CD</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../about/index.html">About</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Nexium Engine Documentation</span>
+    <span class="version">latest</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <div class="title"><a href="../../index.html">Nexium Engine Documentation</a></div>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../../index.html">latest</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../index.html">Nexium Engine Documentation</a></li>
+    <li>Engine Architecture</li>
+    <li><a href="../input-system.html">Input System</a></li>
+    <li><a href="api-reference.html">API Reference</a></li>
+  </ul>
+</nav>
+<div class="edit-this-page"><a href="file:///home/alex/Desktop/nexium//docs/nexium/modules/engine_architecture/pages/input/api-reference.adoc">Edit this Page</a></div>
+</div>
+  <div class="content">
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">Input API Reference</h1>
+<div id="toc" class="toc">
+<div id="toctitle">Table of Contents</div>
+<ul class="sectlevel1">
+<li><a href="#_inputcontroller">InputController</a>
+<ul class="sectlevel2">
+<li><a href="#_creation_and_lifecycle">Creation and lifecycle</a></li>
+<li><a href="#_binding_configuration">Binding configuration</a></li>
+<li><a href="#_context_and_enable_state">Context and enable state</a></li>
+<li><a href="#_action_queries">Action queries</a></li>
+<li><a href="#_notifications_and_settings">Notifications and settings</a></li>
+</ul>
+</li>
+<li><a href="#_inputbinding_and_inputmap">InputBinding and InputMap</a></li>
+<li><a href="#_inputsystem">InputSystem</a></li>
+<li><a href="#_inputcontextguard">InputContextGuard</a></li>
+<li><a href="#_inputcontextstack_and_inputcontextlayer">InputContextStack and InputContextLayer</a></li>
+<li><a href="#_buttons_channels_modifiers_and_events">Buttons, channels, modifiers, and events</a></li>
+<li><a href="#_inputcapture">InputCapture</a></li>
+<li><a href="#_domain_controller_api">Domain controller API</a></li>
+<li><a href="#_internal_collaboration">Internal collaboration</a></li>
+</ul>
+</div>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>This reference describes the routed input API in namespace <code>NX</code>. Declarations are
+included from the current headers. The accompanying tables document behavior and
+preconditions that cannot be inferred from a signature alone.</p>
+</div>
+<div class="paragraph">
+<p>Include headers from <code>NxWorld/Framework/Input/</code> for world-level input/controller
+types and <code>NxSubsystems/Input/InputTypes.h</code> for shared event/chord types.
+Use Core intrusive/weak pointers and StringAtom names as elsewhere in the engine.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_inputcontroller"><a class="anchor" href="#_inputcontroller"></a>InputController</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>An ECS BaseComponent, not a BaseController subclass. It owns editable bindings,
+independent runtime state, handlers, and its action delegate.
+ECS_DECL additionally supplies pointer aliases, constructors, componentType,
+Create(), and clone().</p>
+</div>
+<div class="listingblock">
+<div class="title">Public declaration excerpt.</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">using ActionCallback = std::function&lt;void(const InputActionEvent&amp;)&gt;;
+using Binding = InputBinding;
+
+FIELD();
+float speed = 600.f;
+
+FIELD();
+float mouseSensitivity = 0.5f;
+
+InputController(const Core::StringAtom&amp; name, InputContext context)
+    : InputController(name)
+{
+    _inputContext = context;
+}
+InputController(const InputController&amp; other);
+InputController&amp; operator=(const InputController&amp;) = delete;
+InputController(InputController&amp;&amp;) = delete;
+InputController&amp; operator=(InputController&amp;&amp;) = delete;
+
+~InputController() override;
+
+[[nodiscard]] static Ptr Create(const Core::StringAtom&amp; name, InputContext context);
+
+bool bind(const Core::StringAtom&amp; action, const KeyChord&amp; chord,
+          InputActionTrigger trigger = InputActionTrigger::OnPress);
+bool bind(const Core::StringAtom&amp; action, KeyChord chord, ActionCallback callback,
+          InputActionTrigger trigger = InputActionTrigger::OnPress);
+bool bind(Binding binding);
+
+// Callback registration is independent of the editable bindings.
+// An empty callback unregisters the handler.
+void setActionCallback(const Core::StringAtom&amp; action, ActionCallback callback);
+void clearBindings();
+bool unbind(const Core::StringAtom&amp; action);
+void setBindings(const std::vector&lt;Binding&gt;&amp; bindings);
+
+void setInputMap(const InputMap&amp; map) { setBindings(map.getBindings()); }
+[[nodiscard]] InputMap getInputMap() const { return InputMap(_bindings); }
+
+void setInputContext(InputContext context);
+[[nodiscard]] InputContext getInputContext() const noexcept { return _inputContext; }
+void setInputEnabled(bool enabled);
+[[nodiscard]] bool isInputEnabled() const noexcept;
+
+[[nodiscard]] bool isActive(const Core::StringAtom&amp; action) const;
+[[nodiscard]] bool isActionPressed(const Core::StringAtom&amp; action) const
+{
+    return isActive(action);
+}
+[[nodiscard]] InputModifier getActionModifiers(const Core::StringAtom&amp; action) const;
+[[nodiscard]] glm::vec2 getActionValue(const Core::StringAtom&amp; action) const;
+[[nodiscard]] const std::vector&lt;Binding&gt;&amp; getBindings() const noexcept { return _bindings; }
+
+[[nodiscard]] Tag getTags() const override;
+void onPostDeserialize(AbstractComponent* obj, const RLogsCollector&amp; logs) override;
+
+Core::Delegate&lt;void(const InputActionEvent&amp;)&gt;::Ptr onAction
+    = Core::Delegate&lt;void(const InputActionEvent&amp;)&gt;::Create();</code></pre>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_creation_and_lifecycle"><a class="anchor" href="#_creation_and_lifecycle"></a>Creation and lifecycle</h3>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 37.5%;">
+<col style="width: 62.5%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">API</th>
+<th class="tableblock halign-left valign-top">Contract</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Macro-provided constructor / Create()</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Allocate a component with default Gameplay context. The no-argument factory does not initialize.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Constructor(name, context)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Set the component name/context; constructor alone does not initialize.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Create(name, context)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Allocate and initialize before returning the intrusive Ptr.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">initialize / deinitialize</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Inherited component lifecycle; input registers/unregisters in the corresponding hooks.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Destructor</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Unregister from InputSystem.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Copy/clone</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Copy configuration and explicit enable flag; fresh runtime, handlers, delegate and registration.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Assignments/moves</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Deleted for InputController.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>Keep a real owner alive; router registration is non-owning.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_binding_configuration"><a class="anchor" href="#_binding_configuration"></a>Binding configuration</h3>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 37.5%;">
+<col style="width: 62.5%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">API</th>
+<th class="tableblock halign-left valign-top">Contract</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">bind(action, chord, trigger)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Create a Button binding; trigger defaults to OnPress.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">bind(action, chord, callback, trigger)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Same binding operation; a nonempty callback installs/replaces that action&#8217;s handler.
+An empty callback in this overload does not remove an existing handler.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">bind(Binding)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Allow all supported source types. Validate minimum shape, cancel current state,
+replace first matching action or insert, then refresh.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">bind return value</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">True for insertion; false for valid replacement or invalid binding.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">unbind(action)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Remove all bindings of that name; true if removed. Cancellation/refresh occurs only when removed.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">clearBindings()</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Cancel all state and clear bindings; handlers remain.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">setBindings(vector)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Copy all entries, including invalid or duplicate entries; cancel all state and refresh.
+Resolution skips invalid entries. Self-aliasing with getBindings is safe.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">getBindings()</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Const vector reference. Later changes can invalidate its contents/references.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">getInputMap()</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Return a configuration copy.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">setInputMap(map)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Copy its vector through setBindings; no shared runtime.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>Binding changes reset all actions on that input component, not just the named action.
+Repeated bind calls are replacements, not a way to accumulate alternate keys.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_context_and_enable_state"><a class="anchor" href="#_context_and_enable_state"></a>Context and enable state</h3>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 37.5%;">
+<col style="width: 62.5%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">API</th>
+<th class="tableblock halign-left valign-top">Contract</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">setInputContext / getInputContext</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Assign/query one enum identity. A changed value cancels and refreshes; same value is a no-op.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">setInputEnabled</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Changed explicit flag cancels and refreshes; same value is a no-op.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">isInputEnabled</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">True only if the explicit flag, this component, and all ancestors are enabled.
+Does not test initialization, context availability, focus, or ticking.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>Use <a href="contexts.html" class="xref page">context policy</a> to decide delivery, not isInputEnabled as a
+context-reachability query.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_action_queries"><a class="anchor" href="#_action_queries"></a>Action queries</h3>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 37.5%;">
+<col style="width: 62.5%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">API</th>
+<th class="tableblock halign-left valign-top">Return behavior</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">isActive(action)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">False for unknown/inactive action or disabled input. Otherwise the binding-defined
+held/transient activity.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">isActionPressed(action)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Compatibility alias of isActive. It does not specifically mean an OnPress edge.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">getActionValue(action)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Accumulated vec2, or zero for unknown/inactive/disabled input. Button contributions
+are (1,0), pointer/scroll contributions preserve their event values.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">getActionModifiers(action)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OR of contributing binding snapshots, or None for unknown/inactive/disabled input.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>Held modifiers are captured at activation, not continuously rewritten when an
+unrelated modifier changes. A release pulse uses the release event&#8217;s modifier
+snapshot. For a current physical modifier-dependent behavior, bind a separate
+held modifier action or design the consumer&#8217;s command data explicitly.
+Queries do not consume pulses.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_notifications_and_settings"><a class="anchor" href="#_notifications_and_settings"></a>Notifications and settings</h3>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 37.5%;">
+<col style="width: 62.5%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">API/field</th>
+<th class="tableblock halign-left valign-top">Contract</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">setActionCallback(action, callback)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Install/replace a nonempty handler; empty handler removes it; empty action is ignored.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">onAction</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Intrusive delegate initially created for the component. Receives emitted actions
+after the action-specific callback.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">speed</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Reflected float, default 600. Used by consumers such as Spectator.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">mouseSensitivity</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Reflected float, default 0.5. Core input does not apply it to values.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">getTags()</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">BaseComponent tags plus Tag_InputController.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">onPostDeserialize</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Base processing followed by silent cancellation and router refresh.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>Callbacks are synchronous and not copied/serialized. Cancellation emits no notification.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_inputbinding_and_inputmap"><a class="anchor" href="#_inputbinding_and_inputmap"></a>InputBinding and InputMap</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">struct InputBinding
+{
+    Core::StringAtom action{};
+    KeyChord chord{};
+    InputActionTrigger trigger = InputActionTrigger::OnPress;
+    InputEventType source = InputEventType::Button;
+};</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Configuration API excerpt; private storage omitted.</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">class InputMap
+{
+public:
+    InputMap() = default;
+    explicit InputMap(std::vector&lt;InputBinding&gt; bindings)
+        : _bindings(std::move(bindings))
+    {
+    }
+
+    [[nodiscard]] const std::vector&lt;InputBinding&gt;&amp; getBindings() const noexcept
+    {
+        return _bindings;
+    }
+
+    void setBindings(std::vector&lt;InputBinding&gt; bindings) { _bindings = std::move(bindings); }
+
+    bool bind(InputBinding binding) { return Bind(_bindings, std::move(binding)); }
+    bool unbind(const Core::StringAtom&amp; action) { return Unbind(_bindings, action); }
+
+    [[nodiscard]] std::optional&lt;InputBinding&gt; resolveBinding(const KeyInputEvent&amp; event) const
+    {
+        return ResolveBinding(_bindings, event);
+    }
+
+    [[nodiscard]] static bool IsValid(const InputBinding&amp; binding);
+    static bool Bind(std::vector&lt;InputBinding&gt;&amp; bindings, InputBinding binding);
+    static bool Unbind(std::vector&lt;InputBinding&gt;&amp; bindings, const Core::StringAtom&amp; action);
+    [[nodiscard]] static std::optional&lt;InputBinding&gt; ResolveBinding(
+        std::span&lt;const InputBinding&gt; bindings, const KeyInputEvent&amp; event);</code></pre>
+</div>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 37.5%;">
+<col style="width: 62.5%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">API</th>
+<th class="tableblock halign-left valign-top">Contract</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Default constructor</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Empty vector.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Vector constructor / setBindings</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Move supplied configuration into the map; no validation pass.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">getBindings</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Const reference to configuration.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">bind / static Bind</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Minimum validation; replace first same-action entry or append. True only for append.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">unbind / static Unbind</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Erase all same-action entries; true if any were removed.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">resolveBinding / static ResolveBinding</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Return a copied optional winning binding. Match source/chord, prefer greatest
+requirement count plus nonempty trigger, and keep first tie.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">IsValid</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Nonempty action, plus non-None trigger for Button.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">to_json / from_json</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Custom InputBinding adapters; see <a href="serialization-and-editor.html" class="xref page">Serialization</a>.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>Map resolution does not process frame state or emit events. It is not itself a
+complete dispatcher: the router filters event states and runtime activation semantics.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_inputsystem"><a class="anchor" href="#_inputsystem"></a>InputSystem</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><code>GetInputSystem()</code> returns the singleton. The public methods include engine
+integration and lifecycle plumbing; gameplay normally uses its own input component.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">~InputSystem() override = default;
+void initialize(Platform::Window&amp; window);
+void processEvents();
+void setActiveContext(InputContext context);
+void setGlobalContext(std::optional&lt;InputContext&gt; context);
+[[nodiscard]] InputContextGuard pushContext(InputContextLayer layer);
+void resetInput();
+void registerController(InputController* controller);
+void unregisterController(InputController* controller);
+void refreshController(InputController* controller);
+[[nodiscard]] bool hasPointerCapture() const { return _router.hasPointerCapture(); }</code></pre>
+</div>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 37.5%;">
+<col style="width: 62.5%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">API</th>
+<th class="tableblock halign-left valign-top">Contract</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">initialize(window)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Subscribe the collector once. Current design supports one bound window.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">processEvents()</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Start an input frame and drain queued events. Call once before consumers tick.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">setActiveContext(context)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Change base context and immediately synchronize when changed.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">setGlobalContext(optional)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Set/remove the optional layer above base; synchronize when changed.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">pushContext(layer)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Push temporary overlay, synchronize, return owning move-only guard.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">resetInput()</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Clear queue/devices/actions/pointer ownership/quarantine/recording fence.
+Preserve bindings, handlers, registration, contexts and live capture guards.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">hasPointerCapture()</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Whether any router registration has accepted pointer-button ownership.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">registerController(pointer)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Internal ECS plumbing: non-owning, ignore null/duplicate registration, refresh availability.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">unregisterController(pointer)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Remove matching registrations.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">refreshController(pointer)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Invalidate pending binding candidates, reset gesture/availability state, synchronize.
+The configuration-facing InputController methods supply their own cancellation.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>Do not register ordinary components manually to bypass lifecycle, or call
+refreshController instead of the public binding/context/enable setters.
+There is no public physical-key polling, context-stack inspection, per-player
+instance creation, or action injection API on InputSystem.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_inputcontextguard"><a class="anchor" href="#_inputcontextguard"></a>InputContextGuard</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="title">Public guard excerpt.</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">class InputContextGuard
+{
+public:
+    InputContextGuard() = default;
+    InputContextGuard(const InputContextGuard&amp;) = delete;
+    InputContextGuard&amp; operator=(const InputContextGuard&amp;) = delete;
+    InputContextGuard(InputContextGuard&amp;&amp; other) noexcept;
+    InputContextGuard&amp; operator=(InputContextGuard&amp;&amp; other) noexcept;
+    ~InputContextGuard();
+    void reset();</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Default construction is empty. Copy is deleted; move transfers a layer ID and its
+borrowed owner. Move assignment first resets the destination&#8217;s old layer.
+reset/destruction remove the owned overlay once, even out of stack order.
+The owner must outlive every guard.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_inputcontextstack_and_inputcontextlayer"><a class="anchor" href="#_inputcontextstack_and_inputcontextlayer"></a>InputContextStack and InputContextLayer</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">enum class InputContextPolicy
+{
+    ConsumeMatched,
+    BlockLower
+};
+
+struct InputContextLayer
+{
+    InputContext context = InputContext::Editor;
+    InputContextPolicy policy = InputContextPolicy::ConsumeMatched;
+    InputChannel channels = InputChannel::All;
+};</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Stack method excerpt.</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">using LayerId = std::uint64_t;
+
+bool setActiveContext(InputContext context);
+bool setGlobalContext(std::optional&lt;InputContext&gt; context);
+[[nodiscard]] LayerId push(InputContextLayer layer);
+bool pop(LayerId id);
+[[nodiscard]] std::vector&lt;InputContextLayer&gt; getLayers() const;
+[[nodiscard]] bool isAvailable(InputContext context, InputChannel channel) const;</code></pre>
+</div>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 37.5%;">
+<col style="width: 62.5%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">API</th>
+<th class="tableblock halign-left valign-top">Contract</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">setActiveContext / setGlobalContext</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Return true only when changed. The value type alone does not synchronize a router.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">push(layer)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Return a monotonically allocated uint64 LayerId.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">pop(id)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Remove that ID, regardless of stack position; true if it existed.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">getLayers()</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Return a vector copy: reversed overlays, optional distinct global, base.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">isAvailable(context, channel)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Reach matching context before an earlier BlockLower on the selected channel.
+Does not resolve ConsumeMatched maps.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>InputSystem owns the operational stack. Use its methods/guards for live routing.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_buttons_channels_modifiers_and_events"><a class="anchor" href="#_buttons_channels_modifiers_and_events"></a>Buttons, channels, modifiers, and events</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">ENUM_CLASS();
+enum class InputContext : std::uint8_t
+{
+    Editor,
+    Gameplay,
+    EditorViewport,
+    Modal,
+    TextInput,
+    BindingCapture
+};
+
+enum class InputChannel : std::uint8_t
+{
+    Keyboard = 1,
+    Pointer = 2,
+    All = 3
+};
+
+[[nodiscard]] constexpr bool hasInputChannel(InputChannel mask, InputChannel channel) noexcept
+{
+    return (static_cast&lt;std::uint8_t&gt;(mask) &amp; static_cast&lt;std::uint8_t&gt;(channel)) != 0;
+}
+
+enum class InputEventType : std::uint8_t
+{
+    Button,
+    PointerMove,
+    Wheel
+};
+
+ENUM_CLASS();
+enum class InputModifier : std::uint8_t
+{
+    None = 0,
+    Shift = 1 &lt;&lt; 0,
+    Control = 1 &lt;&lt; 1,
+    Alt = 1 &lt;&lt; 2,
+    Super = 1 &lt;&lt; 3,
+    All = (1 &lt;&lt; 4) - 1
+};</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><code>hasInputChannel(mask, channel)</code> tests any overlapping bit; when supplied All as
+the second argument it does not mean “both bits are present”.
+Modifier <code>|</code> and <code>&amp;</code> operators are defined in the global namespace.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">class InputButton
+{
+public:
+    constexpr InputButton() = default;
+    constexpr InputButton(Platform::Keyboard::Key key)
+        : _value(key)
+    {
+    }
+    constexpr InputButton(Platform::Mouse::Key button)
+        : _value(button)
+    {
+    }
+
+    [[nodiscard]] constexpr bool isMouse() const noexcept
+    {
+        return std::holds_alternative&lt;Platform::Mouse::Key&gt;(_value);
+    }
+
+    [[nodiscard]] constexpr Platform::Keyboard::Key getKeyboardKey() const noexcept
+    {
+        if (const auto* key = std::get_if&lt;Platform::Keyboard::Key&gt;(&amp;_value))
+        {
+            return *key;
+        }
+        return Platform::Keyboard::Key::None;
+    }
+
+    [[nodiscard]] constexpr Platform::Mouse::Key getMouseButton() const noexcept
+    {
+        if (const auto* button = std::get_if&lt;Platform::Mouse::Key&gt;(&amp;_value))
+        {
+            return *button;
+        }
+        return Platform::Mouse::Key::None;
+    }
+
+    [[nodiscard]] constexpr bool isNone() const noexcept
+    {
+        return isMouse() ? getMouseButton() == Platform::Mouse::Key::None
+                         : getKeyboardKey() == Platform::Keyboard::Key::None;
+    }
+
+    [[nodiscard]] constexpr bool operator==(const InputButton&amp;) const noexcept = default;
+
+private:
+    std::variant&lt;Platform::Keyboard::Key, Platform::Mouse::Key&gt; _value
+        = Platform::Keyboard::Key::None;
+};
+
+[[nodiscard]] InputButton NormalizeInputButton(InputButton button) noexcept;
+[[nodiscard]] bool IsInputModifier(InputButton button) noexcept;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><code>InputButton</code> defaults to keyboard None. Accessing the other device variant returns
+that device&#8217;s None. <code>NormalizeInputButton()</code> aliases the four right modifiers to left;
+<code>IsInputModifier()</code> identifies logical Shift/Control/Alt/Super.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">struct KeyChord
+{
+    /// Keyboard key or mouse button that completes the chord and triggers its action.
+    InputButton triggerKey;
+    /// Keys and mouse buttons that must already be held when triggerKey is pressed.
+    std::vector&lt;InputButton&gt; requiredKeys;
+
+    [[nodiscard]] static KeyChord Exact(InputButton key);
+
+    [[nodiscard]] bool matches(InputButton eventKey,
+                               const std::vector&lt;InputButton&gt;&amp; pressedKeys) const;
+
+    [[nodiscard]] bool contains(InputButton key) const;
+};
+ENUM_CLASS();
+enum class InputActionTrigger : std::uint8_t
+{
+    WhileHeld,
+    OnPress,
+    OnRelease
+};
+struct KeyInputEvent
+{
+    InputButton key{};
+    Platform::Keyboard::KeyState state = Platform::Keyboard::KeyState::None;
+    InputModifier modifiers = InputModifier::None;
+    int scancode = 0;
+    std::vector&lt;InputButton&gt; pressedKeys{};
+    InputEventType type = InputEventType::Button;
+    glm::vec2 value{};
+    glm::vec2 position{};
+};
+
+struct InputActionEvent
+{
+    Core::StringAtom action;
+    Platform::Keyboard::KeyState state = Platform::Keyboard::KeyState::None;
+    glm::vec2 value{};
+    glm::vec2 position{};
+    bool canceled = false;
+    InputModifier modifiers = InputModifier::None;
+
+    [[nodiscard]] constexpr bool isCanceled() const noexcept { return canceled; }
+
+    [[nodiscard]] constexpr bool isPressed() const noexcept
+    {
+        return state == Platform::Keyboard::KeyState::Pressed;
+    }
+
+    [[nodiscard]] constexpr bool isReleased() const noexcept
+    {
+        return state == Platform::Keyboard::KeyState::Released;
+    }
+
+    [[nodiscard]] constexpr bool isRepeated() const noexcept
+    {
+        return state == Platform::Keyboard::KeyState::Repeated;
+    }
+};</code></pre>
+</div>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 37.5%;">
+<col style="width: 62.5%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Field/helper</th>
+<th class="tableblock halign-left valign-top">Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">KeyInputEvent.key/state/scancode</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Physical event identity/state and retained scancode; key is normalized after device processing.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">KeyInputEvent.pressedKeys</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Normalized current held-button snapshot after applying that event.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">KeyInputEvent.modifiers</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Reconstructed from physical modifier sides by device state.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">KeyInputEvent.type/value/position</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Event family, pointer delta/scroll offset, window cursor position.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">InputActionEvent.action</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Configured semantic atom.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">InputActionEvent.value</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Individual emitted contribution, not a frame&#8217;s accumulated polling total.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">InputActionEvent.state</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Pressed for Button activation; Released for an accepted OnRelease chord ending;
+normally None for pointer/wheel.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">InputActionEvent.modifiers/position</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Activation snapshot, or current release snapshot for OnRelease.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">isPressed / isReleased</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Check event state only; they are not named-action polling APIs.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">canceled / isCanceled</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Present in the structure; current silent cancellation emits no canceled events.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">isRepeated</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Checks the field, but routed Button Repeat is ignored.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_inputcapture"><a class="anchor" href="#_inputcapture"></a>InputCapture</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="title">Public recording-capture excerpt.</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">class InputCapture
+{
+public:
+    InputCapture();
+    ~InputCapture();
+
+    InputCapture(const InputCapture&amp;) = delete;
+    InputCapture(InputCapture&amp;&amp;) = delete;
+    InputCapture&amp; operator=(const InputCapture&amp;) = delete;
+    InputCapture&amp; operator=(InputCapture&amp;&amp;) = delete;
+
+    /// Returns whether a guard exists or held buttons are still awaiting release.
+    [[nodiscard]] static bool isActive() noexcept;
+
+    /// Tracks button presses and releases, even when no guard exists.
+    static void updateButton(InputButton button, Platform::Keyboard::KeyState state);
+
+    /// Clears button tracking and pending releases without ending live captures.
+    static void resetButtons();</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Construction increments a global guard count. Copy/move are deleted. Destruction
+of the last guard establishes a pending-release fence if physical holds remain.
+isActive is true for a live guard or that fence.
+updateButton tracks Press/Release even without a live guard.
+resetButtons clears physical tracking/fence but not the guard count.
+These integration methods are not an actor-control mechanism.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_domain_controller_api"><a class="anchor" href="#_domain_controller_api"></a>Domain controller API</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>See <a href="controllers.html" class="xref page">Controller hierarchy</a> for the type graph, ownership, and
+GameController/HumanController/EditorController declaration excerpts.
+BaseController and AIController add no public input API of their own.
+Inherited component lifecycle and GameController&#8217;s possession hooks are their
+extension points.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_internal_collaboration"><a class="anchor" href="#_internal_collaboration"></a>Internal collaboration</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>InputCollector, InputDeviceState, InputRouter, and InputActionRuntime are separated
+implementation collaborators. Ordinary gameplay should not call their methods to
+bypass InputSystem or alter private acceptance state.
+Their actual processing order and contracts are documented in
+<a href="lifecycle-and-integration.html" class="xref page">Lifecycle</a> and <a href="contexts.html" class="xref page">Routing</a>.</p>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="serialization-and-editor.html">Serialization and Binding Editor</a></span>
+  <span class="next"><a href="troubleshooting.html">Troubleshooting and Verification</a></span>
+</nav>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script id="site-script" src="../../../../_/js/site.js" data-ui-root-path="../../../../_"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

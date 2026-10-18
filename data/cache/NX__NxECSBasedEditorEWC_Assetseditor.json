@@ -9,21 +9,21 @@
         },
         {
             "_children": null,
-            "_isEnabled": false,
+            "_isEnabled": true,
             "_name": "",
             "_noTick": false,
             "_type": "NX::ECSEditorActorAdapter"
         },
         {
             "_children": null,
-            "_isEnabled": false,
+            "_isEnabled": true,
             "_name": "",
             "_noTick": false,
             "_type": "NX::ECSEditorInterleavedGraphicsDataAdapter"
         },
         {
             "_children": null,
-            "_isEnabled": false,
+            "_isEnabled": true,
             "_name": "",
             "_noTick": false,
             "_type": "NX::ECSEditorFrameByFrameAnimationAdapter"
@@ -34,6 +34,13 @@
             "_name": "",
             "_noTick": false,
             "_type": "NX::ECSEditorInputControllerAdapter"
+        },
+        {
+            "_children": null,
+            "_isEnabled": true,
+            "_name": "",
+            "_noTick": false,
+            "_type": "NX::ECSBaseComponentAdapter"
         }
     ],
     "_innerPosition": [

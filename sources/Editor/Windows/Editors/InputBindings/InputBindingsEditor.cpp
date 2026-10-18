@@ -81,7 +81,7 @@ namespace NX
     {
         auto owner = _owner.tryLoad();
         auto* assetEditor = dynamic_cast<NxECSBasedEditorEWC*>(owner.get());
-        ImGui::BeginDisabled(!assetEditor || InputCapture::isActive());
+        ImGui::BeginDisabled((!assetEditor && !_targetAsset) || InputCapture::isActive());
         if (ImGui::Button(ICON_FA_FLOPPY_O " Save"_atom.c_str()))
         {
             saveTarget();
@@ -93,12 +93,12 @@ namespace NX
     {
         auto owner = _owner.tryLoad();
         auto* assetEditor = dynamic_cast<NxECSBasedEditorEWC*>(owner.get());
-        if (!assetEditor || InputCapture::isActive())
+        if ((!assetEditor && !_targetAsset) || InputCapture::isActive())
         {
             return;
         }
 
-        if (_targetAsset && assetEditor->getTargetAsset() != _targetAsset)
+        if (_targetAsset && (!assetEditor || assetEditor->getTargetAsset() != _targetAsset))
         {
             _targetAsset->syncWithFilesystem(_targetAsset->getData()->serialize());
         }
@@ -229,8 +229,13 @@ namespace NX
         auto controller = _targetController.tryLoad();
         auto owner = _owner.tryLoad();
         auto* editor = dynamic_cast<NxECSBasedEditorEWC*>(owner.get());
+        const auto assetRoot = _targetAsset ? _targetAsset->getData() : nullptr;
+        const bool retainedAsset = controller && assetRoot
+                                   && controller->IsSelfOrDescendantOf(assetRoot.get())
+                                   && (!editor || !editor->getTargetAsset());
         if (!controller
-            || (_hasOwner && (!editor || editor->getTargetComponent() != controller.get())))
+            || (_hasOwner && !retainedAsset
+                && (!editor || editor->getTargetComponent() != controller.get())))
         {
             setTarget(nullptr);
         }

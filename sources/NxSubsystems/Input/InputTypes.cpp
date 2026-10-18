@@ -14,6 +14,40 @@
 
 namespace NX
 {
+    InputButton NormalizeInputButton(InputButton button) noexcept
+    {
+        if (button.isMouse())
+        {
+            return button;
+        }
+        using Key = Platform::Keyboard::Key;
+        switch (button.getKeyboardKey())
+        {
+            case Key::Right_Shift:
+                return Key::Left_Shift;
+            case Key::Right_Control:
+                return Key::Left_Control;
+            case Key::Right_Alt:
+                return Key::Left_Alt;
+            case Key::Right_Super:
+                return Key::Left_Super;
+            default:
+                return button;
+        }
+    }
+
+    bool IsInputModifier(InputButton button) noexcept
+    {
+        if (button.isMouse())
+        {
+            return false;
+        }
+        using Key = Platform::Keyboard::Key;
+        const auto key = NormalizeInputButton(button).getKeyboardKey();
+        return key == Key::Left_Shift || key == Key::Left_Control || key == Key::Left_Alt
+               || key == Key::Left_Super;
+    }
+
     std::size_t InputCapture::_captureCount = 0;
     bool InputCapture::_awaitingRelease = false;
     std::vector<InputButton> InputCapture::_heldButtons;
@@ -70,18 +104,26 @@ namespace NX
 
     bool KeyChord::matches(InputButton eventKey, const std::vector<InputButton>& pressedKeys) const
     {
-        if (triggerKey != eventKey)
+        if (NormalizeInputButton(triggerKey) != NormalizeInputButton(eventKey))
         {
             return false;
         }
 
         return std::ranges::all_of(
-            requiredKeys, [&pressedKeys](InputButton key)
-            { return std::ranges::find(pressedKeys, key) != pressedKeys.end(); });
+            requiredKeys,
+            [&pressedKeys](InputButton key)
+            {
+                return std::ranges::any_of(
+                    pressedKeys, [key](InputButton pressed)
+                    { return NormalizeInputButton(pressed) == NormalizeInputButton(key); });
+            });
     }
 
     bool KeyChord::contains(InputButton key) const
     {
-        return triggerKey == key || std::ranges::find(requiredKeys, key) != requiredKeys.end();
+        return NormalizeInputButton(triggerKey) == NormalizeInputButton(key)
+               || std::ranges::any_of(
+                   requiredKeys, [key](InputButton required)
+                   { return NormalizeInputButton(required) == NormalizeInputButton(key); });
     }
 } // namespace NX

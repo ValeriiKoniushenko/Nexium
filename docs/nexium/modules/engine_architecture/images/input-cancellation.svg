@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="625" viewBox="0 0 1120 625" role="img" aria-labelledby="title desc">
+<title id="title">Silent cancellation and a fresh press</title><desc id="desc">An interrupted action does not resume from the physical button that is still down.</desc>
+<defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#506177" stroke-width="1.6"/></marker><marker id="inherit" markerWidth="14" markerHeight="14" refX="12" refY="7" orient="auto"><path d="M1 1 L12 7 L1 13 Z" fill="white" stroke="#506177" stroke-width="1.4"/></marker></defs>
+<style>text{font-family:DejaVu Sans,Arial,sans-serif;fill:#20324a}.title{font-size:24px;font-weight:700}.subtitle{font-size:14px;fill:#53667c}.node{font-size:17px;font-weight:700}.body{font-size:14px}.label{font-size:13px;fill:#42556c}.small{font-size:12px;fill:#53667c}.head{font-size:15px;font-weight:700}</style>
+<rect width="1120" height="625" fill="#fff"/><rect x="1" y="1" width="1118" height="623" rx="12" fill="none" stroke="#d9e0e9"/>
+<text x="28" y="42" class="title" text-anchor="start">Silent cancellation and a fresh press</text>
+<text x="28" y="69" class="subtitle" text-anchor="start">An interrupted action does not resume from the physical button that is still down.</text>
+<rect x="40" y="120" width="285" height="145" rx="9" fill="#ebf8f0" stroke="#398664" stroke-width="1.6"/>
+<text x="56" y="149" class="node" text-anchor="start">1. Accepted W Press</text>
+<text x="56" y="177" class="body" text-anchor="start">Physical W: held</text>
+<text x="56" y="198" class="body" text-anchor="start">WhileHeld: active</text>
+<rect x="415" y="120" width="285" height="145" rx="9" fill="#fff1ef" stroke="#bc5449" stroke-width="1.6"/>
+<text x="431" y="149" class="node" text-anchor="start">2. Modal opens</text>
+<text x="431" y="177" class="body" text-anchor="start">Accepted binding discarded</text>
+<text x="431" y="198" class="body" text-anchor="start">No Release callback</text>
+<rect x="790" y="120" width="285" height="145" rx="9" fill="#f3f5f8" stroke="#738094" stroke-width="1.6"/>
+<text x="806" y="149" class="node" text-anchor="start">3. Modal closes</text>
+<text x="806" y="177" class="body" text-anchor="start">Physical W: still held</text>
+<text x="806" y="198" class="body" text-anchor="start">Action: inactive / quarantined</text>
+<polyline points="325,190 415,190" fill="none" stroke="#506177" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline points="700,190 790,190" fill="none" stroke="#506177" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<rect x="790" y="370" width="285" height="145" rx="9" fill="#f3f5f8" stroke="#738094" stroke-width="1.6"/>
+<text x="806" y="399" class="node" text-anchor="start">4. Physical Release</text>
+<text x="806" y="427" class="body" text-anchor="start">Quarantine ends</text>
+<text x="806" y="448" class="body" text-anchor="start">No canceled binding to release</text>
+<rect x="415" y="370" width="285" height="145" rx="9" fill="#edf5ff" stroke="#3a68ad" stroke-width="1.6"/>
+<text x="431" y="399" class="node" text-anchor="start">5. Fresh W Press</text>
+<text x="431" y="427" class="body" text-anchor="start">Context accepts new gesture</text>
+<text x="431" y="448" class="body" text-anchor="start">New runtime binding</text>
+<rect x="40" y="370" width="285" height="145" rx="9" fill="#ebf8f0" stroke="#398664" stroke-width="1.6"/>
+<text x="56" y="399" class="node" text-anchor="start">6. Active again</text>
+<text x="56" y="427" class="body" text-anchor="start">WhileHeld behavior resumes</text>
+<text x="56" y="448" class="body" text-anchor="start">From this accepted Press</text>
+<polyline points="935,265 935,370" fill="none" stroke="#506177" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline points="790,443 700,443" fill="none" stroke="#506177" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline points="415,443 325,443" fill="none" stroke="#506177" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<text x="28" y="577" class="small" text-anchor="start">Modifiers are exempt from quarantine: held Control can combine with a newly pressed S after switching contexts.</text>
+</svg>

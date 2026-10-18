@@ -1,0 +1,30 @@
+// Nexium
+// Copyright 2018-2026 Valerii Koniushenko
+// Licensed under the Apache License, Version 2.0.
+
+#pragma once
+
+#include "NxWorld/Framework/Input/HumanController.h"
+
+namespace NX
+{
+    // tag::input-custom-human[]
+    CLASS();
+    class TestHumanController : public HumanController
+    {
+        ECS_DECL(TestHumanController, NX::HumanController);
+
+    protected:
+        void onTick(float delta) override
+        {
+            HumanController::onTick(delta);
+            if (auto* actor = getControlledActor(); actor && getInput().isActive("Run"_atom))
+            {
+                actor->moveRight(delta);
+            }
+        }
+    };
+    // end::input-custom-human[]
+} // namespace NX
+
+#include "TestHumanController.generated.h"

@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1110" height="620" viewBox="0 0 1110 620" role="img" aria-labelledby="title desc">
+<title id="title">Ownership and runtime relationships</title><desc id="desc">A strong child, a weak actor, and a non-owning registration have different lifetimes.</desc>
+<defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#506177" stroke-width="1.6"/></marker><marker id="inherit" markerWidth="14" markerHeight="14" refX="12" refY="7" orient="auto"><path d="M1 1 L12 7 L1 13 Z" fill="white" stroke="#506177" stroke-width="1.4"/></marker></defs>
+<style>text{font-family:DejaVu Sans,Arial,sans-serif;fill:#20324a}.title{font-size:24px;font-weight:700}.subtitle{font-size:14px;fill:#53667c}.node{font-size:17px;font-weight:700}.body{font-size:14px}.label{font-size:13px;fill:#42556c}.small{font-size:12px;fill:#53667c}.head{font-size:15px;font-weight:700}</style>
+<rect width="1110" height="620" fill="#fff"/><rect x="1" y="1" width="1108" height="618" rx="12" fill="none" stroke="#d9e0e9"/>
+<text x="28" y="42" class="title" text-anchor="start">Ownership and runtime relationships</text>
+<text x="28" y="69" class="subtitle" text-anchor="start">A strong child, a weak actor, and a non-owning registration have different lifetimes.</text>
+<rect x="60" y="120" width="340" height="125" rx="9" fill="#f4eeff" stroke="#8056ad" stroke-width="1.6"/>
+<text x="76" y="149" class="node" text-anchor="start">HumanController</text>
+<text x="76" y="177" class="body" text-anchor="start">GameController domain behavior</text>
+<text x="76" y="198" class="body" text-anchor="start">Owns component children</text>
+<rect x="745" y="120" width="300" height="125" rx="9" fill="#f4eeff" stroke="#8056ad" stroke-width="1.6"/>
+<text x="761" y="149" class="node" text-anchor="start">Actor</text>
+<text x="761" y="177" class="body" text-anchor="start">Scene-owned gameplay object</text>
+<text x="761" y="198" class="body" text-anchor="start">May outlive / expire first</text>
+<polyline points="400,180 745,180" fill="none" stroke="#506177" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)" stroke-dasharray="6 5"/>
+<text x="572" y="163" class="label" text-anchor="middle">WeakPtr possession</text>
+<rect x="60" y="380" width="340" height="145" rx="9" fill="#edf5ff" stroke="#3a68ad" stroke-width="1.6"/>
+<text x="76" y="409" class="node" text-anchor="start">InputController child</text>
+<text x="76" y="437" class="body" text-anchor="start">Binding configuration</text>
+<text x="76" y="458" class="body" text-anchor="start">Independent action runtime</text>
+<text x="76" y="479" class="body" text-anchor="start">Handlers and delegate</text>
+<polyline points="215,245 215,380" fill="none" stroke="#506177" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<text x="310" y="315" class="label" text-anchor="middle">strong child ownership</text>
+<rect x="745" y="380" width="300" height="145" rx="9" fill="#ebf8f0" stroke="#398664" stroke-width="1.6"/>
+<text x="761" y="409" class="node" text-anchor="start">InputSystem / Router</text>
+<text x="761" y="437" class="body" text-anchor="start">Application-owned singleton</text>
+<text x="761" y="458" class="body" text-anchor="start">Observes registered inputs</text>
+<text x="761" y="479" class="body" text-anchor="start">Does not retain their lifetime</text>
+<polyline points="745,450 400,450" fill="none" stroke="#506177" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)" stroke-dasharray="6 5"/>
+<text x="573" y="432" class="label" text-anchor="middle">non-owning registration</text>
+<text x="470" y="295" class="body" text-anchor="start">Actor possession does not</text>
+<text x="470" y="316" class="body" text-anchor="start">attach or tick the controller.</text>
+<text x="470" y="337" class="body" text-anchor="start"></text>
+<text x="470" y="358" class="body" text-anchor="start">Input availability also checks</text>
+<text x="470" y="379" class="body" text-anchor="start">every enabled ancestor.</text>
+<text x="28" y="582" class="small" text-anchor="start">EditorController owns an input child without Actor possession. AIController has weak possession without an automatic input child.</text>
+</svg>

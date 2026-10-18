@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Controller Hierarchy and Ownership :: Nexium Engine</title>
+    <link rel="prev" href="contexts.html">
+    <link rel="next" href="custom-controllers.html">
+    <meta name="generator" content="Antora 3.2.1">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="../../../..">Nexium Engine</a>
+      <button class="navbar-burger" aria-controls="topbar-nav" aria-expanded="false" aria-label="Toggle main menu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Products</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="#">Product A</a>
+            <a class="navbar-item" href="#">Product B</a>
+            <a class="navbar-item" href="#">Product C</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Services</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="#">Service A</a>
+            <a class="navbar-item" href="#">Service B</a>
+            <a class="navbar-item" href="#">Service C</a>
+          </div>
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="button is-primary" href="#">Download</a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="nexium" data-version="latest">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <button class="nav-menu-toggle" aria-label="Toggle expand/collapse all" style="display: none"></button>
+    <h3 class="title"><a href="../../index.html">Nexium Engine Documentation</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../../index.html">Overview</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../getting-started.html">Getting Started</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../installation.html">Installation</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Engine Architecture</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../index.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../architecture-review.html">Architecture and Migration Review</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ue5-alignment.html">UE5 Patterns for Nexium</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../module-graph.html">Module Graph</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../lifecycle.html">Application Lifecycle</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../threading.html">Threading Model</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../memory.html">Memory Model</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../resource-system.html">Resource System</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../file-io.html">File I/O</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ecs-overview.html">ECS Overview</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../input-system.html">Input System</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="actions-and-bindings.html">Actions and Bindings</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="contexts.html">Contexts and Routing</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="3">
+    <a class="nav-link" href="controllers.html">Controller Hierarchy and Ownership</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="custom-controllers.html">Creating Custom Controllers</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="lifecycle-and-integration.html">Frame Lifecycle and Integration</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="serialization-and-editor.html">Serialization and Binding Editor</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="api-reference.html">API Reference</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="troubleshooting.html">Troubleshooting and Verification</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Rendering</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../rendering/index.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../rendering/pipeline.html">Rendering Pipeline</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../rendering/renderer-architecture.html">Rendering Responsibilities</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Materials</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../rendering/materials/shader-system.html">Shader System</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Gameplay</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../gameplay/index.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../gameplay/scenes.html">Scenes</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../gameplay/components.html">Components</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../gameplay/scripting.html">Gameplay Hooks</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../gameplay/prefabs.html">Blueprint Templates</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Build &amp; Toolchain</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../build/index.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../build/cmake-structure.html">CMake Structure</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../build/ci-cd.html">CI/CD</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../about/index.html">About</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Nexium Engine Documentation</span>
+    <span class="version">latest</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <div class="title"><a href="../../index.html">Nexium Engine Documentation</a></div>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../../index.html">latest</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../index.html">Nexium Engine Documentation</a></li>
+    <li>Engine Architecture</li>
+    <li><a href="../input-system.html">Input System</a></li>
+    <li><a href="controllers.html">Controller Hierarchy and Ownership</a></li>
+  </ul>
+</nav>
+<div class="edit-this-page"><a href="file:///home/alex/Desktop/nexium//docs/nexium/modules/engine_architecture/pages/input/controllers.adoc">Edit this Page</a></div>
+</div>
+  <div class="content">
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">Controller Hierarchy and Ownership</h1>
+<div id="toc" class="toc">
+<div id="toctitle">Table of Contents</div>
+<ul class="sectlevel1">
+<li><a href="#_inheritance">Inheritance</a></li>
+<li><a href="#_ownership_graph">Ownership graph</a></li>
+<li><a href="#_basecontroller">BaseController</a></li>
+<li><a href="#_gamecontroller_possession">GameController possession</a></li>
+<li><a href="#_humancontroller">HumanController</a></li>
+<li><a href="#_editorcontroller">EditorController</a></li>
+<li><a href="#_aicontroller">AIController</a></li>
+<li><a href="#_enable_state_and_lifecycle">Enable state and lifecycle</a></li>
+<li><a href="#_clone_and_deserialization">Clone and deserialization</a></li>
+<li><a href="#_choosing_the_right_extension_point">Choosing the right extension point</a></li>
+</ul>
+</div>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>Domain controllers and hardware input are separate types. A controller decides how
+to act. An InputController component exposes configured actions and owns their
+runtime. HumanController and EditorController compose that component as a child.
+AIController uses the gameplay possession contract without requiring hardware input.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_inheritance"><a class="anchor" href="#_inheritance"></a>Inheritance</h2>
+<div class="sectionbody">
+<div class="imageblock">
+<div class="content">
+<img src="../_images/input-controller-hierarchy.svg" alt="BaseComponent and the BaseController" width="GameController" height="HumanController">
+</div>
+<div class="title">Figure 1. Arrows point from a derived class to its base.</div>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 18.1818%;">
+<col style="width: 18.1818%;">
+<col style="width: 36.3636%;">
+<col style="width: 27.2728%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Direct base</th>
+<th class="tableblock halign-left valign-top">Purpose</th>
+<th class="tableblock halign-left valign-top">Default input child</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">BaseController</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">BaseComponent</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Common ECS controller identity and lifecycle.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">None</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">GameController</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">BaseController</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Track a possessed Actor and expose possession hooks.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">None</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">HumanController</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">GameController</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Human-facing gameplay controller with action input.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">InputController, Gameplay</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">AIController</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">GameController</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Extension point for AI behavior using the same actor contract.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">None</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">EditorController</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">BaseController</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Editor commands and tools using action input.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">InputController, Editor</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">InputController</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">BaseComponent</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Bindings, action runtime, queries, callbacks, serialization, router registration.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Not applicable</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>InputController does not derive from BaseController. It is the reusable input
+component composed by controllers or other ECS consumers.
+BaseController and AIController are concrete components, not pure virtual interfaces.
+AIController currently supplies no built-in planner, perception, navigation, or
+behavior tree.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_ownership_graph"><a class="anchor" href="#_ownership_graph"></a>Ownership graph</h2>
+<div class="sectionbody">
+<div class="imageblock">
+<div class="content">
+<img src="../_images/input-controller-ownership.svg" alt="Domain controller owns input child" width="weakly references Actor" height="and InputSystem registers the child without owning it">
+</div>
+<div class="title">Figure 2. Inheritance, child ownership, weak possession, and non-owning registration are different edges.</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The component tree owns children using Core&#8217;s intrusive-pointer model.</p>
+</li>
+<li>
+<p>HumanController/EditorController own their InputController through that tree.</p>
+</li>
+<li>
+<p>GameController stores a <code>Core::WeakPtr&lt;Actor&gt;</code>.</p>
+</li>
+<li>
+<p>InputRouter registers InputController pointers without retaining their lifetime.</p>
+</li>
+<li>
+<p>InputController owns its map vector, action runtime, callback table, and delegate.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>A controller does not have to be a child of its possessed actor. Controller-tree
+ownership and possession are independent relationships.
+The current system also does not enforce one controller per actor.
+If two GameControllers possess the same actor, application code must decide
+which behavior is intended.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_basecontroller"><a class="anchor" href="#_basecontroller"></a>BaseController</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>BaseController provides the ECS controller role, generated component facilities,
+and inherited BaseComponent lifecycle. It does not store a hardware map, choose a
+context, or implement actor movement.</p>
+</div>
+<div class="paragraph">
+<p>This keeps editor tools, gameplay possession, and alternative command sources from
+being forced into one class with unrelated state.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_gamecontroller_possession"><a class="anchor" href="#_gamecontroller_possession"></a>GameController possession</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">    void possess(Actor* actor);
+    void unpossess();
+
+    [[nodiscard]] Actor* getControlledActor() noexcept { return _controlledActor.get(); }
+    [[nodiscard]] const Actor* getControlledActor() const noexcept
+    {
+        return _controlledActor.get();
+    }
+
+    void clear() override;
+    void onPreDeserialize(AbstractComponent* obj) override;
+
+protected:
+    virtual void onPossess(Actor&amp; actor) {}
+    virtual void onUnpossess(Actor&amp; actor) {}
+    void onDeinitialize() override;</code></pre>
+</div>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 37.5%;">
+<col style="width: 62.5%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Operation</th>
+<th class="tableblock halign-left valign-top">Behavior</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>possess(actor)</code> with the existing actor</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">No change and no repeated onPossess call.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>possess(other)</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Unpossess the old actor, store the new weak reference, call onPossess if non-null.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>possess(nullptr)</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Unpossess the current actor.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>unpossess()</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Lock the weak reference if still alive, clear it, then call onUnpossess for that live actor.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Actor destruction</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The weak reference expires; getControlledActor returns nullptr.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>clear()</code>, pre-deserialization, deinitialization</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Unpossess before forwarding to the base lifecycle operation.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Clone</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Copy the component tree/configuration but leave possession empty.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>Hooks observe the reference ordering: onPossess sees the newly stored actor;
+onUnpossess runs after the reference has been cleared.
+Expiration alone does not call onUnpossess. The class has a default destructor;
+do not assume a destructor-specific virtual possession hook. Use the component&#8217;s
+explicit deinitialization path when cleanup must run.</p>
+</div>
+<div class="paragraph">
+<p>Possession requires an Actor. A generic BaseComponent or the sample Player
+rectangle cannot be passed directly as an Actor merely because it has a transform.
+Keep input consumption in that component or use an actor/domain adapter.</p>
+</div>
+<div class="paragraph">
+<p>This test demonstrates weak lifetime and clone independence:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">TEST_F(ControllerHierarchyTests, PossessionDoesNotKeepActorAliveOrTransferToClone)
+{
+    auto controller = GameController::Create();
+    auto actor = Actor::Create();
+    controller-&gt;possess(actor.get());
+    auto clone = controller-&gt;clone();
+    EXPECT_EQ(clone-&gt;castTo&lt;GameController&gt;()-&gt;getControlledActor(), nullptr);
+    actor.reset();
+    EXPECT_EQ(controller-&gt;getControlledActor(), nullptr);
+    controller-&gt;unpossess();
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_humancontroller"><a class="anchor" href="#_humancontroller"></a>HumanController</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">CLASS();
+class HumanController : public GameController
+{
+    ECS_DECL(HumanController, NX::GameController);
+
+public:
+    [[nodiscard]] InputController&amp; getInput();
+    [[nodiscard]] const InputController&amp; getInput() const;
+
+protected:
+    void onInitialize() override;
+};</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The mutable <code>getInput()</code> initializes the domain controller, searches its direct
+children for an InputController, and creates <code>"Input"_atom</code> in Gameplay only if
+none exists. Initialization calls this path as well.</p>
+</div>
+<div class="paragraph">
+<p>A deserialized/cloned child is reused, including its bindings and context.
+The default Gameplay context is applied only when a child is created; initialization
+does not overwrite a configured child.</p>
+</div>
+<div class="paragraph">
+<p>The const getter never creates a child. If none exists, it asserts and aborts.
+Initialize through a mutable owner before using const input access.
+The getter searches direct children, not arbitrarily deep descendants. Avoid
+manually adding multiple direct input children unless you handle their selection yourself.</p>
+</div>
+<div class="paragraph">
+<p>The domain controller has possession and command behavior; its input child has
+bindings and action state. Custom HumanControllers normally read <code>getInput().isActive()</code>
+from onTick and act on <code>getControlledActor()</code>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_editorcontroller"><a class="anchor" href="#_editorcontroller"></a>EditorController</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">CLASS();
+class EditorController : public BaseController
+{
+    ECS_DECL(EditorController, NX::BaseController);
+
+public:
+    [[nodiscard]] InputController&amp; getInput();
+    [[nodiscard]] const InputController&amp; getInput() const;
+
+protected:
+    void onInitialize() override;
+};</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Its child-creation and const-getter contracts match HumanController, with Editor
+as the creation default. It derives directly from BaseController and has no Actor
+possession API.</p>
+</div>
+<div class="paragraph">
+<p>The editor currently creates separate controllers for global shortcuts and viewport
+interactions. The latter changes its input context to EditorViewport.
+The controller&#8217;s class name does not itself enforce viewport focus; routing policy
+belongs to EditorIntegration.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_aicontroller"><a class="anchor" href="#_aicontroller"></a>AIController</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>AIController derives from GameController without automatically creating input.
+The following test shows it can initialize and possess an actor without a hardware map:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">TEST_F(ControllerHierarchyTests, AIControllerNeedsNoHardwareInputComponent)
+{
+    auto ai = AIController::Create();
+    ai-&gt;initialize();
+    EXPECT_FALSE(ai-&gt;hasChildrenAs&lt;InputController&gt;());
+    auto actor = Actor::Create();
+    ai-&gt;possess(actor.get());
+    EXPECT_EQ(ai-&gt;getControlledActor(), actor.get());
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Custom AI behavior can act from onTick using the same actor API as human behavior.
+The engine does not currently expose an input-action injection API for AI:
+call domain behavior directly or introduce a separate command layer when needed.</p>
+</div>
+<div class="paragraph">
+<p>The same rule applies to replay/network controllers: GameController is an appropriate
+base for actor possession, but replay storage, network authority, and command transport
+must be implemented explicitly.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_enable_state_and_lifecycle"><a class="anchor" href="#_enable_state_and_lifecycle"></a>Enable state and lifecycle</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>InputController&#8217;s effective enable state combines its own <code>setInputEnabled()</code> flag
+and <code>isEnabled()</code> for itself and every ancestor.
+Disabling HumanController/EditorController therefore gates an owned input child.
+The input flag is distinct from the inherited component tick flag.</p>
+</div>
+<div class="paragraph">
+<p>Input is processed before scene ticking, so input registration does not depend on
+InputController implementing a per-frame onTick. Initialization registers it;
+deinitialization and destruction unregister it.
+The router does not own the component, so application ownership must keep it alive.</p>
+</div>
+<div class="paragraph">
+<p>Possession by itself does not enable input, switch context, attach the controller
+to the scene, or tick it. Each of those decisions remains explicit.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_clone_and_deserialization"><a class="anchor" href="#_clone_and_deserialization"></a>Clone and deserialization</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>A cloned HumanController owns an independent input child:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">TEST_F(ControllerHierarchyTests, ClonedHumanOwnsIndependentInputBindings)
+{
+    auto human = HumanController::Create();
+    human-&gt;getInput().bind("Move"_atom, KeyChord::Exact(Platform::Keyboard::Key::W));
+    auto clone = human-&gt;clone();
+    auto&amp; cloneInput = clone-&gt;castTo&lt;HumanController&gt;()-&gt;getInput();
+    EXPECT_NE(&amp;cloneInput, &amp;human-&gt;getInput());
+    EXPECT_EQ(cloneInput.getParent(), clone.get());
+    EXPECT_EQ(clone-&gt;getChildrenCount(), 1);
+    cloneInput.clearBindings();
+    EXPECT_EQ(human-&gt;getInput().getBindings().size(), 1);
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Bindings, context, speed, sensitivity, and the explicit input flag are copied.
+Runtime activity, callback registrations, delegate listeners, router registration,
+and possession are not copied.
+Initialize the clone and reinstall behavior handlers before use; restore possession
+through the owning gameplay system.</p>
+</div>
+<div class="paragraph">
+<p>Deserialization restores the component tree and reflected configuration. Human and
+Editor controllers reuse the restored input child. The input component cancels stale
+runtime state and refreshes registration after deserialization.
+See <a href="serialization-and-editor.html" class="xref page">Serialization and binding editor</a>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_choosing_the_right_extension_point"><a class="anchor" href="#_choosing_the_right_extension_point"></a>Choosing the right extension point</h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 42.8571%;">
+<col style="width: 57.1429%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Need</th>
+<th class="tableblock halign-left valign-top">Start from</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Human input driving an Actor</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">HumanController</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">AI driving an Actor</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">AIController, with behavior implemented by the game</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Other command source driving an Actor</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">GameController plus explicit source/command behavior</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Editor tool using named actions</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">EditorController</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Controller lifecycle without input or possession</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">BaseController</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A component such as Player needing only action queries</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Compose InputController directly</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>The existing ControllerManager is a logging shell, not a registry or automatic
+controller-selection service. ECS ownership and explicit enable/context choices
+currently determine the live consumers.</p>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="contexts.html">Contexts and Routing</a></span>
+  <span class="next"><a href="custom-controllers.html">Creating Custom Controllers</a></span>
+</nav>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script id="site-script" src="../../../../_/js/site.js" data-ui-root-path="../../../../_"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

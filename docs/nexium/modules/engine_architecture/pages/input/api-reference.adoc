@@ -1,0 +1,352 @@
+= Input API Reference
+:toc:
+:toclevels: 3
+
+This reference describes the routed input API in namespace `NX`. Declarations are
+included from the current headers. The accompanying tables document behavior and
+preconditions that cannot be inferred from a signature alone.
+
+Include headers from `NxWorld/Framework/Input/` for world-level input/controller
+types and `NxSubsystems/Input/InputTypes.h` for shared event/chord types.
+Use Core intrusive/weak pointers and StringAtom names as elsewhere in the engine.
+
+== InputController
+
+An ECS BaseComponent, not a BaseController subclass. It owns editable bindings,
+independent runtime state, handlers, and its action delegate.
+ECS_DECL additionally supplies pointer aliases, constructors, componentType,
+Create(), and clone().
+
+.Public declaration excerpt.
+[source,cpp]
+----
+include::example$engine-input/InputController.h[tag=input-controller-api,indent=0]
+----
+
+=== Creation and lifecycle
+
+[cols="3,5",options="header"]
+|===
+|API |Contract
+|Macro-provided constructor / Create()
+|Allocate a component with default Gameplay context. The no-argument factory does not initialize.
+|Constructor(name, context)
+|Set the component name/context; constructor alone does not initialize.
+|Create(name, context)
+|Allocate and initialize before returning the intrusive Ptr.
+|initialize / deinitialize
+|Inherited component lifecycle; input registers/unregisters in the corresponding hooks.
+|Destructor
+|Unregister from InputSystem.
+|Copy/clone
+|Copy configuration and explicit enable flag; fresh runtime, handlers, delegate and registration.
+|Assignments/moves
+|Deleted for InputController.
+|===
+
+Keep a real owner alive; router registration is non-owning.
+
+=== Binding configuration
+
+[cols="3,5",options="header"]
+|===
+|API |Contract
+|bind(action, chord, trigger)
+|Create a Button binding; trigger defaults to OnPress.
+|bind(action, chord, callback, trigger)
+|Same binding operation; a nonempty callback installs/replaces that action's handler.
+An empty callback in this overload does not remove an existing handler.
+|bind(Binding)
+|Allow all supported source types. Validate minimum shape, cancel current state,
+replace first matching action or insert, then refresh.
+|bind return value
+|True for insertion; false for valid replacement or invalid binding.
+|unbind(action)
+|Remove all bindings of that name; true if removed. Cancellation/refresh occurs only when removed.
+|clearBindings()
+|Cancel all state and clear bindings; handlers remain.
+|setBindings(vector)
+|Copy all entries, including invalid or duplicate entries; cancel all state and refresh.
+Resolution skips invalid entries. Self-aliasing with getBindings is safe.
+|getBindings()
+|Const vector reference. Later changes can invalidate its contents/references.
+|getInputMap()
+|Return a configuration copy.
+|setInputMap(map)
+|Copy its vector through setBindings; no shared runtime.
+|===
+
+Binding changes reset all actions on that input component, not just the named action.
+Repeated bind calls are replacements, not a way to accumulate alternate keys.
+
+=== Context and enable state
+
+[cols="3,5",options="header"]
+|===
+|API |Contract
+|setInputContext / getInputContext
+|Assign/query one enum identity. A changed value cancels and refreshes; same value is a no-op.
+|setInputEnabled
+|Changed explicit flag cancels and refreshes; same value is a no-op.
+|isInputEnabled
+|True only if the explicit flag, this component, and all ancestors are enabled.
+Does not test initialization, context availability, focus, or ticking.
+|===
+
+Use xref:input/contexts.adoc[context policy] to decide delivery, not isInputEnabled as a
+context-reachability query.
+
+=== Action queries
+
+[cols="3,5",options="header"]
+|===
+|API |Return behavior
+|isActive(action)
+|False for unknown/inactive action or disabled input. Otherwise the binding-defined
+held/transient activity.
+|isActionPressed(action)
+|Compatibility alias of isActive. It does not specifically mean an OnPress edge.
+|getActionValue(action)
+|Accumulated vec2, or zero for unknown/inactive/disabled input. Button contributions
+are (1,0), pointer/scroll contributions preserve their event values.
+|getActionModifiers(action)
+|OR of contributing binding snapshots, or None for unknown/inactive/disabled input.
+|===
+
+Held modifiers are captured at activation, not continuously rewritten when an
+unrelated modifier changes. A release pulse uses the release event's modifier
+snapshot. For a current physical modifier-dependent behavior, bind a separate
+held modifier action or design the consumer's command data explicitly.
+Queries do not consume pulses.
+
+=== Notifications and settings
+
+[cols="3,5",options="header"]
+|===
+|API/field |Contract
+|setActionCallback(action, callback)
+|Install/replace a nonempty handler; empty handler removes it; empty action is ignored.
+|onAction
+|Intrusive delegate initially created for the component. Receives emitted actions
+after the action-specific callback.
+|speed
+|Reflected float, default 600. Used by consumers such as Spectator.
+|mouseSensitivity
+|Reflected float, default 0.5. Core input does not apply it to values.
+|getTags()
+|BaseComponent tags plus Tag_InputController.
+|onPostDeserialize
+|Base processing followed by silent cancellation and router refresh.
+|===
+
+Callbacks are synchronous and not copied/serialized. Cancellation emits no notification.
+
+== InputBinding and InputMap
+
+[source,cpp]
+----
+include::example$engine-input/InputMap.h[tag=input-binding,indent=0]
+----
+
+.Configuration API excerpt; private storage omitted.
+[source,cpp]
+----
+include::example$engine-input/InputMap.h[tag=input-map-api,indent=0]
+----
+
+[cols="3,5",options="header"]
+|===
+|API |Contract
+|Default constructor
+|Empty vector.
+|Vector constructor / setBindings
+|Move supplied configuration into the map; no validation pass.
+|getBindings
+|Const reference to configuration.
+|bind / static Bind
+|Minimum validation; replace first same-action entry or append. True only for append.
+|unbind / static Unbind
+|Erase all same-action entries; true if any were removed.
+|resolveBinding / static ResolveBinding
+|Return a copied optional winning binding. Match source/chord, prefer greatest
+requirement count plus nonempty trigger, and keep first tie.
+|IsValid
+|Nonempty action, plus non-None trigger for Button.
+|to_json / from_json
+|Custom InputBinding adapters; see xref:input/serialization-and-editor.adoc[Serialization].
+|===
+
+Map resolution does not process frame state or emit events. It is not itself a
+complete dispatcher: the router filters event states and runtime activation semantics.
+
+== InputSystem
+
+`GetInputSystem()` returns the singleton. The public methods include engine
+integration and lifecycle plumbing; gameplay normally uses its own input component.
+
+[source,cpp]
+----
+include::example$engine-input/InputSystem.h[tag=input-system-api,indent=0]
+----
+
+[cols="3,5",options="header"]
+|===
+|API |Contract
+|initialize(window)
+|Subscribe the collector once. Current design supports one bound window.
+|processEvents()
+|Start an input frame and drain queued events. Call once before consumers tick.
+|setActiveContext(context)
+|Change base context and immediately synchronize when changed.
+|setGlobalContext(optional)
+|Set/remove the optional layer above base; synchronize when changed.
+|pushContext(layer)
+|Push temporary overlay, synchronize, return owning move-only guard.
+|resetInput()
+|Clear queue/devices/actions/pointer ownership/quarantine/recording fence.
+Preserve bindings, handlers, registration, contexts and live capture guards.
+|hasPointerCapture()
+|Whether any router registration has accepted pointer-button ownership.
+|registerController(pointer)
+|Internal ECS plumbing: non-owning, ignore null/duplicate registration, refresh availability.
+|unregisterController(pointer)
+|Remove matching registrations.
+|refreshController(pointer)
+|Invalidate pending binding candidates, reset gesture/availability state, synchronize.
+The configuration-facing InputController methods supply their own cancellation.
+|===
+
+Do not register ordinary components manually to bypass lifecycle, or call
+refreshController instead of the public binding/context/enable setters.
+There is no public physical-key polling, context-stack inspection, per-player
+instance creation, or action injection API on InputSystem.
+
+== InputContextGuard
+
+.Public guard excerpt.
+[source,cpp]
+----
+include::example$engine-input/InputSystem.h[tag=input-context-guard-api,indent=0]
+----
+
+Default construction is empty. Copy is deleted; move transfers a layer ID and its
+borrowed owner. Move assignment first resets the destination's old layer.
+reset/destruction remove the owned overlay once, even out of stack order.
+The owner must outlive every guard.
+
+== InputContextStack and InputContextLayer
+
+[source,cpp]
+----
+include::example$engine-input/InputContextStack.h[tag=input-context-layer,indent=0]
+----
+
+.Stack method excerpt.
+[source,cpp]
+----
+include::example$engine-input/InputContextStack.h[tag=input-context-stack-api,indent=0]
+----
+
+[cols="3,5",options="header"]
+|===
+|API |Contract
+|setActiveContext / setGlobalContext
+|Return true only when changed. The value type alone does not synchronize a router.
+|push(layer)
+|Return a monotonically allocated uint64 LayerId.
+|pop(id)
+|Remove that ID, regardless of stack position; true if it existed.
+|getLayers()
+|Return a vector copy: reversed overlays, optional distinct global, base.
+|isAvailable(context, channel)
+|Reach matching context before an earlier BlockLower on the selected channel.
+Does not resolve ConsumeMatched maps.
+|===
+
+InputSystem owns the operational stack. Use its methods/guards for live routing.
+
+== Buttons, channels, modifiers, and events
+
+[source,cpp]
+----
+include::example$input-types/InputTypes.h[tag=input-enums,indent=0]
+----
+
+`hasInputChannel(mask, channel)` tests any overlapping bit; when supplied All as
+the second argument it does not mean “both bits are present”.
+Modifier `|` and `&` operators are defined in the global namespace.
+
+[source,cpp]
+----
+include::example$input-types/InputTypes.h[tag=input-button-api,indent=0]
+----
+
+`InputButton` defaults to keyboard None. Accessing the other device variant returns
+that device's None. `NormalizeInputButton()` aliases the four right modifiers to left;
+`IsInputModifier()` identifies logical Shift/Control/Alt/Super.
+
+[source,cpp]
+----
+include::example$input-types/InputTypes.h[tag=input-chord,indent=0]
+include::example$input-types/InputTypes.h[tag=input-trigger,indent=0]
+include::example$input-types/InputTypes.h[tag=input-events,indent=0]
+----
+
+[cols="3,5",options="header"]
+|===
+|Field/helper |Meaning
+|KeyInputEvent.key/state/scancode
+|Physical event identity/state and retained scancode; key is normalized after device processing.
+|KeyInputEvent.pressedKeys
+|Normalized current held-button snapshot after applying that event.
+|KeyInputEvent.modifiers
+|Reconstructed from physical modifier sides by device state.
+|KeyInputEvent.type/value/position
+|Event family, pointer delta/scroll offset, window cursor position.
+|InputActionEvent.action
+|Configured semantic atom.
+|InputActionEvent.value
+|Individual emitted contribution, not a frame's accumulated polling total.
+|InputActionEvent.state
+|Pressed for Button activation; Released for an accepted OnRelease chord ending;
+normally None for pointer/wheel.
+|InputActionEvent.modifiers/position
+|Activation snapshot, or current release snapshot for OnRelease.
+|isPressed / isReleased
+|Check event state only; they are not named-action polling APIs.
+|canceled / isCanceled
+|Present in the structure; current silent cancellation emits no canceled events.
+|isRepeated
+|Checks the field, but routed Button Repeat is ignored.
+|===
+
+== InputCapture
+
+.Public recording-capture excerpt.
+[source,cpp]
+----
+include::example$input-types/InputTypes.h[tag=input-capture-api,indent=0]
+----
+
+Construction increments a global guard count. Copy/move are deleted. Destruction
+of the last guard establishes a pending-release fence if physical holds remain.
+isActive is true for a live guard or that fence.
+updateButton tracks Press/Release even without a live guard.
+resetButtons clears physical tracking/fence but not the guard count.
+These integration methods are not an actor-control mechanism.
+
+== Domain controller API
+
+See xref:input/controllers.adoc[Controller hierarchy] for the type graph, ownership, and
+GameController/HumanController/EditorController declaration excerpts.
+BaseController and AIController add no public input API of their own.
+Inherited component lifecycle and GameController's possession hooks are their
+extension points.
+
+== Internal collaboration
+
+InputCollector, InputDeviceState, InputRouter, and InputActionRuntime are separated
+implementation collaborators. Ordinary gameplay should not call their methods to
+bypass InputSystem or alter private acceptance state.
+Their actual processing order and contracts are documented in
+xref:input/lifecycle-and-integration.adoc[Lifecycle] and xref:input/contexts.adoc[Routing].

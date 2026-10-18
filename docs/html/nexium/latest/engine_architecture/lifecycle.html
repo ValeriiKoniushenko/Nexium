@@ -6,7 +6,7 @@
     <title>Application Lifecycle :: Nexium Engine</title>
     <link rel="prev" href="module-graph.html">
     <link rel="next" href="threading.html">
-    <meta name="generator" content="Antora 3.1.15">
+    <meta name="generator" content="Antora 3.2.1">
     <link rel="stylesheet" href="../../../_/css/site.css">
   </head>
   <body class="article">
@@ -106,7 +106,34 @@
     <a class="nav-link" href="ecs-overview.html">ECS Overview</a>
   </li>
   <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
     <a class="nav-link" href="input-system.html">Input System</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="input/actions-and-bindings.html">Actions and Bindings</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="input/contexts.html">Contexts and Routing</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="input/controllers.html">Controller Hierarchy and Ownership</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="input/custom-controllers.html">Creating Custom Controllers</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="input/lifecycle-and-integration.html">Frame Lifecycle and Integration</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="input/serialization-and-editor.html">Serialization and Binding Editor</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="input/api-reference.html">API Reference</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="input/troubleshooting.html">Troubleshooting and Verification</a>
+  </li>
+</ul>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="editor.html">Editor Structure</a>
@@ -217,7 +244,7 @@
     <li><a href="lifecycle.html">Application Lifecycle</a></li>
   </ul>
 </nav>
-<div class="edit-this-page"><a href="file:///home/valerii/workspace/Nexium//docs/nexium/modules/engine_architecture/pages/lifecycle.adoc">Edit this Page</a></div>
+<div class="edit-this-page"><a href="file:///home/alex/Desktop/nexium//docs/nexium/modules/engine_architecture/pages/lifecycle.adoc">Edit this Page</a></div>
 </div>
   <div class="content">
 <aside class="toc sidebar" data-title="Contents" data-levels="2">
@@ -272,9 +299,14 @@ independent concurrent game instances.</p>
 <h2 id="_each_frame"><a class="anchor" href="#_each_frame"></a>Each frame</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Window events are polled first, then the active input context is set from viewport focus and
-the queued key events are dispatched (see <a href="input-system.html" class="xref page">Input System</a>).
-Updates use the previous frame&#8217;s measured delta; the first delta is zero.</p>
+<p>Window events are polled first. The integration then selects input contexts through
+<code>updateInputRouting()</code>; without an integration, Runtime selects Gameplay with no global
+context. <code>GetInputSystem().processEvents()</code> runs before scene ticking, so controllers
+read the current input frame&#8217;s actions. See
+<a href="input/lifecycle-and-integration.html" class="xref page">Input frame lifecycle</a> for the complete pipeline.</p>
+</div>
+<div class="paragraph">
+<p>Updates use the previous frame&#8217;s measured delta; the first delta is zero.</p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
@@ -291,14 +323,19 @@ Updates use the previous frame&#8217;s measured delta; the first delta is zero.<
 </thead>
 <tbody>
 <tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Input processing</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Gameplay plus integration-defined global/overlay contexts, if attached.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Editor/viewport base, global shortcuts, and modal/text/pointer overlays selected by integration.</p></td>
+</tr>
+<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Scene tick</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Every frame.</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Only while the viewport is focused.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Integration update</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>updateInput()</code>, if an integration is attached.</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>tick(delta)</code>: editor windows and keyboard/mouse actions.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The updateInput hook, if attached; currently empty in EditorIntegration.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Editor windows and action consumers after scene ticking.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Drawing</p></td>

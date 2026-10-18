@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Contexts and Routing :: Nexium Engine</title>
+    <link rel="prev" href="actions-and-bindings.html">
+    <link rel="next" href="controllers.html">
+    <meta name="generator" content="Antora 3.2.1">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="../../../..">Nexium Engine</a>
+      <button class="navbar-burger" aria-controls="topbar-nav" aria-expanded="false" aria-label="Toggle main menu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Products</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="#">Product A</a>
+            <a class="navbar-item" href="#">Product B</a>
+            <a class="navbar-item" href="#">Product C</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Services</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="#">Service A</a>
+            <a class="navbar-item" href="#">Service B</a>
+            <a class="navbar-item" href="#">Service C</a>
+          </div>
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="button is-primary" href="#">Download</a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="nexium" data-version="latest">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <button class="nav-menu-toggle" aria-label="Toggle expand/collapse all" style="display: none"></button>
+    <h3 class="title"><a href="../../index.html">Nexium Engine Documentation</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../../index.html">Overview</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../getting-started.html">Getting Started</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../installation.html">Installation</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Engine Architecture</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../index.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../architecture-review.html">Architecture and Migration Review</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ue5-alignment.html">UE5 Patterns for Nexium</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../module-graph.html">Module Graph</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../lifecycle.html">Application Lifecycle</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../threading.html">Threading Model</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../memory.html">Memory Model</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../resource-system.html">Resource System</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../file-io.html">File I/O</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ecs-overview.html">ECS Overview</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../input-system.html">Input System</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="actions-and-bindings.html">Actions and Bindings</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="3">
+    <a class="nav-link" href="contexts.html">Contexts and Routing</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="controllers.html">Controller Hierarchy and Ownership</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="custom-controllers.html">Creating Custom Controllers</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="lifecycle-and-integration.html">Frame Lifecycle and Integration</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="serialization-and-editor.html">Serialization and Binding Editor</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="api-reference.html">API Reference</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="troubleshooting.html">Troubleshooting and Verification</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Rendering</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../rendering/index.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../rendering/pipeline.html">Rendering Pipeline</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../rendering/renderer-architecture.html">Rendering Responsibilities</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Materials</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../rendering/materials/shader-system.html">Shader System</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Gameplay</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../gameplay/index.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../gameplay/scenes.html">Scenes</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../gameplay/components.html">Components</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../gameplay/scripting.html">Gameplay Hooks</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../gameplay/prefabs.html">Blueprint Templates</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Build &amp; Toolchain</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../build/index.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../build/cmake-structure.html">CMake Structure</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../build/ci-cd.html">CI/CD</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../about/index.html">About</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Nexium Engine Documentation</span>
+    <span class="version">latest</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <div class="title"><a href="../../index.html">Nexium Engine Documentation</a></div>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../../index.html">latest</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../index.html">Nexium Engine Documentation</a></li>
+    <li>Engine Architecture</li>
+    <li><a href="../input-system.html">Input System</a></li>
+    <li><a href="contexts.html">Contexts and Routing</a></li>
+  </ul>
+</nav>
+<div class="edit-this-page"><a href="file:///home/alex/Desktop/nexium//docs/nexium/modules/engine_architecture/pages/input/contexts.adoc">Edit this Page</a></div>
+</div>
+  <div class="content">
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">Contexts and Routing</h1>
+<div id="toc" class="toc">
+<div id="toctitle">Table of Contents</div>
+<ul class="sectlevel1">
+<li><a href="#_context_identity_channels_and_policies">Context identity, channels, and policies</a></li>
+<li><a href="#_stack_order">Stack order</a></li>
+<li><a href="#_same_context_collisions">Same-context collisions</a></li>
+<li><a href="#_raii_overlays">RAII overlays</a></li>
+<li><a href="#_text_entry_and_channel_isolation">Text entry and channel isolation</a></li>
+<li><a href="#_modals_and_cancellation">Modals and cancellation</a>
+<ul class="sectlevel2">
+<li><a href="#_consumematched_cancels_only_shadowed_holds">ConsumeMatched cancels only shadowed holds</a></li>
+</ul>
+</li>
+<li><a href="#_held_button_quarantine">Held-button quarantine</a></li>
+<li><a href="#_release_ownership">Release ownership</a></li>
+<li><a href="#pointer-ownership">Pointer ownership</a></li>
+<li><a href="#_availability_versus_enable_state">Availability versus enable state</a></li>
+<li><a href="#_recording_capture">Recording capture</a></li>
+</ul>
+</div>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>Contexts separate commands sharing physical input. Temporary layers let modals
+and text fields block selected channels without rewriting controller maps.
+Context identity is independent of inheritance: a HumanController defaults to
+Gameplay and an EditorController to Editor, but their input-child contexts can change.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_context_identity_channels_and_policies"><a class="anchor" href="#_context_identity_channels_and_policies"></a>Context identity, channels, and policies</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The enum contains Editor, Gameplay, EditorViewport, Modal, TextInput, and
+BindingCapture. New context identities require extending this enum; they are not
+arbitrary runtime strings.</p>
+</div>
+<div class="paragraph">
+<p>Keyboard covers keyboard-triggered Button events. Pointer covers mouse buttons,
+PointerMove, and Wheel. All selects both.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">enum class InputContextPolicy
+{
+    ConsumeMatched,
+    BlockLower
+};
+
+struct InputContextLayer
+{
+    InputContext context = InputContext::Editor;
+    InputContextPolicy policy = InputContextPolicy::ConsumeMatched;
+    InputChannel channels = InputChannel::All;
+};</code></pre>
+</div>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 40%;">
+<col style="width: 40%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Policy</th>
+<th class="tableblock halign-left valign-top">Matching input</th>
+<th class="tableblock halign-left valign-top">Unmatched input</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ConsumeMatched</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Deliver to all eligible matching controllers in the layer, then stop lower layers.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Continue to lower layers on this channel.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">BlockLower</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Deliver to eligible matches, then stop lower layers.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Stop lower layers on this channel anyway.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>A match is a resolved binding or a mouse press reserving a matching pointer gesture.
+BlockLower does not need any registered controller to prevent lower input.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_stack_order"><a class="anchor" href="#_stack_order"></a>Stack order</h2>
+<div class="sectionbody">
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Newest temporary overlay first, followed by older overlays.</p>
+</li>
+<li>
+<p>Optional global context, when different from the base.</p>
+</li>
+<li>
+<p>Active/base context.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>Base and global use ConsumeMatched and All. The stack initially has Editor as its
+base and no global. Runtime selects Gameplay without an application integration.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../_images/input-context-stack.svg" alt="Overlay" width="global and base order with keyboard-only text blocking">
+</div>
+<div class="title">Figure 1. Keyboard and Pointer traverse the same stack with different channel masks.</div>
+</div>
+<div class="paragraph">
+<p>“Global” means above the base, not immune to overlays. Modals can block global
+shortcuts. Identical global/base identities are emitted only once. Overlays are
+not deduplicated. Controllers match enum identity rather than a particular layer ID;
+avoid accidental duplicate layers with the same identity.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_same_context_collisions"><a class="anchor" href="#_same_context_collisions"></a>Same-context collisions</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Two eligible controllers in one context can both bind W and both receive it.
+There is no per-controller priority or exclusive player/camera election.
+Choose which components are enabled, use <code>setInputEnabled()</code>, or assign separate
+contexts when exclusivity is needed.</p>
+</div>
+<div class="paragraph">
+<p>The direct same-context contract is covered by this test:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">TEST_F(InputControllerTests, SameContextControllersMayUseTheSamePhysicalButton)
+{
+    auto player = InputController::Create("Player"_atom, InputContext::Gameplay);
+    auto camera = InputController::Create("Camera"_atom, InputContext::Gameplay);
+    player-&gt;bind("Move"_atom, KeyChord::Exact(Key::W), InputActionTrigger::WhileHeld);
+    camera-&gt;bind("Fly"_atom, KeyChord::Exact(Key::W), InputActionTrigger::WhileHeld);
+    key(Key::W, State::Pressed);
+    frame();
+    EXPECT_TRUE(player-&gt;isActive("Move"_atom));
+    EXPECT_TRUE(camera-&gt;isActive("Fly"_atom));
+    player-&gt;setInputEnabled(false);
+    EXPECT_FALSE(player-&gt;isActive("Move"_atom));
+    EXPECT_TRUE(camera-&gt;isActive("Fly"_atom));
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This test shows same-layer delivery and unmatched passthrough:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">TEST_F(InputRoutingTests, ConsumingLayerDeliversToAllItsControllersAndPassesUnmatchedInput)
+{
+    auto game = InputController::Create("Game"_atom, InputContext::Gameplay);
+    auto first = InputController::Create("First menu"_atom, InputContext::Modal);
+    auto second = InputController::Create("Second menu"_atom, InputContext::Modal);
+    game-&gt;bind("Move"_atom, KeyChord::Exact(Key::W));
+    game-&gt;bind("Other"_atom, KeyChord::Exact(Key::D));
+    first-&gt;bind("Select"_atom, KeyChord::Exact(Key::W));
+    second-&gt;bind("Select"_atom, KeyChord::Exact(Key::W));
+    auto menu = GetInputSystem().pushContext({ .context = InputContext::Modal });
+    key(Key::W, KeyState::Pressed);
+    key(Key::D, KeyState::Pressed);
+    frame();
+    EXPECT_TRUE(first-&gt;isActive("Select"_atom));
+    EXPECT_TRUE(second-&gt;isActive("Select"_atom));
+    EXPECT_FALSE(game-&gt;isActive("Move"_atom));
+    EXPECT_TRUE(game-&gt;isActive("Other"_atom));
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Delivery remains subject to callback-time mutation. A callback may destroy,
+disable, rebind, or change the context of a later recipient; that recipient is
+checked again and can be skipped.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_raii_overlays"><a class="anchor" href="#_raii_overlays"></a>RAII overlays</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><code>pushContext(layer)</code> returns a move-only <code>InputContextGuard</code>. Store it for the
+interaction&#8217;s lifetime. Destruction or <code>reset()</code> removes its own overlay.
+Discarding it immediately also closes the overlay immediately.</p>
+</div>
+<div class="paragraph">
+<p>Layer IDs allow guards to move or close out of order. Resetting an empty/moved-from
+guard is harmless. A guard borrows its InputSystem; the system must outlive it.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">TEST_F(InputRoutingTests, OverlayGuardsCanMoveAndCloseOutOfOrder)
+{
+    auto game = InputController::Create("Game"_atom, InputContext::Gameplay);
+    game-&gt;bind("Move"_atom, KeyChord::Exact(Key::W));
+    auto lower = GetInputSystem().pushContext(
+        { .context = InputContext::Modal, .policy = InputContextPolicy::BlockLower });
+    auto upper = GetInputSystem().pushContext(
+        { .context = InputContext::TextInput, .policy = InputContextPolicy::BlockLower });
+    auto moved = std::move(upper);
+    lower.reset();
+    key(Key::W, KeyState::Pressed);
+    frame();
+    EXPECT_FALSE(game-&gt;isActive("Move"_atom));
+    moved.reset();
+    key(Key::W, KeyState::Released);
+    key(Key::W, KeyState::Pressed);
+    frame();
+    EXPECT_TRUE(game-&gt;isActive("Move"_atom));
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_text_entry_and_channel_isolation"><a class="anchor" href="#_text_entry_and_channel_isolation"></a>Text entry and channel isolation</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>A BlockLower Keyboard overlay cancels keyboard actions below it while allowing
+pointer events to continue:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">TEST_F(InputRoutingTests, TextInputBlocksKeyboardWhilePointerRemainsAvailable)
+{
+    auto game = InputController::Create("Game"_atom, InputContext::Gameplay);
+    game-&gt;bind("Move"_atom, KeyChord::Exact(Key::W), InputActionTrigger::WhileHeld);
+    game-&gt;bind({ .action = "Scroll"_atom, .source = InputEventType::Wheel });
+    key(Key::W, KeyState::Pressed);
+    frame();
+    auto text = GetInputSystem().pushContext({ .context = InputContext::TextInput,
+                                               .policy = InputContextPolicy::BlockLower,
+                                               .channels = InputChannel::Keyboard });
+    EXPECT_FALSE(game-&gt;isActive("Move"_atom));
+    Platform::GetWindow().onMouseWheel-&gt;trigger(glm::vec2{ 0.f, 2.f });
+    frame();
+    EXPECT_TRUE(game-&gt;isActive("Scroll"_atom));
+    EXPECT_EQ(game-&gt;getActionValue("Scroll"_atom), glm::vec2(0.f, 2.f));
+    frame();
+    EXPECT_FALSE(game-&gt;isActive("Scroll"_atom));
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This is a filter for the event&#8217;s source/trigger channel, not for each required
+button in a mixed chord.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_modals_and_cancellation"><a class="anchor" href="#_modals_and_cancellation"></a>Modals and cancellation</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>BlockLower All cancels lower holds and pending OnRelease bindings. Closing the
+modal does not resume the old gesture:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">TEST_F(InputRoutingTests, ModalBlocksUnmatchedInputAndCancelsWithoutReleaseAction)
+{
+    auto game = InputController::Create("Game"_atom, InputContext::Gameplay);
+    int releases = 0;
+    game-&gt;bind("Move"_atom, KeyChord::Exact(Key::W), InputActionTrigger::WhileHeld);
+    game-&gt;bind(
+        "Release"_atom, KeyChord::Exact(Key::S), [&amp;](const InputActionEvent&amp;) { ++releases; },
+        InputActionTrigger::OnRelease);
+    key(Key::W, KeyState::Pressed);
+    key(Key::S, KeyState::Pressed);
+    frame();
+    ASSERT_TRUE(game-&gt;isActive("Move"_atom));
+    auto modal = GetInputSystem().pushContext(
+        { .context = InputContext::Modal, .policy = InputContextPolicy::BlockLower });
+    EXPECT_FALSE(game-&gt;isActive("Move"_atom));
+    key(Key::S, KeyState::Released);
+    frame();
+    EXPECT_EQ(releases, 0);
+    modal.reset();
+    frame();
+    EXPECT_FALSE(game-&gt;isActive("Move"_atom));
+    key(Key::W, KeyState::Released);
+    key(Key::W, KeyState::Pressed);
+    frame();
+    EXPECT_TRUE(game-&gt;isActive("Move"_atom));
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The S release emits no callback because its accepted binding was canceled.
+W needs a real release followed by a fresh press.</p>
+</div>
+<div class="sect2">
+<h3 id="_consumematched_cancels_only_shadowed_holds"><a class="anchor" href="#_consumematched_cancels_only_shadowed_holds"></a>ConsumeMatched cancels only shadowed holds</h3>
+<div class="paragraph">
+<p>A consuming overlay does not cancel every lower hold. The router checks lower
+bindings against higher enabled maps and cancels bindings shadowed by a match.
+Unrelated holds can continue:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">TEST_F(InputRoutingTests, ConsumingOverlayCancelsOnlyShadowedHeldBindings)
+{
+    auto game = InputController::Create("Game"_atom, InputContext::Gameplay);
+    auto menu = InputController::Create("Menu"_atom, InputContext::Modal);
+    game-&gt;bind("Move"_atom, KeyChord::Exact(Key::W), InputActionTrigger::WhileHeld);
+    game-&gt;bind("Other"_atom, KeyChord::Exact(Key::D), InputActionTrigger::WhileHeld);
+    menu-&gt;bind("Select"_atom, KeyChord::Exact(Key::W));
+    key(Key::W, KeyState::Pressed);
+    key(Key::D, KeyState::Pressed);
+    frame();
+    auto overlay = GetInputSystem().pushContext({ .context = InputContext::Modal });
+    EXPECT_FALSE(game-&gt;isActive("Move"_atom));
+    EXPECT_TRUE(game-&gt;isActive("Other"_atom));
+    EXPECT_FALSE(menu-&gt;isActive("Select"_atom));
+    overlay.reset();
+    frame();
+    EXPECT_FALSE(game-&gt;isActive("Move"_atom));
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The menu claims W; the gameplay W hold ends. D remains active. The newly opened
+menu receives no synthetic W press.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_held_button_quarantine"><a class="anchor" href="#_held_button_quarantine"></a>Held-button quarantine</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>When a registration/channel becomes available or unavailable, already-held
+non-modifier buttons are blocked for that registration until physical release.
+Rebinding refresh applies this protection too. Blocked buttons are removed from
+the component&#8217;s chord snapshot, so old presses cannot satisfy a new gate.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../_images/input-cancellation.svg" alt="Hold" width="cancellation" height="quarantine">
+</div>
+<div class="title">Figure 2. Interruption clears acceptance; only a new physical press reactivates an action.</div>
+</div>
+<div class="paragraph">
+<p>Shift, Control, Alt, and Super are exempt. Holding Control while switching context
+and then freshly pressing S can invoke Control+S. Physical left/right sides remain
+independent in device tracking.</p>
+</div>
+<div class="paragraph">
+<p>InputSystem context setters and guard changes synchronize immediately. The router
+also synchronizes at frame start and before each event.
+Ancestor component enable changes are checked by queries and the next synchronization;
+<code>setInputEnabled()</code> explicitly cancels and refreshes immediately.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_release_ownership"><a class="anchor" href="#_release_ownership"></a>Release ownership</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Release does not resolve a new binding in the currently active context. It is sent
+to registered runtimes, which end only bindings that accepted an earlier Press.
+Canceled bindings are no longer in that accepted set.
+This ownership is implemented by controller-local accepted-binding state rather
+than a central press-ID ledger.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="pointer-ownership"><a class="anchor" href="#pointer-ownership"></a>Pointer ownership</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>A mouse-gated PointerMove binding reserves a gesture when its mouse Press is
+accepted. No separate Button action is required.
+While a gesture is captured, PointerMove is limited to registrations with accepted
+pointer-button ownership. Wheel does not use that capture filter.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../_images/input-pointer-capture.svg" alt="Mouse press reservation" width="captured movement and cancellation">
+</div>
+<div class="title">Figure 3. An accepted press reserves movement until release or interruption.</div>
+</div>
+<div class="paragraph">
+<p><code>hasPointerCapture()</code> lets integration keep viewport pointer routing available
+while the cursor leaves the viewport during dragging.
+This is routing ownership; it does not lock/hide the cursor or grab it at OS level.</p>
+</div>
+<div class="paragraph">
+<p>Modal blocking, disabling, recording capture, and rebinding can clear ownership.
+Closing the interruption does not restore it:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">TEST_F(InputRoutingTests, DragRequiresAcceptedPressAndModalCancelsItsOwnership)
+{
+    auto game = InputController::Create("Game"_atom, InputContext::Gameplay);
+    game-&gt;bind({ .action = "Look"_atom,
+                 .chord = KeyChord::Exact(Platform::Mouse::Key::Right),
+                 .source = InputEventType::PointerMove });
+    Platform::GetWindow().onMouseMove-&gt;trigger(glm::vec2{ 10.f, 10.f });
+    mouse(Platform::Mouse::State::Press);
+    Platform::GetWindow().onMouseMove-&gt;trigger(glm::vec2{ 12.f, 15.f });
+    frame();
+    EXPECT_TRUE(game-&gt;isActive("Look"_atom));
+    EXPECT_EQ(game-&gt;getActionValue("Look"_atom), glm::vec2(2.f, 5.f));
+    EXPECT_TRUE(GetInputSystem().hasPointerCapture());
+    auto modal = GetInputSystem().pushContext(
+        { .context = InputContext::Modal, .policy = InputContextPolicy::BlockLower });
+    EXPECT_FALSE(GetInputSystem().hasPointerCapture());
+    EXPECT_FALSE(game-&gt;isActive("Look"_atom));
+    modal.reset();
+    Platform::GetWindow().onMouseMove-&gt;trigger(glm::vec2{ 14.f, 20.f });
+    frame();
+    EXPECT_FALSE(game-&gt;isActive("Look"_atom));
+    mouse(Platform::Mouse::State::Release);
+    mouse(Platform::Mouse::State::Press);
+    Platform::GetWindow().onMouseMove-&gt;trigger(glm::vec2{ 15.f, 21.f });
+    frame();
+    EXPECT_TRUE(game-&gt;isActive("Look"_atom));
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_availability_versus_enable_state"><a class="anchor" href="#_availability_versus_enable_state"></a>Availability versus enable state</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><code>InputContextStack::isAvailable(context, channel)</code> asks whether a matching layer is
+reachable before an earlier BlockLower layer. The matching layer is checked before
+its own blocking policy. The query does not resolve maps or predict consumption
+by an earlier ConsumeMatched layer for a particular event.</p>
+</div>
+<div class="paragraph">
+<p><code>InputController::isInputEnabled()</code> checks its explicit flag and enabled ancestors.
+It does not report context availability. <code>isActive()</code> reports runtime state subject
+to that enable check.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_recording_capture"><a class="anchor" href="#_recording_capture"></a>Recording capture</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><code>InputCapture</code> is separate from context guards and pointer ownership. It suspends
+routed actions globally during recording. Its guards are neither copyable nor movable;
+all instances share a capture count.</p>
+</div>
+<div class="paragraph">
+<p>After the last guard ends, input remains suppressed until all tracked held buttons
+are released. Left/right modifier sides are distinct. <code>resetButtons()</code> clears
+the release fence but does not terminate live guards.</p>
+</div>
+<div class="paragraph">
+<p>BindingCapture&#8217;s enum value alone does not start a recorder. The existing binding
+widget uses InputCapture plus window subscriptions; see
+<a href="serialization-and-editor.html#recording" class="xref page">Binding recording</a>.</p>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="actions-and-bindings.html">Actions and Bindings</a></span>
+  <span class="next"><a href="controllers.html">Controller Hierarchy and Ownership</a></span>
+</nav>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script id="site-script" src="../../../../_/js/site.js" data-ui-root-path="../../../../_"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

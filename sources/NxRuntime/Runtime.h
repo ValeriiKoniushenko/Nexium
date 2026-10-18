@@ -31,6 +31,7 @@ namespace NX
 
     private:
         void runMainLoop();
+        void processInputEvents();
 
         GameInstance& _gameInstance;
     };

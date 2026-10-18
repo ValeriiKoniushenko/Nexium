@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1130" height="635" viewBox="0 0 1130 635" role="img" aria-labelledby="title desc">
+<title id="title">Pointer gesture ownership</title><desc id="desc">RMB-gated PointerMove can reserve input without a separate Button action.</desc>
+<defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#506177" stroke-width="1.6"/></marker><marker id="inherit" markerWidth="14" markerHeight="14" refX="12" refY="7" orient="auto"><path d="M1 1 L12 7 L1 13 Z" fill="white" stroke="#506177" stroke-width="1.4"/></marker></defs>
+<style>text{font-family:DejaVu Sans,Arial,sans-serif;fill:#20324a}.title{font-size:24px;font-weight:700}.subtitle{font-size:14px;fill:#53667c}.node{font-size:17px;font-weight:700}.body{font-size:14px}.label{font-size:13px;fill:#42556c}.small{font-size:12px;fill:#53667c}.head{font-size:15px;font-weight:700}</style>
+<rect width="1130" height="635" fill="#fff"/><rect x="1" y="1" width="1128" height="633" rx="12" fill="none" stroke="#d9e0e9"/>
+<text x="28" y="42" class="title" text-anchor="start">Pointer gesture ownership</text>
+<text x="28" y="69" class="subtitle" text-anchor="start">RMB-gated PointerMove can reserve input without a separate Button action.</text>
+<rect x="40" y="120" width="285" height="145" rx="9" fill="#edf5ff" stroke="#3a68ad" stroke-width="1.6"/>
+<text x="56" y="149" class="node" text-anchor="start">1. Fresh RMB Press</text>
+<text x="56" y="177" class="body" text-anchor="start">Context and mouse gate match</text>
+<text x="56" y="198" class="body" text-anchor="start">Controller reserves gesture</text>
+<rect x="420" y="120" width="285" height="145" rx="9" fill="#ebf8f0" stroke="#398664" stroke-width="1.6"/>
+<text x="436" y="149" class="node" text-anchor="start">2. PointerMove</text>
+<text x="436" y="177" class="body" text-anchor="start">Only accepted gesture owners</text>
+<text x="436" y="198" class="body" text-anchor="start">receive captured movement</text>
+<rect x="800" y="120" width="285" height="145" rx="9" fill="#fff1ef" stroke="#bc5449" stroke-width="1.6"/>
+<text x="816" y="149" class="node" text-anchor="start">3. Modal / disable</text>
+<text x="816" y="177" class="body" text-anchor="start">Cancel action state</text>
+<text x="816" y="198" class="body" text-anchor="start">Clear pointer ownership</text>
+<polyline points="325,190 420,190" fill="none" stroke="#506177" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline points="705,190 800,190" fill="none" stroke="#506177" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<rect x="800" y="375" width="285" height="145" rx="9" fill="#f3f5f8" stroke="#738094" stroke-width="1.6"/>
+<text x="816" y="404" class="node" text-anchor="start">4. Interruption ends</text>
+<text x="816" y="432" class="body" text-anchor="start">Still-held RMB does not</text>
+<text x="816" y="453" class="body" text-anchor="start">restore capture or movement</text>
+<rect x="420" y="375" width="285" height="145" rx="9" fill="#edf5ff" stroke="#3a68ad" stroke-width="1.6"/>
+<text x="436" y="404" class="node" text-anchor="start">5. Release + press</text>
+<text x="436" y="432" class="body" text-anchor="start">Old hold ends</text>
+<text x="436" y="453" class="body" text-anchor="start">New gesture is accepted</text>
+<rect x="40" y="375" width="285" height="145" rx="9" fill="#ebf8f0" stroke="#398664" stroke-width="1.6"/>
+<text x="56" y="404" class="node" text-anchor="start">6. Move again</text>
+<text x="56" y="432" class="body" text-anchor="start">New accepted owner receives</text>
+<text x="56" y="453" class="body" text-anchor="start">pointer deltas</text>
+<polyline points="942,265 942,375" fill="none" stroke="#506177" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline points="800,447 705,447" fill="none" stroke="#506177" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline points="420,447 325,447" fill="none" stroke="#506177" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<text x="28" y="586" class="small" text-anchor="start">Normal mouse Release also clears ownership. Routing capture does not lock the OS cursor; Wheel is not filtered as captured movement.</text>
+</svg>

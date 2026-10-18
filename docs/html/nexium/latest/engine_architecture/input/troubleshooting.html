@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Input Troubleshooting and Verification :: Nexium Engine</title>
+    <link rel="prev" href="api-reference.html">
+    <link rel="next" href="../../rendering/index.html">
+    <meta name="generator" content="Antora 3.2.1">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="../../../..">Nexium Engine</a>
+      <button class="navbar-burger" aria-controls="topbar-nav" aria-expanded="false" aria-label="Toggle main menu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Products</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="#">Product A</a>
+            <a class="navbar-item" href="#">Product B</a>
+            <a class="navbar-item" href="#">Product C</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Services</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="#">Service A</a>
+            <a class="navbar-item" href="#">Service B</a>
+            <a class="navbar-item" href="#">Service C</a>
+          </div>
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="button is-primary" href="#">Download</a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="nexium" data-version="latest">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <button class="nav-menu-toggle" aria-label="Toggle expand/collapse all" style="display: none"></button>
+    <h3 class="title"><a href="../../index.html">Nexium Engine Documentation</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../../index.html">Overview</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../getting-started.html">Getting Started</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../installation.html">Installation</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Engine Architecture</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../index.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../architecture-review.html">Architecture and Migration Review</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ue5-alignment.html">UE5 Patterns for Nexium</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../module-graph.html">Module Graph</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../lifecycle.html">Application Lifecycle</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../threading.html">Threading Model</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../memory.html">Memory Model</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../resource-system.html">Resource System</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../file-io.html">File I/O</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ecs-overview.html">ECS Overview</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../input-system.html">Input System</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="actions-and-bindings.html">Actions and Bindings</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="contexts.html">Contexts and Routing</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="controllers.html">Controller Hierarchy and Ownership</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="custom-controllers.html">Creating Custom Controllers</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="lifecycle-and-integration.html">Frame Lifecycle and Integration</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="serialization-and-editor.html">Serialization and Binding Editor</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="api-reference.html">API Reference</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="3">
+    <a class="nav-link" href="troubleshooting.html">Troubleshooting and Verification</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Rendering</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../rendering/index.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../rendering/pipeline.html">Rendering Pipeline</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../rendering/renderer-architecture.html">Rendering Responsibilities</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Materials</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../rendering/materials/shader-system.html">Shader System</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Gameplay</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../gameplay/index.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../gameplay/scenes.html">Scenes</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../gameplay/components.html">Components</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../gameplay/scripting.html">Gameplay Hooks</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../gameplay/prefabs.html">Blueprint Templates</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Build &amp; Toolchain</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../build/index.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../build/cmake-structure.html">CMake Structure</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../build/ci-cd.html">CI/CD</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../about/index.html">About</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Nexium Engine Documentation</span>
+    <span class="version">latest</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <div class="title"><a href="../../index.html">Nexium Engine Documentation</a></div>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../../index.html">latest</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../index.html">Nexium Engine Documentation</a></li>
+    <li>Engine Architecture</li>
+    <li><a href="../input-system.html">Input System</a></li>
+    <li><a href="troubleshooting.html">Troubleshooting and Verification</a></li>
+  </ul>
+</nav>
+<div class="edit-this-page"><a href="file:///home/alex/Desktop/nexium//docs/nexium/modules/engine_architecture/pages/input/troubleshooting.adoc">Edit this Page</a></div>
+</div>
+  <div class="content">
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">Input Troubleshooting and Verification</h1>
+<div id="toc" class="toc">
+<div id="toctitle">Table of Contents</div>
+<ul class="sectlevel1">
+<li><a href="#_an_action_is_never_active">An action is never active</a></li>
+<li><a href="#_a_command_fires_twice">A command fires twice</a></li>
+<li><a href="#_a_held_action_does_not_resume_after_a_modal">A held action does not resume after a modal</a></li>
+<li><a href="#_onrelease_does_not_run">OnRelease does not run</a></li>
+<li><a href="#_rebinding_appears_ineffective">Rebinding appears ineffective</a></li>
+<li><a href="#_camera_movement_is_missing_or_jumps">Camera movement is missing or jumps</a></li>
+<li><a href="#_a_clonerestored_controller_is_inactive">A clone/restored controller is inactive</a></li>
+<li><a href="#_recording_leaves_gameplay_suppressed">Recording leaves gameplay suppressed</a></li>
+<li><a href="#_callback_mutation">Callback mutation</a></li>
+<li><a href="#_executable_contract_map">Executable contract map</a></li>
+<li><a href="#_repository_verification_commands">Repository verification commands</a></li>
+<li><a href="#_current_extension_limits">Current extension limits</a></li>
+</ul>
+</div>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>Start from the semantic action and its owning InputController, then work outward:
+configuration, lifecycle/enable state, context policy, physical event, and consumer timing.
+The same physical button can be valid in one map and unavailable in another.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_an_action_is_never_active"><a class="anchor" href="#_an_action_is_never_active"></a>An action is never active</h2>
+<div class="sectionbody">
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Confirm the exact StringAtom name matches the binding and consumer.</p>
+</li>
+<li>
+<p>Confirm Button has a non-None trigger, or the intended PointerMove/Wheel source.</p>
+</li>
+<li>
+<p>Confirm the component initialized and is still owned; router registration is non-owning.</p>
+</li>
+<li>
+<p>Confirm <code>isInputEnabled()</code> and every ancestor&#8217;s enable state.</p>
+</li>
+<li>
+<p>Confirm the context is present and not blocked/consumed by a higher layer.</p>
+</li>
+<li>
+<p>Confirm a fresh Press occurred after initialization, context switch, or rebinding.</p>
+</li>
+<li>
+<p>Confirm Runtime processes input before the consumer reads it.</p>
+</li>
+<li>
+<p>For pointer movement, remember the first sample has zero delta and mouse gates
+need a valid accepted press after becoming available.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p><code>isInputEnabled()</code> can be true in an inactive context. That query is not proof of
+routing availability. Conversely, disabling a domain controller gates its owned child.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_a_command_fires_twice"><a class="anchor" href="#_a_command_fires_twice"></a>A command fires twice</h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 37.5%;">
+<col style="width: 62.5%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Cause</th>
+<th class="tableblock halign-left valign-top">Correction</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Two controllers in one context bind the same input</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Enable only intended consumers or assign separate contexts.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Callback and pulse polling both execute the command</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Choose one execution path.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Several simulation ticks read one OnPress pulse</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Consume/queue commands at the simulation boundary; action reads do not consume pulses.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Duplicate delegate subscriptions after reinitialization</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Own/release subscription IDs and install handlers deliberately.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A legacy/raw subscriber also handles the same input</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Audit remaining legacy and ImGui-local consumers; routed contexts do not filter all raw subscribers.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>OS Button Repeat does not retrigger routed actions. If repeats appear, check legacy
+polling behavior or your own consumer update logic.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_a_held_action_does_not_resume_after_a_modal"><a class="anchor" href="#_a_held_action_does_not_resume_after_a_modal"></a>A held action does not resume after a modal</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>That is expected. Cancellation discards the accepted hold, and the already-held
+non-modifier button remains quarantined until release.
+Release and press again. No synthetic Press is created when the modal closes.</p>
+</div>
+<div class="paragraph">
+<p>If a hold seems stuck after release, check whether another binding for the same
+action remains accepted. Activity is OR across contributing bindings.
+Physical left/right modifiers also remain logically held until both sides are released.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_onrelease_does_not_run"><a class="anchor" href="#_onrelease_does_not_run"></a>OnRelease does not run</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>An OnRelease binding needs an accepted earlier Press. It does not fire if:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Its context was unavailable on Press.</p>
+</li>
+<li>
+<p>A higher layer consumed that Press.</p>
+</li>
+<li>
+<p>Capture suppressed the gesture.</p>
+</li>
+<li>
+<p>The binding was canceled by modal/context/enable/focus/map changes.</p>
+</li>
+<li>
+<p>The component was destroyed/deinitialized.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Cancellation emits neither OnRelease nor a canceled event.
+Use explicit interaction cleanup when canceled gestures need domain-level cleanup.</p>
+</div>
+<div class="paragraph">
+<p>OnRelease may run when a required key is released before the trigger: the accepted
+chord has ended. Decide whether that rule fits the command you configure.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_rebinding_appears_ineffective"><a class="anchor" href="#_rebinding_appears_ineffective"></a>Rebinding appears ineffective</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><code>bind()</code> replaces the first entry with the same action, and false can mean a valid
+replacement. Do not treat every false as a rejected configuration.
+Use setBindings for alternate bindings of one action.</p>
+</div>
+<div class="paragraph">
+<p><code>getInputMap()</code> returns a copy; editing it requires setInputMap to apply.
+<code>setBindings()</code> preserves handlers but cancels holds, even for equal configuration.
+Renaming an action does not rename its callback or consumer atom.
+Release any already-held trigger before trying the new binding.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_camera_movement_is_missing_or_jumps"><a class="anchor" href="#_camera_movement_is_missing_or_jumps"></a>Camera movement is missing or jumps</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>First pointer sample only establishes a baseline. Focus loss resets that baseline.</p>
+</li>
+<li>
+<p>Input values are window-coordinate deltas/scroll offsets, not world coordinates.</p>
+</li>
+<li>
+<p>Router pointer ownership is not OS cursor locking.</p>
+</li>
+<li>
+<p>Current editor routing uses previously published focus/hover/ImGui state.</p>
+</li>
+<li>
+<p>Scene tick is gated by viewport focus; callbacks and held polling have different timing.</p>
+</li>
+<li>
+<p>Apply sensitivity and delta time exactly where the behavior needs them. The input
+layer does not scale raw deltas.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>After modal cancellation, an old held RMB does not restore look ownership. Release
+and press again. Use hasPointerCapture only as an ownership query, not as proof
+that every mouse event is delivered.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_a_clonerestored_controller_is_inactive"><a class="anchor" href="#_a_clonerestored_controller_is_inactive"></a>A clone/restored controller is inactive</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Initialize the clone, reinstall callbacks/subscriptions, and restore actor possession.
+Runtime action state is intentionally fresh, and possession is not copied.
+Human/Editor mutable getInput creates/reuses a direct child; const getInput requires
+that child already exists and aborts if absent.</p>
+</div>
+<div class="paragraph">
+<p>Ensure defaults do not overwrite a restored map. Spectator installs defaults only
+when its vector is empty; that convention needs extra state if intentionally empty
+maps should stay empty.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_recording_leaves_gameplay_suppressed"><a class="anchor" href="#_recording_leaves_gameplay_suppressed"></a>Recording leaves gameplay suppressed</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Check live InputCapture guards and physical buttons still awaiting release.
+The fence intentionally outlives the last guard until all tracked holds end.
+Both modifier sides count. Focus loss/reset clears tracking, but a live guard
+still suppresses actions.</p>
+</div>
+<div class="paragraph">
+<p>BindingCapture context identity alone does not start or stop recording.
+The widget owns a separate guard and raw subscriptions.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_callback_mutation"><a class="anchor" href="#_callback_mutation"></a>Callback mutation</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>A callback may destroy or rebind another controller, switch context, or disable
+input. Later pending recipients are revalidated and may be skipped.
+This is supported synchronous mutation, not permission to edit input from another thread.
+Do not retain raw actor/component pointers across uncertain ownership changes.</p>
+</div>
+<div class="paragraph">
+<p>The action-specific callback runs before onAction. Current emission copies its
+callback/delegate, so editing the handler inside that callback affects subsequent
+events rather than replacing the call already in progress.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_executable_contract_map"><a class="anchor" href="#_executable_contract_map"></a>Executable contract map</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>These test names identify focused regression coverage. Full-suite execution remains
+required for final verification.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 37.5%;">
+<col style="width: 62.5%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Contract</th>
+<th class="tableblock halign-left valign-top">Tests</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Context switches and held state</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">InputControllerTests.RoutesContextsAndReleasesHeldActions;
+InputControllerTests.DisableAndReenableDoesNotLeaveStuckKeys</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Specificity and modifier aliases</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">InputControllerTests.MostSpecificChordWinsAndRightModifiersWork;
+InputControllerTests.ReleasingOneModifierSideKeepsHeldChordWhileOtherSideIsHeld</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Pulse lifetime / same-frame taps</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">InputControllerTests.ReleaseTriggerLastsOneFrame;
+InputControllerTests.PressAndReleaseWithinOneFramePreserveConfiguredPulses</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Alternate bindings</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">InputControllerTests.DuplicateActionsUseTheActivatedBindingsReleaseTrigger;
+InputControllerTests.ReleasingOneBindingKeepsAnotherBindingOfTheSameActionHeld</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Same-context delivery</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">InputControllerTests.SameContextControllersMayUseTheSamePhysicalButton;
+InputRoutingTests.ConsumingLayerDeliversToAllItsControllersAndPassesUnmatchedInput</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Modal/selective cancellation</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">InputRoutingTests.ModalBlocksUnmatchedInputAndCancelsWithoutReleaseAction;
+InputRoutingTests.ConsumingOverlayCancelsOnlyShadowedHeldBindings</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Text-input channels</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">InputRoutingTests.TextInputBlocksKeyboardWhilePointerRemainsAvailable</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Pointer ownership</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">InputRoutingTests.DragRequiresAcceptedPressAndModalCancelsItsOwnership</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Mutation safety</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">InputControllerTests.CallbackCanDestroyAnotherRegisteredController;
+InputControllerTests.CallbackMayReleaseItsOwnControllerAndStillDeliverDelegate;
+InputRoutingTests.ContextSwitchInsideCallbackSkipsOtherRecipients;
+InputRoutingTests.RebindingAnotherRecipientInvalidatesPreviouslySelectedBinding</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Rebinding / callbacks</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">InputControllerTests.EditingBindingsPreservesCallbacksAndResetsHeldState;
+InputControllerTests.TemporarilyRemovingAnActionDoesNotUnregisterItsCallback</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Capture / focus loss</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">InputControllerTests.CaptureWaitsForBothModifierSidesToBeReleased;
+InputControllerTests.FocusLossClearsInputCaptureReleaseFence;
+InputControllerTests.FocusLossClearsHeldAndQueuedInputEvenIfFocusReturnsBeforeNextFrame</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Serialization / map independence</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">InputControllerTests.BindingSerializationPreservesChordAndTrigger;
+InputControllerTests.MouseSupportPreservesLegacyKeyboardSerialization;
+InputControllerTests.ReusedInputMapDoesNotShareRuntimeState</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Hierarchy / ownership</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ControllerHierarchyTests.ControllersFollowRequestedHierarchyAndRegisterWithFactory;
+ControllerHierarchyTests.PossessionDoesNotKeepActorAliveOrTransferToClone</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Custom controller</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ControllerHierarchyTests.CustomHumanControllerRegistersAndDrivesItsPossessedActor</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Preserving edited defaults</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">InputRoutingTests.SpectatorInitializationPreservesItsCustomInputMap</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_repository_verification_commands"><a class="anchor" href="#_repository_verification_commands"></a>Repository verification commands</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>From the repository root, use the configured Debug build:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Build with <code>cmake --build build --parallel</code>.</p>
+</li>
+<li>
+<p>Run the full suite with <code>build/bin/Nexium_Tests</code>.</p>
+</li>
+<li>
+<p>Run the graphical smoke check with <code>build/bin/TemplateGame --timeout 5</code>.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>Tests are run directly; this project does not register them with CTest.
+For focused iteration, pass a GoogleTest filter to the executable, then run the
+complete suite before reporting a behavior change verified.
+TemplateGame requires a working graphical/OpenGL session; report an unavailable
+smoke check explicitly.</p>
+</div>
+<div class="paragraph">
+<p>New/changed reflected types trigger JRM code generation in the normal build.
+Follow the repository&#8217;s build, codegen, lint-and-format, and verification-run
+workflows when modifying implementation.</p>
+</div>
+<div class="paragraph">
+<p>For this documentation, source snippets are live tagged includes. Run the required
+site build from <code>docs/</code> with <code>npx antora --fetch antora-playbook.yml</code>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_current_extension_limits"><a class="anchor" href="#_current_extension_limits"></a>Current extension limits</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The current implementation provides one application-level input system, keyboard/
+mouse bindings, enum contexts, synchronous dispatch, and weak actor possession.
+It does not yet supply gamepad/analog processors, per-player device assignment,
+OS pointer locking, arbitrary runtime context names, explicit cancellation
+notifications, built-in AI behavior, replay/network transport, or automatic
+exclusive controller selection.</p>
+</div>
+<div class="paragraph">
+<p>Keep extensions in the layer that owns their responsibility: devices in collection/
+device modeling, routing policy in contexts/router, value processing in an explicit
+processing layer or consumer, and gameplay rules in domain controllers/actors.</p>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="api-reference.html">API Reference</a></span>
+  <span class="next"><a href="../../rendering/index.html">Overview</a></span>
+</nav>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script id="site-script" src="../../../../_/js/site.js" data-ui-root-path="../../../../_"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

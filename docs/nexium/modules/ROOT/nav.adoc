@@ -14,8 +14,14 @@
 ** xref:engine_architecture:file-io.adoc[File I/O]
 ** xref:engine_architecture:ecs-overview.adoc[ECS Overview]
 ** xref:engine_architecture:input-system.adoc[Input System]
-** xref:engine_architecture:editor.adoc[Editor Structure]
-** xref:engine_architecture:diagnostics.adoc[Diagnostics]
+*** xref:engine_architecture:input/actions-and-bindings.adoc[Actions and Bindings]
+*** xref:engine_architecture:input/contexts.adoc[Contexts and Routing]
+*** xref:engine_architecture:input/controllers.adoc[Controller Hierarchy and Ownership]
+*** xref:engine_architecture:input/custom-controllers.adoc[Creating Custom Controllers]
+*** xref:engine_architecture:input/lifecycle-and-integration.adoc[Frame Lifecycle and Integration]
+*** xref:engine_architecture:input/serialization-and-editor.adoc[Serialization and Binding Editor]
+*** xref:engine_architecture:input/api-reference.adoc[API Reference]
+*** xref:engine_architecture:input/troubleshooting.adoc[Troubleshooting and Verification]
 
 * Rendering
 ** xref:rendering:index.adoc[Overview]

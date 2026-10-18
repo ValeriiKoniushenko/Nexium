@@ -12,8 +12,10 @@
 #include "Editor/Windows/GameViewport.h"
 #include "Foundation/Configs.h"
 #include "ImGui/imgui.h"
+#include "ImGui/imgui_internal.h"
 #include "NxRuntime/Runtime.h"
 #include "NxWorld/Framework/GameInstance.h"
+#include "NxWorld/Framework/Input/InputSystem.h"
 
 namespace
 {
@@ -63,9 +65,65 @@ namespace NX
             Foundation::Config::Path::imGuiWindowsIni.generic_string().c_str());
     }
 
+    // tag::input-editor-routing[]
+    void EditorIntegration::updateInputRouting()
+    {
+        auto& input = GetInputSystem();
+        const bool editorVisible = _editor.isEnabled() && _runtime.getGameInstance().isEditorMode();
+        const auto* viewport = _editor.getWindow<GameViewportEWC>();
+        const bool viewportFocused = editorVisible && viewport && viewport->isFocused();
+        const bool viewportHovered = editorVisible && viewport && viewport->isHovered();
+        input.setActiveContext(
+            editorVisible ? (viewportFocused ? InputContext::EditorViewport : InputContext::Editor)
+                          : InputContext::Gameplay);
+        input.setGlobalContext(_editor.isEnabled() ? std::optional{ InputContext::Editor }
+                                                   : std::nullopt);
+
+        const auto setOverlay =
+            [&input](std::optional<InputContextGuard>& guard, bool enabled, InputContextLayer layer)
+        {
+            if (enabled && !guard)
+            {
+                guard.emplace(input.pushContext(layer));
+            }
+            else if (!enabled)
+            {
+                guard.reset();
+            }
+        };
+        const auto& io = ImGui::GetIO();
+        const bool modalOpen = editorVisible && ImGui::GetTopMostPopupModal();
+        if (modalOpen)
+        {
+            _viewportHoverContext.reset();
+            _textInputContext.reset();
+            _pointerCaptureContext.reset();
+            setOverlay(
+                _modalContext, true,
+                { .context = InputContext::Modal, .policy = InputContextPolicy::BlockLower });
+            return;
+        }
+        _modalContext.reset();
+        const bool pointerCaptured = input.hasPointerCapture();
+        setOverlay(_viewportHoverContext,
+                   editorVisible && (viewportHovered || pointerCaptured) && !viewportFocused,
+                   { .context = InputContext::EditorViewport, .channels = InputChannel::Pointer });
+        setOverlay(_textInputContext,
+                   editorVisible
+                       && (io.WantTextInput || (io.WantCaptureKeyboard && !viewportFocused)),
+                   { .context = InputContext::TextInput,
+                     .policy = InputContextPolicy::BlockLower,
+                     .channels = InputChannel::Keyboard });
+        setOverlay(_pointerCaptureContext,
+                   editorVisible && io.WantCaptureMouse && !viewportHovered && !pointerCaptured,
+                   { .context = InputContext::TextInput,
+                     .policy = InputContextPolicy::BlockLower,
+                     .channels = InputChannel::Pointer });
+    }
+    // end::input-editor-routing[]
+
     void EditorIntegration::updateInput()
     {
-        _editor.keyboardInput.update();
     }
 
     void EditorIntegration::tick(float delta)

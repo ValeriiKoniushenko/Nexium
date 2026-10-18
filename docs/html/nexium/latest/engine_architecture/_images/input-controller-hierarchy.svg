@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="725" viewBox="0 0 1080 725" role="img" aria-labelledby="title desc">
+<title id="title">Controller inheritance</title><desc id="desc">Hollow triangles point to the base class. InputController is an independent BaseComponent.</desc>
+<defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#506177" stroke-width="1.6"/></marker><marker id="inherit" markerWidth="14" markerHeight="14" refX="12" refY="7" orient="auto"><path d="M1 1 L12 7 L1 13 Z" fill="white" stroke="#506177" stroke-width="1.4"/></marker></defs>
+<style>text{font-family:DejaVu Sans,Arial,sans-serif;fill:#20324a}.title{font-size:24px;font-weight:700}.subtitle{font-size:14px;fill:#53667c}.node{font-size:17px;font-weight:700}.body{font-size:14px}.label{font-size:13px;fill:#42556c}.small{font-size:12px;fill:#53667c}.head{font-size:15px;font-weight:700}</style>
+<rect width="1080" height="725" fill="#fff"/><rect x="1" y="1" width="1078" height="723" rx="12" fill="none" stroke="#d9e0e9"/>
+<text x="28" y="42" class="title" text-anchor="start">Controller inheritance</text>
+<text x="28" y="69" class="subtitle" text-anchor="start">Hollow triangles point to the base class. InputController is an independent BaseComponent.</text>
+<rect x="395" y="105" width="270" height="85" rx="9" fill="#f3f5f8" stroke="#738094" stroke-width="1.6"/>
+<text x="411" y="134" class="node" text-anchor="start">BaseComponent</text>
+<text x="411" y="162" class="body" text-anchor="start">ECS lifecycle / ownership</text>
+<rect x="395" y="255" width="270" height="85" rx="9" fill="#f4eeff" stroke="#8056ad" stroke-width="1.6"/>
+<text x="411" y="284" class="node" text-anchor="start">BaseController</text>
+<text x="411" y="312" class="body" text-anchor="start">Common controller role</text>
+<polyline points="530,255 530,190" fill="none" stroke="#506177" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#inherit)"/>
+<rect x="210" y="405" width="270" height="85" rx="9" fill="#f4eeff" stroke="#8056ad" stroke-width="1.6"/>
+<text x="226" y="434" class="node" text-anchor="start">GameController</text>
+<text x="226" y="462" class="body" text-anchor="start">Weak Actor possession</text>
+<rect x="700" y="405" width="270" height="85" rx="9" fill="#f4eeff" stroke="#8056ad" stroke-width="1.6"/>
+<text x="716" y="434" class="node" text-anchor="start">EditorController</text>
+<text x="716" y="462" class="body" text-anchor="start">Editor action consumer</text>
+<polyline points="345,405 345,370 470,370 470,340" fill="none" stroke="#506177" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#inherit)"/>
+<polyline points="835,405 835,370 590,370 590,340" fill="none" stroke="#506177" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#inherit)"/>
+<rect x="50" y="565" width="280" height="85" rx="9" fill="#f4eeff" stroke="#8056ad" stroke-width="1.6"/>
+<text x="66" y="594" class="node" text-anchor="start">HumanController</text>
+<text x="66" y="622" class="body" text-anchor="start">Human actions + possession</text>
+<rect x="385" y="565" width="280" height="85" rx="9" fill="#f4eeff" stroke="#8056ad" stroke-width="1.6"/>
+<text x="401" y="594" class="node" text-anchor="start">AIController</text>
+<text x="401" y="622" class="body" text-anchor="start">AI behavior + possession</text>
+<polyline points="190,565 190,530 290,530 290,490" fill="none" stroke="#506177" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#inherit)"/>
+<polyline points="525,565 525,530 405,530 405,490" fill="none" stroke="#506177" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#inherit)"/>
+<rect x="765" y="105" width="270" height="115" rx="9" fill="#edf5ff" stroke="#3a68ad" stroke-width="1.6"/>
+<text x="781" y="134" class="node" text-anchor="start">InputController</text>
+<text x="781" y="162" class="body" text-anchor="start">Map + action runtime</text>
+<text x="781" y="183" class="body" text-anchor="start">Hardware input facade</text>
+<polyline points="765,150 665,150" fill="none" stroke="#506177" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#inherit)"/>
+<text x="725" y="572" class="body" text-anchor="start">Human and Editor own an</text>
+<text x="725" y="593" class="body" text-anchor="start">InputController child by composition.</text>
+<text x="725" y="614" class="body" text-anchor="start">AI creates no hardware child.</text>
+<text x="28" y="695" class="small" text-anchor="start">Inheritance describes available behavior. Context identity is configured on the input child, not selected by this graph.</text>
+</svg>

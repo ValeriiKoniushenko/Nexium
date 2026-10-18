@@ -10,7 +10,7 @@
 #include "Editor/Windows/ECSAdapters/Animation/ECSEditorFrameByFrameAnimationAdapter.h"
 #include "Editor/Windows/ECSAdapters/BaseComponentAdapter.h"
 #include "Editor/Windows/ECSAdapters/Input/ECSEditorInputControllerAdapter.h"
-#include "NxWorld/Framework/InputController.h"
+#include "NxWorld/Framework/Input/InputController.h"
 
 #include "gtest/gtest.h"
 

@@ -14,7 +14,7 @@
 #include "Editor/IconsFontAwesome.h"
 #include "Editor/Windows/Editors/InputBindings/InputBindingsEditor.h"
 #include "ImGui/imgui.h"
-#include "NxWorld/Framework/InputController.h"
+#include "NxWorld/Framework/Input/InputController.h"
 
 namespace NX
 {

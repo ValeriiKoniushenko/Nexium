@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="730" viewBox="0 0 1120 730" role="img" aria-labelledby="title desc">
+<title id="title">Layer order and channel policy</title><desc id="desc">Illustrative stack: newest overlay first, then older overlays, global, and base.</desc>
+<defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#506177" stroke-width="1.6"/></marker><marker id="inherit" markerWidth="14" markerHeight="14" refX="12" refY="7" orient="auto"><path d="M1 1 L12 7 L1 13 Z" fill="white" stroke="#506177" stroke-width="1.4"/></marker></defs>
+<style>text{font-family:DejaVu Sans,Arial,sans-serif;fill:#20324a}.title{font-size:24px;font-weight:700}.subtitle{font-size:14px;fill:#53667c}.node{font-size:17px;font-weight:700}.body{font-size:14px}.label{font-size:13px;fill:#42556c}.small{font-size:12px;fill:#53667c}.head{font-size:15px;font-weight:700}</style>
+<rect width="1120" height="730" fill="#fff"/><rect x="1" y="1" width="1118" height="728" rx="12" fill="none" stroke="#d9e0e9"/>
+<text x="28" y="42" class="title" text-anchor="start">Layer order and channel policy</text>
+<text x="28" y="69" class="subtitle" text-anchor="start">Illustrative stack: newest overlay first, then older overlays, global, and base.</text>
+<rect x="40" y="115" width="420" height="105" rx="9" fill="#fff1ef" stroke="#bc5449" stroke-width="1.6"/>
+<text x="56" y="144" class="node" text-anchor="start">TextInput overlay</text>
+<text x="56" y="172" class="body" text-anchor="start">BlockLower / Keyboard</text>
+<rect x="40" y="255" width="420" height="105" rx="9" fill="#ebf8f0" stroke="#398664" stroke-width="1.6"/>
+<text x="56" y="284" class="node" text-anchor="start">EditorViewport overlay</text>
+<text x="56" y="312" class="body" text-anchor="start">ConsumeMatched / Pointer</text>
+<rect x="40" y="395" width="420" height="105" rx="9" fill="#ebf8f0" stroke="#398664" stroke-width="1.6"/>
+<text x="56" y="424" class="node" text-anchor="start">Global Editor</text>
+<text x="56" y="452" class="body" text-anchor="start">ConsumeMatched / All</text>
+<rect x="40" y="535" width="420" height="105" rx="9" fill="#ebf8f0" stroke="#398664" stroke-width="1.6"/>
+<text x="56" y="564" class="node" text-anchor="start">Base Gameplay</text>
+<text x="56" y="592" class="body" text-anchor="start">ConsumeMatched / All</text>
+<polyline points="245,220 245,255" fill="none" stroke="#506177" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline points="245,360 245,395" fill="none" stroke="#506177" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline points="245,500 245,535" fill="none" stroke="#506177" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<text x="525" y="125" class="head" text-anchor="start">Keyboard: W</text>
+<polyline points="610,140 610,167 460,167" fill="none" stroke="#506177" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<text x="685" y="194" class="label" text-anchor="middle">blocked, even without a match</text>
+<text x="835" y="125" class="head" text-anchor="start">Pointer: Wheel</text>
+<polyline points="925,140 925,280" fill="none" stroke="#506177" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<text x="920" y="237" class="label" text-anchor="middle">skip keyboard-only layer</text>
+<polyline points="925,300 925,420" fill="none" stroke="#506177" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<text x="920" y="377" class="label" text-anchor="middle">continue if no pointer match</text>
+<polyline points="925,440 925,587 460,587" fill="none" stroke="#506177" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<text x="915" y="517" class="label" text-anchor="middle">continue if no global match</text>
+<text x="650" y="634" class="body" text-anchor="start">Gameplay receives Wheel only if</text>
+<text x="650" y="655" class="body" text-anchor="start">no higher participating layer matches.</text>
+<text x="28" y="694" class="small" text-anchor="start">Within a matching layer all eligible matching controllers receive input. Global shortcuts remain below blocking overlays.</text>
+</svg>

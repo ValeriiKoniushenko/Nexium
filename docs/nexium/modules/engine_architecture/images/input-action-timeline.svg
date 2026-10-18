@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1140" height="560" viewBox="0 0 1140 560" role="img" aria-labelledby="title desc">
+<title id="title">Button activation across input frames</title><desc id="desc">Each row represents a separate binding/map for the same physical button.</desc>
+<defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#506177" stroke-width="1.6"/></marker><marker id="inherit" markerWidth="14" markerHeight="14" refX="12" refY="7" orient="auto"><path d="M1 1 L12 7 L1 13 Z" fill="white" stroke="#506177" stroke-width="1.4"/></marker></defs>
+<style>text{font-family:DejaVu Sans,Arial,sans-serif;fill:#20324a}.title{font-size:24px;font-weight:700}.subtitle{font-size:14px;fill:#53667c}.node{font-size:17px;font-weight:700}.body{font-size:14px}.label{font-size:13px;fill:#42556c}.small{font-size:12px;fill:#53667c}.head{font-size:15px;font-weight:700}</style>
+<rect width="1140" height="560" fill="#fff"/><rect x="1" y="1" width="1138" height="558" rx="12" fill="none" stroke="#d9e0e9"/>
+<text x="28" y="42" class="title" text-anchor="start">Button activation across input frames</text>
+<text x="28" y="69" class="subtitle" text-anchor="start">Each row represents a separate binding/map for the same physical button.</text>
+<text x="333.5" y="130" class="head" text-anchor="middle">F0: idle</text>
+<text x="470.5" y="130" class="head" text-anchor="middle">F1: Press</text>
+<text x="607.5" y="130" class="head" text-anchor="middle">F2: held</text>
+<text x="744.5" y="130" class="head" text-anchor="middle">F3: Release</text>
+<text x="881.5" y="130" class="head" text-anchor="middle">F4: idle</text>
+<text x="1018.5" y="130" class="head" text-anchor="middle">F5: P + R</text>
+<text x="35" y="210" class="node" text-anchor="start">OnPress</text>
+<rect x="265" y="170" width="125" height="77" rx="7" fill="#f3f5f8" stroke="#738094"/>
+<text x="327.5" y="200" class="body" text-anchor="middle">inactive</text>
+<rect x="402" y="170" width="125" height="77" rx="7" fill="#ebf8f0" stroke="#398664"/>
+<text x="464.5" y="200" class="body" text-anchor="middle">active</text>
+<text x="464.5" y="227" class="small" text-anchor="middle">callback</text>
+<rect x="539" y="170" width="125" height="77" rx="7" fill="#f3f5f8" stroke="#738094"/>
+<text x="601.5" y="200" class="body" text-anchor="middle">inactive</text>
+<rect x="676" y="170" width="125" height="77" rx="7" fill="#f3f5f8" stroke="#738094"/>
+<text x="738.5" y="200" class="body" text-anchor="middle">inactive</text>
+<rect x="813" y="170" width="125" height="77" rx="7" fill="#f3f5f8" stroke="#738094"/>
+<text x="875.5" y="200" class="body" text-anchor="middle">inactive</text>
+<rect x="950" y="170" width="125" height="77" rx="7" fill="#ebf8f0" stroke="#398664"/>
+<text x="1012.5" y="200" class="body" text-anchor="middle">active</text>
+<text x="1012.5" y="227" class="small" text-anchor="middle">callback</text>
+<text x="35" y="315" class="node" text-anchor="start">WhileHeld</text>
+<rect x="265" y="275" width="125" height="77" rx="7" fill="#f3f5f8" stroke="#738094"/>
+<text x="327.5" y="305" class="body" text-anchor="middle">inactive</text>
+<rect x="402" y="275" width="125" height="77" rx="7" fill="#ebf8f0" stroke="#398664"/>
+<text x="464.5" y="305" class="body" text-anchor="middle">active</text>
+<text x="464.5" y="332" class="small" text-anchor="middle">callback</text>
+<rect x="539" y="275" width="125" height="77" rx="7" fill="#ebf8f0" stroke="#398664"/>
+<text x="601.5" y="305" class="body" text-anchor="middle">active</text>
+<rect x="676" y="275" width="125" height="77" rx="7" fill="#f3f5f8" stroke="#738094"/>
+<text x="738.5" y="305" class="body" text-anchor="middle">inactive</text>
+<rect x="813" y="275" width="125" height="77" rx="7" fill="#f3f5f8" stroke="#738094"/>
+<text x="875.5" y="305" class="body" text-anchor="middle">inactive</text>
+<rect x="950" y="275" width="125" height="77" rx="7" fill="#f3f5f8" stroke="#738094"/>
+<text x="1012.5" y="305" class="body" text-anchor="middle">inactive</text>
+<text x="1012.5" y="332" class="small" text-anchor="middle">callback</text>
+<text x="35" y="420" class="node" text-anchor="start">OnRelease</text>
+<rect x="265" y="380" width="125" height="77" rx="7" fill="#f3f5f8" stroke="#738094"/>
+<text x="327.5" y="410" class="body" text-anchor="middle">inactive</text>
+<rect x="402" y="380" width="125" height="77" rx="7" fill="#f3f5f8" stroke="#738094"/>
+<text x="464.5" y="410" class="body" text-anchor="middle">inactive</text>
+<rect x="539" y="380" width="125" height="77" rx="7" fill="#f3f5f8" stroke="#738094"/>
+<text x="601.5" y="410" class="body" text-anchor="middle">inactive</text>
+<rect x="676" y="380" width="125" height="77" rx="7" fill="#ebf8f0" stroke="#398664"/>
+<text x="738.5" y="410" class="body" text-anchor="middle">active</text>
+<text x="738.5" y="437" class="small" text-anchor="middle">callback</text>
+<rect x="813" y="380" width="125" height="77" rx="7" fill="#f3f5f8" stroke="#738094"/>
+<text x="875.5" y="410" class="body" text-anchor="middle">inactive</text>
+<rect x="950" y="380" width="125" height="77" rx="7" fill="#ebf8f0" stroke="#398664"/>
+<text x="1012.5" y="410" class="body" text-anchor="middle">active</text>
+<text x="1012.5" y="437" class="small" text-anchor="middle">callback</text>
+<text x="35" y="515" class="small" text-anchor="start">P + R means Press and Release drained in one frame. WhileHeld can end before polling; accepted activation still emitted its callback.</text>
+</svg>

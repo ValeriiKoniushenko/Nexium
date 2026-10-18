@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1150" height="510" viewBox="0 0 1150 510" role="img" aria-labelledby="title desc">
+<title id="title">Shortcut recording and the release fence</title><desc id="desc">Ending the recording guard does not let its held buttons immediately activate gameplay.</desc>
+<defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#506177" stroke-width="1.6"/></marker><marker id="inherit" markerWidth="14" markerHeight="14" refX="12" refY="7" orient="auto"><path d="M1 1 L12 7 L1 13 Z" fill="white" stroke="#506177" stroke-width="1.4"/></marker></defs>
+<style>text{font-family:DejaVu Sans,Arial,sans-serif;fill:#20324a}.title{font-size:24px;font-weight:700}.subtitle{font-size:14px;fill:#53667c}.node{font-size:17px;font-weight:700}.body{font-size:14px}.label{font-size:13px;fill:#42556c}.small{font-size:12px;fill:#53667c}.head{font-size:15px;font-weight:700}</style>
+<rect width="1150" height="510" fill="#fff"/><rect x="1" y="1" width="1148" height="508" rx="12" fill="none" stroke="#d9e0e9"/>
+<text x="28" y="42" class="title" text-anchor="start">Shortcut recording and the release fence</text>
+<text x="28" y="69" class="subtitle" text-anchor="start">Ending the recording guard does not let its held buttons immediately activate gameplay.</text>
+<rect x="25" y="130" width="207" height="205" rx="9" fill="#fff1ef" stroke="#bc5449" stroke-width="1.6"/>
+<text x="41" y="159" class="node" text-anchor="start">Record starts</text>
+<text x="41" y="187" class="body" text-anchor="start">Guard: live</text>
+<text x="41" y="208" class="body" text-anchor="start">Fence: not needed</text>
+<text x="41" y="229" class="body" text-anchor="start"></text>
+<text x="41" y="250" class="body" text-anchor="start">suppressed</text>
+<polyline points="232,234 250,234" fill="none" stroke="#506177" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<rect x="250" y="130" width="207" height="205" rx="9" fill="#fff1ef" stroke="#bc5449" stroke-width="1.6"/>
+<text x="266" y="159" class="node" text-anchor="start">Chord held</text>
+<text x="266" y="187" class="body" text-anchor="start">Guard: live</text>
+<text x="266" y="208" class="body" text-anchor="start">Ctrl + RMB held</text>
+<text x="266" y="229" class="body" text-anchor="start"></text>
+<text x="266" y="250" class="body" text-anchor="start">suppressed</text>
+<polyline points="457,234 475,234" fill="none" stroke="#506177" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<rect x="475" y="130" width="207" height="205" rx="9" fill="#fff1ef" stroke="#bc5449" stroke-width="1.6"/>
+<text x="491" y="159" class="node" text-anchor="start">Confirm / cancel</text>
+<text x="491" y="187" class="body" text-anchor="start">Guard: gone</text>
+<text x="491" y="208" class="body" text-anchor="start">Held buttons fenced</text>
+<text x="491" y="229" class="body" text-anchor="start"></text>
+<text x="491" y="250" class="body" text-anchor="start">suppressed</text>
+<polyline points="682,234 700,234" fill="none" stroke="#506177" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<rect x="700" y="130" width="207" height="205" rx="9" fill="#fff1ef" stroke="#bc5449" stroke-width="1.6"/>
+<text x="716" y="159" class="node" text-anchor="start">Final release</text>
+<text x="716" y="187" class="body" text-anchor="start">Guard: gone</text>
+<text x="716" y="208" class="body" text-anchor="start">Fence ends on event</text>
+<text x="716" y="229" class="body" text-anchor="start"></text>
+<text x="716" y="250" class="body" text-anchor="start">event suppressed</text>
+<polyline points="907,234 925,234" fill="none" stroke="#506177" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<rect x="925" y="130" width="207" height="205" rx="9" fill="#ebf8f0" stroke="#398664" stroke-width="1.6"/>
+<text x="941" y="159" class="node" text-anchor="start">Fresh input</text>
+<text x="941" y="187" class="body" text-anchor="start">Guard: gone</text>
+<text x="941" y="208" class="body" text-anchor="start">No held fence</text>
+<text x="941" y="229" class="body" text-anchor="start"></text>
+<text x="941" y="250" class="body" text-anchor="start">normal routing</text>
+<text x="30" y="392" class="body" text-anchor="start">Device tracking continues throughout capture. Every tracked physical hold must end, including both modifier sides.</text>
+<text x="30" y="443" class="small" text-anchor="start">resetButtons clears the fence, not live guards. Context guards and pointer-gesture ownership are separate mechanisms.</text>
+</svg>

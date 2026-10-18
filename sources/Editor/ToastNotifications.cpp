@@ -86,9 +86,9 @@ namespace Editor
 
     void NotificationPopUp::show() const
     {
-        if (gGameInstance)
+        if (auto* editor = NX::GetEditor())
         {
-            NX::GetEditor()->notifications.show(*this);
+            editor->notifications.show(*this);
         }
     }
 

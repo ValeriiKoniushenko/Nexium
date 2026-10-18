@@ -1,114 +1,154 @@
 = Input System
+:toc:
+:toclevels: 3
 
-Platform supplies window events, keyboard/button state, cursor position, and drag tracking.
-Two input layers sit on top of it, and both are live:
+Nexium routes window events through a shared input system into named actions on ECS
+components. Each binding defines its physical chord and its activation rule.
+Gameplay reads `isActive("Run"_atom)` without needing to know whether Run means a
+press, release, or held key.
 
-* `NX::InputSystem` (NxWorld) routes keyboard *events* to `InputController` components,
-  filtered by an active input context. This is the newer path.
-* `NxSubsystems/Input` maps *polled* key state to named `InputAction` objects owned by
-  `KeyboardInputManger` / `MouseInputManger`. Mouse handling and most editor shortcuts
-  still use it.
+Domain controllers decide what to do with actions. Context layers decide which
+controllers may receive them. The runtime remembers accepted presses, clears frame
+pulses, and cancels interrupted actions without manufacturing releases.
 
-New keyboard bindings should use `InputController`. The polled managers remain the only
-path for mouse move/drag/click.
+This section describes `sources/NxWorld/Framework/Input/` and
+`sources/NxSubsystems/Input/`. Legacy polling managers still exist; see
+xref:input/lifecycle-and-integration.adoc[Integration] for their remaining uses.
 
-== Event routing: InputSystem and InputController
+== Reading guide
 
-`GetInputSystem()` is a `Core::Singleton`. `GameInstance::initialize()` calls
-`initialize(window)` on it, which subscribes to the window's key events. Each frame Runtime
-sets the active context and then drains the queue:
+[cols="2,4",options="header"]
+|===
+|Page |What it answers
+|xref:input/actions-and-bindings.adoc[Actions and bindings]
+|Chords, triggers, values, callbacks, and multiple bindings.
+|xref:input/contexts.adoc[Contexts and routing]
+|Modal windows, text fields, global shortcuts, holds, and pointer ownership.
+|xref:input/controllers.adoc[Controller hierarchy and ownership]
+|BaseController, GameController, HumanController, AIController, and EditorController.
+|xref:input/custom-controllers.adoc[Creating custom controllers]
+|Implementing, registering, initializing, and using a custom controller.
+|xref:input/lifecycle-and-integration.adoc[Frame lifecycle and integration]
+|Runtime order and editor, Player, and Spectator consumers.
+|xref:input/serialization-and-editor.adoc[Serialization and binding editor]
+|Saved configuration, runtime state, cloning, recording, and rebinding.
+|xref:input/api-reference.adoc[API reference]
+|Declarations, defaults, return values, and preconditions.
+|xref:input/troubleshooting.adoc[Troubleshooting and verification]
+|Diagnosis and the executable tests that establish each contract.
+|===
+
+== The complete path
+
+.Window events become controller-local action state.
+image::input-pipeline.svg[Collection, device state, contexts, routing, action runtime and consumers]
+
+. Platform publishes keyboard, mouse-button, pointer-position, and wheel events.
+. `InputCollector` queues them. Focus loss invokes reset immediately.
+. `InputDeviceState` updates physical state, normalizes chord keys, reconstructs
+  modifiers, and calculates pointer deltas.
+. `InputRouter` visits context layers in priority order and resolves one binding
+  per receiving component for each press, movement, or wheel event.
+. Each `InputController` has an independent `InputActionRuntime`, containing
+  accepted button bindings, persistent holds, and frame transients.
+. Consumers poll `isActive()` / `getActionValue()` or receive synchronous callbacks.
+
+Physical state is updated even while capture or a blocking context suppresses
+actions. This lets the system observe real releases and clear held buttons correctly.
+
+== Responsibilities
+
+[cols="2,4,3",options="header"]
+|===
+|Type |Responsibility |Boundary
+|`InputCollector`
+|Subscribe to one window, queue events, invoke focus-loss reset.
+|No action resolution or context selection.
+|`InputDeviceState`
+|Physical buttons, normalized chord snapshots, modifiers, pointer baseline.
+|No binding configuration or callbacks.
+|`InputMap`
+|Editable configuration, minimum validation, most-specific chord resolution.
+|No active state, Platform subscriptions, or ECS lifetime.
+|`InputContextStack`
+|Base, optional global, and temporary overlay layers.
+|No callback dispatch or component ownership.
+|`InputRouter`
+|Non-owning registrations, layer priority, blocked holds, pointer ownership.
+|No movement or AI decisions.
+|`InputActionRuntime`
+|Accepted bindings, holds, frame pulses, modifiers, values.
+|No Platform subscriptions or layer priority.
+|`InputController`
+|Bindings, action queries, handlers, serialization, ECS registration.
+|No actor possession or gameplay behavior.
+|`InputSystem`
+|Coordinate collector, device state, contexts, router; expose the engine entry point.
+|Does not own registered components or domain controllers.
+|Domain controllers
+|Translate input or AI decisions into behavior; GameController tracks an actor.
+|Do not parse raw hardware events or duplicate context routing.
+|===
+
+`GetInputSystem()` returns the application singleton. The current system is not
+partitioned into per-player/per-window instances. Processing and callbacks run
+synchronously on the calling runtime thread.
+
+== First working example
+
+This test gives Gameplay and Editor the same W binding. Switching the base context
+cancels the gameplay hold; only a fresh W press activates the editor action.
 
 [source,cpp]
 ----
-GetInputSystem().setActiveContext(gameInstance.isApplicationViewportFocused()
-                                      ? InputContext::Gameplay
-                                      : InputContext::Editor);
-GetInputSystem().processEvents();
+include::example$input-tests/InputControllerTests.cpp[tag=input-context-switch,indent=0]
 ----
 
-`InputContext` is `Editor` or `Gameplay`, and `Editor` is the startup default. Controllers
-register themselves into the list for their own context, and `processEvents()` dispatches
-only to the controllers of the active context. Switching context rebuilds that routed list
-immediately and releases the actions the previous controllers were holding.
+The fixture initializes `GetInputSystem()` with `Platform::GetWindow()`, selects
+Gameplay, and resets input around each test. `key()` publishes a window event;
+`frame()` calls `processEvents()`. Production code uses Runtime's existing loop.
 
-This is a context switch, not a stack: there is no per-event consumption, no priority
-between controllers in the same context, and no modal capture.
+For an actor-facing example reading `isActive("Run"_atom)`, see
+xref:input/custom-controllers.adoc[Creating custom controllers].
 
-=== Bindings and chords
+== Core contracts
 
-`InputController` is a reflected `BaseComponent` (`ECS_DECL`), so bindings persist with the
-component tree. A binding is an action name, a `KeyChord`, and a trigger:
+* Trigger semantics belong to the binding. `isActive()` is the boolean action query.
+* Press/release pulses last until the next `processEvents()` begins.
+* WhileHeld persists only while its accepted chord remains valid.
+* Same-context controllers may receive the same input. Priority is between layers,
+  not an exclusive winner between controllers within a layer.
+* ConsumeMatched stops lower layers on a match. BlockLower also stops unmatched
+  input on its selected channels.
+* Cancellation clears runtime state silently; it never manufactures OnRelease.
+* A held button does not become a new press after a context switch. Held modifiers
+  remain available with a fresh trigger key.
+* InputMap copies contain configuration only; runtime state remains independent.
+* Possession uses a weak actor reference and does not transfer actor ownership.
 
-[cols="2,4",options="header"]
+== Implementation map
+
+[cols="3,4",options="header"]
 |===
-|Element |Meaning
-|`action` |`Core::StringAtom` name reported back in `InputActionEvent`.
-|`KeyChord::triggerKey` |The key whose press completes the chord.
-|`KeyChord::requiredKeys` |Keys that must already be held, for example Left Control and Left Shift.
-|`InputActionTrigger` |`OnPress`, `OnRelease`, or `WhileHeld`.
+|Location |Contents
+|`sources/NxSubsystems/Input/InputTypes.{h,cpp}`
+|Contexts, channels, buttons, chords, triggers, events, modifiers, recording capture.
+|`sources/NxWorld/Framework/Input/`
+|Controller hierarchy and routed input implementation.
+|`sources/NxRuntime/Runtime.cpp`
+|Frame ordering and integration hook.
+|`sources/Editor/EditorIntegration.cpp`
+|Viewport, text-input, modal, and global-shortcut policy.
+|`sources/Editor/GameEditor.cpp`
+|Editor/viewport action consumers.
+|`sources/NxWorld/Scene/Spectator.cpp`
+|2D/3D camera maps and behavior.
+|`game-example/Player.cpp`
+|Movement polling from a descendant InputController.
+|`tests/ECSTests/InputControllerTests.cpp`
+|Runtime, binding, callback, capture, serialization, and modifier contracts.
+|`tests/ECSTests/InputRoutingTests.cpp`
+|Context policies, cancellation, pointer ownership, routing mutation.
+|`tests/ECSTests/ControllerHierarchyTests.cpp`
+|Hierarchy, possession, child ownership, cloning, custom controller example.
 |===
-
-`bind()` takes an optional callback; the controller also exposes an `onAction` delegate that
-receives every `InputActionEvent`. `isActionPressed()` and `getActionModifiers()` give the
-current state, and `InputModifier` is a bitmask of Shift/Control/Alt/Super. When several
-bindings match one event, `findBestBinding()` picks one, so more specific chords win over a
-bare key. `setBindings()` replaces the list wholesale, and `_bindings` is a `FIELD()`, so
-serialized controllers round-trip through JRM; `from_json` still accepts legacy modifier
-fields. The editor exposes these under `Editor/Windows/Editors/InputBindings`.
-
-Chords are written with the left-hand modifier keys. `InputSystem` normalizes the right
-Shift/Control/Alt/Super keys to their left equivalents when queueing an event, so a chord
-declared with `Left_Control` also matches the right Control key.
-
-== Polled actions: InputAction
-
-`KeyboardInputManger` and `MouseInputManger` own intrusive action references indexed by
-`Core::StringAtom` names. "Manger" is the current API spelling.
-`getOrCreate()` reuses the existing name; it does not change that action's key binding.
-
-`InputAction::update()` polls its key, applies repeat/frequency limits, snapshots left
-Shift/Alt/Ctrl, and passes that snapshot to `onPress`.
-Repeat defaults to enabled with zero delay. Disable repeat for one notification per press;
-frequency limits use elapsed `system_clock` milliseconds.
-
-Mouse actions also provide:
-
-* `onMouseClick`: current position on a qualifying press, using the same repeat policy.
-* `onMove`: position delta after the first sample establishes a baseline.
-* `onDrag`: position delta while Platform reports dragging and the action's button condition matches.
-
-A mouse click here is a press notification, not release detection.
-
-[cols="2,4",options="header"]
-|===
-|Owner |Update path
-|GameEditor |Keyboard and mouse mappings after drawing editor windows.
-|EditorIntegration in GameOnly mode |Editor keyboard mappings only.
-|Spectator |Its own keyboard and mouse mappings during its scene tick.
-|`NxECSBasedEditor` |Its own keyboard manager for the Delete shortcut inside component editors.
-|===
-
-Editor scene ticks require viewport focus. These polled actions are not filtered by
-`InputContext`, so a shortcut that must not fire during gameplay has to check focus itself —
-as the Delete shortcut does with `isApplicationViewportFocused()`.
-
-== Editor shortcuts
-
-`GameEditor::setupShortcuts()` installs:
-
-[cols="2,2,3",options="header"]
-|===
-|Shortcut |Action |Path
-|F1 |Toggle render mode |Polled keyboard action, non-repeatable.
-|F12 |Close the application |Polled keyboard action.
-|Escape |Clear selection |Polled keyboard action.
-|Delete |Delete selected objects from the scene |Polled keyboard action; requires no modifiers and a focused viewport.
-|Left Ctrl + Left Shift + S |Save all |`InputController` chord in the `Editor` context.
-|===
-
-Render-mode switching uses the same scene; see xref:lifecycle.adoc[Application Lifecycle].
-
-Implementation: `NxWorld/Framework/{InputSystem,InputController}.{h,cpp}`,
-`NxSubsystems/Input/{InputAction,InputManager,InputTypes}.{h,cpp}`,
-`Editor/GameEditor.cpp`, and `NxWorld/Scene/Spectator.cpp`.
-Checks: `tests/ECSTests/InputControllerTests.cpp`.

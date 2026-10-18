@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Actions and Bindings :: Nexium Engine</title>
+    <link rel="prev" href="../input-system.html">
+    <link rel="next" href="contexts.html">
+    <meta name="generator" content="Antora 3.2.1">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="../../../..">Nexium Engine</a>
+      <button class="navbar-burger" aria-controls="topbar-nav" aria-expanded="false" aria-label="Toggle main menu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Products</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="#">Product A</a>
+            <a class="navbar-item" href="#">Product B</a>
+            <a class="navbar-item" href="#">Product C</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Services</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="#">Service A</a>
+            <a class="navbar-item" href="#">Service B</a>
+            <a class="navbar-item" href="#">Service C</a>
+          </div>
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="button is-primary" href="#">Download</a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="nexium" data-version="latest">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <button class="nav-menu-toggle" aria-label="Toggle expand/collapse all" style="display: none"></button>
+    <h3 class="title"><a href="../../index.html">Nexium Engine Documentation</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../../index.html">Overview</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../getting-started.html">Getting Started</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../installation.html">Installation</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Engine Architecture</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../index.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../architecture-review.html">Architecture and Migration Review</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ue5-alignment.html">UE5 Patterns for Nexium</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../module-graph.html">Module Graph</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../lifecycle.html">Application Lifecycle</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../threading.html">Threading Model</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../memory.html">Memory Model</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../resource-system.html">Resource System</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../file-io.html">File I/O</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ecs-overview.html">ECS Overview</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../input-system.html">Input System</a>
+<ul class="nav-list">
+  <li class="nav-item is-current-page" data-depth="3">
+    <a class="nav-link" href="actions-and-bindings.html">Actions and Bindings</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="contexts.html">Contexts and Routing</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="controllers.html">Controller Hierarchy and Ownership</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="custom-controllers.html">Creating Custom Controllers</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="lifecycle-and-integration.html">Frame Lifecycle and Integration</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="serialization-and-editor.html">Serialization and Binding Editor</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="api-reference.html">API Reference</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="troubleshooting.html">Troubleshooting and Verification</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Rendering</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../rendering/index.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../rendering/pipeline.html">Rendering Pipeline</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../rendering/renderer-architecture.html">Rendering Responsibilities</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Materials</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../rendering/materials/shader-system.html">Shader System</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Gameplay</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../gameplay/index.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../gameplay/scenes.html">Scenes</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../gameplay/components.html">Components</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../gameplay/scripting.html">Gameplay Hooks</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../gameplay/prefabs.html">Blueprint Templates</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Build &amp; Toolchain</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../build/index.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../build/cmake-structure.html">CMake Structure</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../build/ci-cd.html">CI/CD</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../about/index.html">About</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Nexium Engine Documentation</span>
+    <span class="version">latest</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <div class="title"><a href="../../index.html">Nexium Engine Documentation</a></div>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../../index.html">latest</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../index.html">Nexium Engine Documentation</a></li>
+    <li>Engine Architecture</li>
+    <li><a href="../input-system.html">Input System</a></li>
+    <li><a href="actions-and-bindings.html">Actions and Bindings</a></li>
+  </ul>
+</nav>
+<div class="edit-this-page"><a href="file:///home/alex/Desktop/nexium//docs/nexium/modules/engine_architecture/pages/input/actions-and-bindings.adoc">Edit this Page</a></div>
+</div>
+  <div class="content">
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">Actions and Bindings</h1>
+<div id="toc" class="toc">
+<div id="toctitle">Table of Contents</div>
+<ul class="sectlevel1">
+<li><a href="#_binding_data">Binding data</a></li>
+<li><a href="#_physical_button_identity">Physical button identity</a></li>
+<li><a href="#_chords">Chords</a>
+<ul class="sectlevel2">
+<li><a href="#_most_specific_match">Most-specific match</a></li>
+</ul>
+</li>
+<li><a href="#_button_triggers">Button triggers</a>
+<ul class="sectlevel2">
+<li><a href="#_frame_boundaries_and_short_taps">Frame boundaries and short taps</a></li>
+</ul>
+</li>
+<li><a href="#_pointermove_and_wheel">PointerMove and Wheel</a></li>
+<li><a href="#_several_bindings_for_one_action">Several bindings for one action</a></li>
+<li><a href="#_polling_callbacks_and_delegates">Polling, callbacks, and delegates</a></li>
+<li><a href="#_cancellation">Cancellation</a></li>
+</ul>
+</div>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>A button is a keyboard key or mouse button. A chord describes the button completing
+a gesture and any buttons that must already be held. A binding maps that gesture
+to a semantic action and defines when the action is active.</p>
+</div>
+<div class="paragraph">
+<p>Use <code>Core::StringAtom</code> and the <code>_atom</code> literal for static action names. Names are
+local to each input component: two components can both have Run with independent
+configuration and runtime state.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_binding_data"><a class="anchor" href="#_binding_data"></a>Binding data</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">struct InputBinding
+{
+    Core::StringAtom action{};
+    KeyChord chord{};
+    InputActionTrigger trigger = InputActionTrigger::OnPress;
+    InputEventType source = InputEventType::Button;
+};</code></pre>
+</div>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../_images/input-binding-data.svg" alt="InputBinding fields and independent controller-local runtime">
+</div>
+<div class="title">Figure 1. Configuration and accepted runtime state have separate lifetimes.</div>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 22.2222%;">
+<col style="width: 22.2222%;">
+<col style="width: 55.5556%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Field</th>
+<th class="tableblock halign-left valign-top">Default</th>
+<th class="tableblock halign-left valign-top">Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>action</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Empty atom</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Name queried by consumers.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>chord.triggerKey</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Keyboard None</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Completing button for Button; optional held gate for PointerMove/Wheel.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>chord.requiredKeys</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Empty vector</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Additional held keyboard keys and/or mouse buttons.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>trigger</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OnPress</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Button activation rule; PointerMove/Wheel are always frame transients.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>source</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Button</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Event family: Button, PointerMove, or Wheel.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><code>InputMap::IsValid()</code> requires a nonempty action and, for Button, a non-None trigger.
+PointerMove/Wheel may have no gate. This is minimum validation, not comprehensive
+schema checking: it does not diagnose conflicts, duplicate requirements, or invalid
+enum values constructed by callers.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_physical_button_identity"><a class="anchor" href="#_physical_button_identity"></a>Physical button identity</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><code>InputButton</code> holds either <code>Platform::Keyboard::Key</code> or <code>Platform::Mouse::Key</code>.
+The variants remain distinct even when numeric codes overlap. All eight mouse
+buttons are supported: Left, Right, Middle, and _4 through _8.</p>
+</div>
+<div class="paragraph">
+<p>Equality compares physical variants. Chord matching separately normalizes Right
+Shift, Control, Alt, and Super to their Left equivalents. A requirement for Left
+Control therefore accepts Right Control. Device state still stores both physical
+sides, so releasing one side while the other is held preserves the logical modifier.</p>
+</div>
+<div class="paragraph">
+<p>Scancodes are retained in raw events but do not participate in binding resolution.
+There is no gamepad, touch, analog-stick, device-ID, or player-ID binding model yet.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_chords"><a class="anchor" href="#_chords"></a>Chords</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">struct KeyChord
+{
+    /// Keyboard key or mouse button that completes the chord and triggers its action.
+    InputButton triggerKey;
+    /// Keys and mouse buttons that must already be held when triggerKey is pressed.
+    std::vector&lt;InputButton&gt; requiredKeys;
+
+    [[nodiscard]] static KeyChord Exact(InputButton key);
+
+    [[nodiscard]] bool matches(InputButton eventKey,
+                               const std::vector&lt;InputButton&gt;&amp; pressedKeys) const;
+
+    [[nodiscard]] bool contains(InputButton key) const;
+};</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>For Button events, the normalized trigger must match the event button and every
+required key must appear in the normalized held-button snapshot.
+Requirements are a subset; extra held keys do not invalidate a chord.</p>
+</div>
+<div class="paragraph">
+<p><code>KeyChord::Exact(W)</code> means “W with no required keys”, not “W with no modifiers”.
+For a no-modifier command, inspect the callback&#8217;s modifier snapshot, as the editor
+Delete handler does.</p>
+</div>
+<div class="paragraph">
+<p>Requirements can mix devices. A keyboard trigger can require a mouse button;
+a mouse trigger can require another mouse button and a keyboard modifier.
+The trigger/source chooses the channel: keyboard-triggered Button is Keyboard;
+mouse-triggered Button, PointerMove, and Wheel are Pointer.
+The channels of required keys do not change that classification.</p>
+</div>
+<div class="sect2">
+<h3 id="_most_specific_match"><a class="anchor" href="#_most_specific_match"></a>Most-specific match</h3>
+<div class="paragraph">
+<p>For each press/movement/wheel event, only one binding wins within a component.
+Its specificity score is:</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>requiredKeys.size() + (triggerKey is not None ? 1 : 0)</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The greatest matching score wins; equal scores keep the first vector entry.
+Trigger type has no priority. Duplicate required keys count toward the score,
+so avoid duplicating requirements.
+Specificity is not compared across controllers.</p>
+</div>
+<div class="paragraph">
+<p>The modified S binding wins over plain S in this executable example. Right-side
+modifiers work, and OS repeat does not retrigger the action:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">TEST_F(InputControllerTests, MostSpecificChordWinsAndRightModifiersWork)
+{
+    auto controller = InputController::Create("Game"_atom, InputContext::Gameplay);
+    int saved = 0;
+    controller-&gt;bind("Plain"_atom, KeyChord::Exact(Key::S));
+    controller-&gt;bind(
+        "Save"_atom,
+        { .triggerKey = Key::S, .requiredKeys = { Key::Left_Control, Key::Left_Shift } },
+        [&amp;](const InputActionEvent&amp;) { ++saved; });
+    key(Key::Right_Control, State::Pressed);
+    key(Key::Right_Shift, State::Pressed);
+    key(Key::S, State::Pressed, GLFW_MOD_CONTROL | GLFW_MOD_SHIFT);
+    frame();
+    EXPECT_EQ(saved, 1);
+    EXPECT_TRUE(controller-&gt;isActive("Save"_atom));
+    EXPECT_FALSE(controller-&gt;isActive("Plain"_atom));
+    key(Key::S, State::Repeated);
+    frame();
+    EXPECT_EQ(saved, 1);
+    EXPECT_FALSE(controller-&gt;isActive("Save"_atom));
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_button_triggers"><a class="anchor" href="#_button_triggers"></a>Button triggers</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">ENUM_CLASS();
+enum class InputActionTrigger : std::uint8_t
+{
+    WhileHeld,
+    OnPress,
+    OnRelease
+};</code></pre>
+</div>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 40%;">
+<col style="width: 40%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Trigger</th>
+<th class="tableblock halign-left valign-top">When <code>isActive()</code> is true</th>
+<th class="tableblock halign-left valign-top">Callback</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OnPress</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Accepted Press until the next input frame begins.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Once for accepted Press.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">WhileHeld</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Accepted Press until the trigger/requirement is released or cancellation occurs.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Once at activation; continuous behavior uses polling.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OnRelease</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">For the frame in which a previously accepted chord ends.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Once when that chord ends through physical release.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="imageblock">
+<div class="content">
+<img src="../_images/input-action-timeline.svg" alt="OnPress" width="WhileHeld and OnRelease frame timeline">
+</div>
+<div class="title">Figure 2. Equivalent physical input with three different binding rules.</div>
+</div>
+<div class="paragraph">
+<p>An OnRelease binding must accept its initial Press. A context that becomes available
+only on Release cannot inherit another context&#8217;s press.
+Releasing a required key also ends the chord and can fire OnRelease; release is
+not restricted to the trigger button.</p>
+</div>
+<div class="paragraph">
+<p>The runtime stores the accepted binding. When one action has several bindings,
+the binding that accepted Press determines the release rule.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">TEST_F(InputControllerTests, ReleaseTriggerLastsOneFrame)
+{
+    auto controller = InputController::Create("Game"_atom, InputContext::Gameplay);
+    controller-&gt;bind("Release"_atom, KeyChord::Exact(Key::W), InputActionTrigger::OnRelease);
+    key(Key::W, State::Pressed);
+    frame();
+    EXPECT_FALSE(controller-&gt;isActive("Release"_atom));
+    key(Key::W, State::Released);
+    frame();
+    EXPECT_TRUE(controller-&gt;isActive("Release"_atom));
+    frame();
+    EXPECT_FALSE(controller-&gt;isActive("Release"_atom));
+}</code></pre>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_frame_boundaries_and_short_taps"><a class="anchor" href="#_frame_boundaries_and_short_taps"></a>Frame boundaries and short taps</h3>
+<div class="paragraph">
+<p><code>processEvents()</code> clears previous transients before draining queued events.
+If Press and Release arrive in the same drain:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>OnPress remains active for that frame.</p>
+</li>
+<li>
+<p>OnRelease produces a pulse for that frame.</p>
+</li>
+<li>
+<p>WhileHeld ends before the scene tick and may be false when polled.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>A callback still observes a WhileHeld activation that ends before the scene tick.
+Use callbacks for discrete events that must be observed between ticks.</p>
+</div>
+<div class="paragraph">
+<p><code>isActive()</code> does not consume the action. Repeated reads in a frame give the same
+result unless code changes routing, bindings, enable state, or runtime state.
+Button Repeat and None do not activate routed actions. The runtime has no repeat
+interval or frequency limiter.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_pointermove_and_wheel"><a class="anchor" href="#_pointermove_and_wheel"></a>PointerMove and Wheel</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>PointerMove values are differences between successive window cursor positions.
+The first sample establishes a baseline and produces zero delta; zero deltas are
+skipped. Wheel values preserve the two-dimensional scroll offset.</p>
+</div>
+<div class="paragraph">
+<p>The input layer does not multiply these values by delta time, speed, or sensitivity.
+Consumers apply those conversions. Position is a window cursor position, not a
+world coordinate or an automatically converted viewport coordinate.</p>
+</div>
+<div class="paragraph">
+<p>For PointerMove/Wheel:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>An empty trigger accepts ungated events if routing permits them.</p>
+</li>
+<li>
+<p>A nonempty trigger must be held, as must required keys.</p>
+</li>
+<li>
+<p>Every accepted event produces frame-transient state regardless of stored trigger rule.</p>
+</li>
+<li>
+<p>Polling returns the sum of accepted values during the frame.</p>
+</li>
+<li>
+<p>A callback receives each individual value rather than the accumulated total.</p>
+</li>
+<li>
+<p>Event state is normally None; <code>isPressed()</code> is not the way to identify a pointer action.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The spectator adds Wheel and RMB-gated PointerMove bindings:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">auto bindings = input-&gt;getBindings();
+bindings.push_back({ .action = "Scroll camera"_atom, .source = InputEventType::Wheel });
+bindings.push_back({ .action = "Rotate camera"_atom,
+                     .chord = KeyChord::Exact(Platform::Mouse::Key::Right),
+                     .source = InputEventType::PointerMove });
+input-&gt;setBindings(bindings);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Mouse-gated pointer gestures also have router ownership established by an accepted
+mouse Press; see <a href="contexts.html#pointer-ownership" class="xref page">Pointer ownership</a>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_several_bindings_for_one_action"><a class="anchor" href="#_several_bindings_for_one_action"></a>Several bindings for one action</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Runtime activity is logical OR across contributing bindings. Modifiers are bitwise
+OR and values are summed. Two held Button bindings produce <code>(2, 0)</code> rather than a
+clamped <code>(1, 0)</code>; use <code>isActive()</code> for boolean behavior.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">TEST_F(InputControllerTests, ReleasingOneBindingKeepsAnotherBindingOfTheSameActionHeld)
+{
+    auto controller = InputController::Create("Game"_atom, InputContext::Gameplay);
+    controller-&gt;setBindings({ { .action = "Move"_atom,
+                                .chord = KeyChord::Exact(Key::W),
+                                .trigger = InputActionTrigger::WhileHeld },
+                              { .action = "Move"_atom,
+                                .chord = KeyChord::Exact(MouseButton::Left),
+                                .trigger = InputActionTrigger::WhileHeld } });
+    key(Key::W, State::Pressed);
+    mouse(MouseButton::Left, MouseState::Press);
+    frame();
+    EXPECT_TRUE(controller-&gt;isActive("Move"_atom));
+    mouse(MouseButton::Left, MouseState::Release);
+    frame();
+    EXPECT_TRUE(controller-&gt;isActive("Move"_atom));
+    key(Key::W, State::Released);
+    frame();
+    EXPECT_FALSE(controller-&gt;isActive("Move"_atom));
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Use <code>setBindings()</code> or the InputMap vector constructor for alternate keys.
+Repeated <code>bind()</code> calls replace the <strong>first existing entry with the same action name</strong>.
+They do not append alternate bindings.</p>
+</div>
+<div class="paragraph">
+<p><code>bind()</code> returns true only for insertion. False means either a valid replacement
+or invalid input. <code>unbind(action)</code> removes all entries for that action and reports
+whether anything was removed.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_polling_callbacks_and_delegates"><a class="anchor" href="#_polling_callbacks_and_delegates"></a>Polling, callbacks, and delegates</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Polling suits continuous movement and frame totals. Action-specific callbacks suit
+commands and individual deltas. The <code>onAction</code> delegate observes all emitted actions.</p>
+</div>
+<div class="paragraph">
+<p>Emission order is runtime update, action callback, then <code>onAction</code> delegate.
+All run synchronously inside input processing. A WhileHeld callback is not emitted
+on every held frame.</p>
+</div>
+<div class="paragraph">
+<p><code>setActionCallback()</code> is independent of editable configuration. Removing/replacing
+bindings preserves handlers. Passing an empty callback removes the handler;
+an empty action name is ignored.
+Clones do not copy callbacks/subscriptions, and serialization does not persist them.
+Install handlers in the owning component&#8217;s initialization path and avoid duplicate
+delegate subscriptions after reinitialization.</p>
+</div>
+<div class="paragraph">
+<p>Dispatch copies the handler/delegate and protects the currently emitting intrusive
+component. Callbacks may edit their bindings or release their last external reference.
+Pending recipients are rechecked: destruction, disabling, context changes, or
+binding revision changes can skip a later delivery.
+Do not use callback order to arbitrate same-context gameplay conflicts.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_cancellation"><a class="anchor" href="#_cancellation"></a>Cancellation</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Context changes, disabling, focus loss, capture, modal blocking, and rebinding can
+discard accepted bindings without manufacturing a physical Release.
+An interrupted OnRelease command therefore does not execute.</p>
+</div>
+<div class="paragraph">
+<p><code>InputActionEvent.canceled</code> and <code>isCanceled()</code> exist, but current cancellation is
+silent: it emits no canceled events. <code>isRepeated()</code> also exists, but Button Repeat
+is ignored by routed input. Do not rely on either notification being emitted.</p>
+</div>
+<div class="paragraph">
+<p>See <a href="contexts.html" class="xref page">Contexts</a> for interruption and fresh-press rules, and
+<a href="serialization-and-editor.html" class="xref page">Serialization</a> for configuration mutation.</p>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="../input-system.html">Input System</a></span>
+  <span class="next"><a href="contexts.html">Contexts and Routing</a></span>
+</nav>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script id="site-script" src="../../../../_/js/site.js" data-ui-root-path="../../../../_"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

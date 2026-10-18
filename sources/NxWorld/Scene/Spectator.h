@@ -11,9 +11,8 @@
 
 #pragma once
 
-#include "NxSubsystems/Input/InputManager.h"
 #include "NxWorld/Entities/Actor.h"
-#include "NxWorld/Framework/InputController.h"
+#include "NxWorld/Framework/Input/InputController.h"
 
 namespace NX
 {
@@ -24,23 +23,11 @@ namespace NX
         ECS_DECL(BaseSpectator, NX::Actor);
 
     public:
-        // TODO: Move it to Controller
-        FIELD();
-        float speed = 600.f;
-
-        FIELD();
-        float mouseSensitivity = 0.5f;
-
-        KeyboardInputManger keyboardInput;
-        MouseInputManger mouseInput;
-
-    public:
         [[nodiscard]] Core::StringAtom getCacheHash() const override;
+        [[nodiscard]] InputController* getInputController();
+        [[nodiscard]] const InputController* getInputController() const;
 
     protected:
-        void onTick(float delta) override;
-        Core::DelegateSubscriberPoolGuard _subscriptionPool;
-
         void onInitialize() override;
     };
 
@@ -81,8 +68,6 @@ namespace NX
     protected:
         void onInitialize() override;
         void onTick(float delta) override;
-
-        InputController::Ptr _inputController;
     };
 
 } // namespace NX

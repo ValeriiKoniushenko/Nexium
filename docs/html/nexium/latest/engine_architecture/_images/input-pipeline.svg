@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1220" height="610" viewBox="0 0 1220 610" role="img" aria-labelledby="title desc">
+<title id="title">From window events to semantic actions</title><desc id="desc">Each stage has one responsibility; every input component has independent runtime state.</desc>
+<defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#506177" stroke-width="1.6"/></marker><marker id="inherit" markerWidth="14" markerHeight="14" refX="12" refY="7" orient="auto"><path d="M1 1 L12 7 L1 13 Z" fill="white" stroke="#506177" stroke-width="1.4"/></marker></defs>
+<style>text{font-family:DejaVu Sans,Arial,sans-serif;fill:#20324a}.title{font-size:24px;font-weight:700}.subtitle{font-size:14px;fill:#53667c}.node{font-size:17px;font-weight:700}.body{font-size:14px}.label{font-size:13px;fill:#42556c}.small{font-size:12px;fill:#53667c}.head{font-size:15px;font-weight:700}</style>
+<rect width="1220" height="610" fill="#fff"/><rect x="1" y="1" width="1218" height="608" rx="12" fill="none" stroke="#d9e0e9"/>
+<text x="28" y="42" class="title" text-anchor="start">From window events to semantic actions</text>
+<text x="28" y="69" class="subtitle" text-anchor="start">Each stage has one responsibility; every input component has independent runtime state.</text>
+<rect x="25" y="115" width="165" height="160" rx="9" fill="#f3f5f8" stroke="#738094" stroke-width="1.6"/>
+<text x="41" y="144" class="node" text-anchor="start">Platform</text>
+<text x="41" y="172" class="body" text-anchor="start">Keyboard / mouse</text>
+<text x="41" y="193" class="body" text-anchor="start">Cursor position</text>
+<text x="41" y="214" class="body" text-anchor="start">Wheel / focus</text>
+<rect x="235" y="115" width="180" height="160" rx="9" fill="#edf5ff" stroke="#3a68ad" stroke-width="1.6"/>
+<text x="251" y="144" class="node" text-anchor="start">InputCollector</text>
+<text x="251" y="172" class="body" text-anchor="start">FIFO event queue</text>
+<text x="251" y="193" class="body" text-anchor="start">Window subscriptions</text>
+<text x="251" y="214" class="body" text-anchor="start">Focus-loss reset</text>
+<rect x="460" y="115" width="200" height="160" rx="9" fill="#edf5ff" stroke="#3a68ad" stroke-width="1.6"/>
+<text x="476" y="144" class="node" text-anchor="start">InputDeviceState</text>
+<text x="476" y="172" class="body" text-anchor="start">Physical holds</text>
+<text x="476" y="193" class="body" text-anchor="start">Modifier normalization</text>
+<text x="476" y="214" class="body" text-anchor="start">Pointer delta baseline</text>
+<rect x="710" y="115" width="190" height="160" rx="9" fill="#ebf8f0" stroke="#398664" stroke-width="1.6"/>
+<text x="726" y="144" class="node" text-anchor="start">InputRouter</text>
+<text x="726" y="172" class="body" text-anchor="start">Context traversal</text>
+<text x="726" y="193" class="body" text-anchor="start">Binding selection</text>
+<text x="726" y="214" class="body" text-anchor="start">Gesture ownership</text>
+<rect x="950" y="115" width="245" height="185" rx="9" fill="#edf5ff" stroke="#3a68ad" stroke-width="1.6"/>
+<text x="966" y="144" class="node" text-anchor="start">InputController</text>
+<text x="966" y="172" class="body" text-anchor="start">Bindings + callbacks</text>
+<text x="966" y="193" class="body" text-anchor="start">InputActionRuntime:</text>
+<text x="966" y="214" class="body" text-anchor="start">accepted holds / pulses</text>
+<text x="966" y="235" class="body" text-anchor="start">values / modifiers</text>
+<polyline points="190,195 235,195" fill="none" stroke="#506177" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline points="415,195 460,195" fill="none" stroke="#506177" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline points="660,195 710,195" fill="none" stroke="#506177" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<polyline points="900,195 950,195" fill="none" stroke="#506177" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<rect x="235" y="380" width="235" height="145" rx="9" fill="#ebf8f0" stroke="#398664" stroke-width="1.6"/>
+<text x="251" y="409" class="node" text-anchor="start">InputContextStack</text>
+<text x="251" y="437" class="body" text-anchor="start">Overlays &gt; global &gt; base</text>
+<text x="251" y="458" class="body" text-anchor="start">Policy + channel mask</text>
+<polyline points="470,435 685,435 685,240 710,240" fill="none" stroke="#506177" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<text x="582" y="425" class="label" text-anchor="middle">routing policy</text>
+<rect x="710" y="380" width="235" height="145" rx="9" fill="#f4eeff" stroke="#8056ad" stroke-width="1.6"/>
+<text x="726" y="409" class="node" text-anchor="start">Domain consumer</text>
+<text x="726" y="437" class="body" text-anchor="start">Human / editor / player</text>
+<text x="726" y="458" class="body" text-anchor="start">AI uses domain behavior</text>
+<polyline points="1072,300 1072,350 828,350 828,380" fill="none" stroke="#506177" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#arrow)"/>
+<text x="927" y="338" class="label" text-anchor="middle">isActive / value / callback</text>
+<text x="28" y="571" class="small" text-anchor="start">Physical tracking continues while actions are blocked. Cancellation clears runtime state without emitting Release.</text>
+</svg>

@@ -14,8 +14,7 @@
 #include "Core/BaseAssert.h"
 #include "Core/IntrusivePtr.h"
 #include "Foundation/BaseLog.h"
-#include "NxSubsystems/Input/InputManager.h"
-#include "NxWorld/Framework/InputController.h"
+#include "NxWorld/Framework/Input/EditorController.h"
 #include "ObjectPicker.h"
 #include "ToastNotifications.h"
 #include "Windows/BaseWindow.h"
@@ -133,6 +132,19 @@ namespace NX
         /// Totally destroy the object. Will call automatically at the destructor.
         void destroy();
 
+        [[nodiscard]] bool getIsRunSimulation() const noexcept { return _isRunSimulation; }
+        void setIsRunSimulation(bool value) noexcept { _isRunSimulation = value; }
+        void toggleSimulation() noexcept { _isRunSimulation = !_isRunSimulation; }
+
+        [[nodiscard]] const InputController& getEditorInput() const
+        {
+            return _editorController->getInput();
+        }
+        [[nodiscard]] const InputController& getViewportInput() const
+        {
+            return _viewportController->getInput();
+        }
+
         [[nodiscard]] spdlog::logger* getLogger() const override;
 
         void writeToCache();
@@ -140,8 +152,6 @@ namespace NX
 
     public:
         Editor::NotificationPopUpManager notifications;
-        NX::KeyboardInputManger keyboardInput;
-        NX::MouseInputManger mouseInput;
         NX::RenderTargetToTexture gameViewport;
 
     protected:
@@ -150,12 +160,12 @@ namespace NX
         void setupShortcuts();
 
     private:
-        void handleMouseDrag(glm::vec2 delta, NX::MouseInputAction::SpecKeysState state);
-        void handleMouseClick(glm::vec2 pos, NX::MouseInputAction::SpecKeysState state);
+        void handleMouseClick();
         void responseOnPick(NX::Transformable* object);
 
     protected:
-        InputController::Ptr _inputController;
+        EditorController::Ptr _editorController;
+        EditorController::Ptr _viewportController;
         DelegateSubscriberPoolGuard _subscriptionPool;
         std::vector<BaseEWC::Ptr> _windows;
         std::set<StringAtom> _windowTypes;

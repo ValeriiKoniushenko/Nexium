@@ -27,6 +27,43 @@ using namespace NX::Gui;
 using namespace NX;
 using namespace Platform;
 
+namespace
+{
+    Core::StringAtom BindingText(const NX::InputController::Binding& binding)
+    {
+        Core::StringAtom text;
+        const auto appendButton = [&text](NX::InputButton button)
+        {
+            if (!text.isEmpty())
+            {
+                text += " + "_atom;
+            }
+            text += button.isMouse()
+                        ? "Mouse {}"_f << (static_cast<int>(button.getMouseButton()) + 1)
+                        : Core::StringAtom::Intern(
+                              R<Platform::Keyboard::Key>::ToString(button.getKeyboardKey()));
+        };
+        for (auto button : binding.chord.requiredKeys)
+        {
+            appendButton(button);
+        }
+        if (!binding.chord.triggerKey.isNone())
+        {
+            appendButton(binding.chord.triggerKey);
+        }
+        if (binding.source != NX::InputEventType::Button)
+        {
+            if (!text.isEmpty())
+            {
+                text += " + "_atom;
+            }
+            text
+                += binding.source == NX::InputEventType::Wheel ? "Wheel"_atom : "Pointer move"_atom;
+        }
+        return text.isEmpty() ? "None"_atom : text;
+    }
+} // namespace
+
 namespace NX
 {
     ECS_IMPL(EditorSettingsEWC);
@@ -248,14 +285,18 @@ namespace NX
         layout.addChildComponent<Label>()->setText("General");
         layout.addChildComponent<Separator>();
 
-        for (const auto& [fst, snd] : GetEditor()->keyboardInput.getMapping())
+        const auto addBindings = [&layout](const InputController& input)
         {
-            auto* item = layout.addChildComponent<Internal::KeymapItem>();
-            item->setReadOnly(true);
-            item->setLabel(fst);
-            item->setButtonName(
-                R<Keyboard::Key>::ToString(snd->getKey().value_or(Keyboard::Key::None)).data());
-        }
+            for (const auto& binding : input.getBindings())
+            {
+                auto* item = layout.addChildComponent<Internal::KeymapItem>();
+                item->setReadOnly(true);
+                item->setLabel(binding.action);
+                item->setButtonName(BindingText(binding));
+            }
+        };
+        addBindings(GetEditor()->getEditorInput());
+        addBindings(GetEditor()->getViewportInput());
 
         // static keys
         {
@@ -272,13 +313,9 @@ namespace NX
             layout.addChildComponent<Label>()->setText("Spectator");
             layout.addChildComponent<Separator>();
 
-            for (const auto& [fst, snd] : spectator->keyboardInput.getMapping())
+            if (const auto* input = spectator->getInputController())
             {
-                auto* item = layout.addChildComponent<Internal::KeymapItem>();
-                item->setReadOnly(true);
-                item->setLabel(fst + (snd->onPress->isEmpty() ? "(disabled)" : ""));
-                item->setButtonName(
-                    R<Keyboard::Key>::ToString(snd->getKey().value_or(Keyboard::Key::None)).data());
+                addBindings(*input);
             }
         }
     }

@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Serialization and the Binding Editor :: Nexium Engine</title>
+    <link rel="prev" href="lifecycle-and-integration.html">
+    <link rel="next" href="api-reference.html">
+    <meta name="generator" content="Antora 3.2.1">
+    <link rel="stylesheet" href="../../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="../../../..">Nexium Engine</a>
+      <button class="navbar-burger" aria-controls="topbar-nav" aria-expanded="false" aria-label="Toggle main menu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Products</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="#">Product A</a>
+            <a class="navbar-item" href="#">Product B</a>
+            <a class="navbar-item" href="#">Product C</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Services</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="#">Service A</a>
+            <a class="navbar-item" href="#">Service B</a>
+            <a class="navbar-item" href="#">Service C</a>
+          </div>
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="button is-primary" href="#">Download</a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="nexium" data-version="latest">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <button class="nav-menu-toggle" aria-label="Toggle expand/collapse all" style="display: none"></button>
+    <h3 class="title"><a href="../../index.html">Nexium Engine Documentation</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../../index.html">Overview</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../getting-started.html">Getting Started</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../installation.html">Installation</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Engine Architecture</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../index.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../architecture-review.html">Architecture and Migration Review</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ue5-alignment.html">UE5 Patterns for Nexium</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../module-graph.html">Module Graph</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../lifecycle.html">Application Lifecycle</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../threading.html">Threading Model</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../memory.html">Memory Model</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../resource-system.html">Resource System</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../file-io.html">File I/O</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ecs-overview.html">ECS Overview</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../input-system.html">Input System</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="actions-and-bindings.html">Actions and Bindings</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="contexts.html">Contexts and Routing</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="controllers.html">Controller Hierarchy and Ownership</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="custom-controllers.html">Creating Custom Controllers</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="lifecycle-and-integration.html">Frame Lifecycle and Integration</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="3">
+    <a class="nav-link" href="serialization-and-editor.html">Serialization and Binding Editor</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="api-reference.html">API Reference</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="troubleshooting.html">Troubleshooting and Verification</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Rendering</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../rendering/index.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../rendering/pipeline.html">Rendering Pipeline</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../rendering/renderer-architecture.html">Rendering Responsibilities</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Materials</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../../rendering/materials/shader-system.html">Shader System</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Gameplay</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../gameplay/index.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../gameplay/scenes.html">Scenes</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../gameplay/components.html">Components</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../gameplay/scripting.html">Gameplay Hooks</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../gameplay/prefabs.html">Blueprint Templates</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Build &amp; Toolchain</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../build/index.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../build/cmake-structure.html">CMake Structure</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../../build/ci-cd.html">CI/CD</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../../about/index.html">About</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Nexium Engine Documentation</span>
+    <span class="version">latest</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <div class="title"><a href="../../index.html">Nexium Engine Documentation</a></div>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../../index.html">latest</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../../index.html">Nexium Engine Documentation</a></li>
+    <li>Engine Architecture</li>
+    <li><a href="../input-system.html">Input System</a></li>
+    <li><a href="serialization-and-editor.html">Serialization and Binding Editor</a></li>
+  </ul>
+</nav>
+<div class="edit-this-page"><a href="file:///home/alex/Desktop/nexium//docs/nexium/modules/engine_architecture/pages/input/serialization-and-editor.adoc">Edit this Page</a></div>
+</div>
+  <div class="content">
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">Serialization and the Binding Editor</h1>
+<div id="toc" class="toc">
+<div id="toctitle">Table of Contents</div>
+<ul class="sectlevel1">
+<li><a href="#_what_is_saved_and_copied">What is saved and copied</a></li>
+<li><a href="#_binding_json_contract">Binding JSON contract</a>
+<ul class="sectlevel2">
+<li><a href="#_compatibility_on_read">Compatibility on read</a></li>
+</ul>
+</li>
+<li><a href="#_mutation_and_runtime_invalidation">Mutation and runtime invalidation</a></li>
+<li><a href="#_sharing_maps_safely">Sharing maps safely</a></li>
+<li><a href="#_opening_the_editor">Opening the editor</a></li>
+<li><a href="#_save_and_target_lifetime">Save and target lifetime</a></li>
+<li><a href="#recording">Binding recording</a></li>
+<li><a href="#_persistence_and_initialization_rules">Persistence and initialization rules</a></li>
+</ul>
+</div>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>Binding configuration is persistent. Accepted presses, action pulses, callbacks,
+router ownership, and actor possession are runtime relationships.
+Editing or restoring configuration invalidates old action state rather than
+reinterpreting a held key under a new binding.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_what_is_saved_and_copied"><a class="anchor" href="#_what_is_saved_and_copied"></a>What is saved and copied</h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 27.2727%;">
+<col style="width: 18.1818%;">
+<col style="width: 18.1818%;">
+<col style="width: 36.3637%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">State</th>
+<th class="tableblock halign-left valign-top">Serialized</th>
+<th class="tableblock halign-left valign-top">Copied to clone</th>
+<th class="tableblock halign-left valign-top">Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Binding vector</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Yes</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Yes</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Reflected legacy field name <code>_bindings</code> is retained.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Input context</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Yes</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Yes</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Reflected <code>_inputContext</code> field.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">speed / mouseSensitivity</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Yes</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Yes</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Defaults 600 / 0.5; consumer settings, not core input scaling.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Explicit input-enabled flag</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">No</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Yes</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Set through setInputEnabled; distinct from reflected BaseComponent state.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Accepted/held/transient actions</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">No</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">No</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A fresh runtime starts inactive.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Action callbacks / delegate listeners</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">No</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">No</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Reinstall behavior during initialization.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Router registration / gesture ownership / blocked buttons</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">No</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">No</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Established by live lifecycle/routing.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Possessed Actor</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">No</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">No</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">GameController restores possession explicitly at runtime.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>BaseComponent&#8217;s own serialized fields/child tree remain governed by the component
+serialization contract. InputMap is a configuration value, not a separate ECS asset type.
+<code>getInputMap()</code> returns a copy; <code>setInputMap()</code> copies its bindings into the component.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../_images/input-serialization-flow.svg" alt="Editable bindings" width="controller configuration" height="JRM persistence and runtime-only state">
+</div>
+<div class="title">Figure 1. Editor changes configuration; runtime state is rebuilt through fresh input.</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_binding_json_contract"><a class="anchor" href="#_binding_json_contract"></a>Binding JSON contract</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The custom <code>to_json/from_json</code> adapters for InputBinding live in InputMap.cpp.
+They preserve the keyboard-oriented legacy shape while adding mouse and pointer sources.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 66.6667%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Field</th>
+<th class="tableblock halign-left valign-top">Representation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">action</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">StringAtom&#8217;s JSON name; interned on input.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">triggerKey</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Keyboard enum name as a string, or an object with device = Mouse and button = the mouse enum name.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">requiredKeys</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Array of the same keyboard-string/mouse-object button representations.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">trigger</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OnPress, WhileHeld, or OnRelease string.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">source</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Omitted for Button; PointerMove or Wheel for nonbutton bindings.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>These are binding-adapter fields, not a complete scene/asset wrapper schema.
+The following test round-trips a binding and checks its actual serialized placement:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">TEST_F(InputControllerTests, BindingSerializationPreservesChordAndTrigger)
+{
+    const InputController::Binding binding{ .action = "Save"_atom,
+                                            .chord = { .triggerKey = Key::S,
+                                                       .requiredKeys = { Key::Left_Control } },
+                                            .trigger = InputActionTrigger::OnRelease };
+    const nlohmann::json json = binding;
+    const auto restored = json.get&lt;InputController::Binding&gt;();
+    EXPECT_EQ(restored.action, binding.action);
+    EXPECT_EQ(restored.chord.triggerKey, Key::S);
+    EXPECT_EQ(restored.chord.requiredKeys, binding.chord.requiredKeys);
+    EXPECT_EQ(restored.trigger, binding.trigger);
+    auto controller = InputController::Create("Game"_atom, InputContext::Gameplay);
+    controller-&gt;setBindings({ restored });
+    EXPECT_TRUE(controller-&gt;getTags() &amp; Tag_InputController);
+    EXPECT_EQ(TagHelper::ToTag("InputController"), Tag_InputController);
+    EXPECT_EQ(controller-&gt;serialize()["_bindings"][0], json);
+}</code></pre>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_compatibility_on_read"><a class="anchor" href="#_compatibility_on_read"></a>Compatibility on read</h3>
+<div class="paragraph">
+<p>The adapter accepts:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>triggerKey</code>, falling back to the older <code>key</code> field if triggerKey is absent.</p>
+</li>
+<li>
+<p>Keyboard names and older integer keyboard codes.</p>
+</li>
+<li>
+<p>Mouse objects with a recognized Mouse device/button name.</p>
+</li>
+<li>
+<p>Legacy <code>requiredModifiers</code> bits, converted into required Left Control, Shift, Alt,
+and Super keys, without duplicating identical stored physical keys.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Source defaults to Button. Unrecognized source strings remain Button.
+Trigger defaults to OnPress; unrecognized trigger strings also become OnPress.
+Unrecognized buttons are ignored, leaving an absent trigger as None.
+Button entries with None triggers remain editable but cannot resolve.</p>
+</div>
+<div class="paragraph">
+<p>This is not a promise that arbitrary malformed JSON is accepted: incorrect field
+types can still cause JSON conversion errors. Loading is compatibility handling,
+not a general migration/error-repair framework.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">TEST_F(InputControllerTests, MouseSupportPreservesLegacyKeyboardSerialization)
+{
+    const nlohmann::json legacy{
+        { "action", "Save" },
+        { "key", static_cast&lt;int&gt;(Key::S) },
+        { "requiredKeys", { "Left_Shift", static_cast&lt;int&gt;(Key::Left_Alt) } },
+        { "requiredModifiers", static_cast&lt;int&gt;(InputModifier::Control) }
+    };
+    const auto restored = legacy.get&lt;InputController::Binding&gt;();
+    EXPECT_EQ(restored.action, "Save"_atom);
+    EXPECT_EQ(restored.chord.triggerKey, Key::S);
+    EXPECT_EQ(restored.chord.requiredKeys,
+              (std::vector&lt;InputButton&gt;{ Key::Left_Shift, Key::Left_Alt, Key::Left_Control }));
+    EXPECT_EQ(restored.trigger, InputActionTrigger::OnPress);
+    const nlohmann::json serialized = restored;
+    EXPECT_EQ(serialized["triggerKey"], "S");
+    EXPECT_EQ(serialized["requiredKeys"],
+              (nlohmann::json::array({ "Left_Shift", "Left_Alt", "Left_Control" })));
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Re-saving uses the current adapter representation. Legacy modifier bits become
+regular required keys.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_mutation_and_runtime_invalidation"><a class="anchor" href="#_mutation_and_runtime_invalidation"></a>Mutation and runtime invalidation</h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 37.5%;">
+<col style="width: 62.5%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Operation</th>
+<th class="tableblock halign-left valign-top">Runtime effect</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Valid bind, including replacement</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Cancel all current action state and refresh routing.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Invalid bind</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Return false without changing configuration or runtime.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">unbind when an action exists</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Remove all its entries, cancel all runtime state, refresh.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">unbind when absent</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Return false without cancellation.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">clearBindings</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Cancel, clear vector, refresh; handlers remain.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">setBindings / setInputMap</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Copy vector, cancel all runtime state, refresh, preserve handlers.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Different input context</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Cancel all state and refresh in the new context.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Same input context</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">No change.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Changed explicit input-enabled flag</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Cancel and refresh.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Same explicit input-enabled flag</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">No change.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">setActionCallback</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Change the handler independently; do not replace bindings.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Post-deserialization</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Cancel stale state and refresh routing.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>Even <code>setBindings(getBindings())</code> cancels accepted holds. Its local copy makes
+self-aliasing safe, but equality is not checked to preserve active state.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">TEST_F(InputControllerTests, EditingBindingsPreservesCallbacksAndResetsHeldState)
+{
+    auto controller = InputController::Create("Game"_atom, InputContext::Gameplay);
+    int calls = 0;
+    controller-&gt;bind(
+        "Move"_atom, KeyChord::Exact(Key::W), [&amp;](const InputActionEvent&amp;) { ++calls; },
+        InputActionTrigger::WhileHeld);
+    key(Key::W, State::Pressed);
+    frame();
+    EXPECT_EQ(calls, 1);
+    controller-&gt;setBindings(controller-&gt;getBindings());
+    EXPECT_FALSE(controller-&gt;isActive("Move"_atom));
+    ASSERT_EQ(controller-&gt;getBindings().size(), 1);
+    key(Key::W, State::Released);
+    key(Key::W, State::Pressed);
+    frame();
+    EXPECT_EQ(calls, 2);
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Already-held non-modifier buttons are quarantined after refresh. Release them and
+press again to test a new binding. No OnRelease callback is manufactured by the edit.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_sharing_maps_safely"><a class="anchor" href="#_sharing_maps_safely"></a>Sharing maps safely</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The same InputMap can initialize several components. Configuration is copied;
+active state is independent:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">TEST_F(InputControllerTests, ReusedInputMapDoesNotShareRuntimeState)
+{
+    InputMap map;
+    map.bind({ .action = "Move"_atom,
+               .chord = KeyChord::Exact(Key::W),
+               .trigger = InputActionTrigger::WhileHeld });
+    auto first = InputController::Create("First"_atom, InputContext::Gameplay);
+    auto second = InputController::Create("Second"_atom, InputContext::Gameplay);
+    first-&gt;setInputMap(map);
+    second-&gt;setInputMap(map);
+    key(Key::W, State::Pressed);
+    frame();
+    EXPECT_TRUE(first-&gt;isActive("Move"_atom));
+    EXPECT_TRUE(second-&gt;isActive("Move"_atom));
+    first-&gt;clearBindings();
+    EXPECT_FALSE(first-&gt;isActive("Move"_atom));
+    EXPECT_TRUE(second-&gt;isActive("Move"_atom));
+    EXPECT_EQ(map.getBindings().size(), 1);
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Editing a returned map copy does not update a component until setInputMap/setBindings
+is called. A const reference from getBindings should be treated as a view whose
+contents can be invalidated by a later configuration change; copy it for editing.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_opening_the_editor"><a class="anchor" href="#_opening_the_editor"></a>Opening the editor</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The ECS InputController adapter shows an Input shortcuts section and an Edit
+shortcuts button. That opens InputBindingsEditor for the selected input component.
+The editor presents a binding list and settings for action name, recorded chord,
+and trigger. Add creates a named Button entry with a None trigger; it becomes
+usable after a valid chord is supplied. Delete removes the selected vector entry.</p>
+</div>
+<div class="paragraph">
+<p>Edits apply through setBindings and mark the owning asset editor dirty.
+This means editing live bindings also resets their action runtime.
+The current settings widget is not a general editor for PointerMove/Wheel source
+selection or all input-device features.</p>
+</div>
+<div class="paragraph">
+<p>Action renaming does not rename callback registrations. Handlers are keyed by the
+original action atom; the renamed action needs a corresponding handler/consumer.
+Temporarily removing a binding does not erase its old callback.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_save_and_target_lifetime"><a class="anchor" href="#_save_and_target_lifetime"></a>Save and target lifetime</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>InputBindingsEditor tracks the target component and owner weakly, and retains
+the target asset when opened from an asset editor.
+If the original window closes but the retained asset still owns the component,
+the bindings window can continue editing and save that asset directly.</p>
+</div>
+<div class="paragraph">
+<p>If there is no retained valid asset and the owner/target no longer matches, the
+window clears its target. Switching targets, selection, or binding sessions cancels
+recording. Closing the bindings window clears target state.</p>
+</div>
+<div class="paragraph">
+<p>Save routes through the matching asset editor when available, otherwise directly
+through the retained asset. Save is disabled during active recording capture,
+including its pending-release fence.
+Editing and saving are separate: a live setBindings update is not by itself a
+filesystem save.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="recording"><a class="anchor" href="#recording"></a>Binding recording</h2>
+<div class="sectionbody">
+<div class="imageblock">
+<div class="content">
+<img src="../_images/input-recording-capture.svg" alt="Capture guard lifetime and pending physical release fence">
+</div>
+<div class="title">Figure 2. Recording suppresses actions until every recorded physical hold has ended.</div>
+</div>
+<div class="paragraph">
+<p>The widget starts an InputCapture guard and subscribes to raw Platform keyboard,
+mouse, and focus events. Routed actions are suppressed, while the recorder sees
+buttons needed to build a chord.</p>
+</div>
+<div class="paragraph">
+<p>Keyboard modifiers are normalized and recorded as requirements. The most recently
+recorded non-modifier/button becomes the trigger, with the other currently tracked
+buttons as requirements.
+Mouse presses are recorded only in the widget&#8217;s capture area, so clicking Confirm
+or Cancel is not interpreted as the intended mouse shortcut.</p>
+</div>
+<div class="paragraph">
+<p>Confirm requires a non-None trigger and applies the recorded chord. Cancel leaves
+the existing chord unchanged. Focus loss requests cancellation, and invisible/closed
+recording UI releases its recording state/subscriptions.</p>
+</div>
+<div class="paragraph">
+<p>When the guard ends, InputCapture&#8217;s shared release fence continues suppressing
+actions until all tracked held buttons are released. The final fence-clearing
+Release is suppressed too. This avoids immediately executing the shortcut just
+recorded or confirmed.</p>
+</div>
+<div class="paragraph">
+<p>Focus loss/reset clears the held-button fence. A still-live capture guard keeps
+suppression active until it is destroyed.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_persistence_and_initialization_rules"><a class="anchor" href="#_persistence_and_initialization_rules"></a>Persistence and initialization rules</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Use reflected configuration for editable state, and install behavior at runtime.
+Do not serialize lambdas, delegates, intrusive runtime registrations, or weak
+possession as binding configuration.</p>
+</div>
+<div class="paragraph">
+<p>For defaults, preserve restored maps. The spectator&#8217;s empty-vector convention is
+one policy, not a universal serialization rule. Games needing versioned defaults
+or intentionally empty persisted maps should track that decision explicitly.</p>
+</div>
+<div class="paragraph">
+<p>JRM-generated files update through CodeGenerator in the normal build. Source tags
+used by these docs are comments in the real source/tests; the Antora examples
+family links to those files instead of storing duplicate snippets.</p>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="lifecycle-and-integration.html">Frame Lifecycle and Integration</a></span>
+  <span class="next"><a href="api-reference.html">API Reference</a></span>
+</nav>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script id="site-script" src="../../../../_/js/site.js" data-ui-root-path="../../../../_"></script>
+<script async src="../../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

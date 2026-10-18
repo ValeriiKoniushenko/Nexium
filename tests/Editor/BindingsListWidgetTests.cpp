@@ -13,7 +13,7 @@
 #include "Editor/Windows/NxECSBasedEditor.h"
 #include "ImGui/imgui_internal.h"
 #include "NxWorld/Framework/GameInstance.h"
-#include "NxWorld/Framework/InputSystem.h"
+#include "NxWorld/Framework/Input/InputSystem.h"
 #include "Platform/Window.h"
 
 #include "gtest/gtest.h"

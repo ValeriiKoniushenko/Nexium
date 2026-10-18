@@ -10,17 +10,16 @@
 #pragma once
 
 #include "Core/Delegate.h"
+#include "InputActionRuntime.h"
 #include "NxFundamental/ECS/BaseComponent.h"
-#include "NxSubsystems/Input/InputTypes.h"
 
 #include <functional>
 #include <unordered_map>
-#include <unordered_set>
-#include <vector>
 
 namespace NX
 {
     class InputSystem;
+    class InputRouter;
 
     CLASS();
     class InputController : public BaseComponent
@@ -28,7 +27,15 @@ namespace NX
         ECS_DECL(InputController, NX::BaseComponent);
 
     public:
+        // tag::input-controller-api[]
         using ActionCallback = std::function<void(const InputActionEvent&)>;
+        using Binding = InputBinding;
+
+        FIELD();
+        float speed = 600.f;
+
+        FIELD();
+        float mouseSensitivity = 0.5f;
 
         InputController(const Core::StringAtom& name, InputContext context)
             : InputController(name)
@@ -44,83 +51,73 @@ namespace NX
 
         [[nodiscard]] static Ptr Create(const Core::StringAtom& name, InputContext context);
 
-        struct Binding
-        {
-            Core::StringAtom action;
-            KeyChord chord;
-            InputActionTrigger trigger = InputActionTrigger::OnPress;
-        };
-
         bool bind(const Core::StringAtom& action, const KeyChord& chord,
                   InputActionTrigger trigger = InputActionTrigger::OnPress);
-
         bool bind(const Core::StringAtom& action, KeyChord chord, ActionCallback callback,
                   InputActionTrigger trigger = InputActionTrigger::OnPress);
+        bool bind(Binding binding);
 
         // Callback registration is independent of the editable bindings.
         // An empty callback unregisters the handler.
         void setActionCallback(const Core::StringAtom& action, ActionCallback callback);
-
         void clearBindings();
-
         bool unbind(const Core::StringAtom& action);
-
         void setBindings(const std::vector<Binding>& bindings);
 
+        void setInputMap(const InputMap& map) { setBindings(map.getBindings()); }
+        [[nodiscard]] InputMap getInputMap() const { return InputMap(_bindings); }
+
+        void setInputContext(InputContext context);
         [[nodiscard]] InputContext getInputContext() const noexcept { return _inputContext; }
+        void setInputEnabled(bool enabled);
+        [[nodiscard]] bool isInputEnabled() const noexcept;
 
-        [[nodiscard]] bool isActionPressed(const Core::StringAtom& action) const;
-
+        [[nodiscard]] bool isActive(const Core::StringAtom& action) const;
+        [[nodiscard]] bool isActionPressed(const Core::StringAtom& action) const
+        {
+            return isActive(action);
+        }
         [[nodiscard]] InputModifier getActionModifiers(const Core::StringAtom& action) const;
-
+        [[nodiscard]] glm::vec2 getActionValue(const Core::StringAtom& action) const;
         [[nodiscard]] const std::vector<Binding>& getBindings() const noexcept { return _bindings; }
 
         [[nodiscard]] Tag getTags() const override;
-
         void onPostDeserialize(AbstractComponent* obj, const RLogsCollector& logs) override;
 
         Core::Delegate<void(const InputActionEvent&)>::Ptr onAction
             = Core::Delegate<void(const InputActionEvent&)>::Create();
+        // end::input-controller-api[]
 
     protected:
         void onInitialize() override;
+        void onDeinitialize() override;
 
     private:
         friend class InputSystem;
+        friend class InputRouter;
 
+        [[nodiscard]] std::optional<Binding> resolveBinding(const KeyInputEvent& event) const;
         void handleRoutedEvent(const KeyInputEvent& event);
+        void handleRoutedEvent(const KeyInputEvent& event, const Binding& binding);
         void handleReleasedEvent(const KeyInputEvent& event);
-        void handlePressedEvent(const KeyInputEvent& event);
-
-        [[nodiscard]] const Binding* findBestBinding(const KeyInputEvent& event) const;
-
-        void activateBinding(const Binding& binding, const KeyInputEvent& event);
-        void releaseBinding(const Binding& binding, const KeyInputEvent& event);
-        [[nodiscard]] bool hasHeldBinding(const Core::StringAtom& action) const;
-
         void beginInputFrame();
+        void cancelInput(InputChannel channels = InputChannel::All);
+        void cancelMatchingBindings(const std::function<bool(const Binding&)>& predicate);
+        void releaseAllActions() { cancelInput(); }
+        void emitAction(const InputActionEvent& event);
 
-        void releaseAllActions();
+        FIELD();
+        InputContext _inputContext = NX::InputContext::Gameplay;
 
-    private:
-        InputContext _inputContext = InputContext::Gameplay;
-
+        // Keep the existing asset field name and array representation.
         FIELD();
         std::vector<Binding> _bindings;
 
-        std::unordered_set<Core::StringAtom> _transientActions;
-
-        std::unordered_map<Core::StringAtom, bool> _actionStates;
-        std::vector<Binding> _activeBindings;
-        std::unordered_map<Core::StringAtom, InputModifier> _actionModifiers;
+        bool _inputEnabled = true;
+        InputActionRuntime _runtime;
+        std::uint64_t _runtimeRevision = 0;
         std::unordered_map<Core::StringAtom, ActionCallback> _actionCallbacks;
     };
-
-    /// @brief Serializes an input binding to its asset JSON representation.
-    void to_json(nlohmann::json& json, const InputController::Binding& binding);
-
-    /// @brief Deserializes an input binding, including legacy modifier fields.
-    void from_json(const nlohmann::json& json, InputController::Binding& binding);
 } // namespace NX
 
 #include "InputController.generated.h" // added by the code generator. Better don't move it.
