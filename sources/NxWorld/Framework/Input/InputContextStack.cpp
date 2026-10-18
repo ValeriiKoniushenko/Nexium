@@ -5,6 +5,7 @@
 #include "InputContextStack.h"
 
 #include <algorithm>
+#include <ranges>
 
 namespace NX
 {
@@ -44,7 +45,7 @@ namespace NX
     {
         std::vector<InputContextLayer> layers;
 
-        for (auto entry : _overlays)
+        for (const auto& entry : std::views::reverse(_overlays))
         {
             layers.push_back(entry.layer);
         }

@@ -15,12 +15,88 @@
 #include "NxWorld/Framework/Input/EditorController.h"
 #include "NxWorld/Framework/Input/HumanController.h"
 
+namespace
+{
+    NX::BaseController::Ptr CreateSpectatorController()
+    {
+        if (gGameInstance && gGameInstance->isEditorMode())
+        {
+            NX::EditorController::Ptr controller
+                = new NX::EditorController("Spectator controller"_atom);
+            controller->getInput().setInputContext(NX::InputContext::EditorViewport);
+            return controller;
+        }
+
+        NX::HumanController::Ptr controller = new NX::HumanController("Spectator controller"_atom);
+        (void)controller->getInput();
+        return controller;
+    }
+
+    template<class SpectatorT>
+    void DeserializeSpectator(RResourceStream<RJsonResourceStream>& stream, SpectatorT& spectator)
+    {
+        spectator.onPreDeserialize(&spectator);
+        // Inspect the restored children before the post hook can create a default input child.
+        R<SpectatorT>::Deserialize(stream, spectator, true);
+        const auto& data = stream.getData();
+        if (!spectator.getInputController()
+            && (data.contains("speed") || data.contains("mouseSensitivity")))
+        {
+            auto controller = CreateSpectatorController();
+            auto* input = controller->findFirstChildOf<NX::InputController>();
+            if (data.contains("speed"))
+            {
+                input->speed = data.at("speed").get<float>();
+            }
+            if (data.contains("mouseSensitivity"))
+            {
+                input->mouseSensitivity = data.at("mouseSensitivity").get<float>();
+            }
+            // As with deserialized children, the post hook attaches this child's parent. This
+            // also preserves migrated settings when a disabled spectator is saved before init.
+            spectator.getChildren().push_back(controller.get());
+            spectator.invalidate();
+        }
+        spectator.onPostDeserialize(&spectator, stream.logs());
+    }
+} // namespace
+
 namespace NX
 {
 
-    ECS_IMPL(BaseSpectator);
-    ECS_IMPL(Spectator2D);
-    ECS_IMPL(Spectator3D);
+    ECS_IMPL_NO_SER(BaseSpectator);
+    ECS_IMPL_NO_SER(Spectator2D);
+    ECS_IMPL_NO_SER(Spectator3D);
+
+    nlohmann::json BaseSpectator::serialize() const
+    {
+        return R<BaseSpectator>::Serialize(*this).getData();
+    }
+
+    void BaseSpectator::deserialize(RResourceStream<RJsonResourceStream>& stream)
+    {
+        DeserializeSpectator(stream, *this);
+    }
+
+    nlohmann::json Spectator2D::serialize() const
+    {
+        return R<Spectator2D>::Serialize(*this).getData();
+    }
+
+    void Spectator2D::deserialize(RResourceStream<RJsonResourceStream>& stream)
+    {
+        DeserializeSpectator(stream, *this);
+    }
+
+    nlohmann::json Spectator3D::serialize() const
+    {
+        return R<Spectator3D>::Serialize(*this).getData();
+    }
+
+    void Spectator3D::deserialize(RResourceStream<RJsonResourceStream>& stream)
+    {
+        DeserializeSpectator(stream, *this);
+    }
 
     Core::StringAtom BaseSpectator::getCacheHash() const
     {

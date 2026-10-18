@@ -57,11 +57,11 @@ namespace NX
             }
 
             const KeyInputEvent event = _devices.apply(std::move(raw));
-            _router.observeDevices(_devices);
 
             if (InputCapture::isActive())
             {
-                // if record binding mode is active for any controllers we must not to do anything
+                // Captured events bypass route(), which normally observes the device state.
+                _router.observeDevices(_devices);
                 _router.cancelAll();
             }
             else

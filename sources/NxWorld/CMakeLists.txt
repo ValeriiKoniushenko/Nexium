@@ -64,6 +64,8 @@ target_sources(Nexium_World
 		Framework/Input/InputCollector.cpp
 		Framework/Input/InputController.cpp
 		Framework/Input/InputSystem.cpp
+		Framework/Input/InputRoutingState.cpp
+		Framework/Input/InputControllerSynchronizer.cpp
 		Framework/GameInstanceSubsystem.cpp
 		Framework/GameState.cpp
 		Framework/LevelData.cpp
@@ -111,6 +113,8 @@ nexium_add_public_headers(
 	NxWorld/Framework/Input/InputController.h
 	NxWorld/Framework/Input/InputController.generated.h
 	NxWorld/Framework/Input/InputSystem.h
+	NxWorld/Framework/Input/InputRoutingState.h
+	NxWorld/Framework/Input/InputControllerSynchronizer.h
 	NxWorld/Framework/GameInstance.generated.h
 	NxWorld/Framework/GameInstanceSubsystem.h
 	NxWorld/Framework/GameState.h

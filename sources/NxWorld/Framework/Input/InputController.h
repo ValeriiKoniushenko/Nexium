@@ -20,6 +20,7 @@ namespace NX
 {
     class InputSystem;
     class InputRouter;
+    class InputControllerSynchronizer;
 
     CLASS();
     class InputController : public BaseComponent
@@ -95,6 +96,7 @@ namespace NX
     private:
         friend class InputSystem;
         friend class InputRouter;
+        friend class InputControllerSynchronizer;
 
         [[nodiscard]] std::optional<Binding> resolveBinding(const KeyInputEvent& event) const;
         void handleRoutedEvent(const KeyInputEvent& event);

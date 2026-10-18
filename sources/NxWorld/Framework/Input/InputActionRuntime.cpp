@@ -142,10 +142,51 @@ namespace NX
     void InputActionRuntime::cancelMatching(
         const std::function<bool(const InputBinding&)>& predicate)
     {
-        const auto affected
-            = [&predicate](const ActiveBinding& binding) { return predicate(binding.binding); };
-        std::erase_if(_activeBindings, affected);
-        std::erase_if(_transientBindings, affected);
+        std::vector<InputBinding> bindingsToCancel;
+
+        const auto collect = [&](const ActiveBinding& active)
+        {
+            const auto& binding = active.binding;
+
+            if (!predicate(binding))
+            {
+                return;
+            }
+
+            const bool alreadyCollected
+                = std::ranges::any_of(bindingsToCancel, [&binding](const InputBinding& value)
+                                      { return IsSameBinding(value, binding); });
+
+            if (!alreadyCollected)
+            {
+                bindingsToCancel.push_back(binding);
+            }
+        };
+
+        for (const auto& active : _activeBindings)
+        {
+            collect(active);
+        }
+
+        for (const auto& transient : _transientBindings)
+        {
+            collect(transient);
+        }
+
+        if (bindingsToCancel.empty())
+        {
+            return;
+        }
+
+        const auto shouldCancel = [&](const ActiveBinding& active)
+        {
+            return std::ranges::any_of(bindingsToCancel, [&active](const InputBinding& binding)
+                                       { return IsSameBinding(active.binding, binding); });
+        };
+
+        std::erase_if(_activeBindings, shouldCancel);
+        std::erase_if(_transientBindings, shouldCancel);
+
         rebuildStates();
     }
 

@@ -1,20 +1,22 @@
 // Nexium
 // Copyright 2018-2026 Valerii Koniushenko
-// Licensed under the Apache License, Version 2.0.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
 
 #include "InputRouter.h"
 
 #include "InputController.h"
 
 #include <algorithm>
-#include <array>
 
 namespace NX
 {
     namespace
     {
-        constexpr auto RoutedChannels = std::array{ InputChannel::Keyboard, InputChannel::Pointer };
-
         InputChannel ChannelOf(InputButton button)
         {
             return button.isMouse() ? InputChannel::Pointer : InputChannel::Keyboard;
@@ -25,125 +27,19 @@ namespace NX
             return event.type == InputEventType::Button ? ChannelOf(event.key)
                                                         : InputChannel::Pointer;
         }
-
-        bool Contains(std::span<const InputButton> buttons, InputButton button)
-        {
-            return std::ranges::any_of(
-                buttons, [button](InputButton value)
-                { return NormalizeInputButton(value) == NormalizeInputButton(button); });
-        }
     } // namespace
 
-    bool InputRouter::Registration::canReceive(InputChannel channel) const
+    bool InputRouter::canReceive(const Registration& registration, InputChannel channel)
     {
-        return hasInputChannel(_available, channel) && handle.controller->isInputEnabled();
+        return registration.handle.controller->isInputEnabled()
+               && registration.state.canReceive(channel);
     }
 
-    bool InputRouter::Registration::acceptsEvent(const KeyInputEvent& event,
-                                                 bool pointerCaptured) const
+    bool InputRouter::acceptsEvent(const Registration& registration, const KeyInputEvent& event,
+                                   bool pointerCaptured)
     {
-        return canReceive(ChannelOf(event)) && (!pointerCaptured || hasPointerCapture())
-               && !(event.isButtonEventType() && Contains(_blockedButtons, event.key));
-    }
-
-    KeyInputEvent InputRouter::Registration::prepareEvent(const KeyInputEvent& event) const
-    {
-        auto result = event;
-        std::erase_if(result.pressedKeys,
-                      [this](InputButton button) { return Contains(_blockedButtons, button); });
-        return result;
-    }
-
-    void InputRouter::Registration::updateChannels(InputChannel available,
-                                                   const InputDeviceState& devices)
-    {
-        for (const auto channel : RoutedChannels)
-        {
-            if (hasInputChannel(available, channel) != hasInputChannel(_available, channel))
-            {
-                // Require a fresh press when a channel becomes available or unavailable.
-                blockHeldButtons(channel, devices);
-            }
-        }
-        _available = available;
-        if (!hasInputChannel(_available, InputChannel::Pointer))
-        {
-            _pointerButtons.clear();
-        }
-    }
-
-    void InputRouter::Registration::observeDevices(const InputDeviceState& devices)
-    {
-        const auto released = [&devices](InputButton button)
-        { return !Contains(devices.getHeldButtons(), button); };
-        std::erase_if(_blockedButtons, released);
-        std::erase_if(_pointerButtons, released);
-    }
-
-    void InputRouter::Registration::releaseButton(const KeyInputEvent& event)
-    {
-        if (!Contains(event.pressedKeys, event.key))
-        {
-            const auto released = [&event](InputButton button)
-            { return NormalizeInputButton(button) == event.key; };
-            std::erase_if(_blockedButtons, released);
-            std::erase_if(_pointerButtons, released);
-        }
-    }
-
-    void InputRouter::Registration::capturePointer(InputButton button)
-    {
-        if (!Contains(_pointerButtons, button))
-        {
-            _pointerButtons.push_back(button);
-        }
-    }
-
-    void InputRouter::Registration::blockButton(InputButton button)
-    {
-        // Modifiers remain usable with a fresh trigger after a routing change.
-        if (!button.isNone() && !IsInputModifier(button) && !Contains(_blockedButtons, button))
-        {
-            _blockedButtons.push_back(button);
-        }
-    }
-
-    void InputRouter::Registration::blockHeldButtons(InputChannel channels,
-                                                     const InputDeviceState& devices)
-    {
-        for (const auto button : devices.getHeldButtons())
-        {
-            if (hasInputChannel(channels, ChannelOf(button)))
-            {
-                blockButton(button);
-            }
-        }
-    }
-
-    void InputRouter::Registration::blockChord(const KeyChord& chord,
-                                               const InputDeviceState& devices)
-    {
-        for (const auto button : devices.getHeldButtons())
-        {
-            if (chord.contains(button))
-            {
-                blockButton(button);
-            }
-        }
-        std::erase_if(_pointerButtons,
-                      [&chord](InputButton button) { return chord.contains(button); });
-    }
-
-    void InputRouter::Registration::resetRouting()
-    {
-        _available = InputChannel{};
-        _pointerButtons.clear();
-    }
-
-    void InputRouter::Registration::reset()
-    {
-        resetRouting();
-        _blockedButtons.clear();
+        return registration.handle.controller->isInputEnabled()
+               && registration.state.acceptsEvent(event, pointerCaptured);
     }
 
     void InputRouter::registerController(InputController* controller)
@@ -187,6 +83,7 @@ namespace NX
     std::vector<InputRouter::Handle> InputRouter::snapshot() const
     {
         std::vector<Handle> result;
+        result.reserve(_controllers.size());
         for (const auto& entry : _controllers)
         {
             result.push_back(entry.handle);
@@ -199,83 +96,17 @@ namespace NX
     {
         if (auto* entry = find(handle))
         {
-            synchronizeChannels(*entry, contexts, devices);
-            cancelBlockedBindings(*entry, contexts, devices);
+            _synchronizer.synchronizeChannels(*handle.controller, entry->state, contexts, devices);
         }
-    }
 
-    void InputRouter::synchronizeChannels(Registration& registration,
-                                          const InputContextStack& contexts,
-                                          const InputDeviceState& devices)
-    {
-        auto availableChannels = std::uint8_t{};
-        auto canceledChannels = std::uint8_t{};
-        auto& controller = *registration.handle.controller;
-        const bool inputEnabled = !InputCapture::isActive() && controller.isInputEnabled();
-        const auto context = controller.getInputContext();
-
-        for (const auto channel : RoutedChannels)
+        // Re-find the registration: synchronization can invalidate cached addresses.
+        if (auto* current = find(handle))
         {
-            const bool available = inputEnabled && contexts.isAvailable(context, channel);
-            if (available)
-            {
-                availableChannels |= static_cast<std::uint8_t>(channel);
-            }
-            else
-            {
-                canceledChannels |= static_cast<std::uint8_t>(channel);
-            }
+            _synchronizer.cancelBlockedBindings(
+                *handle.controller, current->state, contexts, devices,
+                [this](InputContext context, const KeyInputEvent& event)
+                { return contextClaimsInput(context, event); });
         }
-
-        registration.updateChannels(static_cast<InputChannel>(availableChannels), devices);
-        if (canceledChannels)
-        {
-            controller.cancelInput(static_cast<InputChannel>(canceledChannels));
-        }
-    }
-
-    void InputRouter::cancelBlockedBindings(Registration& registration,
-                                            const InputContextStack& contexts,
-                                            const InputDeviceState& devices)
-    {
-        registration.handle.controller->cancelMatchingBindings(
-            [&](const InputBinding& binding)
-            {
-                if (!isBindingBlocked(registration.handle, binding, contexts, devices))
-                {
-                    return false;
-                }
-                registration.blockChord(binding.chord, devices);
-                return true;
-            });
-    }
-
-    bool InputRouter::isBindingBlocked(Handle handle, const InputBinding& binding,
-                                       const InputContextStack& contexts,
-                                       const InputDeviceState& devices) const
-    {
-        const KeyInputEvent probe{ .key = binding.chord.triggerKey,
-                                   .state = Platform::Keyboard::KeyState::Pressed,
-                                   .pressedKeys = devices.getChordKeys(),
-                                   .type = binding.source };
-        const auto channel = ChannelOf(probe);
-        for (const auto& layer : contexts.getLayers())
-        {
-            if (!hasInputChannel(layer.channels, channel))
-            {
-                continue;
-            }
-            if (layer.context == handle.controller->getInputContext())
-            {
-                return false;
-            }
-            if (layer.policy == InputContextPolicy::BlockLower
-                || contextClaimsInput(layer.context, probe))
-            {
-                return true;
-            }
-        }
-        return true;
     }
 
     bool InputRouter::contextClaimsInput(InputContext context, const KeyInputEvent& event) const
@@ -298,9 +129,10 @@ namespace NX
         {
             auto pointerProbe = event;
             pointerProbe.type = InputEventType::PointerMove;
-            if (const auto pointer = controller.resolveBinding(pointerProbe))
+            if (const auto pointer = controller.resolveBinding(pointerProbe);
+                pointer && pointer->chord.contains(event.key))
             {
-                input.capturePointer = pointer->chord.contains(event.key);
+                input.pointerBinding = pointer;
             }
         }
         return input;
@@ -321,7 +153,7 @@ namespace NX
     {
         for (auto& entry : _controllers)
         {
-            entry.observeDevices(devices);
+            entry.state.observeDevices(devices);
         }
     }
 
@@ -335,7 +167,7 @@ namespace NX
         {
             const auto handle = it->handle;
             ++it->revision;
-            it->resetRouting();
+            it->state.resetRouting();
             synchronize(handle, contexts, devices);
         }
     }
@@ -396,8 +228,8 @@ namespace NX
         {
             if (auto* entry = find(handle))
             {
-                entry->releaseButton(event);
-                const auto routed = entry->prepareEvent(event);
+                entry->state.releaseButton(event);
+                const auto routed = entry->state.prepareEvent(event);
                 // The runtime only releases bindings which accepted an earlier press.
                 handle.controller->handleReleasedEvent(routed);
             }
@@ -412,12 +244,12 @@ namespace NX
         for (const auto handle : handles)
         {
             const auto* entry = find(handle);
-            if (!entry || !entry->acceptsEvent(event, capturedPointer)
+            if (!entry || !acceptsEvent(*entry, event, capturedPointer)
                 || handle.controller->getInputContext() != context)
             {
                 continue;
             }
-            auto routed = entry->prepareEvent(event);
+            auto routed = entry->state.prepareEvent(event);
             auto input = resolveInput(*handle.controller, routed);
             if (input.hasMatch())
             {
@@ -440,14 +272,15 @@ namespace NX
                 return;
             }
             auto* entry = find(delivery.handle);
-            if (!entry || !entry->canReceive(channel) || !contexts.isAvailable(context, channel)
+            if (!entry || !canReceive(*entry, channel) || !contexts.isAvailable(context, channel)
+                || delivery.handle.controller->getInputContext() != context
                 || entry->revision != delivery.revision)
             {
                 continue;
             }
-            if (delivery.input.capturePointer)
+            if (delivery.input.pointerBinding)
             {
-                entry->capturePointer(delivery.event.key);
+                entry->state.capturePointer(delivery.event.key, *delivery.input.pointerBinding);
             }
             if (delivery.input.binding)
             {
@@ -463,7 +296,7 @@ namespace NX
     bool InputRouter::hasPointerCapture() const
     {
         return std::ranges::any_of(_controllers, [](const Registration& entry)
-                                   { return entry.hasPointerCapture(); });
+                                   { return entry.state.hasPointerCapture(); });
     }
 
     void InputRouter::cancelAll()
@@ -472,7 +305,7 @@ namespace NX
         {
             if (auto* entry = find(handle))
             {
-                entry->resetRouting();
+                entry->state.resetRouting();
                 handle.controller->cancelInput();
             }
         }
@@ -483,7 +316,7 @@ namespace NX
         cancelAll();
         for (auto& entry : _controllers)
         {
-            entry.reset();
+            entry.state.reset();
         }
     }
 } // namespace NX

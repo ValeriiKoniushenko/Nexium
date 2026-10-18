@@ -1,48 +1,5 @@
 {
-    "_children": [
-        {
-            "_children": null,
-            "_isEnabled": true,
-            "_name": "",
-            "_noTick": false,
-            "_type": "NX::ECSBaseComponentAdapter"
-        },
-        {
-            "_children": null,
-            "_isEnabled": true,
-            "_name": "",
-            "_noTick": false,
-            "_type": "NX::ECSEditorActorAdapter"
-        },
-        {
-            "_children": null,
-            "_isEnabled": true,
-            "_name": "",
-            "_noTick": false,
-            "_type": "NX::ECSEditorInterleavedGraphicsDataAdapter"
-        },
-        {
-            "_children": null,
-            "_isEnabled": true,
-            "_name": "",
-            "_noTick": false,
-            "_type": "NX::ECSEditorFrameByFrameAnimationAdapter"
-        },
-        {
-            "_children": null,
-            "_isEnabled": true,
-            "_name": "",
-            "_noTick": false,
-            "_type": "NX::ECSEditorInputControllerAdapter"
-        },
-        {
-            "_children": null,
-            "_isEnabled": true,
-            "_name": "",
-            "_noTick": false,
-            "_type": "NX::ECSBaseComponentAdapter"
-        }
-    ],
+    "_children": null,
     "_innerPosition": [
         814.0,
         388.0
