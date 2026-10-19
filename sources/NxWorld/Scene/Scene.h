@@ -14,6 +14,7 @@
 #include "Core/Delegate.h"
 #include "Grid.h"
 #include "NxFundamental/Assets/ECSAsset.h"
+#include "NxSubsystems/AssetsManager/FontFaceAsset.h"
 #include "NxSubsystems/Graphics/Font.h"
 #include "NxWorld/Assets/SkyboxAsset.h"
 #include "SceneObject.h"
@@ -100,7 +101,7 @@ namespace NX
         // TODO: get rid of it, deprecated
         std::vector<Actor*> _postDrawBuffer;
 
-        NX::Face nxFace;
+        NXFFace nxFace;
 
         uint32_t _uniqueCounterName = 0;
     };

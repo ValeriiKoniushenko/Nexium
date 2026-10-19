@@ -11,6 +11,7 @@
 
 #include "NxWorld/Entities/Actor.h"
 #include "NxWorld/Entities/Camera/Camera.h"
+#include "NxWorld/Framework/GameInstanceAccess.h"
 #ifdef NEXIUM_ENABLE_3D_MODULE
     #include "NxWorld/Entities/Mesh/StaticMeshBundle.h"
 #endif
@@ -115,7 +116,7 @@ namespace NX
 
         auto& camera = *world->currentCamera;
 
-        nxFace.drawText("Hello world", glm::vec2(0.f), camera);
+        nxFace->getData().drawText("Hello world", glm::vec2(0.f), camera);
 
         if (gGameInstance->isEditorMode())
         {
@@ -465,10 +466,15 @@ namespace NX
         // NXSkybox{ dynamic_cast<SkyboxAsset*>(asset.get()) };
         grid.setPlane(glm::vec3(0.0f, 0.0f, -1.f), glm::vec3(0.0f, 0.0f, 1.0f));
 
-        nxFace.setSourcePath("data/internal/fonts/Inter/Inter_18pt-Black.ttf");
-        nxFace.generateFace(0);
-        nxFace.setPixelSize(48);
-        nxFace.generateTextureASCIIGlyphs(NX::GetShaderManager().getShaderProgram("text"_atom));
+        nxFace = GetAssetsManager()->getFontFace(
+            "data/assets/fonts/Inter/Inter_18px-Black.nxfont"_atom);
+        if (nxFace)
+        {
+            auto& data = nxFace->getData();
+            data.generateFace(0);
+            data.setPixelSize(18);
+            data.generateTextureASCIIGlyphs(NX::GetShaderManager().getShaderProgram("text"_atom));
+        }
     }
 
     void Scene::tick(float timeDelta)

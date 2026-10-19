@@ -70,7 +70,7 @@ namespace NX
             PreLoaded,       // Loaded only the main information: type & ID & name
             Loaded,          // Full asset's data is loaded (corresponding to asset's type)
             PreLoadingError, // Error while preloading data
-            LoadingError     // Error while loading of the main data
+            LoadingError,    // Error while loading of the main data
         };
 
         struct StreamData
@@ -168,46 +168,6 @@ namespace NX
 
     using NXECSAsset = Core::IntrusivePtr<ECSAsset>;
     using WeakNXECSAsset = Core::WeakPtr<ECSAsset>;
-
-    class NXSceneAsset : public Core::IntrusiveRefCounter<NXSceneAsset>
-    {
-        INTRUSIVE_PTR_ADAPTERS(NXSceneAsset)
-    public:
-        NXSceneAsset() = default;
-        NXSceneAsset(NXSceneAsset&&) = delete;
-        NXSceneAsset& operator=(NXSceneAsset&&) = delete;
-        NXSceneAsset(const NXSceneAsset& other);
-        NXSceneAsset& operator=(const NXSceneAsset& other);
-        ~NXSceneAsset() override = default;
-
-        void setAsset(ECSAsset& asset);
-        void setAsset(NXECSAsset asset);
-        bool setData(const BaseComponent* comp);
-
-        template<IsComponent T, class... Args>
-        bool spawnData(Args... args)
-        {
-            _data = new T(std::forward<Args>(args)...);
-            if (!validateInputSetData(_data.get()))
-            {
-                _data.reset();
-                return false;
-            }
-
-            return true;
-        }
-
-        [[nodiscard]] const NXECSAsset& getAsset() const noexcept { return _asset; }
-        [[nodiscard]] const BaseComponent* getData() const noexcept { return _data.get(); }
-        [[nodiscard]] BaseComponent* getData() noexcept { return _data.get(); }
-
-    private:
-        [[nodiscard]] bool validateInputSetData(const BaseComponent* comp);
-
-    protected:
-        NXECSAsset _asset;
-        BaseComponent::Ptr _data;
-    };
 
 } // namespace NX
 

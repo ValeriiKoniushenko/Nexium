@@ -86,6 +86,7 @@ namespace NX
     void AssetsManager::initScanFileSystem()
     {
         _textures.clear();
+        _fontFaces.clear();
         _skyboxes.clear();
         _ecsAssets.clear();
         scanFileSystem(false);
@@ -100,6 +101,7 @@ namespace NX
     {
         std::unordered_set<Core::StringAtom> foundEcsAssets;
         std::unordered_set<Core::StringAtom> foundTextures;
+        std::unordered_set<Core::StringAtom> foundFontFaces;
         std::unordered_set<Core::StringAtom> foundSkyboxes;
         bool scanCompleted = true;
 
@@ -148,6 +150,16 @@ namespace NX
                         }
                         it->second->attachAndReadFromFile(absPath);
                     }
+                    else if (ext == FontFaceAsset::fileExtension)
+                    {
+                        foundFontFaces.emplace(id);
+                        auto it = _fontFaces.find(id);
+                        if (it == _fontFaces.end())
+                        {
+                            it = _fontFaces.emplace(id, new FontFaceAsset(id)).first;
+                        }
+                        it->second->attachAndReadFromFile(absPath);
+                    }
                     // else if (ext == SkyboxAsset::fileExtension)
                     // {
                     //     foundSkyboxes.emplace(id);
@@ -174,6 +186,8 @@ namespace NX
                           { return !foundEcsAssets.contains(item.first); });
             std::erase_if(_textures, [&foundTextures](const auto& item)
                           { return !foundTextures.contains(item.first); });
+            std::erase_if(_fontFaces, [&foundFontFaces](const auto& item)
+                          { return !foundFontFaces.contains(item.first); });
             std::erase_if(_skyboxes, [&foundSkyboxes](const auto& item)
                           { return !foundSkyboxes.contains(item.first); });
         }
@@ -226,6 +240,11 @@ namespace NX
         return atlases;
     }
 
+    std::size_t AssetsManager::getAtlasesCount() const noexcept
+    {
+        return _textureAtlases.size();
+    }
+
     TextureAtlas& AssetsManager::getTextureAtlas()
     {
         return getAtlas("default"_atom);
@@ -239,6 +258,11 @@ namespace NX
     NXTexture AssetsManager::getTexture(const Core::StringAtom& logicPath)
     {
         return getAssetOf<NXTexture>(*this, logicPath, _textures);
+    }
+
+    NXFFace AssetsManager::getFontFace(const Core::StringAtom& logicPath)
+    {
+        return getAssetOf<NXFFace>(*this, logicPath, _fontFaces);
     }
 
     NX::AssetRef<NX::BaseAsset> AssetsManager::getSkybox(const Core::StringAtom& logicPath)
@@ -256,6 +280,7 @@ namespace NX
     void AssetsManager::unloadAllResources()
     {
         _textures.clear();
+        _fontFaces.clear();
         _skyboxes.clear();
         _ecsAssets.clear();
     }

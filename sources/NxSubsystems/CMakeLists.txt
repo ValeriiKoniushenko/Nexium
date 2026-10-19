@@ -65,11 +65,14 @@ add_library(Nexium_Subsystem_AssetsManager STATIC)
 add_library(Nexium::Subsystem::AssetsManager ALIAS Nexium_Subsystem_AssetsManager)
 target_sources(Nexium_Subsystem_AssetsManager PRIVATE
     AssetsManager/AssetsManager.cpp
+    AssetsManager/FontFaceAsset.cpp
     AssetsManager/TextureAsset.cpp
 )
 nexium_add_public_headers(Nexium_Subsystem_AssetsManager
     NxSubsystems/AssetsManager/AssetsManager.h
     NxSubsystems/AssetsManager/AssetsManager.generated.h
+    NxSubsystems/AssetsManager/FontFaceAsset.h
+    NxSubsystems/AssetsManager/FontFaceAsset.generated.h
     NxSubsystems/AssetsManager/TextureAsset.h
     NxSubsystems/AssetsManager/TextureAsset.generated.h
 )

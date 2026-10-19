@@ -13,6 +13,7 @@
 
 #include "NxFundamental/Assets/ECSAsset.h"
 #include "NxFundamental/Assets/TextureAtlas.h"
+#include "NxSubsystems/AssetsManager/FontFaceAsset.h"
 #include "NxSubsystems/AssetsManager/TextureAsset.h"
 #include "Utils/Functions.h"
 
@@ -93,12 +94,10 @@ namespace NX
         ~AssetsManager() override = default;
 
         // ================= STATIC ======================
+        // TODO: move it to another module
         [[nodiscard]] static Core::StringAtom OpenFileSelectionDialog(
             const std::vector<std::string>& filter);
-
         [[nodiscard]] static NodeType GetNodeType(const std::filesystem::directory_entry& entry);
-
-        // TODO: move it to another module
         static void OpenPathFromOSExplorer(const std::filesystem::path& path);
 
         // ================= MAIN ======================
@@ -113,7 +112,9 @@ namespace NX
 
         // ============== WORKING WITH ASSETS ==========
 
-        // ====== Texture Atlas ======
+        // ====================================================
+        //                   Texture Atlases
+        // ====================================================
         void generateTextureAtlas(const std::filesystem::path& atlasFolder);
         void generateTextureAtlas(const Core::StringAtom& atlasName,
                                   const std::filesystem::path& atlasFolder);
@@ -121,22 +122,30 @@ namespace NX
         [[nodiscard]] NX::TextureAtlas& getAtlas(const Core::StringAtom& atlasName);
         [[nodiscard]] const NX::TextureAtlas& getAtlas(const Core::StringAtom& atlasName) const;
         [[nodiscard]] std::vector<Core::StringAtom> getAtlasesAsVector() const;
-        [[nodiscard]] std::size_t getAtlasesCount() const noexcept
-        {
-            return _textureAtlases.size();
-        }
+        [[nodiscard]] std::size_t getAtlasesCount() const noexcept;
 
         // Backward-compatible access to the default atlas.
         [[nodiscard]] NX::TextureAtlas& getTextureAtlas();
         [[nodiscard]] const NX::TextureAtlas& getTextureAtlas() const;
 
-        // ========== Textures =======
+        // ====================================================
+        //                     Textures
+        // ====================================================
         [[nodiscard]] NXTexture getTexture(const Core::StringAtom& logicPath);
 
-        // =========== Skybox ========
+        // ====================================================
+        //                      Font faces
+        // ====================================================
+        [[nodiscard]] NXFFace getFontFace(const Core::StringAtom& logicPath);
+
+        // ====================================================
+        //                      Skyboxes
+        // ====================================================
         [[nodiscard]] NX::AssetRef<NX::BaseAsset> getSkybox(const Core::StringAtom& logicPath);
 
-        // ============ ECS ==========
+        // ====================================================
+        //                        ECS
+        // ====================================================
         /// @brief Get an asset by its logical path. Will load the asset if it wasn't loaded
         /// previously.
         /// @param logicPath Logical path to the asset
@@ -203,10 +212,11 @@ namespace NX
             findAssetByPath(const std::filesystem::path& path);
 
     protected:
-        std::unordered_map<Core::StringAtom, NX::TextureAtlas> _textureAtlases;
         std::set<std::filesystem::path> _registeredPaths;
+        std::unordered_map<Core::StringAtom, NX::TextureAtlas> _textureAtlases;
         std::unordered_map<Core::StringAtom, NX::NXECSAsset> _ecsAssets;
         std::unordered_map<Core::StringAtom, NX::AssetRef<NX::BaseAsset>> _textures;
+        std::unordered_map<Core::StringAtom, NX::AssetRef<NX::BaseAsset>> _fontFaces;
         std::unordered_map<Core::StringAtom, NX::AssetRef<NX::BaseAsset>> _skyboxes;
     };
 } // namespace NX
