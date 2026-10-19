@@ -92,7 +92,7 @@ namespace NX
             return false;
         }
 
-        _glyphs.resize(128);
+        _glyphs.resize(genGlyphCharLimit);
 
         // TODO: move it to the OpenGL abstraction
         GLint prev{};
@@ -161,6 +161,11 @@ namespace NX
 
         for (const char c : text)
         {
+            if (c >= genGlyphCharLimit)
+            {
+                continue;
+            }
+
             const auto& ch = _glyphs[c].glyph;
 
             const auto xpos = static_cast<float>(xOffset + ch.bearing.width);

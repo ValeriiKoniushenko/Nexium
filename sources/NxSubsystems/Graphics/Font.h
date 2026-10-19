@@ -65,6 +65,8 @@ namespace NX
             RawBackend::Texture texture;
         };
 
+        static constexpr std::size_t genGlyphCharLimit = 128z;
+
     public:
         Face();
         ~Face() override;
