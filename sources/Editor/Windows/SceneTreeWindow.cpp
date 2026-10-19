@@ -99,6 +99,7 @@ namespace NX
     {
         std::string sceneName;
         int extraFlag = ImGuiInputTextFlags_ReadOnly;
+
         if (_scene)
         {
             sceneName = _scene->getSceneName();
@@ -112,7 +113,8 @@ namespace NX
         ImGui::SameLine();
         ImGui::TextUnformatted("Name: ");
         ImGui::SameLine();
-        ImGui::PushItemWidth(-FLT_MIN); // Makes the next widget take full width
+
+        ImGui::PushItemWidth(-FLT_MIN);
         ImGui::InputText("##sceneName", &sceneName, extraFlag);
         ImGui::PopItemWidth();
 
@@ -124,6 +126,7 @@ namespace NX
         int32_t internalId = 0;
 
         auto&& sceneObjects = _scene->getObjects();
+
         for (std::size_t i = 0; i < sceneObjects.size(); ++i)
         {
             drawTreeNode(sceneObjects[i].get(), internalId++);
@@ -142,6 +145,35 @@ namespace NX
         {
             _scene->setSceneName(sceneName.c_str());
         }
+
+        // Process deferred operations after tree traversal.
+
+        if (_pendingDelete)
+        {
+            auto* component = _pendingDelete;
+            _pendingDelete = nullptr;
+
+            if (selectedObject == component)
+            {
+                selectedObject = nullptr;
+                _lastSelectedObject = nullptr;
+            }
+
+            if (_highlightTracerObject == component)
+            {
+                _highlightTracerObject = nullptr;
+            }
+
+            GetGameScene()->deleteFromSceneOrFromObject(component);
+        }
+
+        if (_pendingDuplicate)
+        {
+            auto* component = _pendingDuplicate;
+            _pendingDuplicate = nullptr;
+
+            GetGameScene()->duplicateSceneObject(component);
+        }
     }
 
     void SceneTreeWindowEWC::onUpdate()
@@ -150,7 +182,7 @@ namespace NX
     }
 
     void SceneTreeWindowEWC::drawTreeNode(BaseComponent* n, int32_t id,
-                                          bool isInSelectedSubtree /* = false*/)
+                                          bool isInSelectedSubtree /* = false */)
     {
         if (!n)
         {
@@ -183,15 +215,19 @@ namespace NX
             flags |= ImGuiTreeNodeFlags_Leaf;
         }
 
-        ImGui::PushID(id);
+        ImGui::PushID(n);
 
         ImGui::PushStyleColor(ImGuiCol_Button, glm::vec4(0, 0, 0, 0));
+
         ImGui::PushStyleColor(ImGuiCol_ButtonHovered, glm::vec4(0, 0, 0, 0));
+
         ImGui::PushStyleColor(ImGuiCol_ButtonActive, glm::vec4(0, 0, 0, 0));
+
         ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, 0.0f);
         ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 0.0f);
 
-        bool const isEnabled = n->isEnabled();
+        const bool isEnabled = n->isEnabled();
+
         if (!isEnabled)
         {
             ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetStyle().Colors[ImGuiCol_TextDisabled]);
@@ -201,20 +237,24 @@ namespace NX
         {
             n->setEnabled(!isEnabled);
         }
+
         if (!isEnabled)
         {
-            ImGui::PopStyleColor(1);
+            ImGui::PopStyleColor();
         }
+
         ImGui::PopStyleVar(2);
         ImGui::PopStyleColor(3);
 
         ImGui::SameLine();
+
         if (!isEnabled)
         {
             ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetStyle().Colors[ImGuiCol_TextDisabled]);
         }
 
         auto componentName = n->getComponentName();
+
         if (componentName.isEmpty())
         {
             componentName = "<no name>";
@@ -231,10 +271,13 @@ namespace NX
         }
 
         const bool isOpened = ImGui::TreeNodeEx(componentName.c_str(), flags);
+
         if (!isEnabled)
         {
-            ImGui::PopStyleColor(1);
+            ImGui::PopStyleColor();
         }
+
+        // Handle selection and keyboard actions.
 
         if (ImGui::IsItemClicked(ImGuiMouseButton_Right))
         {
@@ -244,11 +287,12 @@ namespace NX
         {
             if (ImGui::IsKeyPressed(ImGuiKey_Delete))
             {
-                GetGameScene()->deleteFromSceneOrFromObject(n);
+                _pendingDelete = n;
             }
             else if (ImGui::IsItemClicked())
             {
                 selectedObject = n;
+
                 if (_lastSelectedObject != selectedObject)
                 {
                     GetObjectSelectorManager()->selectSingleObject(n);
@@ -256,15 +300,18 @@ namespace NX
             }
         }
 
+        // Context menu.
+
         if (ImGui::BeginPopup("ContextSceneItemMenu"))
         {
             if (ImGui::MenuItem(ICON_FA_TRASH " Delete"))
             {
-                GetGameScene()->deleteFromSceneOrFromObject(n);
+                _pendingDelete = n;
             }
+
             if (ImGui::MenuItem(ICON_FA_CLONE " Duplicate"))
             {
-                GetGameScene()->duplicateSceneObject(n);
+                _pendingDuplicate = n;
             }
 
             if (auto* camera = n->tryCastTo<BaseCamera>())
@@ -276,13 +323,17 @@ namespace NX
             }
 
             const auto* sceneObj = dynamic_cast<SceneObject*>(n);
+
             if (sceneObj && sceneObj->hasReferencedAsset() && ImGui::MenuItem("Show derived .nx"))
             {
                 auto* wnd = GetEditor()->getWindow<AssetsManagerWindowEWC>();
+
                 if (wnd)
                 {
                     wnd->requestFocus();
+
                     auto asset = GetAssetsManager()->getEcsAsset(sceneObj->getReferencedAsset());
+
                     wnd->tryOpenPath(asset->getMeta().pathToSource);
                 }
             }
@@ -290,11 +341,13 @@ namespace NX
             ImGui::EndPopup();
         }
 
+        // Draw children.
+
         if (isOpened)
         {
             for (auto& child : n->getChildren())
             {
-                drawTreeNode(child.get(), ++id);
+                drawTreeNode(child.get(), ++id, isInSelectedSubtree);
             }
 
             ImGui::TreePop();
