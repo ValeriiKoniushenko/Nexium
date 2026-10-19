@@ -13,7 +13,7 @@
 #include "Foundation/Debug/LatencyTerminalPrinter.h"
 #include "NxRuntime/GameUtils/FPSCounter.h"
 #include "NxWorld/Framework/GameInstance.h"
-#include "NxWorld/Framework/Input/InputSystem.h"
+#include "NxWorld/Framework/InputSystem.h"
 
 #include <chrono>
 #include <thread>
