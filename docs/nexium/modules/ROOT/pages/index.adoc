@@ -10,7 +10,9 @@ image::main-preview.png[Engine editor,width=100%]
 
 * OpenGL rendering, orthographic/perspective cameras, grids, textures, and optional meshes.
 * Reflected component trees through JustReflectMe.
-* ImGui docking, scene tree, property adapters, asset browser, and viewport picking.
+* Event-routed input with contexts, key chords, and serialized bindings.
+* ImGui docking, scene tree, property adapters, asset browser, viewport picking, and gizmos.
+* FreeType glyph rendering, currently scaffolding rather than an authoring feature.
 * CMake libraries organized into Foundation, Platform, RawBackend, Fundamental, Subsystems, World, Runtime, and Editor.
 
 The example application is editor-enabled.

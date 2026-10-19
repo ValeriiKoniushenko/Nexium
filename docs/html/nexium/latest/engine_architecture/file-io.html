@@ -108,6 +108,12 @@
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="input-system.html">Input System</a>
   </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="editor.html">Editor Structure</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="diagnostics.html">Diagnostics</a>
+  </li>
 </ul>
   </li>
   <li class="nav-item" data-depth="1">
@@ -122,6 +128,9 @@
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../rendering/renderer-architecture.html">Rendering Responsibilities</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../rendering/text.html">Text Rendering</a>
   </li>
   <li class="nav-item" data-depth="2">
     <button class="nav-item-toggle"></button>
@@ -249,6 +258,14 @@ Its “cache” includes persistent authored content.</p>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>data/world/&lt;sanitized world name&gt;.json</code></p></td>
 </tr>
 <tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Window</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data/cache/RootWindow.json</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Input managers</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data/Inputs/&lt;manager hash&gt;.json</code></p></td>
+</tr>
+<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Editor objects</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Object-specific directories beneath <code>data/</code></p></td>
 </tr>
@@ -264,7 +281,8 @@ Its “cache” includes persistent authored content.</p>
 </table>
 <div class="paragraph">
 <p>CacheSystem combines <code>Config::Path::data</code>, <code>getCacheDir()</code>, and a sanitized <code>getCacheHash()</code>
-with <code>.json</code>. Non-alphanumeric characters other than <code><em></code> become <code></em></code>, so names can collide.
+with <code>.json</code>. <code>IDataIO::getCacheDir()</code> defaults to <code>cache</code>, so a type that does not override
+it lands in <code>data/cache/</code>. Non-alphanumeric characters other than <code><em></code> become <code></em></code>, so names can collide.
 Paths derive from <code>NEXIUM_PROJECT_DIR</code> compiled into Foundation.</p>
 </div>
 </div>

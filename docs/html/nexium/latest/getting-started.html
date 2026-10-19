@@ -108,6 +108,12 @@
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="engine_architecture/input-system.html">Input System</a>
   </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="engine_architecture/editor.html">Editor Structure</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="engine_architecture/diagnostics.html">Diagnostics</a>
+  </li>
 </ul>
   </li>
   <li class="nav-item" data-depth="1">
@@ -122,6 +128,9 @@
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="rendering/renderer-architecture.html">Rendering Responsibilities</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="rendering/text.html">Text Rendering</a>
   </li>
   <li class="nav-item" data-depth="2">
     <button class="nav-item-toggle"></button>
@@ -237,6 +246,9 @@ Keep the checkout available: resource paths are based on the project location re
 <p>Select an object in the Scene tree to inspect its properties. Expand it to inspect child components.</p>
 </li>
 <li>
+<p>Drag the on-screen gizmo in the viewport to move or rotate the selected object.</p>
+</li>
+<li>
 <p>Use the Assets browser to inspect project files and templates; see <a href="engine_architecture/resource-system.html" class="xref page">Assets</a>.</p>
 </li>
 <li>
@@ -278,6 +290,10 @@ and the Logs window for asset or shader errors.</p>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Escape.</p></td>
 </tr>
 <tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Delete the selected objects</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Delete, with no modifiers and the viewport focused.</p></td>
+</tr>
+<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Close the application</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">F12.</p></td>
 </tr>
@@ -295,6 +311,8 @@ not disposable caches. Check Logs after saving; the current success notification
 <div class="sectionbody">
 <div class="paragraph">
 <p>For a brief launch check, run <code>build/bin/TemplateGame --timeout 5</code>; it still requires graphics and saves on exit.
+Without a display, <code>NEXIUM_HEADLESS_GL=1</code> under Xvfb requests a 4.5 context, which is how CI runs it.
+The menu bar&#8217;s Play toggle is currently inert; F1 only switches the render path.
 To change gameplay, start with <code>game-example/TemplateGameInstance</code> and registered C++ components,
 then rebuild. See <a href="gameplay/scripting.html" class="xref page">Gameplay Hooks</a> and
 <a href="gameplay/scenes.html" class="xref page">Scenes</a> for update and persistence behavior.</p>

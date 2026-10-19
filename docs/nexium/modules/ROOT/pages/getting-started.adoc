@@ -8,6 +8,7 @@ Keep the checkout available: resource paths are based on the project location re
 
 . Use the *Windows* menu to open *Scene*, *Object properties*, *Assets*, *Viewport*, or *Logs* if hidden.
 . Select an object in the Scene tree to inspect its properties. Expand it to inspect child components.
+. Drag the on-screen gizmo in the viewport to move or rotate the selected object.
 . Use the Assets browser to inspect project files and templates; see xref:engine_architecture:resource-system.adoc[Assets].
 . Focus the viewport to allow scene ticks, including camera controls and animation.
 
@@ -22,6 +23,7 @@ and the Logs window for asset or shader errors.
 |Save scene, World, and editor/window state |*File → Save all*, or left Ctrl + left Shift + S.
 |Switch Editor/GameOnly rendering |F1.
 |Clear selection |Escape.
+|Delete the selected objects |Delete, with no modifiers and the viewport focused.
 |Close the application |F12.
 |===
 
@@ -32,6 +34,8 @@ not disposable caches. Check Logs after saving; the current success notification
 == Next steps
 
 For a brief launch check, run `build/bin/TemplateGame --timeout 5`; it still requires graphics and saves on exit.
+Without a display, `NEXIUM_HEADLESS_GL=1` under Xvfb requests a 4.5 context, which is how CI runs it.
+The menu bar's Play toggle is currently inert; F1 only switches the render path.
 To change gameplay, start with `game-example/TemplateGameInstance` and registered C++ components,
 then rebuild. See xref:gameplay:scripting.adoc[Gameplay Hooks] and
 xref:gameplay:scenes.adoc[Scenes] for update and persistence behavior.

@@ -108,6 +108,12 @@
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="input-system.html">Input System</a>
   </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="editor.html">Editor Structure</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="diagnostics.html">Diagnostics</a>
+  </li>
 </ul>
   </li>
   <li class="nav-item" data-depth="1">
@@ -122,6 +128,9 @@
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../rendering/renderer-architecture.html">Rendering Responsibilities</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../rendering/text.html">Text Rendering</a>
   </li>
   <li class="nav-item" data-depth="2">
     <button class="nav-item-toggle"></button>
@@ -234,7 +243,7 @@ Runtime borrows the instance; the integration attaches editor hooks through <cod
 <div class="olist arabic">
 <ol class="arabic">
 <li>
-<p>Create the Platform window and subscribe to resize events.</p>
+<p>Create the Platform window, initialize <code>InputSystem</code> on it, and subscribe to resize events.</p>
 </li>
 <li>
 <p>Scan assets, load shaders, and configure vertex attributes.</p>
@@ -263,7 +272,9 @@ independent concurrent game instances.</p>
 <h2 id="_each_frame"><a class="anchor" href="#_each_frame"></a>Each frame</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Window events are polled first. Updates use the previous frame&#8217;s measured delta; the first delta is zero.</p>
+<p>Window events are polled first, then the active input context is set from viewport focus and
+the queued key events are dispatched (see <a href="input-system.html" class="xref page">Input System</a>).
+Updates use the previous frame&#8217;s measured delta; the first delta is zero.</p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
@@ -286,13 +297,13 @@ independent concurrent game instances.</p>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Integration update</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Keyboard shortcuts, if attached.</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Editor windows and keyboard/mouse actions.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>updateInput()</code>, if an integration is attached.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>tick(delta)</code>: editor windows and keyboard/mouse actions.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Drawing</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Scene to the window.</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Picking, then Scene to the viewport texture.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>updateSceneInteraction()</code> (picking/gizmos), <code>beforeSceneDraw()</code>, then Scene to the viewport texture.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">GameInstance tick</p></td>
@@ -303,8 +314,18 @@ independent concurrent game instances.</p>
 </table>
 <div class="paragraph">
 <p>Scene ticking does not require a camera; <code>GameInstance::onTick</code> and scene drawing do.
-After updates, the loop throttles unfocused/iconified windows, checks <code>--timeout</code>, swaps buffers,
-and records elapsed time in World. Rendering and throttling contribute to that time.</p>
+After updates, the loop sleeps 50 ms for unfocused/iconified windows, compares world time with
+<code>--timeout</code>, swaps buffers, and records elapsed time in World. Rendering, the sleep, and
+throttling all contribute to that time.</p>
+</div>
+<div class="paragraph">
+<p>Runtime sets the global GL state once before the loop: blending on, face culling on, stencil
+test on, and <strong>depth testing off</strong>. It never re-enables depth testing, so the scene is drawn in
+submission order; see <a href="../rendering/pipeline.html" class="xref page">Rendering Pipeline</a>.</p>
+</div>
+<div class="paragraph">
+<p>In <code>NEXIUM_DEBUG</code> builds the loop also records <code>NX_LATENCY_POINT</code> samples and prints a latency
+report after <code>saveAllToCache()</code>; see <a href="diagnostics.html" class="xref page">Diagnostics</a>.</p>
 </div>
 </div>
 </div>
@@ -312,7 +333,8 @@ and records elapsed time in World. Rendering and throttling contribute to that t
 <h2 id="_modes_and_shutdown"><a class="anchor" href="#_modes_and_shutdown"></a>Modes and shutdown</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Editor mode requires both the Editor render mode and an attached integration.
+<p>Editor mode requires both the Editor render mode and an attached integration: the GameOnly
+branch null-checks the integration pointer, while the Editor branch dereferences it.
 F1 switches rendering paths, which share the same <code>gameScene</code>.
 There is no isolated Play/Stop session or paused simulation clock; gameplay edits can be saved at shutdown.</p>
 </div>
@@ -324,6 +346,12 @@ then calls <code>onSaveAll()</code>. Exceptions escaping initialization or the l
 <p>The example destroys EditorIntegration before Runtime and resets <code>gGameInstance</code> last.
 Keep that order because both objects borrow their dependencies.
 See <a href="file-io.html" class="xref page">File I/O</a> for persistence and <a href="memory.html" class="xref page">Ownership</a> for lifetimes.</p>
+</div>
+<div class="paragraph">
+<p>The editor hooks Runtime calls are declared in <code>NxWorld/Framework/ApplicationIntegration.h</code>:
+<code>preInitialize</code>, <code>initialize</code>, <code>readFromCache</code>, <code>writeToCache</code>, <code>updateInput</code>, <code>tick</code>,
+<code>updateSceneInteraction</code>, <code>isViewportFocused</code>, <code>beforeSceneDraw</code>, <code>afterSceneDraw</code>,
+<code>clearSceneRenderTarget</code>, and <code>getRenderSize</code>.</p>
 </div>
 <div class="paragraph">
 <p>Implementation: <code>NxRuntime/Runtime.cpp</code>, <code>NxWorld/Framework/GameInstance.cpp</code>, and <code>Editor/EditorIntegration.cpp</code>.</p>

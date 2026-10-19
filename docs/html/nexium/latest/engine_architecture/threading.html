@@ -108,6 +108,12 @@
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="input-system.html">Input System</a>
   </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="editor.html">Editor Structure</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="diagnostics.html">Diagnostics</a>
+  </li>
 </ul>
   </li>
   <li class="nav-item" data-depth="1">
@@ -122,6 +128,9 @@
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../rendering/renderer-architecture.html">Rendering Responsibilities</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../rendering/text.html">Text Rendering</a>
   </li>
   <li class="nav-item" data-depth="2">
     <button class="nav-item-toggle"></button>
@@ -226,6 +235,12 @@ File scans, JSON reconstruction, shader compilation, and atlas generation block 
 <div class="paragraph">
 <p>Keep GPU resource creation and destruction within a valid OpenGL context.
 Reference counting does not make component trees, registries, or resource payloads thread-safe.</p>
+</div>
+<div class="paragraph">
+<p><code>Foundation::Latency::Collector</code> is the one explicitly synchronized piece: it guards its sample
+list with a <code>std::shared_mutex</code> and records the originating thread id. Nothing else in the
+engine, including the <code>InputSystem</code> singleton and its controller lists, is written for
+concurrent access. See <a href="diagnostics.html" class="xref page">Diagnostics</a>.</p>
 </div>
 </div>
 </div>

@@ -12,6 +12,8 @@ The immediate goal is a useful 2D authoring workflow; optional 3D and game-only 
 * xref:ecs-overview.adoc[Component system] explains composition, registration, and reflection.
 * xref:resource-system.adoc[Resources] and xref:file-io.adoc[File I/O] describe asset and scene persistence.
 * xref:input-system.adoc[Input], xref:memory.adoc[Memory], and xref:threading.adoc[Threading] describe current contracts.
+* xref:editor.adoc[Editor structure] covers the integration interface, window discovery, picking, and gizmos.
+* xref:diagnostics.adoc[Diagnostics] covers logging and the latency instrumentation.
 * xref:build:cmake-structure.adoc[CMake infrastructure] records options, code generation, and checks.
 * xref:ue5-alignment.adoc[UE5 comparison] separates useful design patterns from proposed work.
 

@@ -1,12 +1,69 @@
 = Input System
 
 Platform supplies window events, keyboard/button state, cursor position, and drag tracking.
-`NxSubsystems/Input` maps that state to named actions in namespace `NX`.
+Two input layers sit on top of it, and both are live:
 
-== Actions
+* `NX::InputSystem` (NxWorld) routes keyboard *events* to `InputController` components,
+  filtered by an active input context. This is the newer path.
+* `NxSubsystems/Input` maps *polled* key state to named `InputAction` objects owned by
+  `KeyboardInputManger` / `MouseInputManger`. Mouse handling and most editor shortcuts
+  still use it.
+
+New keyboard bindings should use `InputController`. The polled managers remain the only
+path for mouse move/drag/click.
+
+== Event routing: InputSystem and InputController
+
+`GetInputSystem()` is a `Core::Singleton`. `GameInstance::initialize()` calls
+`initialize(window)` on it, which subscribes to the window's key events. Each frame Runtime
+sets the active context and then drains the queue:
+
+[source,cpp]
+----
+GetInputSystem().setActiveContext(gameInstance.isApplicationViewportFocused()
+                                      ? InputContext::Gameplay
+                                      : InputContext::Editor);
+GetInputSystem().processEvents();
+----
+
+`InputContext` is `Editor` or `Gameplay`, and `Editor` is the startup default. Controllers
+register themselves into the list for their own context, and `processEvents()` dispatches
+only to the controllers of the active context. Switching context rebuilds that routed list
+immediately and releases the actions the previous controllers were holding.
+
+This is a context switch, not a stack: there is no per-event consumption, no priority
+between controllers in the same context, and no modal capture.
+
+=== Bindings and chords
+
+`InputController` is a reflected `BaseComponent` (`ECS_DECL`), so bindings persist with the
+component tree. A binding is an action name, a `KeyChord`, and a trigger:
+
+[cols="2,4",options="header"]
+|===
+|Element |Meaning
+|`action` |`Core::StringAtom` name reported back in `InputActionEvent`.
+|`KeyChord::triggerKey` |The key whose press completes the chord.
+|`KeyChord::requiredKeys` |Keys that must already be held, for example Left Control and Left Shift.
+|`InputActionTrigger` |`OnPress`, `OnRelease`, or `WhileHeld`.
+|===
+
+`bind()` takes an optional callback; the controller also exposes an `onAction` delegate that
+receives every `InputActionEvent`. `isActionPressed()` and `getActionModifiers()` give the
+current state, and `InputModifier` is a bitmask of Shift/Control/Alt/Super. When several
+bindings match one event, `findBestBinding()` picks one, so more specific chords win over a
+bare key. `setBindings()` replaces the list wholesale, and `_bindings` is a `FIELD()`, so
+serialized controllers round-trip through JRM; `from_json` still accepts legacy modifier
+fields. The editor exposes these under `Editor/Windows/Editors/InputBindings`.
+
+Chords are written with the left-hand modifier keys. `InputSystem` normalizes the right
+Shift/Control/Alt/Super keys to their left equivalents when queueing an event, so a chord
+declared with `Left_Control` also matches the right Control key.
+
+== Polled actions: InputAction
 
 `KeyboardInputManger` and `MouseInputManger` own intrusive action references indexed by
-`Core::StringAtom` names. “Manger” is the current API spelling.
+`Core::StringAtom` names. "Manger" is the current API spelling.
 `getOrCreate()` reuses the existing name; it does not change that action's key binding.
 
 `InputAction::update()` polls its key, applies repeat/frequency limits, snapshots left
@@ -22,22 +79,36 @@ Mouse actions also provide:
 
 A mouse click here is a press notification, not release detection.
 
-== Who updates actions
-
 [cols="2,4",options="header"]
 |===
 |Owner |Update path
 |GameEditor |Keyboard and mouse mappings after drawing editor windows.
 |EditorIntegration in GameOnly mode |Editor keyboard mappings only.
 |Spectator |Its own keyboard and mouse mappings during its scene tick.
+|`NxECSBasedEditor` |Its own keyboard manager for the Delete shortcut inside component editors.
 |===
 
-Editor scene ticks require viewport focus. There is no central input-context stack or
-consumption/priority policy; callers must gate actions where needed.
+Editor scene ticks require viewport focus. These polled actions are not filtered by
+`InputContext`, so a shortcut that must not fire during gameplay has to check focus itself —
+as the Delete shortcut does with `isApplicationViewportFocused()`.
 
-Editor shortcuts in `GameEditor::setupShortcuts()` are F1 (render mode), Escape (clear selection),
-F12 (close), and left Ctrl + left Shift + S (save).
+== Editor shortcuts
+
+`GameEditor::setupShortcuts()` installs:
+
+[cols="2,2,3",options="header"]
+|===
+|Shortcut |Action |Path
+|F1 |Toggle render mode |Polled keyboard action, non-repeatable.
+|F12 |Close the application |Polled keyboard action.
+|Escape |Clear selection |Polled keyboard action.
+|Delete |Delete selected objects from the scene |Polled keyboard action; requires no modifiers and a focused viewport.
+|Left Ctrl + Left Shift + S |Save all |`InputController` chord in the `Editor` context.
+|===
+
 Render-mode switching uses the same scene; see xref:lifecycle.adoc[Application Lifecycle].
 
-Implementation: `NxSubsystems/Input/InputAction.{h,cpp}`, `InputManager.h`,
+Implementation: `NxWorld/Framework/{InputSystem,InputController}.{h,cpp}`,
+`NxSubsystems/Input/{InputAction,InputManager,InputTypes}.{h,cpp}`,
 `Editor/GameEditor.cpp`, and `NxWorld/Scene/Spectator.cpp`.
+Checks: `tests/ECSTests/InputControllerTests.cpp`.

@@ -7,6 +7,11 @@ File scans, JSON reconstruction, shader compilation, and atlas generation block 
 Keep GPU resource creation and destruction within a valid OpenGL context.
 Reference counting does not make component trees, registries, or resource payloads thread-safe.
 
+`Foundation::Latency::Collector` is the one explicitly synchronized piece: it guards its sample
+list with a `std::shared_mutex` and records the originating thread id. Nothing else in the
+engine, including the `InputSystem` singleton and its controller lists, is written for
+concurrent access. See xref:diagnostics.adoc[Diagnostics].
+
 == Build-time concurrency
 
 CMake can compile targets in parallel. JRM is a separate build tool.

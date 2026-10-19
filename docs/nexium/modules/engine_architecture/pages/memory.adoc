@@ -14,9 +14,12 @@ Nexium uses C++ ownership and reference counting. Components use `Core::Intrusiv
 |World → active camera |Borrowed pointer into component data.
 |Selector → selected components |Strong references keyed by addresses.
 |AssetsManager → indexed assets |Strong ECSAsset references and `AssetRef` entries.
+|InputSystem → controllers |Non-owning pointers; each `InputController` unregisters itself in its destructor.
+|GameEditor → windows |Strong `BaseEWC` references created from the component factory.
 |===
 
-Window and ShaderManager use shared accessor lifetimes outside this explicit ownership tree.
+Window, ShaderManager, and the `InputSystem` singleton use shared accessor lifetimes outside
+this explicit ownership tree.
 
 == Lifetime is not scene membership
 

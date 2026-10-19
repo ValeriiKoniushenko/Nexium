@@ -20,8 +20,9 @@ The adapter uses the engine toolchain.
 Public-header verification and executable layer consumers make interfaces reviewable.
 
 See xref:build:cmake-structure.adoc[CMake infrastructure] for real options and checks.
-Tests and benchmarks are disabled by default. CI enables tests across GCC/Clang Debug
-and Release builds, with a separate Clang Debug 3D build; see xref:build:ci-cd.adoc[CI coverage].
+Tests and benchmarks are disabled by default. CI enables tests in GCC and Clang Debug builds
+with 3D off, and adds format, tidy, coverage, and Valgrind checks; see
+xref:build:ci-cd.adoc[CI coverage]. No Release, 3D, or benchmark job is configured.
 
 == Object model and ownership
 
@@ -33,6 +34,9 @@ Scene owns root component trees and handles persistence and drawing.
 The model is suitable for a small authoring engine.
 World does not yet provide the ownership/lifetime boundary implied by its UE-style name.
 Most new managers and GameInstanceSubsystem have logging scaffolding without operational contracts.
+Input is the exception that proves the point: `InputSystem` is a real routing service with
+contexts, controllers, and tests, but it is a global singleton rather than something a session
+owns — so switching worlds or sessions has no defined effect on it.
 
 == Reflection and persistence
 
@@ -55,6 +59,8 @@ Prioritize these behaviors within the existing modules:
 . Create a disposable Play-session copy from authored state and destroy it on Stop.
 . Add an asset-reference/move policy and portable content identifiers.
 . Extend executable interface checks and CI to the World/Runtime/editor boundary.
+. Retire the polled `InputAction` managers once mouse events route through `InputSystem`,
+  so input has one path and one context policy.
 
 A project-content context should move game-specific atlas setup into game-example.
 Keep the editor-enabled executable while building these contracts.

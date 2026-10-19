@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Text Rendering :: Nexium Engine</title>
+    <link rel="prev" href="renderer-architecture.html">
+    <link rel="next" href="materials/shader-system.html">
+    <meta name="generator" content="Antora 3.1.15">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="../../..">Nexium Engine</a>
+      <button class="navbar-burger" aria-controls="topbar-nav" aria-expanded="false" aria-label="Toggle main menu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Products</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="#">Product A</a>
+            <a class="navbar-item" href="#">Product B</a>
+            <a class="navbar-item" href="#">Product C</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Services</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="#">Service A</a>
+            <a class="navbar-item" href="#">Service B</a>
+            <a class="navbar-item" href="#">Service C</a>
+          </div>
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="button is-primary" href="#">Download</a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="nexium" data-version="latest">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <button class="nav-menu-toggle" aria-label="Toggle expand/collapse all" style="display: none"></button>
+    <h3 class="title"><a href="../index.html">Nexium Engine Documentation</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../index.html">Overview</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../getting-started.html">Getting Started</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../installation.html">Installation</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Engine Architecture</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../engine_architecture/index.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../engine_architecture/architecture-review.html">Architecture and Migration Review</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../engine_architecture/ue5-alignment.html">UE5 Patterns for Nexium</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../engine_architecture/module-graph.html">Module Graph</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../engine_architecture/lifecycle.html">Application Lifecycle</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../engine_architecture/threading.html">Threading Model</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../engine_architecture/memory.html">Memory Model</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../engine_architecture/resource-system.html">Resource System</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../engine_architecture/file-io.html">File I/O</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../engine_architecture/ecs-overview.html">ECS Overview</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../engine_architecture/input-system.html">Input System</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../engine_architecture/editor.html">Editor Structure</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../engine_architecture/diagnostics.html">Diagnostics</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Rendering</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="index.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="pipeline.html">Rendering Pipeline</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="renderer-architecture.html">Rendering Responsibilities</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="text.html">Text Rendering</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Materials</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="materials/shader-system.html">Shader System</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Gameplay</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../gameplay/index.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../gameplay/scenes.html">Scenes</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../gameplay/components.html">Components</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../gameplay/scripting.html">Gameplay Hooks</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../gameplay/prefabs.html">Blueprint Templates</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Build &amp; Toolchain</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../build/index.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../build/cmake-structure.html">CMake Structure</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../build/ci-cd.html">CI/CD</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../about/index.html">About</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Nexium Engine Documentation</span>
+    <span class="version">latest</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <div class="title"><a href="../index.html">Nexium Engine Documentation</a></div>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">latest</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Nexium Engine Documentation</a></li>
+    <li>Rendering</li>
+    <li><a href="text.html">Text Rendering</a></li>
+  </ul>
+</nav>
+<div class="edit-this-page"><a href="file:///home/valerii/workspace/Nexium//docs/nexium/modules/rendering/pages/text.adoc">Edit this Page</a></div>
+</div>
+  <div class="content">
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">Text Rendering</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>Text goes through two layers. <code>RawBackend::Fonts</code> is a thin FreeType adapter:
+<code>FreeTypeLibrary</code> owns the library handle and <code>RawBackend::Font::Face</code> exposes source paths,
+face selection, pixel sizes, and <code>loadChar()</code>. <code>NxSubsystems/Graphics/Font.h</code> wraps that in
+<code>NX::Face</code>, which is the API the engine uses; FreeType is a private dependency of
+<code>Nexium::Subsystem::Graphics</code>, so nothing above it includes FreeType headers.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_preparing_a_face"><a class="anchor" href="#_preparing_a_face"></a>Preparing a face</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><code>NX::Face</code> is reference-counted (<code>Core::IntrusiveRefCounter</code>), movable, and not copyable.
+The setup order matters, and each step depends on the previous one:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 66.6667%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Call</th>
+<th class="tableblock halign-left valign-top">Effect</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>setSourcePath(path)</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Select the font file. Required before anything else.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>getFacesNumber()</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Number of faces in the file.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>generateFace(index)</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Load one face, for example a single weight of a family.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>setPixelSize(height)</code> or <code>setPixelSize(size)</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Set the rasterization size in pixels.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>generateTextureASCIIGlyphs(shader)</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Rasterize glyphs and create the GPU state.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><code>generateTextureASCIIGlyphs()</code> rasterizes code points 0–127 only. For each glyph it records
+size, bearing, and advance, uploads a single-channel <code>GL_RED</code> texture with
+<code>GL_UNPACK_ALIGNMENT</code> temporarily set to 1, and builds linear mipmaps. It then releases the
+FreeType face, creates the <code>BaseGraphicsData</code>, stores the passed <code>ShaderProgram</code>, fires the
+program&#8217;s <code>OnSetVertexBuffer</code> event to configure the vertex layout, and reserves a dynamic
+vertex buffer for six 4-component vertices — one quad, reused for every glyph.</p>
+</div>
+<div class="paragraph">
+<p>The call needs a non-null shader and logs plus asserts otherwise. Glyphs that FreeType
+cannot load are skipped and leave an empty entry in the table.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_drawing"><a class="anchor" href="#_drawing"></a>Drawing</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><code>drawText(text, pos, camera)</code> binds the stored program, invalidates and uploads the camera
+matrix as <code>uProj</code>, uploads <code>pos</code> as <code>uPos</code>, activates texture unit 0, and then walks the
+string. Per character it computes the quad from the glyph&#8217;s bearing and size, binds that
+glyph&#8217;s texture, rewrites the shared vertex buffer with <code>setVertexSubBuffer</code>, issues
+<code>glDrawArrays(GL_TRIANGLES, 0, 6)</code>, and advances the pen by <code>advance &gt;&gt; 6</code> (FreeType&#8217;s 26.6
+fixed point).</p>
+</div>
+<div class="paragraph">
+<p>That is one buffer upload and one draw call per character, plus a camera-matrix
+invalidation per call — the source marks the latter as needing optimization. There is no
+glyph atlas, no batching, no kerning, and no line breaking.</p>
+</div>
+<div class="paragraph">
+<p>The matching shaders are <code>data/assets/shaders/text.vert</code> and <code>text.frag</code>, registered under the
+<code>text</code> lookup name like any other pair; see <a href="materials/shader-system.html" class="xref page">Shader System</a>.
+The vertex stage takes one <code>vec4</code> per vertex (<code>vec2</code> position, <code>vec2</code> UV) at location 0 and
+builds its model matrix from <code>uPos</code>. The fragment stage samples the glyph&#8217;s red channel as
+coverage and multiplies it by <code>uTextureColor</code>, which the draw path never uploads: the shader&#8217;s
+own default is used, so text currently renders in that fixed colour. Neither the sampler nor
+the colour is exposed as a parameter.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_current_usage"><a class="anchor" href="#_current_usage"></a>Current usage</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><code>Scene</code> owns a single <code>NX::Face</code> member. <code>Scene::initialize()</code> points it at
+<code>data/internal/fonts/Inter/Inter_18pt-Black.ttf</code>, generates face 0 at 48 px, and passes the
+<code>text</code> program. <code>Scene::directDraw()</code> then draws a fixed <code>"Hello world"</code> at the origin every
+frame. There is no text component, no scene-authored text, and no editor property for it;
+treat this as scaffolding rather than a supported feature.</p>
+</div>
+<div class="paragraph">
+<p>Two limits to know before building on it:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The font path is relative, unlike other engine resources, which resolve against
+<code>NEXIUM_PROJECT_DIR</code>. Loading it depends on the process working directory.</p>
+</li>
+<li>
+<p><code>drawText()</code> indexes the glyph table with <code>char</code>, so bytes above 127 index negatively.
+Keep input to 7-bit ASCII until that path handles wider encodings.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Implementation: <code>RawBackend/Fonts/FreeTypeLibrary.{h,cpp}</code>,
+<code>NxSubsystems/Graphics/Font.{h,cpp}</code>, and <code>NxWorld/Scene/Scene.cpp</code>.</p>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="renderer-architecture.html">Rendering Responsibilities</a></span>
+  <span class="next"><a href="materials/shader-system.html">Shader System</a></span>
+</nav>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script id="site-script" src="../../../_/js/site.js" data-ui-root-path="../../../_"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

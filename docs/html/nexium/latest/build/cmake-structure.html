@@ -108,6 +108,12 @@
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../engine_architecture/input-system.html">Input System</a>
   </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../engine_architecture/editor.html">Editor Structure</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../engine_architecture/diagnostics.html">Diagnostics</a>
+  </li>
 </ul>
   </li>
   <li class="nav-item" data-depth="1">
@@ -122,6 +128,9 @@
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../rendering/renderer-architecture.html">Rendering Responsibilities</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../rendering/text.html">Text Rendering</a>
   </li>
   <li class="nav-item" data-depth="2">
     <button class="nav-item-toggle"></button>
@@ -258,6 +267,11 @@
 <td class="tableblock halign-left valign-top"><p class="tableblock">Enable Assimp, meshes, and related editor files.</p></td>
 </tr>
 <tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>NEXIUM_ENABLE_CODE_COVERAGE</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OFF</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Instrument targets and add the <code>Nexium_Coverage</code> report target.</p></td>
+</tr>
+<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>NEXIUM_VERIFY_INTERFACE_HEADER_SETS</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">ON</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Create explicit public-header verification targets.</p></td>
@@ -270,8 +284,13 @@
 </tbody>
 </table>
 <div class="paragraph">
+<p><code>NEXIUM_ENABLE_CODE_COVERAGE</code> is checked at configure time and rejects a configuration that
+is not GCC, not <code>Debug</code>, or has tests disabled; it also requires <code>gcovr</code> and <code>gcov</code> on PATH.</p>
+</div>
+<div class="paragraph">
 <p>There are no repository CMake presets. Configure <code>build/</code> with Ninja and
 <code>CMAKE_BUILD_TYPE=Debug</code>; use a separate directory for Release or another toolchain.
+A single-configuration generator with no build type set defaults to <code>Debug</code>.
 Set <code>NEXIUM_DISABLE_TESTS=OFF</code> or <code>NEXIUM_DISABLE_BENCHMARKS=OFF</code> when those targets are needed.
 These defaults come from the root <code>CMakeLists.txt</code>; older guidance saying tests are enabled is stale.</p>
 </div>
@@ -279,7 +298,15 @@ These defaults come from the root <code>CMakeLists.txt</code>; older guidance sa
 <p>Executables go to <code>&lt;build_dir&gt;/bin/</code>, libraries to <code>&lt;build_dir&gt;/lib/</code>.
 Multi-configuration generators normally add a configuration subdirectory.
 Editor and TemplateGame are always included. The default build compiles enabled targets but does not run tests.
-There is no root coverage workflow or CTest registration.</p>
+CTest is not used; the coverage target runs the suite itself.</p>
+</div>
+<div class="paragraph">
+<p>On Linux, <code>nexium_configure_application()</code> adds an ALL custom target that writes a
+<code>&lt;application id&gt;.desktop</code> launcher and copies <code>data/internal/icons/logo_192.png</code> next to the
+executable, with <code>Path=</code> set to the configured source directory. When <code>xdg-desktop-menu</code> is
+found it also defines an opt-in <code>TemplateGame_RegisterDesktopLauncher</code> target that installs
+that entry for the current user. On Windows the same function compiles
+<code>sources/Platform/Resources/app.rc</code> instead.</p>
 </div>
 </div>
 </div>
@@ -294,7 +321,10 @@ Debug definitions affecting the ECS and graphics public APIs propagate to consum
 <div class="paragraph">
 <p>Most layers list sources explicitly. Editor uses <code>CONFIGURE_DEPENDS</code> globs;
 tests and game-example use ordinary globs and may need reconfiguration after adding files.
-Header sets use the shared <code>sources/</code> include root; they do not enforce private-header isolation.</p>
+Header sets use the shared <code>sources/</code> include root; they do not enforce private-header isolation.
+World and Editor each use a private precompiled header (<code>WorldPCH.h</code>, <code>EditorPCH.h</code>), and
+Editor marks <code>*.generated.h</code> with <code>SKIP_LINTING</code>. With 3D disabled, Editor also drops
+<code>Gizmo.cpp</code> and the two static-mesh adapters from its glob.</p>
 </div>
 <div class="paragraph">
 <p>Dependencies are configured with <code>EXCLUDE_FROM_ALL</code>; active targets determine what is built.
@@ -303,8 +333,9 @@ Linux prefers mold, then lld; ccache is used when available.
 Runtime retains World with WHOLE_ARCHIVE, and TemplateGame retains Editor for static registrations.</p>
 </div>
 <div class="paragraph">
-<p>Windows still needs validation: the <code>/Z7</code> configuration condition precedes compiler detection,
-and game-example references <code>sources/Resources/app.rc</code> while the file is under <code>sources/Platform/Resources</code>.</p>
+<p>Windows still needs validation: the <code>/Z7</code> debug-information setting is guarded by <code>if(MSVC)</code>
+in the root <code>CMakeLists.txt</code> before <code>project()</code>, where <code>MSVC</code> is not yet defined, so that
+block never takes effect.</p>
 </div>
 </div>
 </div>
@@ -354,6 +385,10 @@ Generated files remain beside their owning headers and must not be edited manual
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>TemplateGame</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Run <code>&lt;build_dir&gt;/bin/TemplateGame --timeout 5</code> with a display/OpenGL context.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Nexium_Coverage</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Configure a dedicated GCC Debug coverage directory, build this target; it clears counters, runs the full suite, and writes HTML/JSON/text reports under <code>&lt;build_dir&gt;/coverage-report/</code>.</p></td>
 </tr>
 </tbody>
 </table>

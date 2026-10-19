@@ -11,7 +11,9 @@ It does not use archetype storage or a central query scheduler.
 
 Scene owns root `SceneObject` instances, which combine BaseComponent with transforms,
 drawing, outlining, and persistence. Children can be non-spatial components.
-`Actor`, cameras, rectangles, and editor widgets specialize this tree model.
+`Actor`, cameras, rectangles, input controllers, animators, and editor windows all specialize
+this tree model; editor windows are ordinary components tagged `Tag_EditorWindow`, which is how
+xref:editor.adoc[the editor] discovers them.
 
 == Registration and reflection
 
@@ -24,6 +26,7 @@ drawing, outlining, and persistence. Children can be non-spatial components.
 |`ECS_DECL_NO_SER` / `ECS_IMPL_NO_SER` |Omit the reflection bridge.
 |`ECS_DECL_NO_SER_NO_CNSTR` |Combine both declaration variants.
 |`ECS_TEMPLATE_COMPONENT_DECL` / `ECS_TEMPLATE_COMPONENT_IMPL` |Template-component variants.
+|`ECS_TEMPLATE_COMPONENT_DECL_NO_CNSTR` |Template variant with a caller-defined constructor.
 |===
 
 `ECS_IMPL` registers a creator during static initialization of `componentType`.
@@ -64,4 +67,5 @@ neither is a stable identity across rename or reparenting.
 
 Implementation: `NxFundamental/ECS/BaseComponent.{h,cpp}`.
 `tests/ECSTests/ECSTests.cpp` covers factories, serialization, traversal, cloning, and parent repair;
+`tests/ECSTests/InputControllerTests.cpp` covers a reflected component with serialized state;
 `tests/Runtime/RuntimeTests.cpp` checks retained World registrations.

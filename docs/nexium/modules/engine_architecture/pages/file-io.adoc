@@ -11,13 +11,16 @@ Its “cache” includes persistent authored content.
 |Data |Path relative to the compiled project root
 |Scene |`data/scenes/<sanitized scene name>.json`
 |World |`data/world/<sanitized world name>.json`
+|Window |`data/cache/RootWindow.json`
+|Input managers |`data/Inputs/<manager hash>.json`
 |Editor objects |Object-specific directories beneath `data/`
 |ImGui layout |`data/cache/windows.ini`
 |Assets |Their attached source files; see xref:resource-system.adoc[Assets].
 |===
 
 CacheSystem combines `Config::Path::data`, `getCacheDir()`, and a sanitized `getCacheHash()`
-with `.json`. Non-alphanumeric characters other than `_` become `_`, so names can collide.
+with `.json`. `IDataIO::getCacheDir()` defaults to `cache`, so a type that does not override
+it lands in `data/cache/`. Non-alphanumeric characters other than `_` become `_`, so names can collide.
 Paths derive from `NEXIUM_PROJECT_DIR` compiled into Foundation.
 
 == Reads and failures

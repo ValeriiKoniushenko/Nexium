@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Editor Structure :: Nexium Engine</title>
+    <link rel="prev" href="input-system.html">
+    <link rel="next" href="diagnostics.html">
+    <meta name="generator" content="Antora 3.1.15">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="../../..">Nexium Engine</a>
+      <button class="navbar-burger" aria-controls="topbar-nav" aria-expanded="false" aria-label="Toggle main menu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Products</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="#">Product A</a>
+            <a class="navbar-item" href="#">Product B</a>
+            <a class="navbar-item" href="#">Product C</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Services</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="#">Service A</a>
+            <a class="navbar-item" href="#">Service B</a>
+            <a class="navbar-item" href="#">Service C</a>
+          </div>
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="button is-primary" href="#">Download</a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="nexium" data-version="latest">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <button class="nav-menu-toggle" aria-label="Toggle expand/collapse all" style="display: none"></button>
+    <h3 class="title"><a href="../index.html">Nexium Engine Documentation</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../index.html">Overview</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../getting-started.html">Getting Started</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../installation.html">Installation</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Engine Architecture</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="index.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="architecture-review.html">Architecture and Migration Review</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="ue5-alignment.html">UE5 Patterns for Nexium</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="module-graph.html">Module Graph</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="lifecycle.html">Application Lifecycle</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="threading.html">Threading Model</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="memory.html">Memory Model</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="resource-system.html">Resource System</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="file-io.html">File I/O</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="ecs-overview.html">ECS Overview</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="input-system.html">Input System</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="editor.html">Editor Structure</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="diagnostics.html">Diagnostics</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Rendering</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../rendering/index.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../rendering/pipeline.html">Rendering Pipeline</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../rendering/renderer-architecture.html">Rendering Responsibilities</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../rendering/text.html">Text Rendering</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Materials</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../rendering/materials/shader-system.html">Shader System</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Gameplay</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../gameplay/index.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../gameplay/scenes.html">Scenes</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../gameplay/components.html">Components</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../gameplay/scripting.html">Gameplay Hooks</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../gameplay/prefabs.html">Blueprint Templates</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Build &amp; Toolchain</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../build/index.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../build/cmake-structure.html">CMake Structure</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../build/ci-cd.html">CI/CD</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../about/index.html">About</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Nexium Engine Documentation</span>
+    <span class="version">latest</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <div class="title"><a href="../index.html">Nexium Engine Documentation</a></div>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">latest</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Nexium Engine Documentation</a></li>
+    <li>Engine Architecture</li>
+    <li><a href="editor.html">Editor Structure</a></li>
+  </ul>
+</nav>
+<div class="edit-this-page"><a href="file:///home/valerii/workspace/Nexium//docs/nexium/modules/engine_architecture/pages/editor.adoc">Edit this Page</a></div>
+</div>
+  <div class="content">
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">Editor Structure</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>The Editor layer is the top of the <a href="module-graph.html" class="xref page">module graph</a>. It depends on
+Runtime and ImGui, and nothing below it includes editor headers: Runtime and World reach the
+editor only through the <code>ApplicationIntegration</code> interface.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_entry_points"><a class="anchor" href="#_entry_points"></a>Entry points</h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 66.6667%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Object</th>
+<th class="tableblock halign-left valign-top">Role</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>EditorIntegration</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Implements <code>ApplicationIntegration</code>. Borrows Runtime, owns the three objects below, and attaches/detaches itself from GameInstance.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>GameEditor</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Owns the ImGui setup, the window list, toast notifications, the polled input managers, and the viewport render target.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ObjectSelectorManager</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Holds strong references to selected components, keyed by address.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ObjectPickerAggregator</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Chooses a picking strategy and dispatches pick requests.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><code>GetEditorIntegration()</code>, <code>GetEditor()</code>, <code>GetObjectSelectorManager()</code>, and <code>GetObjectPicker()</code>
+are global accessors over the integration instance, so editor code reaches these services
+without being handed them.</p>
+</div>
+<div class="paragraph">
+<p><code>EditorIntegration</code> maps the Runtime hooks onto <code>GameEditor</code>: <code>tick()</code> draws the windows,
+<code>updateInput()</code> updates the polled keyboard manager, <code>updateSceneInteraction()</code> services
+pick requests, <code>isViewportFocused()</code> forwards to the <code>GameViewportEWC</code> window,
+<code>beforeSceneDraw()</code>/<code>afterSceneDraw()</code> bind and unbind the viewport target through
+<code>RenderTargetToTexture::callMePreDraw()</code> / <code>callMeAfterDraw()</code>, and
+<code>readFromCache()</code>/<code>writeToCache()</code> persist editor state alongside the ImGui layout in
+<code>data/cache/windows.ini</code>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_windows_are_discovered_not_listed"><a class="anchor" href="#_windows_are_discovered_not_listed"></a>Windows are discovered, not listed</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Editor windows derive from <code>BaseEWC</code> (<code>Windows/BaseWindow.h</code>) and are reflected components
+tagged <code>Tag_EditorWindow</code>. <code>GameEditor::initialize()</code> asks <code>GlobalComponentFactory</code> for every
+type carrying that tag, creates one instance of each, and registers it. Adding a window means
+adding a tagged component type; there is no central window list to edit.</p>
+</div>
+<div class="paragraph">
+<p><code>registerNewWindow()</code> records the type, appends the instance, and opens or closes it according
+to the requested initial state. Windows are looked up by type, optionally filtered by a regex
+over the window title: <code>getWindow&lt;T&gt;()</code>, <code>showWindow&lt;T&gt;()</code>, <code>tryToOpenWindow&lt;T&gt;()</code>.
+<code>TemplateGame</code> links Editor with <code>WHOLE_ARCHIVE</code> so these registrations survive linking.</p>
+</div>
+<div class="paragraph">
+<p>Current windows include the root dock, menu bar, scene tree, object properties, assets
+explorer, game viewport, logs, world settings, editor settings, a shader inspector, an image
+viewer, asset/ECS search and blueprint-creation modals, and the asset editors under
+<code>Windows/Editors</code> (texture, text, input bindings). <code>Windows/ECSAdapters</code> holds the per-component
+property adapters, and <code>GuiComponents</code> holds the reusable ImGui widgets.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_selection_picking_and_gizmos"><a class="anchor" href="#_selection_picking_and_gizmos"></a>Selection, picking, and gizmos</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><code>ObjectPickerAggregator</code> owns two strategies: <code>SlowObjectPicker</code>, which renders object
+identifiers to a target and resolves the colour under the cursor, and
+<code>RectangleBasedObjectPicker</code>. Picking is request-based — <code>requestPick(callback)</code> records the
+request and <code>update(scene)</code> services it on the next interaction pass — and works for both
+camera projections.</p>
+</div>
+<div class="paragraph">
+<p><code>SceneGizmo</code> is a member of the game-viewport window. It draws the ImGuizmo manipulator for
+the selected object inside the viewport rectangle and reports <code>blocksPicking()</code> so a drag on
+the gizmo is not treated as a pick.
+<code>SceneGizmo::ApplyTransform()</code> converts the manipulated world matrix back into the object&#8217;s
+local transform. The gizmo is checked by <code>tests/Editor/SceneGizmoTests.cpp</code>.</p>
+</div>
+<div class="paragraph">
+<p>Selection holds strong references, so a selected object outlives removal from the scene, and
+scene replacement does not clear selection. See <a href="memory.html" class="xref page">Memory and Ownership</a>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_known_gaps"><a class="anchor" href="#_known_gaps"></a>Known gaps</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>There is no command/undo layer: property edits, transforms, and create/delete apply directly.</p>
+</li>
+<li>
+<p>The menu bar has a Play toggle backed by <code>GameEditor::getIsRunSimulation()</code>, but nothing else
+reads that flag, so it does not start or stop a simulation. Render-mode switching (F1) shares
+the authored scene; see <a href="lifecycle.html" class="xref page">Application Lifecycle</a>.</p>
+</li>
+<li>
+<p>Save notifications are raised without verifying that every write succeeded; see
+<a href="file-io.html" class="xref page">File I/O</a>.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Implementation: <code>sources/Editor/</code>. Checks: <code>tests/Editor/</code>.</p>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="input-system.html">Input System</a></span>
+  <span class="next"><a href="diagnostics.html">Diagnostics</a></span>
+</nav>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script id="site-script" src="../../../_/js/site.js" data-ui-root-path="../../../_"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

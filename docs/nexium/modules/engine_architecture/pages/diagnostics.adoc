@@ -1,0 +1,47 @@
+= Diagnostics
+
+Foundation provides two diagnostic facilities: spdlog-based logging through
+`Foundation::BaseLog`, and a latency collector used to measure startup and frame costs.
+
+== Logging
+
+Every engine class that logs derives from `Foundation::BaseLog` and supplies `getPrefix()`
+and `getLogger()`. Each source layer has a private module target whose
+`PrivateModuleInfo.cpp` owns that layer's logger, so log lines carry the originating module.
+`GameInstance::initialize()` sets the spdlog pattern from `Config::spdlogPattern` and raises
+the level to `debug` in `NEXIUM_DEBUG` builds. The editor's Logs window reads the same stream.
+
+== Latency instrumentation
+
+`Foundation/Debug/Latency.h` declares a global `Foundation::Latency::gCollector` and the
+`NX_LATENCY_POINT("description")` macro. The macro expands to a collector write in
+`NEXIUM_DEBUG` builds and to nothing otherwise, so release builds carry no cost.
+
+[cols="2,4",options="header"]
+|===
+|Type |Role
+|`Sample` |One timestamp with its `std::source_location`, description, and thread id.
+|`Collector` |Append-only sample list guarded by a `std::shared_mutex`; `clear()` resets it.
+|`Report` (`LatencyExtractor.h`) |Groups consecutive samples into `Hotspot` entries with call count and total/min/max/average duration, per thread.
+|`HotspotComparison` |Compares two reports and classifies each hotspot as improved, unchanged, regressed, added, or removed.
+|`TerminalPrinter` |Renders a report to a stream.
+|===
+
+`Runtime::run()` builds a `Report` over `gCollector` and prints it after the loop exits and
+state is saved. Existing probes mark the window, assets, shaders, ECS, scene, and resource
+phases of `GameInstance::initialize()`, plus loop start and end.
+
+Two consequences of the current design are worth knowing before adding probes:
+
+* Samples accumulate for the whole session. Nothing clears `gCollector` between frames, and
+  the loop records two samples per frame, so a long Debug run grows that vector steadily.
+  Clear it explicitly if you need a bounded window.
+* Each probe takes the collector's lock, so probes inside hot inner loops change what they
+  measure.
+
+Latency samples are not written to disk and are not part of any pass/fail check. For
+performance conclusions use the Release benchmark workflow instead; see
+xref:build:cmake-structure.adoc[CMake infrastructure].
+
+Implementation: `Foundation/Debug/{Latency,LatencyExtractor,LatencyTerminalPrinter}.{h,cpp}`.
+Checks: `tests/Foundation/LatencyTests.cpp`.

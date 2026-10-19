@@ -10,4 +10,20 @@ See xref:engine_architecture:lifecycle.adoc[Application Lifecycle] before choosi
 for camera-independent simulation.
 
 The hooks are declared in `NxWorld/Framework/GameInstance.h`.
-`game-example/TemplateGameInstance` currently inherits their default behavior without overrides.
+`game-example/TemplateGameInstance` currently inherits their default behavior without overrides,
+so all example behavior lives in components instead.
+
+== The worked example
+
+`game-example/Player` is the pattern to copy for gameplay behavior. It derives from
+`RectangleAnimated`, calls the base `onTick()` first, then reads its own state from two child
+components it looks up with `findFirstChildOf<T>()`:
+
+* an `InputController`, queried with `isActionPressed("Move right"_atom)` and the other three
+  direction actions, normalized for diagonals and applied through `moveRight()`/`moveUp()`;
+* a `FrameByFrameAnimator`, switched to the animation matching the movement direction.
+
+Nothing is hard-wired: the controller's bindings are serialized component data, and the
+component does nothing when the controller is missing or disabled. Gameplay controllers belong
+to the `Gameplay` input context, which is active only while the viewport is focused — see
+xref:engine_architecture:input-system.adoc[Input System].

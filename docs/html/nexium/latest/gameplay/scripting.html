@@ -108,6 +108,12 @@
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../engine_architecture/input-system.html">Input System</a>
   </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../engine_architecture/editor.html">Editor Structure</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../engine_architecture/diagnostics.html">Diagnostics</a>
+  </li>
 </ul>
   </li>
   <li class="nav-item" data-depth="1">
@@ -122,6 +128,9 @@
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../rendering/renderer-architecture.html">Rendering Responsibilities</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../rendering/text.html">Text Rendering</a>
   </li>
   <li class="nav-item" data-depth="2">
     <button class="nav-item-toggle"></button>
@@ -216,6 +225,8 @@
 </aside>
 <article class="doc">
 <h1 class="page">Gameplay Hooks</h1>
+<div id="preamble">
+<div class="sectionbody">
 <div class="paragraph">
 <p>Gameplay behavior currently runs in compiled C++; there is no embedded gameplay scripting runtime.
 Component hooks include <code>onInitialize()</code> and <code>onTick(float)</code>.
@@ -229,7 +240,37 @@ for camera-independent simulation.</p>
 </div>
 <div class="paragraph">
 <p>The hooks are declared in <code>NxWorld/Framework/GameInstance.h</code>.
-<code>game-example/TemplateGameInstance</code> currently inherits their default behavior without overrides.</p>
+<code>game-example/TemplateGameInstance</code> currently inherits their default behavior without overrides,
+so all example behavior lives in components instead.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_the_worked_example"><a class="anchor" href="#_the_worked_example"></a>The worked example</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><code>game-example/Player</code> is the pattern to copy for gameplay behavior. It derives from
+<code>RectangleAnimated</code>, calls the base <code>onTick()</code> first, then reads its own state from two child
+components it looks up with <code>findFirstChildOf&lt;T&gt;()</code>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>an <code>InputController</code>, queried with <code>isActionPressed("Move right"_atom)</code> and the other three
+direction actions, normalized for diagonals and applied through <code>moveRight()</code>/<code>moveUp()</code>;</p>
+</li>
+<li>
+<p>a <code>FrameByFrameAnimator</code>, switched to the animation matching the movement direction.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Nothing is hard-wired: the controller&#8217;s bindings are serialized component data, and the
+component does nothing when the controller is missing or disabled. Gameplay controllers belong
+to the <code>Gameplay</code> input context, which is active only while the viewport is focused — see
+<a href="../engine_architecture/input-system.html" class="xref page">Input System</a>.</p>
+</div>
+</div>
 </div>
 <nav class="pagination">
   <span class="prev"><a href="components.html">Components</a></span>

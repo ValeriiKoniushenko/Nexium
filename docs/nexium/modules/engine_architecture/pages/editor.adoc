@@ -1,0 +1,74 @@
+= Editor Structure
+
+The Editor layer is the top of the xref:module-graph.adoc[module graph]. It depends on
+Runtime and ImGui, and nothing below it includes editor headers: Runtime and World reach the
+editor only through the `ApplicationIntegration` interface.
+
+== Entry points
+
+[cols="2,4",options="header"]
+|===
+|Object |Role
+|`EditorIntegration` |Implements `ApplicationIntegration`. Borrows Runtime, owns the three objects below, and attaches/detaches itself from GameInstance.
+|`GameEditor` |Owns the ImGui setup, the window list, toast notifications, the polled input managers, and the viewport render target.
+|`ObjectSelectorManager` |Holds strong references to selected components, keyed by address.
+|`ObjectPickerAggregator` |Chooses a picking strategy and dispatches pick requests.
+|===
+
+`GetEditorIntegration()`, `GetEditor()`, `GetObjectSelectorManager()`, and `GetObjectPicker()`
+are global accessors over the integration instance, so editor code reaches these services
+without being handed them.
+
+`EditorIntegration` maps the Runtime hooks onto `GameEditor`: `tick()` draws the windows,
+`updateInput()` updates the polled keyboard manager, `updateSceneInteraction()` services
+pick requests, `isViewportFocused()` forwards to the `GameViewportEWC` window,
+`beforeSceneDraw()`/`afterSceneDraw()` bind and unbind the viewport target through
+`RenderTargetToTexture::callMePreDraw()` / `callMeAfterDraw()`, and
+`readFromCache()`/`writeToCache()` persist editor state alongside the ImGui layout in
+`data/cache/windows.ini`.
+
+== Windows are discovered, not listed
+
+Editor windows derive from `BaseEWC` (`Windows/BaseWindow.h`) and are reflected components
+tagged `Tag_EditorWindow`. `GameEditor::initialize()` asks `GlobalComponentFactory` for every
+type carrying that tag, creates one instance of each, and registers it. Adding a window means
+adding a tagged component type; there is no central window list to edit.
+
+`registerNewWindow()` records the type, appends the instance, and opens or closes it according
+to the requested initial state. Windows are looked up by type, optionally filtered by a regex
+over the window title: `getWindow<T>()`, `showWindow<T>()`, `tryToOpenWindow<T>()`.
+`TemplateGame` links Editor with `WHOLE_ARCHIVE` so these registrations survive linking.
+
+Current windows include the root dock, menu bar, scene tree, object properties, assets
+explorer, game viewport, logs, world settings, editor settings, a shader inspector, an image
+viewer, asset/ECS search and blueprint-creation modals, and the asset editors under
+`Windows/Editors` (texture, text, input bindings). `Windows/ECSAdapters` holds the per-component
+property adapters, and `GuiComponents` holds the reusable ImGui widgets.
+
+== Selection, picking, and gizmos
+
+`ObjectPickerAggregator` owns two strategies: `SlowObjectPicker`, which renders object
+identifiers to a target and resolves the colour under the cursor, and
+`RectangleBasedObjectPicker`. Picking is request-based — `requestPick(callback)` records the
+request and `update(scene)` services it on the next interaction pass — and works for both
+camera projections.
+
+`SceneGizmo` is a member of the game-viewport window. It draws the ImGuizmo manipulator for
+the selected object inside the viewport rectangle and reports `blocksPicking()` so a drag on
+the gizmo is not treated as a pick.
+`SceneGizmo::ApplyTransform()` converts the manipulated world matrix back into the object's
+local transform. The gizmo is checked by `tests/Editor/SceneGizmoTests.cpp`.
+
+Selection holds strong references, so a selected object outlives removal from the scene, and
+scene replacement does not clear selection. See xref:memory.adoc[Memory and Ownership].
+
+== Known gaps
+
+* There is no command/undo layer: property edits, transforms, and create/delete apply directly.
+* The menu bar has a Play toggle backed by `GameEditor::getIsRunSimulation()`, but nothing else
+  reads that flag, so it does not start or stop a simulation. Render-mode switching (F1) shares
+  the authored scene; see xref:lifecycle.adoc[Application Lifecycle].
+* Save notifications are raised without verifying that every write succeeded; see
+  xref:file-io.adoc[File I/O].
+
+Implementation: `sources/Editor/`. Checks: `tests/Editor/`.

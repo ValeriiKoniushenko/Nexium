@@ -108,6 +108,12 @@
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="input-system.html">Input System</a>
   </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="editor.html">Editor Structure</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="diagnostics.html">Diagnostics</a>
+  </li>
 </ul>
   </li>
   <li class="nav-item" data-depth="1">
@@ -122,6 +128,9 @@
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../rendering/renderer-architecture.html">Rendering Responsibilities</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../rendering/text.html">Text Rendering</a>
   </li>
   <li class="nav-item" data-depth="2">
     <button class="nav-item-toggle"></button>
@@ -246,8 +255,9 @@ Public-header verification and executable layer consumers make interfaces review
 </div>
 <div class="paragraph">
 <p>See <a href="../build/cmake-structure.html" class="xref page">CMake infrastructure</a> for real options and checks.
-Tests and benchmarks are disabled by default. CI enables tests across GCC/Clang Debug
-and Release builds, with a separate Clang Debug 3D build; see <a href="../build/ci-cd.html" class="xref page">CI coverage</a>.</p>
+Tests and benchmarks are disabled by default. CI enables tests in GCC and Clang Debug builds
+with 3D off, and adds format, tidy, coverage, and Valgrind checks; see
+<a href="../build/ci-cd.html" class="xref page">CI coverage</a>. No Release, 3D, or benchmark job is configured.</p>
 </div>
 </div>
 </div>
@@ -263,7 +273,10 @@ Scene owns root component trees and handles persistence and drawing.</p>
 <div class="paragraph">
 <p>The model is suitable for a small authoring engine.
 World does not yet provide the ownership/lifetime boundary implied by its UE-style name.
-Most new managers and GameInstanceSubsystem have logging scaffolding without operational contracts.</p>
+Most new managers and GameInstanceSubsystem have logging scaffolding without operational contracts.
+Input is the exception that proves the point: <code>InputSystem</code> is a real routing service with
+contexts, controllers, and tests, but it is a global singleton rather than something a session
+owns — so switching worlds or sessions has no defined effect on it.</p>
 </div>
 </div>
 </div>
@@ -308,6 +321,10 @@ and caller-visible save errors before relying on the editor for larger authored 
 </li>
 <li>
 <p>Extend executable interface checks and CI to the World/Runtime/editor boundary.</p>
+</li>
+<li>
+<p>Retire the polled <code>InputAction</code> managers once mouse events route through <code>InputSystem</code>,
+so input has one path and one context policy.</p>
 </li>
 </ol>
 </div>

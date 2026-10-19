@@ -108,6 +108,12 @@
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../engine_architecture/input-system.html">Input System</a>
   </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../engine_architecture/editor.html">Editor Structure</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../engine_architecture/diagnostics.html">Diagnostics</a>
+  </li>
 </ul>
   </li>
   <li class="nav-item" data-depth="1">
@@ -122,6 +128,9 @@
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../rendering/renderer-architecture.html">Rendering Responsibilities</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../rendering/text.html">Text Rendering</a>
   </li>
   <li class="nav-item" data-depth="2">
     <button class="nav-item-toggle"></button>
@@ -301,6 +310,44 @@ ASSERT_EQ("Engine", engine-&gt;getComponentName());</code></pre>
 <p><code>getOrAddChildComponent&lt;T&gt;()</code> searches descendants before creating a direct child.
 Choose it only if a match deeper in the tree is acceptable.</p>
 </div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_reusable_engine_components"><a class="anchor" href="#_reusable_engine_components"></a>Reusable engine components</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Some behavior is already available as a component rather than something to write again:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 66.6667%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Component</th>
+<th class="tableblock halign-left valign-top">Use</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>InputController</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Named actions bound to key chords in one input context; bindings are reflected and serialized.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>FrameByFrameAnimator</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Drives a <code>RectangleAnimated</code> parent through a named animation&#8217;s frames.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>BaseCamera</code> subclasses</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Provide the active camera World observes; removing one clears that pointer.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>Attach them as children and query them from the owning component&#8217;s tick, as
+<a href="scripting.html" class="xref page">the Player example</a> does.</p>
 </div>
 </div>
 </div>

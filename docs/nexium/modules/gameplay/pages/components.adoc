@@ -50,6 +50,21 @@ include::example$component-tests.cpp[tag=component_unique_type,indent=0]
 `getOrAddChildComponent<T>()` searches descendants before creating a direct child.
 Choose it only if a match deeper in the tree is acceptable.
 
+== Reusable engine components
+
+Some behavior is already available as a component rather than something to write again:
+
+[cols="2,4",options="header"]
+|===
+|Component |Use
+|`InputController` |Named actions bound to key chords in one input context; bindings are reflected and serialized.
+|`FrameByFrameAnimator` |Drives a `RectangleAnimated` parent through a named animation's frames.
+|`BaseCamera` subclasses |Provide the active camera World observes; removing one clears that pointer.
+|===
+
+Attach them as children and query them from the owning component's tick, as
+xref:scripting.adoc[the Player example] does.
+
 == Initialization and ticking
 
 === Initialization can happen during assembly

@@ -108,6 +108,12 @@
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../engine_architecture/input-system.html">Input System</a>
   </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../engine_architecture/editor.html">Editor Structure</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../engine_architecture/diagnostics.html">Diagnostics</a>
+  </li>
 </ul>
   </li>
   <li class="nav-item" data-depth="1">
@@ -122,6 +128,9 @@
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../rendering/renderer-architecture.html">Rendering Responsibilities</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../rendering/text.html">Text Rendering</a>
   </li>
   <li class="nav-item" data-depth="2">
     <button class="nav-item-toggle"></button>
@@ -217,89 +226,126 @@
 <article class="doc">
 <h1 class="page">Continuous Integration</h1>
 <div class="sect1">
-<h2 id="_build_and_test_coverage"><a class="anchor" href="#_build_and_test_coverage"></a>Build and test coverage</h2>
+<h2 id="_what_the_workflow_runs"><a class="anchor" href="#_what_the_workflow_runs"></a>What the workflow runs</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p><code>.gitea/workflows/code-quality.yml</code> runs on pushes using the <code>linux</code> runner and
-<code>cpp-ci:latest</code>. Each matrix entry checks out pinned recursive submodules and configures
-its own Ninja build with tests, public-header verification, and layer checks enabled.</p>
+<p><code>.gitea/workflows/code-quality.yml</code> defines a single <code>Build</code> job that runs <strong>on pull
+requests</strong> using the <code>linux</code> runner and the <code>cpp-ci:latest</code> container. There is no build
+matrix: the job checks out the repository twice and drives two Debug configurations
+sequentially, GCC first and Clang second.</p>
+</div>
+<div class="paragraph">
+<p>All step commands are thin wrappers. Repository-specific values live in
+<code>.gitea/ci-config.sh</code>, and the executable logic lives in the <code>scripts</code> submodule under
+<code>scripts/ci/gitea/</code>. <code>scripts/ci/gitea/runners/run_ci_check.sh &lt;config&gt; &lt;check&gt;</code> dispatches
+every named check, so the workflow file itself contains no tool invocations.</p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
-<col style="width: 16.6666%;">
-<col style="width: 16.6666%;">
-<col style="width: 16.6666%;">
-<col style="width: 50.0002%;">
+<col style="width: 28.5714%;">
+<col style="width: 71.4286%;">
 </colgroup>
 <thead>
 <tr>
-<th class="tableblock halign-left valign-top">Compiler</th>
-<th class="tableblock halign-left valign-top">Configuration</th>
-<th class="tableblock halign-left valign-top">3D</th>
-<th class="tableblock halign-left valign-top">Additional checks</th>
+<th class="tableblock halign-left valign-top">Step</th>
+<th class="tableblock halign-left valign-top">What it does</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Clang</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Debug</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Off</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Init submodules</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Fetch <code>scripts</code> shallowly, then <code>prepare_checkout.sh</code> for the bootstrap and cached submodules named by <code>CI_BOOTSTRAP_SUBMODULES</code> / <code>CI_CACHED_SUBMODULES</code>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">CI helper tests</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>python3 -m unittest discover -s scripts/ci/gitea/tests</code>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Copyright</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>copyright</code> and <code>publish-copyright</code> checks; failures are recorded, not fatal yet.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Clang-format</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>format</code> check; failure is recorded, not fatal yet.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Configure GCC Debug</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>configure_variant.sh &#8230;&#8203; gcc</code>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Clang-tidy</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>tidy</code> against the GCC build directory with <code>--fail-on error</code>, under a 10-minute step timeout.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Build GCC Debug</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>build_variant.sh &#8230;&#8203; gcc</code>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Configure/Build Clang Debug</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The same two scripts against the second checkout.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Capture TemplateGame UI</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>capture-ui</code> runs the built game headless and publishes <code>template-game-ui.png</code>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Unit tests</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>tests</code> runs <code>bin/Nexium_Tests</code> directly.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Coverage</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>configure_coverage.sh</code>, then the <code>coverage</code> check builds the <code>Nexium_Coverage</code> target; <code>publish-coverage</code> posts the report and the job summary quotes <code>summary.txt</code>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Unit tests under Valgrind</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>valgrind-tests</code>.</p></td>
+</tr>
+<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Headless game under Valgrind</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>valgrind-game</code> with <code>NEXIUM_HEADLESS_GL=1</code> and <code>data/cache/RootWindow.json</code>.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Clang</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Debug</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">On</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Headless game under Valgrind</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">GCC</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Debug</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Off</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Full unit suite under Valgrind</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Clang</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Release</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Off</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">ECS benchmark smoke run</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">GCC</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Release</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Off</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">ECS benchmark smoke run</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Precheck results</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Final step that fails the job if the copyright or clang-format checks failed earlier.</p></td>
 </tr>
 </tbody>
 </table>
 <div class="paragraph">
-<p>Every entry builds the application, runs <code>Nexium_Tests</code> directly, and builds
-<code>all_verify_interface_header_sets</code> and <code>Nexium_CheckLayers</code>. The latter runs layer
-consumers and generated-header checks. CTest is not configured for this project.
-Release builds enable benchmarks and run all registered cases with a short minimum
-time; these runs check execution, not performance regressions.</p>
+<p>Both configurations are Debug with <code>NEXIUM_DISABLE_TESTS=OFF</code>,
+<code>NEXIUM_DISABLE_BENCHMARKS=ON</code>, <code>NEXIUM_ENABLE_3D_MODULE=OFF</code>, and both
+<code>NEXIUM_VERIFY_INTERFACE_HEADER_SETS</code> and <code>NEXIUM_ENABLE_LAYER_CHECKS</code> set to <code>ON</code>.
+The coverage configuration adds <code>NEXIUM_ENABLE_CODE_COVERAGE=ON</code> and turns the
+header/layer checks off. CTest is not configured for this project.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_failures_and_runner_requirements"><a class="anchor" href="#_failures_and_runner_requirements"></a>Failures and runner requirements</h2>
+<h2 id="_timeouts_and_runner_requirements"><a class="anchor" href="#_timeouts_and_runner_requirements"></a>Timeouts and runner requirements</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Matrix failures do not cancel the other configurations; at most two jobs run together.
-Unit tests have a five-minute limit, unit Valgrind ten minutes, and benchmark runs five
-minutes. The game helper runs under Xvfb/Valgrind for five seconds, requires a clean
-Valgrind summary, and has an outer two-minute limit.</p>
+<p>Checks carry their own timeouts inside <code>run_ci_check.sh</code>: unit tests three minutes,
+unit Valgrind five minutes, the headless game under Valgrind eight minutes (the game
+itself stops after <code>CI_GAME_TIMEOUT_SECONDS</code>, currently 5), the UI capture two minutes,
+and the coverage build 45 minutes. Clang-tidy has a 10-minute timeout in the workflow.</p>
 </div>
 <div class="paragraph">
-<p>The container must provide GCC, Clang, CMake 3.30+, Ninja, Python 3, Valgrind, Xvfb,
-and the engine&#8217;s Linux graphics dependencies. <code>cpp-ci:latest</code> does not pin compiler
-versions; configuration prints the selected compiler version. Memory-check helpers
-use <code>--no-gitea</code>, so failures appear in job logs without posting reviews.</p>
+<p>The job depends on persistent runner volumes: <code>/ccache</code> for compiler caches,
+<code>/cache/build</code> for build directories, and a git-repo cache. Build directories live
+outside the checkout (<code>/cache/build/{gcc,clang}/debug</code>, <code>/cache/build/gcc/coverage</code>),
+so CI paths do not match a local <code>build/</code> layout.</p>
 </div>
 <div class="paragraph">
-<p>The matrix describes configured coverage, not a passing-run guarantee. Windows,
-formatting, clang-tidy, and sanitizer jobs are not configured. See
-<a href="cmake-structure.html" class="xref page">CMake infrastructure</a> for local targets and limitations.</p>
+<p>The container must provide GCC, Clang, CMake 3.30+, Ninja, Python 3, clang-format,
+clang-tidy, Valgrind, Xvfb, gcovr/gcov, and the engine&#8217;s Linux graphics dependencies.
+<code>cpp-ci:latest</code> does not pin compiler versions; configuration prints the selected version.
+<code>GITEA_TOKEN</code> is required by the steps that publish review comments, the coverage report,
+and the captured screenshot.</p>
+</div>
+<div class="paragraph">
+<p>This describes configured coverage, not a passing-run guarantee. There is no push-triggered
+build, no Release configuration, no benchmark job, no 3D-enabled job, no Windows job, and
+no sanitizer job. See <a href="cmake-structure.html" class="xref page">CMake infrastructure</a> for local targets and
+limitations.</p>
 </div>
 </div>
 </div>

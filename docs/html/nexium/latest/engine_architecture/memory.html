@@ -108,6 +108,12 @@
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="input-system.html">Input System</a>
   </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="editor.html">Editor Structure</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="diagnostics.html">Diagnostics</a>
+  </li>
 </ul>
   </li>
   <li class="nav-item" data-depth="1">
@@ -122,6 +128,9 @@
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../rendering/renderer-architecture.html">Rendering Responsibilities</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../rendering/text.html">Text Rendering</a>
   </li>
   <li class="nav-item" data-depth="2">
     <button class="nav-item-toggle"></button>
@@ -266,10 +275,19 @@
 <td class="tableblock halign-left valign-top"><p class="tableblock">AssetsManager → indexed assets</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Strong ECSAsset references and <code>AssetRef</code> entries.</p></td>
 </tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">InputSystem → controllers</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Non-owning pointers; each <code>InputController</code> unregisters itself in its destructor.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">GameEditor → windows</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Strong <code>BaseEWC</code> references created from the component factory.</p></td>
+</tr>
 </tbody>
 </table>
 <div class="paragraph">
-<p>Window and ShaderManager use shared accessor lifetimes outside this explicit ownership tree.</p>
+<p>Window, ShaderManager, and the <code>InputSystem</code> singleton use shared accessor lifetimes outside
+this explicit ownership tree.</p>
 </div>
 </div>
 </div>

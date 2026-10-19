@@ -8,7 +8,7 @@ Runtime borrows the instance; the integration attaches editor hooks through `App
 `Runtime::run()` initializes the instance, runs the frame loop, then saves state.
 `GameInstance::initialize()` performs these steps:
 
-. Create the Platform window and subscribe to resize events.
+. Create the Platform window, initialize `InputSystem` on it, and subscribe to resize events.
 . Scan assets, load shaders, and configure vertex attributes.
 . Initialize the editor integration and build the component factory's type/tag map.
 . Initialize Scene and subscribe to object additions for camera discovery.
@@ -20,24 +20,35 @@ independent concurrent game instances.
 
 == Each frame
 
-Window events are polled first. Updates use the previous frame's measured delta; the first delta is zero.
+Window events are polled first, then the active input context is set from viewport focus and
+the queued key events are dispatched (see xref:input-system.adoc[Input System]).
+Updates use the previous frame's measured delta; the first delta is zero.
 
 [cols="2,3,3",options="header"]
 |===
 |Operation |GameOnly |Editor
 |Scene tick |Every frame. |Only while the viewport is focused.
-|Integration update |Keyboard shortcuts, if attached. |Editor windows and keyboard/mouse actions.
-|Drawing |Scene to the window. |Picking, then Scene to the viewport texture.
+|Integration update |`updateInput()`, if an integration is attached. |`tick(delta)`: editor windows and keyboard/mouse actions.
+|Drawing |Scene to the window. |`updateSceneInteraction()` (picking/gizmos), `beforeSceneDraw()`, then Scene to the viewport texture.
 |GameInstance tick |After Scene drawing, if a camera exists. |After Scene drawing, if a camera exists.
 |===
 
 Scene ticking does not require a camera; `GameInstance::onTick` and scene drawing do.
-After updates, the loop throttles unfocused/iconified windows, checks `--timeout`, swaps buffers,
-and records elapsed time in World. Rendering and throttling contribute to that time.
+After updates, the loop sleeps 50 ms for unfocused/iconified windows, compares world time with
+`--timeout`, swaps buffers, and records elapsed time in World. Rendering, the sleep, and
+throttling all contribute to that time.
+
+Runtime sets the global GL state once before the loop: blending on, face culling on, stencil
+test on, and *depth testing off*. It never re-enables depth testing, so the scene is drawn in
+submission order; see xref:rendering:pipeline.adoc[Rendering Pipeline].
+
+In `NEXIUM_DEBUG` builds the loop also records `NX_LATENCY_POINT` samples and prints a latency
+report after `saveAllToCache()`; see xref:diagnostics.adoc[Diagnostics].
 
 == Modes and shutdown
 
-Editor mode requires both the Editor render mode and an attached integration.
+Editor mode requires both the Editor render mode and an attached integration: the GameOnly
+branch null-checks the integration pointer, while the Editor branch dereferences it.
 F1 switches rendering paths, which share the same `gameScene`.
 There is no isolated Play/Stop session or paused simulation clock; gameplay edits can be saved at shutdown.
 
@@ -47,5 +58,10 @@ then calls `onSaveAll()`. Exceptions escaping initialization or the loop bypass 
 The example destroys EditorIntegration before Runtime and resets `gGameInstance` last.
 Keep that order because both objects borrow their dependencies.
 See xref:file-io.adoc[File I/O] for persistence and xref:memory.adoc[Ownership] for lifetimes.
+
+The editor hooks Runtime calls are declared in `NxWorld/Framework/ApplicationIntegration.h`:
+`preInitialize`, `initialize`, `readFromCache`, `writeToCache`, `updateInput`, `tick`,
+`updateSceneInteraction`, `isViewportFocused`, `beforeSceneDraw`, `afterSceneDraw`,
+`clearSceneRenderTarget`, and `getRenderSize`.
 
 Implementation: `NxRuntime/Runtime.cpp`, `NxWorld/Framework/GameInstance.cpp`, and `Editor/EditorIntegration.cpp`.

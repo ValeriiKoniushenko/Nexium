@@ -7,6 +7,7 @@ The steps below follow the Linux Clang/Ninja configuration used by CI.
 
 * Git with working symlinks, CMake 3.30+, Ninja, and a C/C++ toolchain with C++26 mode and compatible standard-library support.
 * A graphical session and driver supporting OpenGL 4.6 for the normal application.
+  Setting `NEXIUM_HEADLESS_GL=1` requests a 4.5 context instead, which is how CI runs under Xvfb.
 * Linux development packages for GLFW's X11 and Wayland backends; both are enabled by default.
 
 On Debian/Ubuntu, the graphics prerequisites include `libwayland-dev`, `wayland-protocols`,
@@ -29,21 +30,22 @@ Use a fresh build directory when changing compiler or generator.
 Initialize all submodules, including `.agents/Agents`; a source ZIP alone is insufficient.
 
 The executable is `build/bin/TemplateGame`. The build generates reflection metadata automatically.
-Tests, benchmarks, and optional 3D support are disabled by default; enable them through the
-options in xref:build:cmake-structure.adoc[CMake Infrastructure].
+Tests, benchmarks, coverage, and optional 3D support are disabled by default; enable them
+through the options in xref:build:cmake-structure.adoc[CMake Infrastructure].
+On Linux the build also writes a `nexium.desktop` launcher next to the executable.
 
 == Platform status
 
-The Gitea workflow `.gitea/workflows/code-quality.yml` configures five Linux builds on
-pushes: GCC and Clang in Debug/Release with 3D off, plus Clang Debug with 3D on.
-Each builds with Ninja in `cpp-ci:latest`, runs unit tests, and checks public headers
-and layer consumers. Debug jobs add Valgrind checks; Release jobs build and smoke-run
-the ECS benchmarks. See xref:build:ci-cd.adoc[CI coverage] for the exact split.
+The Gitea workflow `.gitea/workflows/code-quality.yml` runs one Linux job on pull
+requests, inside `cpp-ci:latest`. It builds GCC Debug and Clang Debug sequentially with
+Ninja and 3D off, and adds copyright, clang-format, clang-tidy, unit tests, a gcovr
+coverage report, Valgrind over the unit suite, and a headless Valgrind run of the game.
+See xref:build:ci-cd.adoc[CI coverage] for the full step list.
 These are configured checks; results depend on the latest workflow run. Compiler
 versions come from the container image, and no Windows job is configured.
 
-Windows support still needs validation: the application resource path is stale.
-Windows also requires Git symlink support and permission to create symlinks.
-See xref:build:cmake-structure.adoc[CMake Infrastructure] for the known build limitations.
+Windows support still needs validation and requires Git symlink support plus permission
+to create symlinks. See xref:build:cmake-structure.adoc[CMake Infrastructure] for the
+known build limitations.
 
 Continue with xref:getting-started.adoc[Getting Started].

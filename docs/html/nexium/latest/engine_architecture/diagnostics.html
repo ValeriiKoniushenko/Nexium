@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Diagnostics :: Nexium Engine</title>
+    <link rel="prev" href="editor.html">
+    <link rel="next" href="../rendering/index.html">
+    <meta name="generator" content="Antora 3.1.15">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="../../..">Nexium Engine</a>
+      <button class="navbar-burger" aria-controls="topbar-nav" aria-expanded="false" aria-label="Toggle main menu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Home</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Products</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="#">Product A</a>
+            <a class="navbar-item" href="#">Product B</a>
+            <a class="navbar-item" href="#">Product C</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Services</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="#">Service A</a>
+            <a class="navbar-item" href="#">Service B</a>
+            <a class="navbar-item" href="#">Service C</a>
+          </div>
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="button is-primary" href="#">Download</a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="nexium" data-version="latest">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <button class="nav-menu-toggle" aria-label="Toggle expand/collapse all" style="display: none"></button>
+    <h3 class="title"><a href="../index.html">Nexium Engine Documentation</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../index.html">Overview</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../getting-started.html">Getting Started</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../installation.html">Installation</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Engine Architecture</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="index.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="architecture-review.html">Architecture and Migration Review</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="ue5-alignment.html">UE5 Patterns for Nexium</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="module-graph.html">Module Graph</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="lifecycle.html">Application Lifecycle</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="threading.html">Threading Model</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="memory.html">Memory Model</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="resource-system.html">Resource System</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="file-io.html">File I/O</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="ecs-overview.html">ECS Overview</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="input-system.html">Input System</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="editor.html">Editor Structure</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="diagnostics.html">Diagnostics</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Rendering</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../rendering/index.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../rendering/pipeline.html">Rendering Pipeline</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../rendering/renderer-architecture.html">Rendering Responsibilities</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../rendering/text.html">Text Rendering</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Materials</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="../rendering/materials/shader-system.html">Shader System</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Gameplay</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../gameplay/index.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../gameplay/scenes.html">Scenes</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../gameplay/components.html">Components</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../gameplay/scripting.html">Gameplay Hooks</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../gameplay/prefabs.html">Blueprint Templates</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Build &amp; Toolchain</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../build/index.html">Overview</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../build/cmake-structure.html">CMake Structure</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../build/ci-cd.html">CI/CD</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../about/index.html">About</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Nexium Engine Documentation</span>
+    <span class="version">latest</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <div class="title"><a href="../index.html">Nexium Engine Documentation</a></div>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">latest</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Nexium Engine Documentation</a></li>
+    <li>Engine Architecture</li>
+    <li><a href="diagnostics.html">Diagnostics</a></li>
+  </ul>
+</nav>
+<div class="edit-this-page"><a href="file:///home/valerii/workspace/Nexium//docs/nexium/modules/engine_architecture/pages/diagnostics.adoc">Edit this Page</a></div>
+</div>
+  <div class="content">
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">Diagnostics</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>Foundation provides two diagnostic facilities: spdlog-based logging through
+<code>Foundation::BaseLog</code>, and a latency collector used to measure startup and frame costs.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_logging"><a class="anchor" href="#_logging"></a>Logging</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Every engine class that logs derives from <code>Foundation::BaseLog</code> and supplies <code>getPrefix()</code>
+and <code>getLogger()</code>. Each source layer has a private module target whose
+<code>PrivateModuleInfo.cpp</code> owns that layer&#8217;s logger, so log lines carry the originating module.
+<code>GameInstance::initialize()</code> sets the spdlog pattern from <code>Config::spdlogPattern</code> and raises
+the level to <code>debug</code> in <code>NEXIUM_DEBUG</code> builds. The editor&#8217;s Logs window reads the same stream.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_latency_instrumentation"><a class="anchor" href="#_latency_instrumentation"></a>Latency instrumentation</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><code>Foundation/Debug/Latency.h</code> declares a global <code>Foundation::Latency::gCollector</code> and the
+<code>NX_LATENCY_POINT("description")</code> macro. The macro expands to a collector write in
+<code>NEXIUM_DEBUG</code> builds and to nothing otherwise, so release builds carry no cost.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 66.6667%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Role</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Sample</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">One timestamp with its <code>std::source_location</code>, description, and thread id.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Collector</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Append-only sample list guarded by a <code>std::shared_mutex</code>; <code>clear()</code> resets it.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Report</code> (<code>LatencyExtractor.h</code>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Groups consecutive samples into <code>Hotspot</code> entries with call count and total/min/max/average duration, per thread.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>HotspotComparison</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Compares two reports and classifies each hotspot as improved, unchanged, regressed, added, or removed.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>TerminalPrinter</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Renders a report to a stream.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><code>Runtime::run()</code> builds a <code>Report</code> over <code>gCollector</code> and prints it after the loop exits and
+state is saved. Existing probes mark the window, assets, shaders, ECS, scene, and resource
+phases of <code>GameInstance::initialize()</code>, plus loop start and end.</p>
+</div>
+<div class="paragraph">
+<p>Two consequences of the current design are worth knowing before adding probes:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Samples accumulate for the whole session. Nothing clears <code>gCollector</code> between frames, and
+the loop records two samples per frame, so a long Debug run grows that vector steadily.
+Clear it explicitly if you need a bounded window.</p>
+</li>
+<li>
+<p>Each probe takes the collector&#8217;s lock, so probes inside hot inner loops change what they
+measure.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Latency samples are not written to disk and are not part of any pass/fail check. For
+performance conclusions use the Release benchmark workflow instead; see
+<a href="../build/cmake-structure.html" class="xref page">CMake infrastructure</a>.</p>
+</div>
+<div class="paragraph">
+<p>Implementation: <code>Foundation/Debug/{Latency,LatencyExtractor,LatencyTerminalPrinter}.{h,cpp}</code>.
+Checks: <code>tests/Foundation/LatencyTests.cpp</code>.</p>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="editor.html">Editor Structure</a></span>
+  <span class="next"><a href="../rendering/index.html">Overview</a></span>
+</nav>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <p>This page was built using the Antora default UI.</p>
+  <p>The source code for this UI is licensed under the terms of the MPL-2.0 license.</p>
+</footer>
+<script id="site-script" src="../../../_/js/site.js" data-ui-root-path="../../../_"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

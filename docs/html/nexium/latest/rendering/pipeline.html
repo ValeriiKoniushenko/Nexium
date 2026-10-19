@@ -108,6 +108,12 @@
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../engine_architecture/input-system.html">Input System</a>
   </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../engine_architecture/editor.html">Editor Structure</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../engine_architecture/diagnostics.html">Diagnostics</a>
+  </li>
 </ul>
   </li>
   <li class="nav-item" data-depth="1">
@@ -122,6 +128,9 @@
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="renderer-architecture.html">Rendering Responsibilities</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="text.html">Text Rendering</a>
   </li>
   <li class="nav-item" data-depth="2">
     <button class="nav-item-toggle"></button>
@@ -222,6 +231,11 @@
 <div class="paragraph">
 <p>The loop in <code>NxRuntime/Runtime.cpp</code> uses the previous frame&#8217;s measured delta; the first delta is zero.</p>
 </div>
+<div class="paragraph">
+<p>Before the loop starts, Runtime sets the clear color and the global GL state once:
+<code>GL_BLEND</code>, <code>GL_CULL_FACE</code>, and <code>GL_STENCIL_TEST</code> enabled, <code>GL_DEPTH_TEST</code> <strong>disabled</strong>.
+Every clear uses colour + depth + stencil bits.</p>
+</div>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 14.2857%;">
@@ -238,8 +252,8 @@
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Poll window events and tick Scene.</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Poll events; tick Scene only when the viewport is focused.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Poll events, route input, tick Scene.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Poll events, route input; tick Scene only when the viewport is focused.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">2</p></td>
@@ -274,10 +288,15 @@ the previous scene render. There is no independent simulation/render clock.</p>
 <h2 id="_scene_draw_order"><a class="anchor" href="#_scene_draw_order"></a>Scene draw order</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p><code>Scene::directDraw()</code> reads World&#8217;s active camera, then:</p>
+<p>Runtime passes the <code>skybox</code> and <code>grid</code> programs into <code>Scene::directDraw(skyboxShader, gridShader)</code>.
+The method returns immediately when there is no World or no active camera, and otherwise:</p>
 </div>
 <div class="olist arabic">
 <ol class="arabic">
+<li>
+<p>Draws a hard-coded <code>"Hello world"</code> string through the scene&#8217;s own <code>NX::Face</code>. This is a
+development leftover in the normal draw path, not a feature.</p>
+</li>
 <li>
 <p>Draws the grid in Editor mode.</p>
 </li>
@@ -295,7 +314,8 @@ the previous scene render. There is no independent simulation/render clock.</p>
 <div class="paragraph">
 <p>This is an explicit sequence, not a depth-sorted transparent pass. The general root loop also
 calls mesh roots; do not infer a once-per-object guarantee from the post-draw flag.
-Skybox lookup/initialization is unfinished. Ordinary <code>SceneObject::draw()</code> checks its enabled flag;
+The skybox is drawn only for a perspective camera and only when a <code>skybox</code> program exists;
+<code>AssetsManager::getSkybox()</code> still asserts "Not implemented", so skybox assets cannot be loaded. Ordinary <code>SceneObject::draw()</code> checks its enabled flag;
 component tick traversal does not automatically imply child rendering.</p>
 </div>
 </div>
@@ -350,10 +370,13 @@ gcd.directDraw();</code></pre>
 <div class="paragraph">
 <p>With blending enabled, the fragment shader discards samples below alpha 0.1 and the draw uses
 source-alpha blending. Disabling blending forces fragment alpha to 1 and uses replacement blending.
-Depth testing remains enabled by Runtime; alpha blending alone does not establish correct transparent ordering.</p>
+Runtime disables depth testing for the whole run, so draw order alone decides what covers what:
+2D roots paint in scene-object order, and the alpha discard is what keeps sprite edges clean.
+Any depth-dependent content has to enable and manage <code>GL_DEPTH_TEST</code> itself.</p>
 </div>
 <div class="paragraph">
-<p>See <a href="materials/shader-system.html" class="xref page">Shader System</a> for the matching GLSL and binding sequence.</p>
+<p>See <a href="materials/shader-system.html" class="xref page">Shader System</a> for the matching GLSL and binding sequence,
+and <a href="text.html" class="xref page">Text Rendering</a> for the glyph path.</p>
 </div>
 </div>
 </div>

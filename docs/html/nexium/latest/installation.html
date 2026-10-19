@@ -108,6 +108,12 @@
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="engine_architecture/input-system.html">Input System</a>
   </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="engine_architecture/editor.html">Editor Structure</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="engine_architecture/diagnostics.html">Diagnostics</a>
+  </li>
 </ul>
   </li>
   <li class="nav-item" data-depth="1">
@@ -122,6 +128,9 @@
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="rendering/renderer-architecture.html">Rendering Responsibilities</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="rendering/text.html">Text Rendering</a>
   </li>
   <li class="nav-item" data-depth="2">
     <button class="nav-item-toggle"></button>
@@ -233,7 +242,8 @@ The steps below follow the Linux Clang/Ninja configuration used by CI.</p>
 <p>Git with working symlinks, CMake 3.30+, Ninja, and a C/C toolchain with C26 mode and compatible standard-library support.</p>
 </li>
 <li>
-<p>A graphical session and driver supporting OpenGL 4.6 for the normal application.</p>
+<p>A graphical session and driver supporting OpenGL 4.6 for the normal application.
+Setting <code>NEXIUM_HEADLESS_GL=1</code> requests a 4.5 context instead, which is how CI runs under Xvfb.</p>
 </li>
 <li>
 <p>Linux development packages for GLFW&#8217;s X11 and Wayland backends; both are enabled by default.</p>
@@ -281,8 +291,9 @@ Initialize all submodules, including <code>.agents/Agents</code>; a source ZIP a
 </div>
 <div class="paragraph">
 <p>The executable is <code>build/bin/TemplateGame</code>. The build generates reflection metadata automatically.
-Tests, benchmarks, and optional 3D support are disabled by default; enable them through the
-options in <a href="build/cmake-structure.html" class="xref page">CMake Infrastructure</a>.</p>
+Tests, benchmarks, coverage, and optional 3D support are disabled by default; enable them
+through the options in <a href="build/cmake-structure.html" class="xref page">CMake Infrastructure</a>.
+On Linux the build also writes a <code>nexium.desktop</code> launcher next to the executable.</p>
 </div>
 </div>
 </div>
@@ -290,18 +301,18 @@ options in <a href="build/cmake-structure.html" class="xref page">CMake Infrastr
 <h2 id="_platform_status"><a class="anchor" href="#_platform_status"></a>Platform status</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The Gitea workflow <code>.gitea/workflows/code-quality.yml</code> configures five Linux builds on
-pushes: GCC and Clang in Debug/Release with 3D off, plus Clang Debug with 3D on.
-Each builds with Ninja in <code>cpp-ci:latest</code>, runs unit tests, and checks public headers
-and layer consumers. Debug jobs add Valgrind checks; Release jobs build and smoke-run
-the ECS benchmarks. See <a href="build/ci-cd.html" class="xref page">CI coverage</a> for the exact split.
+<p>The Gitea workflow <code>.gitea/workflows/code-quality.yml</code> runs one Linux job on pull
+requests, inside <code>cpp-ci:latest</code>. It builds GCC Debug and Clang Debug sequentially with
+Ninja and 3D off, and adds copyright, clang-format, clang-tidy, unit tests, a gcovr
+coverage report, Valgrind over the unit suite, and a headless Valgrind run of the game.
+See <a href="build/ci-cd.html" class="xref page">CI coverage</a> for the full step list.
 These are configured checks; results depend on the latest workflow run. Compiler
 versions come from the container image, and no Windows job is configured.</p>
 </div>
 <div class="paragraph">
-<p>Windows support still needs validation: the application resource path is stale.
-Windows also requires Git symlink support and permission to create symlinks.
-See <a href="build/cmake-structure.html" class="xref page">CMake Infrastructure</a> for the known build limitations.</p>
+<p>Windows support still needs validation and requires Git symlink support plus permission
+to create symlinks. See <a href="build/cmake-structure.html" class="xref page">CMake Infrastructure</a> for the
+known build limitations.</p>
 </div>
 <div class="paragraph">
 <p>Continue with <a href="getting-started.html" class="xref page">Getting Started</a>.</p>

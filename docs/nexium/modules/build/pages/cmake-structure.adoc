@@ -12,19 +12,31 @@ xref:engine_architecture:module-graph.adoc[Module Graph] lists the libraries.
 |`NEXIUM_DISABLE_TESTS` |ON |Omit `Nexium_Tests`.
 |`NEXIUM_DISABLE_BENCHMARKS` |ON |Omit `Nexium_ECS_Benchmarks`.
 |`NEXIUM_ENABLE_3D_MODULE` |OFF |Enable Assimp, meshes, and related editor files.
+|`NEXIUM_ENABLE_CODE_COVERAGE` |OFF |Instrument targets and add the `Nexium_Coverage` report target.
 |`NEXIUM_VERIFY_INTERFACE_HEADER_SETS` |ON |Create explicit public-header verification targets.
 |`NEXIUM_ENABLE_LAYER_CHECKS` |ON |Create explicit layer-consumer and generated-header checks.
 |===
 
+`NEXIUM_ENABLE_CODE_COVERAGE` is checked at configure time and rejects a configuration that
+is not GCC, not `Debug`, or has tests disabled; it also requires `gcovr` and `gcov` on PATH.
+
 There are no repository CMake presets. Configure `build/` with Ninja and
 `CMAKE_BUILD_TYPE=Debug`; use a separate directory for Release or another toolchain.
+A single-configuration generator with no build type set defaults to `Debug`.
 Set `NEXIUM_DISABLE_TESTS=OFF` or `NEXIUM_DISABLE_BENCHMARKS=OFF` when those targets are needed.
 These defaults come from the root `CMakeLists.txt`; older guidance saying tests are enabled is stale.
 
 Executables go to `<build_dir>/bin/`, libraries to `<build_dir>/lib/`.
 Multi-configuration generators normally add a configuration subdirectory.
 Editor and TemplateGame are always included. The default build compiles enabled targets but does not run tests.
-There is no root coverage workflow or CTest registration.
+CTest is not used; the coverage target runs the suite itself.
+
+On Linux, `nexium_configure_application()` adds an ALL custom target that writes a
+`<application id>.desktop` launcher and copies `data/internal/icons/logo_192.png` next to the
+executable, with `Path=` set to the configured source directory. When `xdg-desktop-menu` is
+found it also defines an opt-in `TemplateGame_RegisterDesktopLauncher` target that installs
+that entry for the current user. On Windows the same function compiles
+`sources/Platform/Resources/app.rc` instead.
 
 == Target and dependency rules
 
@@ -35,14 +47,18 @@ Debug definitions affecting the ECS and graphics public APIs propagate to consum
 Most layers list sources explicitly. Editor uses `CONFIGURE_DEPENDS` globs;
 tests and game-example use ordinary globs and may need reconfiguration after adding files.
 Header sets use the shared `sources/` include root; they do not enforce private-header isolation.
+World and Editor each use a private precompiled header (`WorldPCH.h`, `EditorPCH.h`), and
+Editor marks `*.generated.h` with `SKIP_LINTING`. With 3D disabled, Editor also drops
+`Gizmo.cpp` and the two static-mesh adapters from its glob.
 
 Dependencies are configured with `EXCLUDE_FROM_ALL`; active targets determine what is built.
 Initialize submodules recursively at recorded revisions. The 3D option gates Assimp.
 Linux prefers mold, then lld; ccache is used when available.
 Runtime retains World with WHOLE_ARCHIVE, and TemplateGame retains Editor for static registrations.
 
-Windows still needs validation: the `/Z7` configuration condition precedes compiler detection,
-and game-example references `sources/Resources/app.rc` while the file is under `sources/Platform/Resources`.
+Windows still needs validation: the `/Z7` debug-information setting is guarded by `if(MSVC)`
+in the root `CMakeLists.txt` before `project()`, where `MSVC` is not yet defined, so that
+block never takes effect.
 
 == Reflection generation
 
@@ -64,6 +80,7 @@ Generated files remain beside their owning headers and must not be edited manual
 |`all_verify_interface_header_sets` |Compile exposed headers individually.
 |`Nexium_Tests` |Build with tests enabled, then run `<build_dir>/bin/Nexium_Tests` directly.
 |`TemplateGame` |Run `<build_dir>/bin/TemplateGame --timeout 5` with a display/OpenGL context.
+|`Nexium_Coverage` |Configure a dedicated GCC Debug coverage directory, build this target; it clears counters, runs the full suite, and writes HTML/JSON/text reports under `<build_dir>/coverage-report/`.
 |===
 
 Build the verification targets explicitly. Layer/header checks do not prove higher-level runtime behavior.

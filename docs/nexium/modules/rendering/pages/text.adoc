@@ -1,0 +1,71 @@
+= Text Rendering
+
+Text goes through two layers. `RawBackend::Fonts` is a thin FreeType adapter:
+`FreeTypeLibrary` owns the library handle and `RawBackend::Font::Face` exposes source paths,
+face selection, pixel sizes, and `loadChar()`. `NxSubsystems/Graphics/Font.h` wraps that in
+`NX::Face`, which is the API the engine uses; FreeType is a private dependency of
+`Nexium::Subsystem::Graphics`, so nothing above it includes FreeType headers.
+
+== Preparing a face
+
+`NX::Face` is reference-counted (`Core::IntrusiveRefCounter`), movable, and not copyable.
+The setup order matters, and each step depends on the previous one:
+
+[cols="2,4",options="header"]
+|===
+|Call |Effect
+|`setSourcePath(path)` |Select the font file. Required before anything else.
+|`getFacesNumber()` |Number of faces in the file.
+|`generateFace(index)` |Load one face, for example a single weight of a family.
+|`setPixelSize(height)` or `setPixelSize(size)` |Set the rasterization size in pixels.
+|`generateTextureASCIIGlyphs(shader)` |Rasterize glyphs and create the GPU state.
+|===
+
+`generateTextureASCIIGlyphs()` rasterizes code points 0–127 only. For each glyph it records
+size, bearing, and advance, uploads a single-channel `GL_RED` texture with
+`GL_UNPACK_ALIGNMENT` temporarily set to 1, and builds linear mipmaps. It then releases the
+FreeType face, creates the `BaseGraphicsData`, stores the passed `ShaderProgram`, fires the
+program's `OnSetVertexBuffer` event to configure the vertex layout, and reserves a dynamic
+vertex buffer for six 4-component vertices — one quad, reused for every glyph.
+
+The call needs a non-null shader and logs plus asserts otherwise. Glyphs that FreeType
+cannot load are skipped and leave an empty entry in the table.
+
+== Drawing
+
+`drawText(text, pos, camera)` binds the stored program, invalidates and uploads the camera
+matrix as `uProj`, uploads `pos` as `uPos`, activates texture unit 0, and then walks the
+string. Per character it computes the quad from the glyph's bearing and size, binds that
+glyph's texture, rewrites the shared vertex buffer with `setVertexSubBuffer`, issues
+`glDrawArrays(GL_TRIANGLES, 0, 6)`, and advances the pen by `advance >> 6` (FreeType's 26.6
+fixed point).
+
+That is one buffer upload and one draw call per character, plus a camera-matrix
+invalidation per call — the source marks the latter as needing optimization. There is no
+glyph atlas, no batching, no kerning, and no line breaking.
+
+The matching shaders are `data/assets/shaders/text.vert` and `text.frag`, registered under the
+`text` lookup name like any other pair; see xref:materials/shader-system.adoc[Shader System].
+The vertex stage takes one `vec4` per vertex (`vec2` position, `vec2` UV) at location 0 and
+builds its model matrix from `uPos`. The fragment stage samples the glyph's red channel as
+coverage and multiplies it by `uTextureColor`, which the draw path never uploads: the shader's
+own default is used, so text currently renders in that fixed colour. Neither the sampler nor
+the colour is exposed as a parameter.
+
+== Current usage
+
+`Scene` owns a single `NX::Face` member. `Scene::initialize()` points it at
+`data/internal/fonts/Inter/Inter_18pt-Black.ttf`, generates face 0 at 48 px, and passes the
+`text` program. `Scene::directDraw()` then draws a fixed `"Hello world"` at the origin every
+frame. There is no text component, no scene-authored text, and no editor property for it;
+treat this as scaffolding rather than a supported feature.
+
+Two limits to know before building on it:
+
+* The font path is relative, unlike other engine resources, which resolve against
+  `NEXIUM_PROJECT_DIR`. Loading it depends on the process working directory.
+* `drawText()` indexes the glyph table with `char`, so bytes above 127 index negatively.
+  Keep input to 7-bit ASCII until that path handles wider encodings.
+
+Implementation: `RawBackend/Fonts/FreeTypeLibrary.{h,cpp}`,
+`NxSubsystems/Graphics/Font.{h,cpp}`, and `NxWorld/Scene/Scene.cpp`.

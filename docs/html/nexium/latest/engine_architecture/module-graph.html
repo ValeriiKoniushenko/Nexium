@@ -108,6 +108,12 @@
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="input-system.html">Input System</a>
   </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="editor.html">Editor Structure</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="diagnostics.html">Diagnostics</a>
+  </li>
 </ul>
   </li>
   <li class="nav-item" data-depth="1">
@@ -122,6 +128,9 @@
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../rendering/renderer-architecture.html">Rendering Responsibilities</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../rendering/text.html">Text Rendering</a>
   </li>
   <li class="nav-item" data-depth="2">
     <button class="nav-item-toggle"></button>
@@ -244,22 +253,22 @@ Dependencies may skip layers; numbering describes their intended direction.</p>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">8</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Editor</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">ImGui windows, property adapters, selection, picking, asset tools, viewport integration.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ImGui windows, property adapters, selection, picking, gizmos, toasts, asset tools, viewport integration.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">7</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">NxRuntime</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Frame loop, timing, startup/save orchestration.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Frame loop, timing, input-context switching, startup/save orchestration.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">6</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">NxWorld</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">GameInstance, World state, Scene, actors, cameras, rectangles, animation, optional meshes.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">GameInstance, World state, input routing and controllers, framework managers, Scene, actors, cameras, rectangles, animation, optional meshes.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">5</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">NxSubsystems</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">AssetsManager, shaders/graphics data, input actions, optional Assimp importer.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">AssetsManager, shaders/graphics data, text rendering, input actions and types, optional Assimp importer.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">4</p></td>
@@ -269,7 +278,7 @@ Dependencies may skip layers; numbering describes their intended direction.</p>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">3</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">RawBackend</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">CPU images, OpenGL textures/framebuffers, drawable interface.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">CPU images, OpenGL textures/framebuffers, drawable interface, FreeType access.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">2</p></td>
@@ -279,7 +288,7 @@ Dependencies may skip layers; numbering describes their intended direction.</p>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Foundation</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Configuration, logging, data/outline interfaces, Utils core access.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Configuration, logging, data/outline interfaces, latency instrumentation, Utils core access.</p></td>
 </tr>
 </tbody>
 </table>
@@ -309,7 +318,7 @@ Foundation&#8217;s separate private logging target is disabled.</p>
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Nexium::Foundation</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Configs, BaseLog, IDataIO, IOutliner</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Configs, BaseLog, IDataIO, IOutliner, Latency collector/report/printer</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Utils::Core, spdlog::spdlog, JustReflectMe::Adapter.</p></td>
 </tr>
 <tr>
@@ -323,14 +332,29 @@ Foundation&#8217;s separate private logging target is disabled.</p>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Foundation, glfw, Utils::Core, JustReflectMe::Adapter, glm.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Nexium::RawBackend</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Image, Texture, RenderTargetToTexture, IDrawable</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Nexium::RawBackend::Graphics</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Texture, RenderTargetToTexture</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Foundation, Platform Graphics.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Nexium::RawBackend::Fonts</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">FreeTypeLibrary, FreeType face adapter</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Foundation, freetype.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Nexium::RawBackend::Common</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Image, IDrawable, Utils</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">RawBackend Graphics.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Nexium::Fundamental::Utils</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Stringifier</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Platform Graphics.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Nexium::Fundamental::Base</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">ITagHolder, Transformable</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Foundation.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Foundation, Fundamental Utils.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Nexium::Fundamental::ResourceManagement</code></p></td>
@@ -350,21 +374,21 @@ Foundation&#8217;s separate private logging target is disabled.</p>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Nexium::Fundamental::TextureAtlas</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Atlas packing and GPU texture</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Foundation, RawBackend, Core::Rectpack2D.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Foundation, RawBackend Common, Core::Rectpack2D.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Nexium::Subsystem::Graphics</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">ShaderManager, ShaderProgram, metadata, graphics data, debug lines</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ShaderManager, ShaderProgram, metadata, graphics data, debug lines, Font/Face text rendering</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Foundation, Platform Graphics, Fundamental ResourceManagement.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Nexium::Subsystem::AssetsManager</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Filesystem index and loading, TextureAsset</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Subsystem Graphics, Fundamental Assets and TextureAtlas, RawBackend.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Subsystem Graphics, Fundamental Assets and TextureAtlas, RawBackend Common.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Nexium::Subsystem::Input</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">InputAction and keyboard/mouse managers</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">InputAction, keyboard/mouse managers, InputTypes (contexts, chords, triggers)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Foundation, Platform Input.</p></td>
 </tr>
 <tr>
@@ -379,8 +403,8 @@ Foundation&#8217;s separate private logging target is disabled.</p>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Nexium::World</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">World/framework, Scene, actors, cameras, rectangles, animator, skybox types</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">World Animation, Fundamental Assets/ECS, Subsystem AssetsManager/Graphics/Input, both Platform targets, RawBackend.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">World/framework, InputSystem/InputController, framework managers and state, Scene, actors, cameras, rectangles, animator, skybox types</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">World Animation, Fundamental Assets/ECS, Subsystem AssetsManager/Graphics/Input, both Platform targets, RawBackend Common.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Nexium::Runtime</code></p></td>
@@ -389,22 +413,27 @@ Foundation&#8217;s separate private logging target is disabled.</p>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Nexium::Editor</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">EditorIntegration, GameEditor, windows, tools</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">EditorIntegration, GameEditor, windows, gizmos, picking, toasts, tools</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Runtime, Core::ImGui.</p></td>
 </tr>
 </tbody>
 </table>
 <div class="paragraph">
-<p>Platform Input privately links Platform Graphics.
-RawBackend privately links Core::Stb.
-Subsystem Graphics privately links Utils::Utils.
+<p>Platform Input privately links Platform Graphics and Core::Stb.
+All three RawBackend targets privately link Core::Stb.
+Subsystem Graphics privately links RawBackend Fonts and Utils::Utils, so FreeType stays
+behind the <code>NX::Face</code> abstraction.
 AssimpImporter privately links assimp::assimp; World additionally exposes Assimp and the importer when 3D is enabled.
-AssetsManager privately links comdlg32 on Windows.</p>
+AssetsManager privately links comdlg32 on Windows.
+Editor privately links imguizmo::imguizmo.</p>
 </div>
 <div class="paragraph">
-<p><code>Nexium::Fundamental</code> is an INTERFACE aggregate of its five focused targets.
+<p><code>Nexium::Fundamental</code> is an INTERFACE aggregate of its six focused targets, including
+<code>Nexium::Fundamental::Utils</code>.
 <code>Nexium::NxFundamental</code>, <code>Nexium::NxWorld</code>, and <code>Nexium::NxRuntime</code> preserve old aliases.
-<code>Nexium::World::Scene</code> aliases World; it is not a separate scene library.</p>
+<code>Nexium::World::Scene</code> aliases World; it is not a separate scene library.
+There is no combined <code>Nexium::RawBackend</code> target: link the Graphics, Fonts, or Common
+target you actually need.</p>
 </div>
 <div class="paragraph">
 <p>The application chain is <code>TemplateGame &#8594; Editor &#8594; Runtime &#8594; World</code>.
@@ -453,6 +482,10 @@ WHOLE_ARCHIVE retains otherwise unreferenced component registrations in these st
 <td class="tableblock halign-left valign-top"><p class="tableblock">Owns lighting/time and game/player/level state; observes currentCamera. Scene is its sibling, not its child.</p></td>
 </tr>
 <tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>InputSystem</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Singleton; holds non-owning InputController pointers per context. Controllers unregister themselves on destruction.</p></td>
+</tr>
+<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Scene</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Owns root SceneObjects through intrusive pointers, plus grid/skybox state.</p></td>
 </tr>
@@ -480,7 +513,9 @@ WHOLE_ARCHIVE retains otherwise unreferenced component registrations in these st
 </div>
 <div class="paragraph">
 <p>RawBackend&#8217;s <code>IDrawable</code> still names higher-layer camera/actor/mesh types through forward declarations.
-<code>Scene::directDraw</code> chooses the camera and editor grid through global GameInstance/World access.</p>
+<code>Scene::directDraw</code> receives the skybox and grid programs from Runtime, but still reaches the
+camera through <code>GetWorld()</code> and the render mode through the global <code>gGameInstance</code>.
+<code>InputSystem</code> is a <code>Core::Singleton</code>, so input routing is global rather than owned by a session.</p>
 </div>
 <div class="paragraph">
 <p>Public header sets support compilation checks, but the shared <code>sources/</code> include root also exposes private headers.

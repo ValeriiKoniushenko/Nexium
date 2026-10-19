@@ -4,10 +4,14 @@
 
 The loop in `NxRuntime/Runtime.cpp` uses the previous frame's measured delta; the first delta is zero.
 
+Before the loop starts, Runtime sets the clear color and the global GL state once:
+`GL_BLEND`, `GL_CULL_FACE`, and `GL_STENCIL_TEST` enabled, `GL_DEPTH_TEST` *disabled*.
+Every clear uses colour + depth + stencil bits.
+
 [cols="1,3,3",options="header"]
 |===
 |Step |GameOnly |Editor
-|1 |Poll window events and tick Scene. |Poll events; tick Scene only when the viewport is focused.
+|1 |Poll events, route input, tick Scene. |Poll events, route input; tick Scene only when the viewport is focused.
 |2 |Clear the window; update integration keyboard actions if attached. |Clear the window; update editor windows/input and submit ImGui drawing.
 |3 |Use the active camera to draw Scene into the window. |Process picking, bind and clear the viewport target, then draw Scene.
 |4 |Call GameInstance's tick hook after drawing. |Call that hook while the viewport target is still bound, then bind framebuffer 0.
@@ -20,8 +24,11 @@ the previous scene render. There is no independent simulation/render clock.
 
 == Scene draw order
 
-`Scene::directDraw()` reads World's active camera, then:
+Runtime passes the `skybox` and `grid` programs into `Scene::directDraw(skyboxShader, gridShader)`.
+The method returns immediately when there is no World or no active camera, and otherwise:
 
+. Draws a hard-coded `"Hello world"` string through the scene's own `NX::Face`. This is a
+  development leftover in the normal draw path, not a feature.
 . Draws the grid in Editor mode.
 . Handles enabled root mesh bundles when 3D is compiled in, collecting those marked post-draw.
 . Calls `draw()` on the root objects.
@@ -29,7 +36,8 @@ the previous scene render. There is no independent simulation/render clock.
 
 This is an explicit sequence, not a depth-sorted transparent pass. The general root loop also
 calls mesh roots; do not infer a once-per-object guarantee from the post-draw flag.
-Skybox lookup/initialization is unfinished. Ordinary `SceneObject::draw()` checks its enabled flag;
+The skybox is drawn only for a perspective camera and only when a `skybox` program exists;
+`AssetsManager::getSkybox()` still asserts "Not implemented", so skybox assets cannot be loaded. Ordinary `SceneObject::draw()` checks its enabled flag;
 component tick traversal does not automatically imply child rendering.
 
 == Example: one atlas-backed rectangle
@@ -61,6 +69,9 @@ include::example$rectangle.cpp[tag=rectangle_draw_uniforms,indent=0]
 
 With blending enabled, the fragment shader discards samples below alpha 0.1 and the draw uses
 source-alpha blending. Disabling blending forces fragment alpha to 1 and uses replacement blending.
-Depth testing remains enabled by Runtime; alpha blending alone does not establish correct transparent ordering.
+Runtime disables depth testing for the whole run, so draw order alone decides what covers what:
+2D roots paint in scene-object order, and the alpha discard is what keeps sprite edges clean.
+Any depth-dependent content has to enable and manage `GL_DEPTH_TEST` itself.
 
-See xref:materials/shader-system.adoc[Shader System] for the matching GLSL and binding sequence.
+See xref:materials/shader-system.adoc[Shader System] for the matching GLSL and binding sequence,
+and xref:text.adoc[Text Rendering] for the glyph path.
