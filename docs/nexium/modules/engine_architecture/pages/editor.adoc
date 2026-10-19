@@ -65,9 +65,8 @@ scene replacement does not clear selection. See xref:memory.adoc[Memory and Owne
 == Known gaps
 
 * There is no command/undo layer: property edits, transforms, and create/delete apply directly.
-* The menu bar has a Play toggle backed by `GameEditor::getIsRunSimulation()`, but nothing else
-  reads that flag, so it does not start or stop a simulation. Render-mode switching (F1) shares
-  the authored scene; see xref:lifecycle.adoc[Application Lifecycle].
+* There is no Play/Stop control. Render-mode switching (F1) shares the authored scene, so
+  gameplay edits are editor edits; see xref:lifecycle.adoc[Application Lifecycle].
 * Save notifications are raised without verifying that every write succeeded; see
   xref:file-io.adoc[File I/O].
 

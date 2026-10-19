@@ -45,7 +45,6 @@ namespace NX
         StringAtom _cachedFpsText = _fpsText;
         Repeater _slowUpdater;
         float _fpsTextSize = 50.f;
-        float _simulationButton = 50.f;
     };
 } // namespace NX
 

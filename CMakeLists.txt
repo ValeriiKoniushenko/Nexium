@@ -1,13 +1,14 @@
 cmake_minimum_required(VERSION 3.30)
 
+project(Nexium VERSION 1.0 LANGUAGES CXX)
+
 if(MSVC)
     # Use /Z7 so debug builds remain compatible with ccache.
+    # MSVC is only defined after project(), so this must stay below it.
     set(CMAKE_MSVC_DEBUG_INFORMATION_FORMAT
         "$<$<CONFIG:Debug,RelWithDebInfo>:Embedded>"
     )
 endif()
-
-project(Nexium VERSION 1.0 LANGUAGES CXX)
 
 if(NOT CMAKE_CONFIGURATION_TYPES AND NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Debug CACHE STRING "Build configuration" FORCE)

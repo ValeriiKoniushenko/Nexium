@@ -339,9 +339,8 @@ scene replacement does not clear selection. See <a href="memory.html" class="xre
 <p>There is no command/undo layer: property edits, transforms, and create/delete apply directly.</p>
 </li>
 <li>
-<p>The menu bar has a Play toggle backed by <code>GameEditor::getIsRunSimulation()</code>, but nothing else
-reads that flag, so it does not start or stop a simulation. Render-mode switching (F1) shares
-the authored scene; see <a href="lifecycle.html" class="xref page">Application Lifecycle</a>.</p>
+<p>There is no Play/Stop control. Render-mode switching (F1) shares the authored scene, so
+gameplay edits are editor edits; see <a href="lifecycle.html" class="xref page">Application Lifecycle</a>.</p>
 </li>
 <li>
 <p>Save notifications are raised without verifying that every write succeeded; see

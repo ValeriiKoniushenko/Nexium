@@ -35,7 +35,7 @@ not disposable caches. Check Logs after saving; the current success notification
 
 For a brief launch check, run `build/bin/TemplateGame --timeout 5`; it still requires graphics and saves on exit.
 Without a display, `NEXIUM_HEADLESS_GL=1` under Xvfb requests a 4.5 context, which is how CI runs it.
-The menu bar's Play toggle is currently inert; F1 only switches the render path.
+There is no Play/Stop control; F1 only switches the render path.
 To change gameplay, start with `game-example/TemplateGameInstance` and registered C++ components,
 then rebuild. See xref:gameplay:scripting.adoc[Gameplay Hooks] and
 xref:gameplay:scenes.adoc[Scenes] for update and persistence behavior.

@@ -68,7 +68,6 @@ namespace NX
 
         const auto& style = ImGui::GetStyle();
         _fpsTextSize = ImGui::CalcTextSize(_fpsTextTemplate).x + style.ItemSpacing.x;
-        _simulationButton = ImGui::CalcTextSize(ICON_FA_PLAY_CIRCLE).x + style.ItemSpacing.x * 2.f;
     }
 
     void EditorMenuBarWindowEWC::onClose()
@@ -127,20 +126,6 @@ namespace NX
         ImGui::SetCursorPosX(offset);
         ImGui::TextUnformatted(_cachedFpsText.c_str());
         ImGui::SameLine(0, 0);
-
-        /*
-        offset -= style.ItemSpacing.x * 2.f;
-        offset -= _simulationButton - style.ItemSpacing.x;
-        ImGui::SetCursorPosX(offset);
-
-        if (ToggleButton(ICON_FA_PLAY_CIRCLE, GetEditor()->getIsRunSimulation(),
-                         BaseEWC::ColorSoftGreen, BaseEWC::ColorRed))
-        {
-            GetEditor()->toggleSimulation();
-        }
-        ImGui::SameLine(0,0);
-        offset -= style.ItemSpacing.x * 2.f;
-        */
     }
 
     void EditorMenuBarWindowEWC::onUpdate()
