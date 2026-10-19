@@ -18,7 +18,8 @@ namespace NX
 {
     namespace
     {
-        constexpr auto RoutedChannels = std::array{ InputChannel::Keyboard, InputChannel::Pointer };
+        constexpr auto gcPossibleRoutingChannels
+            = std::array{ InputChannel::Keyboard, InputChannel::Pointer };
 
         InputChannel ChannelOf(const KeyInputEvent& event)
         {
@@ -39,7 +40,7 @@ namespace NX
         const bool enabled = !InputCapture::isActive() && controller.isInputEnabled();
         const auto context = controller.getInputContext();
 
-        for (const auto channel : RoutedChannels)
+        for (const auto channel : gcPossibleRoutingChannels)
         {
             if (enabled && contexts.isAvailable(context, channel))
             {
@@ -70,7 +71,7 @@ namespace NX
 
         for (const auto& layer : contexts.getLayers())
         {
-            if (!hasInputChannel(layer.channels, channel))
+            if (!HasInputChannel(layer.channels, channel))
             {
                 continue;
             }

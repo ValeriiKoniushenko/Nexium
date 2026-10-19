@@ -80,7 +80,7 @@ namespace NX
         return it == _controllers.end() ? nullptr : &*it;
     }
 
-    std::vector<InputRouter::Handle> InputRouter::snapshot() const
+    std::vector<InputRouter::Handle> InputRouter::inputControllerSnapshot() const
     {
         std::vector<Handle> result;
         result.reserve(_controllers.size());
@@ -91,19 +91,20 @@ namespace NX
         return result;
     }
 
-    void InputRouter::synchronize(Handle handle, const InputContextStack& contexts,
-                                  const InputDeviceState& devices)
+    void InputRouter::synchronize(Handle handle, const InputContextStack& currentContext,
+                                  const InputDeviceState& currentDevices)
     {
         if (auto* entry = find(handle))
         {
-            _synchronizer.synchronizeChannels(*handle.controller, entry->state, contexts, devices);
+            _synchronizer.synchronizeChannels(*handle.controller, entry->state, currentContext,
+                                              currentDevices);
         }
 
         // Re-find the registration: synchronization can invalidate cached addresses.
         if (auto* current = find(handle))
         {
             _synchronizer.cancelBlockedBindings(
-                *handle.controller, current->state, contexts, devices,
+                *handle.controller, current->state, currentContext, currentDevices,
                 [this](InputContext context, const KeyInputEvent& event)
                 { return contextClaimsInput(context, event); });
         }
@@ -141,19 +142,19 @@ namespace NX
     void InputRouter::synchronize(const InputContextStack& contexts,
                                   const InputDeviceState& devices)
     {
-        observeDevices(devices);
-        for (const Handle handle : snapshot())
+        observeDevicesAndEraseReleasedButtons(devices);
+        for (const Handle handle : inputControllerSnapshot())
         {
             synchronize(handle, contexts, devices);
         }
     }
 
     /// @brief Removes released buttons from input quarantine and pointer capture.
-    void InputRouter::observeDevices(const InputDeviceState& devices)
+    void InputRouter::observeDevicesAndEraseReleasedButtons(const InputDeviceState& devices)
     {
         for (auto& entry : _controllers)
         {
-            entry.state.observeDevices(devices);
+            entry.state.observeDevicesAndEraseReleasedButtons(devices);
         }
     }
 
@@ -175,7 +176,7 @@ namespace NX
     void InputRouter::beginFrame(const InputContextStack& contexts, const InputDeviceState& devices)
     {
         synchronize(contexts, devices);
-        for (const auto handle : snapshot())
+        for (const auto handle : inputControllerSnapshot())
         {
             if (find(handle))
             {
@@ -190,7 +191,7 @@ namespace NX
         synchronize(contexts, devices);
         if (event.isButtonEventType() && event.state == Platform::Keyboard::KeyState::Released)
         {
-            routeReleasedEvent(event, snapshot());
+            routeReleasedEvent(event, inputControllerSnapshot());
             return;
         }
 
@@ -201,10 +202,10 @@ namespace NX
         }
 
         const InputChannel channel = ChannelOf(event);
-        const auto handles = snapshot();
+        const auto handles = inputControllerSnapshot();
         for (const auto& layer : contexts.getLayers())
         {
-            if (!hasInputChannel(layer.channels, channel))
+            if (!HasInputChannel(layer.channels, channel))
             {
                 continue;
             }
@@ -301,7 +302,7 @@ namespace NX
 
     void InputRouter::cancelAll()
     {
-        for (const auto handle : snapshot())
+        for (const auto handle : inputControllerSnapshot())
         {
             if (auto* entry = find(handle))
             {

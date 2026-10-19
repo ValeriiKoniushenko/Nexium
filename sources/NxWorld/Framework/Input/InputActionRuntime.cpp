@@ -124,7 +124,7 @@ namespace NX
     void InputActionRuntime::cancel(InputChannel channels)
     {
         const auto affected = [channels](const ActiveBinding& binding)
-        { return hasInputChannel(channels, GetBindingChannel(binding.binding)); };
+        { return HasInputChannel(channels, GetBindingChannel(binding.binding)); };
         std::erase_if(_activeBindings, affected);
         std::erase_if(_transientBindings, affected);
         rebuildStates();

@@ -32,7 +32,7 @@ namespace NX
         void refreshController(InputController* controller, const InputContextStack& contexts,
                                const InputDeviceState& devices);
         void synchronize(const InputContextStack& contexts, const InputDeviceState& devices);
-        void observeDevices(const InputDeviceState& devices);
+        void observeDevicesAndEraseReleasedButtons(const InputDeviceState& devices);
         void beginFrame(const InputContextStack& contexts, const InputDeviceState& devices);
         void route(const KeyInputEvent& event, const InputContextStack& contexts,
                    const InputDeviceState& devices);
@@ -43,8 +43,8 @@ namespace NX
     private:
         struct Handle
         {
-            InputController* controller;
-            std::uint64_t id;
+            InputController* controller = nullptr;
+            std::uint64_t id = 0;
         };
 
         struct Registration
@@ -83,7 +83,7 @@ namespace NX
                                                const KeyInputEvent& event, bool pointerCaptured);
         [[nodiscard]] Registration* find(Handle handle);
         [[nodiscard]] const Registration* find(Handle handle) const;
-        [[nodiscard]] std::vector<Handle> snapshot() const;
+        [[nodiscard]] std::vector<Handle> inputControllerSnapshot() const;
         void synchronize(Handle handle, const InputContextStack& contexts,
                          const InputDeviceState& devices);
         [[nodiscard]] bool contextClaimsInput(InputContext context,

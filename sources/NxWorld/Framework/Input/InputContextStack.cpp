@@ -62,7 +62,7 @@ namespace NX
     {
         for (const auto& layer : getLayers())
         {
-            if (!hasInputChannel(layer.channels, channel))
+            if (!HasInputChannel(layer.channels, channel))
             {
                 continue;
             }

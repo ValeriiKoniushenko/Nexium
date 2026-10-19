@@ -30,17 +30,17 @@ namespace NX
         EditorViewport,
         Modal,
         TextInput,
-        BindingCapture
+        BindingCapture,
     };
 
     enum class InputChannel : std::uint8_t
     {
-        Keyboard = 1,
-        Pointer = 2, // mouse
-        All = 3
+        Keyboard = 1 << 0,
+        Pointer = 1 << 1, // Mouse
+        All = Keyboard | Pointer,
     };
 
-    [[nodiscard]] constexpr bool hasInputChannel(InputChannel mask, InputChannel channel) noexcept
+    [[nodiscard]] constexpr bool HasInputChannel(InputChannel mask, InputChannel channel) noexcept
     {
         return (static_cast<std::uint8_t>(mask) & static_cast<std::uint8_t>(channel)) != 0;
     }
@@ -49,7 +49,7 @@ namespace NX
     {
         Button,
         PointerMove,
-        Wheel
+        Wheel,
     };
 
     ENUM_CLASS();
@@ -60,7 +60,7 @@ namespace NX
         Control = 1 << 1,
         Alt = 1 << 2,
         Super = 1 << 3,
-        All = (1 << 4) - 1
+        All = (1 << 4) - 1,
     };
     // end::input-enums[]
 

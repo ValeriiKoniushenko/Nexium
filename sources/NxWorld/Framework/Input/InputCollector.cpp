@@ -51,11 +51,11 @@ namespace NX
         {
             return;
         }
-        _events.push_back({ .key = key,
-                            .state = state,
-                            .modifiers = ConvertModifiers(mods),
-                            .scancode = scancode,
-                            .pressedKeys = {} });
+        _events.emplace_back(KeyInputEvent{ .key = key,
+                                            .state = state,
+                                            .modifiers = ConvertModifiers(mods),
+                                            .scancode = scancode,
+                                            .pressedKeys = {} });
     }
 
     void InputCollector::pushMouseEvent(Platform::Mouse::Key button, Platform::Mouse::State state,
@@ -67,12 +67,12 @@ namespace NX
             return;
         }
 
-        _events.push_back({ .key = button,
-                            .state = state == Platform::Mouse::State::Press
-                                         ? Platform::Keyboard::KeyState::Pressed
-                                         : Platform::Keyboard::KeyState::Released,
-                            .modifiers = ConvertModifiers(static_cast<int>(mods)),
-                            .pressedKeys = {} });
+        _events.emplace_back(KeyInputEvent{ .key = button,
+                                            .state = state == Platform::Mouse::State::Press
+                                                         ? Platform::Keyboard::KeyState::Pressed
+                                                         : Platform::Keyboard::KeyState::Released,
+                                            .modifiers = ConvertModifiers(static_cast<int>(mods)),
+                                            .pressedKeys = {} });
     }
 
     InputModifier InputCollector::ConvertModifiers(int mods)
@@ -99,12 +99,13 @@ namespace NX
 
     void InputCollector::pushPointerEvent(glm::vec2 position)
     {
-        _events.push_back({ .type = InputEventType::PointerMove, .position = position });
+        _events.emplace_back(
+            KeyInputEvent{ .type = InputEventType::PointerMove, .position = position });
     }
 
     void InputCollector::pushWheelEvent(glm::vec2 offset)
     {
-        _events.push_back({ .type = InputEventType::Wheel, .value = offset });
+        _events.emplace_back(KeyInputEvent{ .type = InputEventType::Wheel, .value = offset });
     }
 
     bool InputCollector::pollEvent(KeyInputEvent& event)

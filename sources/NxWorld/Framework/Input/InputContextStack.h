@@ -14,7 +14,7 @@ namespace NX
     enum class InputContextPolicy
     {
         ConsumeMatched,
-        BlockLower
+        BlockLower,
     };
 
     struct InputContextLayer

@@ -28,7 +28,7 @@ namespace NX
         [[nodiscard]] bool hasPointerCapture() const noexcept { return !_pointerCaptures.empty(); }
 
         void updateChannels(InputChannel available, const InputDeviceState& devices);
-        void observeDevices(const InputDeviceState& devices);
+        void observeDevicesAndEraseReleasedButtons(const InputDeviceState& devices);
         void releaseButton(const KeyInputEvent& event);
         void capturePointer(InputButton button, const InputBinding& binding);
         void cancelMatchingPointerCaptures(
@@ -49,6 +49,8 @@ namespace NX
         void blockHeldButtons(InputChannel channels, const InputDeviceState& devices);
 
         InputChannel _available{};
+
+        // TODO: split it to two+ classes: keyboard, mouse, joystic, etc
         std::vector<InputButton> _blockedButtons;
         std::vector<PointerCapture> _pointerCaptures;
     };

@@ -4,6 +4,8 @@
 
 #include "InputSystem.h"
 
+#include "NxSubsystems/Input/InputTypes.h"
+
 #include <utility>
 
 namespace NX
@@ -51,6 +53,11 @@ namespace NX
 
         while (_collector.pollEvent(raw))
         {
+            if (raw.type == InputEventType::PointerMove)
+            {
+                continue;
+            }
+
             if (raw.type == InputEventType::Button)
             {
                 InputCapture::updateButton(raw.key, raw.state);
@@ -61,7 +68,7 @@ namespace NX
             if (InputCapture::isActive())
             {
                 // Captured events bypass route(), which normally observes the device state.
-                _router.observeDevices(_devices);
+                _router.observeDevicesAndEraseReleasedButtons(_devices);
                 _router.cancelAll();
             }
             else
