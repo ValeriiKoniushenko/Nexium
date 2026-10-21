@@ -22,12 +22,12 @@ namespace NX
     class InputRoutingState
     {
     public:
-        [[nodiscard]] bool canReceive(InputChannel channel) const;
+        [[nodiscard]] bool canReceive(std::uint8_t channel) const;
         [[nodiscard]] bool acceptsEvent(const KeyInputEvent& event, bool pointerCaptured) const;
         [[nodiscard]] KeyInputEvent prepareEvent(const KeyInputEvent& event) const;
         [[nodiscard]] bool hasPointerCapture() const noexcept { return !_pointerCaptures.empty(); }
 
-        void updateChannels(InputChannel available, const InputDeviceState& devices);
+        void updateChannels(std::uint8_t available, const InputDeviceState& devices);
         void observeDevicesAndEraseReleasedButtons(const InputDeviceState& devices);
         void releaseButton(const KeyInputEvent& event);
         void capturePointer(InputButton button, const InputBinding& binding);
@@ -46,9 +46,9 @@ namespace NX
         };
 
         void blockButton(InputButton button);
-        void blockHeldButtons(InputChannel channels, const InputDeviceState& devices);
+        void blockHeldButtons(std::uint8_t channels, const InputDeviceState& devices);
 
-        InputChannel _available{};
+        std::uint8_t _available{};
 
         // TODO: split it to two+ classes: keyboard, mouse, joystic, etc
         std::vector<InputButton> _blockedButtons;

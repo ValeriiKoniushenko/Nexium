@@ -31,7 +31,7 @@ TEST(InputContextStackTests, NewestOverlayTakesPriorityOnItsChannelsUntilClosed)
         { .context = InputContext::Modal, .policy = InputContextPolicy::BlockLower });
     auto upper = system.pushContext({ .context = InputContext::TextInput,
                                       .policy = InputContextPolicy::BlockLower,
-                                      .channels = InputChannel::Keyboard });
+                                      .channels = InputChannel_Keyboard });
 
     Platform::GetWindow().onKeyPressed->trigger(Platform::Keyboard::Key::W, 0,
                                                 Platform::Keyboard::KeyState::Pressed, 0);

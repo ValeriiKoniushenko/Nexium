@@ -566,7 +566,7 @@ namespace NX
             "Del object from scene"_atom, KeyChord::Exact(Keyboard::Key::Delete),
             [](const InputActionEvent& event)
             {
-                if (event.modifiers == InputModifier::None)
+                if (event.modifiers == InputModifier_None)
                 {
                     for (auto&& obj :
                          GetObjectSelectorManager()->getSelectedObjects() | std::views::values)

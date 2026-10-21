@@ -420,7 +420,7 @@ TEST_F(InputControllerTests, MostSpecificMouseChordWinsAndRightModifiersWork)
     EXPECT_TRUE(controller->isActive("Modified"_atom));
     EXPECT_FALSE(controller->isActive("Plain"_atom));
     EXPECT_EQ(controller->getActionModifiers("Modified"_atom),
-              InputModifier::Control | InputModifier::Shift);
+              InputModifier_Control | InputModifier_Shift);
 }
 
 TEST_F(InputControllerTests, KeyboardTriggerCanRequireMouseAndKeyboardButtons)
@@ -579,12 +579,11 @@ TEST_F(InputControllerTests, MouseSerializationPreservesMixedChordAndTrigger)
 // tag::input-legacy-json[]
 TEST_F(InputControllerTests, MouseSupportPreservesLegacyKeyboardSerialization)
 {
-    const nlohmann::json legacy{
-        { "action", "Save" },
-        { "key", static_cast<int>(Key::S) },
-        { "requiredKeys", { "Left_Shift", static_cast<int>(Key::Left_Alt) } },
-        { "requiredModifiers", static_cast<int>(InputModifier::Control) }
-    };
+    const nlohmann::json legacy{ { "action", "Save" },
+                                 { "key", static_cast<int>(Key::S) },
+                                 { "requiredKeys",
+                                   { "Left_Shift", static_cast<int>(Key::Left_Alt) } },
+                                 { "requiredModifiers", static_cast<int>(InputModifier_Control) } };
     const auto restored = legacy.get<InputController::Binding>();
     EXPECT_EQ(restored.action, "Save"_atom);
     EXPECT_EQ(restored.chord.triggerKey, Key::S);

@@ -75,24 +75,24 @@ namespace NX
                                             .pressedKeys = {} });
     }
 
-    InputModifier InputCollector::ConvertModifiers(int mods)
+    std::uint8_t InputCollector::ConvertModifiers(int mods)
     {
-        auto result = NX::InputModifier::None;
+        std::uint8_t result = InputModifier_None;
         if (mods & GLFW_MOD_SHIFT)
         {
-            result = result | NX::InputModifier::Shift;
+            result |= NX::InputModifier_Shift;
         }
         if (mods & GLFW_MOD_CONTROL)
         {
-            result = result | NX::InputModifier::Control;
+            result |= NX::InputModifier_Control;
         }
         if (mods & GLFW_MOD_ALT)
         {
-            result = result | NX::InputModifier::Alt;
+            result |= NX::InputModifier_Alt;
         }
         if (mods & GLFW_MOD_SUPER)
         {
-            result = result | NX::InputModifier::Super;
+            result |= NX::InputModifier_Super;
         }
         return result;
     }

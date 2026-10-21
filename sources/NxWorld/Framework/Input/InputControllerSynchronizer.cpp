@@ -19,15 +19,15 @@ namespace NX
     namespace
     {
         constexpr auto gcPossibleRoutingChannels
-            = std::array{ InputChannel::Keyboard, InputChannel::Pointer };
+            = std::array{ InputChannel_Keyboard, InputChannel_Pointer };
 
-        InputChannel ChannelOf(const KeyInputEvent& event)
+        std::uint8_t ChannelOf(const KeyInputEvent& event)
         {
             if (event.type != InputEventType::Button)
             {
-                return InputChannel::Pointer;
+                return InputChannel_Pointer;
             }
-            return event.key.isMouse() ? InputChannel::Pointer : InputChannel::Keyboard;
+            return event.key.isMouse() ? InputChannel_Pointer : InputChannel_Keyboard;
         }
     } // namespace
 
@@ -44,17 +44,16 @@ namespace NX
         {
             if (enabled && contexts.isAvailable(context, channel))
             {
-                availableChannels |= static_cast<std::uint8_t>(channel);
+                availableChannels |= channel;
             }
         }
 
-        state.updateChannels(static_cast<InputChannel>(availableChannels), devices);
+        state.updateChannels(availableChannels, devices);
 
-        const auto canceledChannels
-            = static_cast<std::uint8_t>(InputChannel::All) & ~availableChannels;
+        const auto canceledChannels = InputChannel_All & ~availableChannels;
         if (canceledChannels)
         {
-            controller.cancelInput(static_cast<InputChannel>(canceledChannels));
+            controller.cancelInput(canceledChannels);
         }
     }
 
@@ -71,7 +70,7 @@ namespace NX
 
         for (const auto& layer : contexts.getLayers())
         {
-            if (!HasInputChannel(layer.channels, channel))
+            if ((layer.channels & channel) == 0)
             {
                 continue;
             }

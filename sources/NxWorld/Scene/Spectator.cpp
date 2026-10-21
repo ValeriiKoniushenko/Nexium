@@ -169,8 +169,7 @@ namespace NX
             "Scroll camera"_atom,
             [this, input](const InputActionEvent& event)
             {
-                const bool shifted
-                    = (event.modifiers & InputModifier::Shift) != InputModifier::None;
+                const bool shifted = (event.modifiers & InputModifier_Shift) != InputModifier_None;
                 const auto mlt = input->speed / (shifted ? leftShiftMlt : 1.f);
                 moveForward(-event.value.y * mlt * gGameInstance->world.getTimeDelta());
             });
@@ -219,8 +218,8 @@ namespace NX
         input->setActionCallback("Pan camera"_atom,
                                  [this](const InputActionEvent& event)
                                  {
-                                     const bool shifted = (event.modifiers & InputModifier::Shift)
-                                                          != InputModifier::None;
+                                     const bool shifted = (event.modifiers & InputModifier_Shift)
+                                                          != InputModifier_None;
                                      const auto* camera = findFirstChildOf<OrthographicCamera>();
                                      const float zoom = camera ? camera->getZoom() : 1.f;
                                      const float mlt = (shifted ? 5.f : 1.f) / zoom;
@@ -235,13 +234,13 @@ namespace NX
             {
                 auto offset = event.value;
                 float mlt = baseMlt;
-                if ((event.modifiers & InputModifier::Shift) != InputModifier::None)
+                if ((event.modifiers & InputModifier_Shift) != InputModifier_None)
                 {
                     mlt = leftShiftMlt;
                 }
                 offset *= mlt;
 
-                if ((event.modifiers & InputModifier::Control) != InputModifier::None)
+                if ((event.modifiers & InputModifier_Control) != InputModifier_None)
                 {
                     if (auto* camera = findFirstChildOf<OrthographicCamera>())
                     {

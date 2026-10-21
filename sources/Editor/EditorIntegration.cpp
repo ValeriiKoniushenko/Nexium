@@ -107,18 +107,18 @@ namespace NX
         const bool pointerCaptured = input.hasPointerCapture();
         setOverlay(_viewportHoverContext,
                    editorVisible && (viewportHovered || pointerCaptured) && !viewportFocused,
-                   { .context = InputContext::EditorViewport, .channels = InputChannel::Pointer });
+                   { .context = InputContext::EditorViewport, .channels = InputChannel_Pointer });
         setOverlay(_textInputContext,
                    editorVisible
                        && (io.WantTextInput || (io.WantCaptureKeyboard && !viewportFocused)),
                    { .context = InputContext::TextInput,
                      .policy = InputContextPolicy::BlockLower,
-                     .channels = InputChannel::Keyboard });
+                     .channels = InputChannel_Keyboard });
         setOverlay(_pointerCaptureContext,
                    editorVisible && io.WantCaptureMouse && !viewportHovered && !pointerCaptured,
                    { .context = InputContext::TextInput,
                      .policy = InputContextPolicy::BlockLower,
-                     .channels = InputChannel::Pointer });
+                     .channels = InputChannel_Pointer });
     }
     // end::input-editor-routing[]
 

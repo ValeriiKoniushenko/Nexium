@@ -78,7 +78,7 @@ namespace NX
         };
 
         [[nodiscard]] static bool canReceive(const Registration& registration,
-                                             InputChannel channel);
+                                             std::uint8_t channel);
         [[nodiscard]] static bool acceptsEvent(const Registration& registration,
                                                const KeyInputEvent& event, bool pointerCaptured);
         [[nodiscard]] Registration* find(Handle handle);
@@ -95,7 +95,7 @@ namespace NX
             const KeyInputEvent& event, InputContext context,
             std::span<const Handle> handles) const;
         void dispatchDeliveries(std::span<const PendingDelivery> deliveries, InputContext context,
-                                InputChannel channel, const InputContextStack& contexts);
+                                std::uint8_t channel, const InputContextStack& contexts);
 
         InputControllerSynchronizer _synchronizer;
         std::vector<Registration> _controllers;

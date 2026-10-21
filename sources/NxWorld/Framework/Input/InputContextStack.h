@@ -26,7 +26,7 @@ namespace NX
     {
         InputContext context = InputContext::Editor;
         InputContextPolicy policy = InputContextPolicy::ConsumeMatched;
-        InputChannel channels = InputChannel::All;
+        std::uint8_t channels = InputChannel_All;
     };
     // end::input-context-layer[]
 
@@ -41,13 +41,13 @@ namespace NX
         [[nodiscard]] LayerId push(InputContextLayer layer);
         bool pop(LayerId id);
         [[nodiscard]] std::vector<InputContextLayer> getLayers() const;
-        [[nodiscard]] bool isAvailable(InputContext context, InputChannel channel) const;
+        [[nodiscard]] bool isAvailable(InputContext context, std::uint8_t channel) const;
         // end::input-context-stack-api[]
 
     private:
         struct Entry
         {
-            LayerId id;
+            LayerId id = 0;
             InputContextLayer layer;
         };
 

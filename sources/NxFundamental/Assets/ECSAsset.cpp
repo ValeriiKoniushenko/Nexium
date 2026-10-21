@@ -26,7 +26,7 @@ namespace
         {
             Updated,
             Added,
-            Removed
+            Removed,
         };
 
         std::string path;

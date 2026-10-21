@@ -21,14 +21,14 @@ namespace NX
     {
     public:
         [[nodiscard]] bool isActive(const Core::StringAtom& action) const;
-        [[nodiscard]] InputModifier getModifiers(const Core::StringAtom& action) const;
+        [[nodiscard]] std::uint8_t getModifiers(const Core::StringAtom& action) const;
         [[nodiscard]] glm::vec2 getValue(const Core::StringAtom& action) const;
 
         [[nodiscard]] std::optional<InputActionEvent> activate(const InputBinding& binding,
                                                                const KeyInputEvent& event);
         [[nodiscard]] std::vector<InputActionEvent> release(const KeyInputEvent& event);
         void beginFrame();
-        void cancel(InputChannel channels = InputChannel::All);
+        void cancel(std::uint8_t channels = InputChannel_All);
         void cancelAction(const Core::StringAtom& action);
         void cancelMatching(const std::function<bool(const InputBinding&)>& predicate);
 
@@ -36,7 +36,7 @@ namespace NX
         struct ActiveBinding
         {
             InputBinding binding;
-            InputModifier modifiers = InputModifier::None;
+            std::uint8_t modifiers = InputModifier_None;
             glm::vec2 value{};
             glm::vec2 position{};
         };
@@ -44,7 +44,7 @@ namespace NX
         struct ActionState
         {
             bool active = false;
-            InputModifier modifiers = InputModifier::None;
+            std::uint8_t modifiers = InputModifier_None;
             glm::vec2 value{};
         };
 

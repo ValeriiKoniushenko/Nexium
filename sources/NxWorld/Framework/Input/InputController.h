@@ -78,7 +78,7 @@ namespace NX
         {
             return isActive(action);
         }
-        [[nodiscard]] InputModifier getActionModifiers(const Core::StringAtom& action) const;
+        [[nodiscard]] std::uint8_t getActionModifiers(const Core::StringAtom& action) const;
         [[nodiscard]] glm::vec2 getActionValue(const Core::StringAtom& action) const;
         [[nodiscard]] const std::vector<Binding>& getBindings() const noexcept { return _bindings; }
 
@@ -103,7 +103,7 @@ namespace NX
         void handleRoutedEvent(const KeyInputEvent& event, const Binding& binding);
         void handleReleasedEvent(const KeyInputEvent& event);
         void beginInputFrame();
-        void cancelInput(InputChannel channels = InputChannel::All);
+        void cancelInput(std::uint8_t channels = InputChannel_All);
         void cancelMatchingBindings(const std::function<bool(const Binding&)>& predicate);
         void releaseAllActions() { cancelInput(); }
         void emitAction(const InputActionEvent& event);

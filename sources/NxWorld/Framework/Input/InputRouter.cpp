@@ -17,19 +17,19 @@ namespace NX
 {
     namespace
     {
-        InputChannel ChannelOf(InputButton button)
+        std::uint8_t ChannelOf(InputButton button)
         {
-            return button.isMouse() ? InputChannel::Pointer : InputChannel::Keyboard;
+            return button.isMouse() ? InputChannel_Pointer : InputChannel_Keyboard;
         }
 
-        InputChannel ChannelOf(const KeyInputEvent& event)
+        std::uint8_t ChannelOf(const KeyInputEvent& event)
         {
             return event.type == InputEventType::Button ? ChannelOf(event.key)
-                                                        : InputChannel::Pointer;
+                                                        : std::uint8_t{ InputChannel_Pointer };
         }
     } // namespace
 
-    bool InputRouter::canReceive(const Registration& registration, InputChannel channel)
+    bool InputRouter::canReceive(const Registration& registration, std::uint8_t channel)
     {
         return registration.handle.controller->isInputEnabled()
                && registration.state.canReceive(channel);
@@ -201,11 +201,11 @@ namespace NX
             return;
         }
 
-        const InputChannel channel = ChannelOf(event);
+        const std::uint8_t channel = ChannelOf(event);
         const auto handles = inputControllerSnapshot();
         for (const auto& layer : contexts.getLayers())
         {
-            if (!HasInputChannel(layer.channels, channel))
+            if ((layer.channels & channel) == 0)
             {
                 continue;
             }
@@ -262,7 +262,7 @@ namespace NX
     }
 
     void InputRouter::dispatchDeliveries(std::span<const PendingDelivery> deliveries,
-                                         InputContext context, InputChannel channel,
+                                         InputContext context, std::uint8_t channel,
                                          const InputContextStack& contexts)
     {
         for (const auto& delivery : deliveries)

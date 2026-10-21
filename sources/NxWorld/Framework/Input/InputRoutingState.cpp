@@ -17,15 +17,15 @@ namespace NX
 {
     namespace
     {
-        InputChannel ChannelOf(InputButton button)
+        std::uint8_t ChannelOf(InputButton button)
         {
-            return button.isMouse() ? InputChannel::Pointer : InputChannel::Keyboard;
+            return button.isMouse() ? InputChannel_Pointer : InputChannel_Keyboard;
         }
 
-        InputChannel ChannelOf(const KeyInputEvent& event)
+        std::uint8_t ChannelOf(const KeyInputEvent& event)
         {
             return event.type == InputEventType::Button ? ChannelOf(event.key)
-                                                        : InputChannel::Pointer;
+                                                        : std::uint8_t{ InputChannel_Pointer };
         }
 
         bool Contains(std::span<const InputButton> buttons, InputButton button)
@@ -36,9 +36,9 @@ namespace NX
         }
     } // namespace
 
-    bool InputRoutingState::canReceive(InputChannel channel) const
+    bool InputRoutingState::canReceive(std::uint8_t channel) const
     {
-        return HasInputChannel(_available, channel);
+        return (_available & channel) != 0;
     }
 
     bool InputRoutingState::acceptsEvent(const KeyInputEvent& event, bool pointerCaptured) const
@@ -57,10 +57,9 @@ namespace NX
         return result;
     }
 
-    void InputRoutingState::updateChannels(InputChannel available, const InputDeviceState& devices)
+    void InputRoutingState::updateChannels(std::uint8_t available, const InputDeviceState& devices)
     {
-        const auto changedChannels
-            = static_cast<std::uint8_t>(available) ^ static_cast<std::uint8_t>(_available);
+        const auto changedChannels = available ^ _available;
 
         // 0000'0001 - keyboard
         // 0000'0010 - mouse
@@ -73,12 +72,12 @@ namespace NX
 
         if (changedChannels)
         {
-            blockHeldButtons(static_cast<InputChannel>(changedChannels), devices);
+            blockHeldButtons(changedChannels, devices);
         }
 
         _available = available;
 
-        if (!HasInputChannel(_available, InputChannel::Pointer))
+        if ((_available & InputChannel_Pointer) == 0)
         {
             _pointerCaptures.clear();
         }
@@ -155,11 +154,11 @@ namespace NX
         }
     }
 
-    void InputRoutingState::blockHeldButtons(InputChannel channels, const InputDeviceState& devices)
+    void InputRoutingState::blockHeldButtons(std::uint8_t channels, const InputDeviceState& devices)
     {
         for (const auto button : devices.getHeldButtons())
         {
-            if (HasInputChannel(channels, ChannelOf(button)))
+            if ((channels & ChannelOf(button)) != 0)
             {
                 blockButton(button);
             }
@@ -168,7 +167,7 @@ namespace NX
 
     void InputRoutingState::resetRouting()
     {
-        _available = InputChannel{};
+        _available = 0;
         _pointerCaptures.clear();
     }
 

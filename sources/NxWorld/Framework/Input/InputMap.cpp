@@ -139,7 +139,7 @@ namespace NX
         // Compatibility with assets saved before modifiers became regular chord keys.
         const auto oldModifiers = json.value("requiredModifiers", std::uint8_t{});
         const auto appendOldModifier
-            = [&binding, oldModifiers](InputModifier modifier, Platform::Keyboard::Key key)
+            = [&binding, oldModifiers](std::uint8_t modifier, Platform::Keyboard::Key key)
         {
             if ((oldModifiers & static_cast<std::uint8_t>(modifier)) != 0
                 && std::ranges::find(binding.chord.requiredKeys, key)
@@ -148,10 +148,10 @@ namespace NX
                 binding.chord.requiredKeys.push_back(key);
             }
         };
-        appendOldModifier(InputModifier::Control, Platform::Keyboard::Key::Left_Control);
-        appendOldModifier(InputModifier::Shift, Platform::Keyboard::Key::Left_Shift);
-        appendOldModifier(InputModifier::Alt, Platform::Keyboard::Key::Left_Alt);
-        appendOldModifier(InputModifier::Super, Platform::Keyboard::Key::Left_Super);
+        appendOldModifier(InputModifier_Control, Platform::Keyboard::Key::Left_Control);
+        appendOldModifier(InputModifier_Shift, Platform::Keyboard::Key::Left_Shift);
+        appendOldModifier(InputModifier_Alt, Platform::Keyboard::Key::Left_Alt);
+        appendOldModifier(InputModifier_Super, Platform::Keyboard::Key::Left_Super);
         const auto trigger = json.value("trigger", std::string{ "OnPress" });
         if (trigger == "WhileHeld")
         {

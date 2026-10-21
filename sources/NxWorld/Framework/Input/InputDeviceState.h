@@ -24,7 +24,7 @@ namespace NX
             return _heldButtons;
         }
         [[nodiscard]] std::vector<InputButton> getChordKeys() const;
-        [[nodiscard]] InputModifier getModifiers() const noexcept;
+        [[nodiscard]] std::uint8_t getModifiers() const noexcept;
         void reset();
 
     private:

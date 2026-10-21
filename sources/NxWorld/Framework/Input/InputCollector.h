@@ -40,7 +40,7 @@ namespace NX
         void reset();
 
     private:
-        static InputModifier ConvertModifiers(int mods);
+        static std::uint8_t ConvertModifiers(int mods);
 
     private:
         std::deque<KeyInputEvent> _events;

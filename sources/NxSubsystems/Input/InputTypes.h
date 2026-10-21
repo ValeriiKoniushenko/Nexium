@@ -33,17 +33,13 @@ namespace NX
         BindingCapture,
     };
 
-    enum class InputChannel : std::uint8_t
+    // Bit masks: plain enums, so the flags combine with the built-in bitwise operators.
+    enum InputChannel : std::uint8_t
     {
-        Keyboard = 1 << 0,
-        Pointer = 1 << 1, // Mouse
-        All = Keyboard | Pointer,
+        InputChannel_Keyboard = 1 << 0,
+        InputChannel_Pointer = 1 << 1, // Mouse
+        InputChannel_All = InputChannel_Keyboard | InputChannel_Pointer,
     };
-
-    [[nodiscard]] constexpr bool HasInputChannel(InputChannel mask, InputChannel channel) noexcept
-    {
-        return (static_cast<std::uint8_t>(mask) & static_cast<std::uint8_t>(channel)) != 0;
-    }
 
     enum class InputEventType : std::uint8_t
     {
@@ -52,15 +48,14 @@ namespace NX
         Wheel,
     };
 
-    ENUM_CLASS();
-    enum class InputModifier : std::uint8_t
+    enum InputModifier : std::uint8_t
     {
-        None = 0,
-        Shift = 1 << 0,
-        Control = 1 << 1,
-        Alt = 1 << 2,
-        Super = 1 << 3,
-        All = (1 << 4) - 1,
+        InputModifier_None = 0,
+        InputModifier_Shift = 1 << 0,
+        InputModifier_Control = 1 << 1,
+        InputModifier_Alt = 1 << 2,
+        InputModifier_Super = 1 << 3,
+        InputModifier_All = (1 << 4) - 1,
     };
     // end::input-enums[]
 
@@ -182,7 +177,7 @@ namespace NX
     {
         InputButton key;
         Platform::Keyboard::KeyState state = Platform::Keyboard::KeyState::None;
-        InputModifier modifiers = InputModifier::None;
+        std::uint8_t modifiers = InputModifier_None;
         int scancode = 0;
         std::vector<InputButton> pressedKeys;
         InputEventType type = InputEventType::Button;
@@ -208,7 +203,7 @@ namespace NX
         glm::vec2 value{};
         glm::vec2 position{};
         bool canceled = false;
-        InputModifier modifiers = InputModifier::None;
+        std::uint8_t modifiers = InputModifier_None;
 
         [[nodiscard]] constexpr bool isCanceled() const noexcept { return canceled; }
 
@@ -229,19 +224,5 @@ namespace NX
     };
     // end::input-events[]
 } // namespace NX
-
-// Keep bitwise operators in the global namespace, consistently with Core::Tag operators.
-// Otherwise a Core::operator| overload hides ::operator|(Core::Tag, Core::Tag) in Core code.
-[[nodiscard]] constexpr NX::InputModifier operator|(NX::InputModifier lhs, NX::InputModifier rhs)
-{
-    return static_cast<NX::InputModifier>(static_cast<std::uint8_t>(lhs)
-                                          | static_cast<std::uint8_t>(rhs));
-}
-
-[[nodiscard]] constexpr NX::InputModifier operator&(NX::InputModifier lhs, NX::InputModifier rhs)
-{
-    return static_cast<NX::InputModifier>(static_cast<std::uint8_t>(lhs)
-                                          & static_cast<std::uint8_t>(rhs));
-}
 
 #include "InputTypes.generated.h" // added by the code generator. Better don't move it.

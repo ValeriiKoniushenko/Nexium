@@ -106,7 +106,7 @@ namespace
             EXPECT_TRUE(game->isActive("Look"_atom));
             EXPECT_TRUE(GetInputSystem().hasPointerCapture());
             EXPECT_TRUE(game->isActive("Other"_atom));
-            EXPECT_EQ(game->getActionModifiers("Look"_atom), InputModifier::Control);
+            EXPECT_EQ(game->getActionModifiers("Look"_atom), InputModifier_Control);
         }
     };
 } // namespace
@@ -182,7 +182,7 @@ TEST_F(InputRoutingTests, TextInputBlocksKeyboardWhilePointerRemainsAvailable)
     frame();
     auto text = GetInputSystem().pushContext({ .context = InputContext::TextInput,
                                                .policy = InputContextPolicy::BlockLower,
-                                               .channels = InputChannel::Keyboard });
+                                               .channels = InputChannel_Keyboard });
     EXPECT_FALSE(game->isActive("Move"_atom));
     Platform::GetWindow().onMouseWheel->trigger(glm::vec2{ 0.f, 2.f });
     frame();
@@ -210,7 +210,7 @@ TEST_F(InputRoutingTests, KeyboardOnlyOverlayPreservesAcceptedPointerDrag)
 
     auto text = GetInputSystem().pushContext({ .context = InputContext::TextInput,
                                                .policy = InputContextPolicy::BlockLower,
-                                               .channels = InputChannel::Keyboard });
+                                               .channels = InputChannel_Keyboard });
     EXPECT_FALSE(game->isActive("Move"_atom));
     EXPECT_TRUE(game->isActive("Look"_atom));
     EXPECT_TRUE(GetInputSystem().hasPointerCapture());
@@ -227,7 +227,7 @@ TEST_F(InputRoutingTests, RestoredKeyboardChannelQuarantinesButtonsPressedWhileU
     game->bind("Chord"_atom, { .triggerKey = Key::S, .requiredKeys = { Key::W } });
     auto text = GetInputSystem().pushContext({ .context = InputContext::TextInput,
                                                .policy = InputContextPolicy::BlockLower,
-                                               .channels = InputChannel::Keyboard });
+                                               .channels = InputChannel_Keyboard });
     key(Key::W, KeyState::Pressed);
     frame();
     text.reset();
@@ -291,8 +291,8 @@ TEST_F(InputRoutingTests, RestoredChannelsQuarantineKeyboardAndMouseButPreserveH
     frame();
     EXPECT_TRUE(game->isActive("Keyboard"_atom));
     EXPECT_TRUE(game->isActive("Pointer"_atom));
-    EXPECT_EQ(game->getActionModifiers("Keyboard"_atom), InputModifier::Control);
-    EXPECT_EQ(game->getActionModifiers("Pointer"_atom), InputModifier::Control);
+    EXPECT_EQ(game->getActionModifiers("Keyboard"_atom), InputModifier_Control);
+    EXPECT_EQ(game->getActionModifiers("Pointer"_atom), InputModifier_Control);
 }
 
 // tag::input-consume-matched[]
@@ -572,7 +572,7 @@ TEST_F(InputRoutingTests, ConsumingOverlayCancelsDragAndQuarantinesRequiredNonMo
     frame();
     EXPECT_TRUE(game->isActive("Look"_atom));
     EXPECT_TRUE(GetInputSystem().hasPointerCapture());
-    EXPECT_EQ(game->getActionModifiers("Look"_atom), InputModifier::Control);
+    EXPECT_EQ(game->getActionModifiers("Look"_atom), InputModifier_Control);
 }
 
 // tag::input-guard-lifetime[]

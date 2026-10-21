@@ -21,11 +21,11 @@ namespace
                && lhs.chord.requiredKeys == rhs.chord.requiredKeys;
     }
 
-    NX::InputChannel GetBindingChannel(const NX::InputBinding& binding)
+    std::uint8_t GetBindingChannel(const NX::InputBinding& binding)
     {
         return binding.source == NX::InputEventType::Button && !binding.chord.triggerKey.isMouse()
-                   ? NX::InputChannel::Keyboard
-                   : NX::InputChannel::Pointer;
+                   ? NX::InputChannel_Keyboard
+                   : NX::InputChannel_Pointer;
     }
 } // namespace
 
@@ -37,10 +37,11 @@ namespace NX
         return found != _states.end() && found->second.active;
     }
 
-    InputModifier InputActionRuntime::getModifiers(const Core::StringAtom& action) const
+    std::uint8_t InputActionRuntime::getModifiers(const Core::StringAtom& action) const
     {
         const auto found = _states.find(action);
-        return found != _states.end() ? found->second.modifiers : InputModifier::None;
+        return found != _states.end() ? found->second.modifiers
+                                      : std::uint8_t{ InputModifier_None };
     }
 
     glm::vec2 InputActionRuntime::getValue(const Core::StringAtom& action) const
@@ -121,10 +122,10 @@ namespace NX
         rebuildStates();
     }
 
-    void InputActionRuntime::cancel(InputChannel channels)
+    void InputActionRuntime::cancel(std::uint8_t channels)
     {
         const auto affected = [channels](const ActiveBinding& binding)
-        { return HasInputChannel(channels, GetBindingChannel(binding.binding)); };
+        { return (channels & GetBindingChannel(binding.binding)) != 0; };
         std::erase_if(_activeBindings, affected);
         std::erase_if(_transientBindings, affected);
         rebuildStates();

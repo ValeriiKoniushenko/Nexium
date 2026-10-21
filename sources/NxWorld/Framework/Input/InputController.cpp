@@ -157,9 +157,10 @@ namespace NX
         return isInputEnabled() && _runtime.isActive(action);
     }
 
-    InputModifier InputController::getActionModifiers(const Core::StringAtom& action) const
+    std::uint8_t InputController::getActionModifiers(const Core::StringAtom& action) const
     {
-        return isInputEnabled() ? _runtime.getModifiers(action) : InputModifier::None;
+        return isInputEnabled() ? _runtime.getModifiers(action)
+                                : std::uint8_t{ InputModifier_None };
     }
 
     glm::vec2 InputController::getActionValue(const Core::StringAtom& action) const
@@ -259,7 +260,7 @@ namespace NX
         }
     }
 
-    void InputController::cancelInput(InputChannel channels)
+    void InputController::cancelInput(std::uint8_t channels)
     {
         ++_runtimeRevision;
         _runtime.cancel(channels);

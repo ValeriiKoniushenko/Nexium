@@ -63,11 +63,11 @@ namespace NX
         return layers;
     }
 
-    bool InputContextStack::isAvailable(InputContext context, InputChannel channel) const
+    bool InputContextStack::isAvailable(InputContext context, std::uint8_t channel) const
     {
         for (const auto& layer : getLayers())
         {
-            if (!HasInputChannel(layer.channels, channel))
+            if ((layer.channels & channel) == 0)
             {
                 continue;
             }

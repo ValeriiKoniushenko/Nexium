@@ -72,9 +72,9 @@ namespace NX
         return result;
     }
 
-    InputModifier InputDeviceState::getModifiers() const noexcept
+    std::uint8_t InputDeviceState::getModifiers() const noexcept
     {
-        auto result = InputModifier::None;
+        std::uint8_t result = InputModifier_None;
         using Key = Platform::Keyboard::Key;
         for (const auto button : _heldButtons)
         {
@@ -85,16 +85,16 @@ namespace NX
             switch (NormalizeInputButton(button).getKeyboardKey())
             {
                 case Key::Left_Control:
-                    result = result | InputModifier::Control;
+                    result |= InputModifier_Control;
                     break;
                 case Key::Left_Shift:
-                    result = result | InputModifier::Shift;
+                    result |= InputModifier_Shift;
                     break;
                 case Key::Left_Alt:
-                    result = result | InputModifier::Alt;
+                    result |= InputModifier_Alt;
                     break;
                 case Key::Left_Super:
-                    result = result | InputModifier::Super;
+                    result |= InputModifier_Super;
                     break;
                 default:
                     break;
