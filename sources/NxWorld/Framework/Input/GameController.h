@@ -31,18 +31,15 @@ namespace NX
         void possess(Actor* actor);
         void unpossess();
 
-        [[nodiscard]] Actor* getControlledActor() noexcept { return _controlledActor.get(); }
-        [[nodiscard]] const Actor* getControlledActor() const noexcept
-        {
-            return _controlledActor.get();
-        }
+        [[nodiscard]] Actor* getControlledActor() noexcept;
+        [[nodiscard]] const Actor* getControlledActor() const noexcept;
 
         void clear() override;
         void onPreDeserialize(AbstractComponent* obj) override;
 
     protected:
-        virtual void onPossess(Actor& actor) {}
-        virtual void onUnpossess(Actor& actor) {}
+        virtual void onPossess(Actor& actor);
+        virtual void onUnpossess(Actor& actor);
         void onDeinitialize() override;
         // end::input-game-controller-api[]
 

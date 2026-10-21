@@ -176,4 +176,9 @@ namespace NX
         resetRouting();
         _blockedButtons.clear();
     }
+
+    bool InputRoutingState::hasPointerCapture() const noexcept
+    {
+        return !_pointerCaptures.empty();
+    }
 } // namespace NX

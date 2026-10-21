@@ -61,4 +61,22 @@ namespace NX
         unpossess();
         BaseController::onDeinitialize();
     }
+
+    Actor* GameController::getControlledActor() noexcept
+    {
+        return _controlledActor.get();
+    }
+
+    const Actor* GameController::getControlledActor() const noexcept
+    {
+        return _controlledActor.get();
+    }
+
+    void GameController::onPossess(Actor& /*actor*/)
+    {
+    }
+
+    void GameController::onUnpossess(Actor& /*actor*/)
+    {
+    }
 } // namespace NX

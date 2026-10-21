@@ -19,10 +19,7 @@ namespace NX
     {
     public:
         [[nodiscard]] KeyInputEvent apply(KeyInputEvent event);
-        [[nodiscard]] const std::vector<InputButton>& getHeldButtons() const noexcept
-        {
-            return _heldButtons;
-        }
+        [[nodiscard]] const std::vector<InputButton>& getHeldButtons() const noexcept;
         [[nodiscard]] std::vector<InputButton> getChordKeys() const;
         [[nodiscard]] std::uint8_t getModifiers() const noexcept;
         void reset();

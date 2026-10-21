@@ -186,7 +186,7 @@ namespace NX
         using Self = KeyboardInputAction;
         using KeyT = KeyT;
 
-        static Ptr Create() { return { new Self }; }
+        static Ptr Create();
 
         KeyboardInputAction() = default;
 
@@ -208,7 +208,7 @@ namespace NX
         using CPtr = Core::IntrusivePtr<const Self>;
         using KeyT = KeyT;
 
-        static Ptr Create() { return { new Self }; }
+        static Ptr Create();
 
         MouseInputAction();
 

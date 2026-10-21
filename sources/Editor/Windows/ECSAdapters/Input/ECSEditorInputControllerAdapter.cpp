@@ -58,4 +58,8 @@ namespace NX
             }
         }
     }
+
+    void ECSEditorInputControllerAdapter::onApplyAssetData(const nlohmann::json& /*data*/)
+    {
+    }
 } // namespace NX

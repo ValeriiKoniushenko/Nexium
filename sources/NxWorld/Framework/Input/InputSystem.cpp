@@ -142,4 +142,15 @@ namespace NX
     {
         return InputSystem::Instance();
     }
+
+    InputContextGuard::InputContextGuard(InputSystem& owner, InputContextStack::LayerId id)
+        : _owner(&owner),
+          _id(id)
+    {
+    }
+
+    bool InputSystem::hasPointerCapture() const
+    {
+        return _router.hasPointerCapture();
+    }
 } // namespace NX

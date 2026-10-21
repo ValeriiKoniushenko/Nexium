@@ -27,8 +27,8 @@ namespace NX
     public:
         SceneTreeWindowEWC(const StringAtom& name = ""_atom);
 
-        void setScene(NX::Scene* scene) { _scene = scene; }
-        [[nodiscard]] NX::Scene* getScene() const noexcept { return _scene; }
+        void setScene(NX::Scene* scene);
+        [[nodiscard]] NX::Scene* getScene() const noexcept;
 
         void highlightSpecificObject(const NX::SceneObject* obj);
 

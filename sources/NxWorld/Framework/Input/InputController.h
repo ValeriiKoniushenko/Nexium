@@ -38,11 +38,7 @@ namespace NX
         FIELD();
         float mouseSensitivity = 0.5f;
 
-        InputController(const Core::StringAtom& name, InputContext context)
-            : InputController(name)
-        {
-            _inputContext = context;
-        }
+        InputController(const Core::StringAtom& name, InputContext context);
         InputController(const InputController& other);
         InputController& operator=(const InputController&) = delete;
         InputController(InputController&&) = delete;
@@ -65,22 +61,19 @@ namespace NX
         bool unbind(const Core::StringAtom& action);
         void setBindings(const std::vector<Binding>& bindings);
 
-        void setInputMap(const InputMap& map) { setBindings(map.getBindings()); }
-        [[nodiscard]] InputMap getInputMap() const { return InputMap(_bindings); }
+        void setInputMap(const InputMap& map);
+        [[nodiscard]] InputMap getInputMap() const;
 
         void setInputContext(InputContext context);
-        [[nodiscard]] InputContext getInputContext() const noexcept { return _inputContext; }
+        [[nodiscard]] InputContext getInputContext() const noexcept;
         void setInputEnabled(bool enabled);
         [[nodiscard]] bool isInputEnabled() const noexcept;
 
         [[nodiscard]] bool isActive(const Core::StringAtom& action) const;
-        [[nodiscard]] bool isActionPressed(const Core::StringAtom& action) const
-        {
-            return isActive(action);
-        }
+        [[nodiscard]] bool isActionPressed(const Core::StringAtom& action) const;
         [[nodiscard]] std::uint8_t getActionModifiers(const Core::StringAtom& action) const;
         [[nodiscard]] glm::vec2 getActionValue(const Core::StringAtom& action) const;
-        [[nodiscard]] const std::vector<Binding>& getBindings() const noexcept { return _bindings; }
+        [[nodiscard]] const std::vector<Binding>& getBindings() const noexcept;
 
         [[nodiscard]] Tag getTags() const override;
         void onPostDeserialize(AbstractComponent* obj, const RLogsCollector& logs) override;
@@ -105,7 +98,7 @@ namespace NX
         void beginInputFrame();
         void cancelInput(std::uint8_t channels = InputChannel_All);
         void cancelMatchingBindings(const std::function<bool(const Binding&)>& predicate);
-        void releaseAllActions() { cancelInput(); }
+        void releaseAllActions();
         void emitAction(const InputActionEvent& event);
 
         FIELD();

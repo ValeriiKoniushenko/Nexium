@@ -320,4 +320,14 @@ namespace NX
             entry.state.reset();
         }
     }
+
+    InputRouter::Registration::Registration(Handle registeredHandle)
+        : handle(registeredHandle)
+    {
+    }
+
+    bool InputRouter::ResolvedInput::hasMatch() const
+    {
+        return binding.has_value() || pointerBinding.has_value();
+    }
 } // namespace NX

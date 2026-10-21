@@ -45,8 +45,8 @@ namespace NX
 
         void tick(float delta);
 
-        [[nodiscard]] bool isEnabled() const noexcept { return _isEnabled; }
-        void setIsEnabled(bool v) noexcept { _isEnabled = v; }
+        [[nodiscard]] bool isEnabled() const noexcept;
+        void setIsEnabled(bool v) noexcept;
 
         /// Register a new editor window of type T.
         /// Initializes it and sets its initial enabled state.
@@ -132,18 +132,12 @@ namespace NX
         /// Totally destroy the object. Will call automatically at the destructor.
         void destroy();
 
-        [[nodiscard]] bool getIsRunSimulation() const noexcept { return _isRunSimulation; }
-        void setIsRunSimulation(bool value) noexcept { _isRunSimulation = value; }
-        void toggleSimulation() noexcept { _isRunSimulation = !_isRunSimulation; }
+        [[nodiscard]] bool getIsRunSimulation() const noexcept;
+        void setIsRunSimulation(bool value) noexcept;
+        void toggleSimulation() noexcept;
 
-        [[nodiscard]] const InputController& getEditorInput() const
-        {
-            return _editorController->getInput();
-        }
-        [[nodiscard]] const InputController& getViewportInput() const
-        {
-            return _viewportController->getInput();
-        }
+        [[nodiscard]] const InputController& getEditorInput() const;
+        [[nodiscard]] const InputController& getViewportInput() const;
 
         [[nodiscard]] spdlog::logger* getLogger() const override;
 

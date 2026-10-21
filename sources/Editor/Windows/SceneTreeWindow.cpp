@@ -363,4 +363,14 @@ namespace NX
             ModalAssetsSearchPopUpEWC::Open("Choose a scene asset"_dyn);
         }
     }
+
+    void SceneTreeWindowEWC::setScene(NX::Scene* scene)
+    {
+        _scene = scene;
+    }
+
+    NX::Scene* SceneTreeWindowEWC::getScene() const noexcept
+    {
+        return _scene;
+    }
 } // namespace NX

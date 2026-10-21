@@ -108,4 +108,9 @@ namespace NX
         _heldButtons.clear();
         _pointerPosition.reset();
     }
+
+    const std::vector<InputButton>& InputDeviceState::getHeldButtons() const noexcept
+    {
+        return _heldButtons;
+    }
 } // namespace NX

@@ -94,4 +94,14 @@ namespace NX
             [this](SpecKeysState states)
             { onMouseClick->trigger(Platform::Mouse::GetPosition(), states); });
     }
+
+    KeyboardInputAction::Ptr KeyboardInputAction::Create()
+    {
+        return { new Self };
+    }
+
+    MouseInputAction::Ptr MouseInputAction::Create()
+    {
+        return { new Self };
+    }
 } // namespace NX

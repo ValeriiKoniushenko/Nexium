@@ -126,4 +126,78 @@ namespace NX
                    requiredKeys, [key](InputButton required)
                    { return NormalizeInputButton(required) == NormalizeInputButton(key); });
     }
+
+    InputButton::InputButton(Platform::Keyboard::Key key)
+        : _value(key)
+    {
+    }
+
+    InputButton::InputButton(Platform::Mouse::Key button)
+        : _value(button)
+    {
+    }
+
+    bool InputButton::isMouse() const noexcept
+    {
+        return std::holds_alternative<Platform::Mouse::Key>(_value);
+    }
+
+    Platform::Keyboard::Key InputButton::getKeyboardKey() const noexcept
+    {
+        if (const auto* key = std::get_if<Platform::Keyboard::Key>(&_value))
+        {
+            return *key;
+        }
+        return Platform::Keyboard::Key::None;
+    }
+
+    Platform::Mouse::Key InputButton::getMouseButton() const noexcept
+    {
+        if (const auto* button = std::get_if<Platform::Mouse::Key>(&_value))
+        {
+            return *button;
+        }
+        return Platform::Mouse::Key::None;
+    }
+
+    bool InputButton::isNone() const noexcept
+    {
+        return isMouse() ? getMouseButton() == Platform::Mouse::Key::None
+                         : getKeyboardKey() == Platform::Keyboard::Key::None;
+    }
+
+    bool KeyInputEvent::isButtonEventType() const
+    {
+        return type == InputEventType::Button;
+    }
+
+    bool KeyInputEvent::isPointerMoveEventType() const
+    {
+        return type == InputEventType::PointerMove;
+    }
+
+    bool KeyInputEvent::isKeyStatePressed() const
+    {
+        return state == Platform::Keyboard::KeyState::Pressed;
+    }
+
+    bool InputActionEvent::isCanceled() const noexcept
+    {
+        return canceled;
+    }
+
+    bool InputActionEvent::isPressed() const noexcept
+    {
+        return state == Platform::Keyboard::KeyState::Pressed;
+    }
+
+    bool InputActionEvent::isReleased() const noexcept
+    {
+        return state == Platform::Keyboard::KeyState::Released;
+    }
+
+    bool InputActionEvent::isRepeated() const noexcept
+    {
+        return state == Platform::Keyboard::KeyState::Repeated;
+    }
 } // namespace NX

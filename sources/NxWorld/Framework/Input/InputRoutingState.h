@@ -25,7 +25,7 @@ namespace NX
         [[nodiscard]] bool canReceive(std::uint8_t channel) const;
         [[nodiscard]] bool acceptsEvent(const KeyInputEvent& event, bool pointerCaptured) const;
         [[nodiscard]] KeyInputEvent prepareEvent(const KeyInputEvent& event) const;
-        [[nodiscard]] bool hasPointerCapture() const noexcept { return !_pointerCaptures.empty(); }
+        [[nodiscard]] bool hasPointerCapture() const noexcept;
 
         void updateChannels(std::uint8_t available, const InputDeviceState& devices);
         void observeDevicesAndEraseReleasedButtons(const InputDeviceState& devices);

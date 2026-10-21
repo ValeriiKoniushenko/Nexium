@@ -35,25 +35,16 @@ namespace NX
     {
     public:
         InputMap() = default;
-        explicit InputMap(std::vector<InputBinding> bindings)
-            : _bindings(std::move(bindings))
-        {
-        }
+        explicit InputMap(std::vector<InputBinding> bindings);
 
-        [[nodiscard]] const std::vector<InputBinding>& getBindings() const noexcept
-        {
-            return _bindings;
-        }
+        [[nodiscard]] const std::vector<InputBinding>& getBindings() const noexcept;
 
-        void setBindings(std::vector<InputBinding> bindings) { _bindings = std::move(bindings); }
+        void setBindings(std::vector<InputBinding> bindings);
 
-        bool bind(InputBinding binding) { return Bind(_bindings, std::move(binding)); }
-        bool unbind(const Core::StringAtom& action) { return Unbind(_bindings, action); }
+        bool bind(InputBinding binding);
+        bool unbind(const Core::StringAtom& action);
 
-        [[nodiscard]] std::optional<InputBinding> resolveBinding(const KeyInputEvent& event) const
-        {
-            return ResolveBinding(_bindings, event);
-        }
+        [[nodiscard]] std::optional<InputBinding> resolveBinding(const KeyInputEvent& event) const;
 
         [[nodiscard]] static bool IsValid(const InputBinding& binding);
         static bool Bind(std::vector<InputBinding>& bindings, InputBinding binding);

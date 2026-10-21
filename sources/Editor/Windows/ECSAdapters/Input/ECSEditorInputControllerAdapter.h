@@ -24,7 +24,7 @@ namespace NX
 
     protected:
         void onDraw(float dt) override;
-        void onApplyAssetData(const nlohmann::json&) override {}
+        void onApplyAssetData(const nlohmann::json& data) override;
     };
 } // namespace NX
 

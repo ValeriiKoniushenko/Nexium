@@ -34,11 +34,7 @@ namespace NX
 
     private:
         friend class InputSystem;
-        InputContextGuard(InputSystem& owner, InputContextStack::LayerId id)
-            : _owner(&owner),
-              _id(id)
-        {
-        }
+        InputContextGuard(InputSystem& owner, InputContextStack::LayerId id);
         InputSystem* _owner = nullptr;
         InputContextStack::LayerId _id = 0;
     };
@@ -59,7 +55,7 @@ namespace NX
         void registerController(InputController* controller);
         void unregisterController(InputController* controller);
         void refreshController(InputController* controller);
-        [[nodiscard]] bool hasPointerCapture() const { return _router.hasPointerCapture(); }
+        [[nodiscard]] bool hasPointerCapture() const;
         // end::input-system-api[]
 
     private:

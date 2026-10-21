@@ -49,10 +49,7 @@ namespace NX
 
         struct Registration
         {
-            explicit Registration(Handle registeredHandle)
-                : handle(registeredHandle)
-            {
-            }
+            explicit Registration(Handle registeredHandle);
 
             Handle handle;
             std::uint64_t revision = 0;
@@ -63,10 +60,7 @@ namespace NX
         {
             std::optional<InputBinding> binding;
             std::optional<InputBinding> pointerBinding{};
-            [[nodiscard]] bool hasMatch() const
-            {
-                return binding.has_value() || pointerBinding.has_value();
-            }
+            [[nodiscard]] bool hasMatch() const;
         };
 
         struct PendingDelivery

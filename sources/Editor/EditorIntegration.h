@@ -45,12 +45,9 @@ namespace NX
         void clearSceneRenderTarget() override;
         [[nodiscard]] ISize2 getRenderSize() const override;
 
-        [[nodiscard]] GameEditor& getEditor() noexcept { return _editor; }
-        [[nodiscard]] ObjectSelectorManager& getObjectSelectorManager() noexcept
-        {
-            return _objectSelectorManager;
-        }
-        [[nodiscard]] ObjectPickerAggregator& getObjectPicker() noexcept { return _objectPicker; }
+        [[nodiscard]] GameEditor& getEditor() noexcept;
+        [[nodiscard]] ObjectSelectorManager& getObjectSelectorManager() noexcept;
+        [[nodiscard]] ObjectPickerAggregator& getObjectPicker() noexcept;
 
     private:
         NX::Runtime& _runtime;

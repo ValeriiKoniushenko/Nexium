@@ -48,6 +48,7 @@ target_sources(Nexium_World
 		Entities/Actor.cpp
 		Entities/Camera/Camera.cpp
 		Framework/ActorManager.cpp
+		Framework/ApplicationIntegration.cpp
 		Framework/CameraManager.cpp
 		Framework/ControllerManager.cpp
 		Framework/GameInstance.cpp

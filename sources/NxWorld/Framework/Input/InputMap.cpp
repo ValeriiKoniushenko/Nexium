@@ -232,4 +232,34 @@ namespace NX
         }
         return best ? std::optional<InputBinding>{ *best } : std::nullopt;
     }
+
+    InputMap::InputMap(std::vector<InputBinding> bindings)
+        : _bindings(std::move(bindings))
+    {
+    }
+
+    const std::vector<InputBinding>& InputMap::getBindings() const noexcept
+    {
+        return _bindings;
+    }
+
+    void InputMap::setBindings(std::vector<InputBinding> bindings)
+    {
+        _bindings = std::move(bindings);
+    }
+
+    bool InputMap::bind(InputBinding binding)
+    {
+        return Bind(_bindings, std::move(binding));
+    }
+
+    bool InputMap::unbind(const Core::StringAtom& action)
+    {
+        return Unbind(_bindings, action);
+    }
+
+    std::optional<InputBinding> InputMap::resolveBinding(const KeyInputEvent& event) const
+    {
+        return ResolveBinding(_bindings, event);
+    }
 } // namespace NX

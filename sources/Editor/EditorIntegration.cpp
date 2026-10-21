@@ -181,4 +181,19 @@ namespace NX
     {
         return gEditorIntegration ? &gEditorIntegration->getObjectPicker() : nullptr;
     }
+
+    GameEditor& EditorIntegration::getEditor() noexcept
+    {
+        return _editor;
+    }
+
+    ObjectSelectorManager& EditorIntegration::getObjectSelectorManager() noexcept
+    {
+        return _objectSelectorManager;
+    }
+
+    ObjectPickerAggregator& EditorIntegration::getObjectPicker() noexcept
+    {
+        return _objectPicker;
+    }
 } // namespace NX

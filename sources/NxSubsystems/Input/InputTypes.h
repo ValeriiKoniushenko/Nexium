@@ -64,45 +64,18 @@ namespace NX
     {
     public:
         constexpr InputButton() = default;
-        constexpr InputButton(Platform::Keyboard::Key key)
-            : _value(key)
-        {
-        }
-        constexpr InputButton(Platform::Mouse::Key button)
-            : _value(button)
-        {
-        }
+        InputButton(Platform::Keyboard::Key key);
+        InputButton(Platform::Mouse::Key button);
 
-        [[nodiscard]] constexpr bool isMouse() const noexcept
-        {
-            return std::holds_alternative<Platform::Mouse::Key>(_value);
-        }
+        [[nodiscard]] bool isMouse() const noexcept;
 
-        [[nodiscard]] constexpr Platform::Keyboard::Key getKeyboardKey() const noexcept
-        {
-            if (const auto* key = std::get_if<Platform::Keyboard::Key>(&_value))
-            {
-                return *key;
-            }
-            return Platform::Keyboard::Key::None;
-        }
+        [[nodiscard]] Platform::Keyboard::Key getKeyboardKey() const noexcept;
 
-        [[nodiscard]] constexpr Platform::Mouse::Key getMouseButton() const noexcept
-        {
-            if (const auto* button = std::get_if<Platform::Mouse::Key>(&_value))
-            {
-                return *button;
-            }
-            return Platform::Mouse::Key::None;
-        }
+        [[nodiscard]] Platform::Mouse::Key getMouseButton() const noexcept;
 
-        [[nodiscard]] constexpr bool isNone() const noexcept
-        {
-            return isMouse() ? getMouseButton() == Platform::Mouse::Key::None
-                             : getKeyboardKey() == Platform::Keyboard::Key::None;
-        }
+        [[nodiscard]] bool isNone() const noexcept;
 
-        [[nodiscard]] constexpr bool operator==(const InputButton&) const noexcept = default;
+        [[nodiscard]] bool operator==(const InputButton&) const noexcept = default;
 
     private:
         std::variant<Platform::Keyboard::Key, Platform::Mouse::Key> _value
@@ -175,25 +148,18 @@ namespace NX
     // tag::input-events[]
     struct KeyInputEvent
     {
-        InputButton key;
+        InputButton key{};
         Platform::Keyboard::KeyState state = Platform::Keyboard::KeyState::None;
         std::uint8_t modifiers = InputModifier_None;
         int scancode = 0;
-        std::vector<InputButton> pressedKeys;
+        std::vector<InputButton> pressedKeys{};
         InputEventType type = InputEventType::Button;
         glm::vec2 value{};
         glm::vec2 position{};
 
-        [[nodiscard]] bool isButtonEventType() const { return type == InputEventType::Button; }
-        [[nodiscard]] bool isPointerMoveEventType() const
-        {
-            return type == InputEventType::PointerMove;
-        }
-
-        [[nodiscard]] bool isKeyStatePressed() const
-        {
-            return state == Platform::Keyboard::KeyState::Pressed;
-        }
+        [[nodiscard]] bool isButtonEventType() const;
+        [[nodiscard]] bool isPointerMoveEventType() const;
+        [[nodiscard]] bool isKeyStatePressed() const;
     };
 
     struct InputActionEvent
@@ -205,22 +171,13 @@ namespace NX
         bool canceled = false;
         std::uint8_t modifiers = InputModifier_None;
 
-        [[nodiscard]] constexpr bool isCanceled() const noexcept { return canceled; }
+        [[nodiscard]] bool isCanceled() const noexcept;
 
-        [[nodiscard]] constexpr bool isPressed() const noexcept
-        {
-            return state == Platform::Keyboard::KeyState::Pressed;
-        }
+        [[nodiscard]] bool isPressed() const noexcept;
 
-        [[nodiscard]] constexpr bool isReleased() const noexcept
-        {
-            return state == Platform::Keyboard::KeyState::Released;
-        }
+        [[nodiscard]] bool isReleased() const noexcept;
 
-        [[nodiscard]] constexpr bool isRepeated() const noexcept
-        {
-            return state == Platform::Keyboard::KeyState::Repeated;
-        }
+        [[nodiscard]] bool isRepeated() const noexcept;
     };
     // end::input-events[]
 } // namespace NX

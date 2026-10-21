@@ -288,4 +288,40 @@ namespace NX
             delegate->trigger(event);
         }
     }
+
+    InputController::InputController(const Core::StringAtom& name, InputContext context)
+        : InputController(name)
+    {
+        _inputContext = context;
+    }
+
+    void InputController::setInputMap(const InputMap& map)
+    {
+        setBindings(map.getBindings());
+    }
+
+    InputMap InputController::getInputMap() const
+    {
+        return InputMap(_bindings);
+    }
+
+    InputContext InputController::getInputContext() const noexcept
+    {
+        return _inputContext;
+    }
+
+    bool InputController::isActionPressed(const Core::StringAtom& action) const
+    {
+        return isActive(action);
+    }
+
+    const std::vector<InputController::Binding>& InputController::getBindings() const noexcept
+    {
+        return _bindings;
+    }
+
+    void InputController::releaseAllActions()
+    {
+        cancelInput();
+    }
 } // namespace NX
