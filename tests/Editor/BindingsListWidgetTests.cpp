@@ -435,11 +435,16 @@ namespace
             }
             TemporaryFile(const TemporaryFile&) = delete;
             TemporaryFile& operator=(const TemporaryFile&) = delete;
+            TemporaryFile(TemporaryFile&&) = delete;
+            TemporaryFile& operator=(TemporaryFile&&) = delete;
             ~TemporaryFile() { std::filesystem::remove(path); }
-        } file{ std::filesystem::temp_directory_path()
-                / ("nexium_binding_save_"
-                   + std::to_string(std::chrono::steady_clock::now().time_since_epoch().count())
-                   + ".nx") };
+        };
+
+        TemporaryFile file{ std::filesystem::temp_directory_path()
+                            / ("nexium_binding_save_"
+                               + std::to_string(
+                                   std::chrono::steady_clock::now().time_since_epoch().count())
+                               + ".nx") };
         using Key = Platform::Keyboard::Key;
         using State = Platform::Keyboard::KeyState;
         InputController root;
