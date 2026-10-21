@@ -132,10 +132,6 @@ namespace NX
         /// Totally destroy the object. Will call automatically at the destructor.
         void destroy();
 
-        [[nodiscard]] bool getIsRunSimulation() const noexcept;
-        void setIsRunSimulation(bool value) noexcept;
-        void toggleSimulation() noexcept;
-
         [[nodiscard]] const InputController& getEditorInput() const;
         [[nodiscard]] const InputController& getViewportInput() const;
 

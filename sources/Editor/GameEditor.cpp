@@ -653,21 +653,6 @@ namespace NX
         _isEnabled = v;
     }
 
-    bool GameEditor::getIsRunSimulation() const noexcept
-    {
-        return _isRunSimulation;
-    }
-
-    void GameEditor::setIsRunSimulation(bool value) noexcept
-    {
-        _isRunSimulation = value;
-    }
-
-    void GameEditor::toggleSimulation() noexcept
-    {
-        _isRunSimulation = !_isRunSimulation;
-    }
-
     const InputController& GameEditor::getEditorInput() const
     {
         return _editorController->getInput();
