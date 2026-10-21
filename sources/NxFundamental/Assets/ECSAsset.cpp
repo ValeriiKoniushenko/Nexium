@@ -248,9 +248,7 @@ namespace NX
 
         json[StreamData::data] = baseAssetData;
 
-        // Saving the current component tree must not recreate its children and invalidate
-        // editor selections. Deserialize only when the caller supplied different data.
-        if (_status == Status::Loaded && _data->serialize() != json[StreamData::data])
+        if (_status == Status::Loaded)
         {
             RResourceStream<RJsonResourceStream> stream(json[StreamData::data]);
             _data->deserialize(stream);
