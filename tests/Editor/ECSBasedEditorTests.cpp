@@ -23,7 +23,10 @@ namespace
     class TestECSBasedEditor : public NxECSBasedEditorEWC
     {
     public:
-        Core::StringAtom getCacheHash() const override { return "ECSBasedEditorTests"_atom; }
+        [[nodiscard]] Core::StringAtom getCacheHash() const override
+        {
+            return "ECSBasedEditorTests"_atom;
+        }
 
         void selectComponent(const BaseComponent::Ptr& component) { _targetComponent = component; }
     };

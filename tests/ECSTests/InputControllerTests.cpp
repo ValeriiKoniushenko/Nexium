@@ -624,7 +624,7 @@ TEST_F(InputControllerTests, CaptureSuppressesMouseChordUntilRecordedButtonsAreR
         "Confirm"_atom, KeyChord::Exact(Key::Enter), [&](const InputActionEvent&) { ++confirmed; },
         InputActionTrigger::OnRelease);
     {
-        InputCapture capture;
+        const InputCapture capture;
         key(Key::Right_Control, State::Pressed);
         mouse(MouseButton::Left, MouseState::Press, GLFW_MOD_CONTROL);
         key(Key::Enter, State::Pressed);
@@ -669,7 +669,7 @@ TEST_F(InputControllerTests, CaptureReleasesHeldAndPendingReleaseActionsWithoutN
     frame();
     ASSERT_TRUE(controller->isActive("Drag"_atom));
     {
-        InputCapture capture;
+        const InputCapture capture;
         frame();
         EXPECT_FALSE(controller->isActive("Drag"_atom));
         mouse(MouseButton::Right, MouseState::Release);
@@ -691,7 +691,7 @@ TEST_F(InputControllerTests, CaptureWaitsForBothModifierSidesToBeReleased)
                      { .triggerKey = MouseButton::Left, .requiredKeys = { Key::Left_Control } },
                      [&](const InputActionEvent&) { ++clicked; });
     {
-        InputCapture capture;
+        const InputCapture capture;
         key(Key::Left_Control, State::Pressed);
         key(Key::Right_Control, State::Pressed);
         mouse(MouseButton::Left, MouseState::Press, GLFW_MOD_CONTROL);
@@ -719,7 +719,7 @@ TEST_F(InputControllerTests, FocusLossClearsInputCaptureReleaseFence)
     auto controller = InputController::Create("Game"_atom, InputContext::Gameplay);
     controller->bind("Click"_atom, KeyChord::Exact(MouseButton::Left));
     {
-        InputCapture capture;
+        const InputCapture capture;
         mouse(MouseButton::Left, MouseState::Press);
         frame();
     }

@@ -35,13 +35,19 @@ namespace
     public:
         using InputBindingsEditor::onDraw;
 
-        Core::StringAtom getCacheHash() const override { return "BindingsListWidgetTests"_atom; }
+        [[nodiscard]] Core::StringAtom getCacheHash() const override
+        {
+            return "BindingsListWidgetTests"_atom;
+        }
     };
 
     class BindingsTestOwner : public NxECSBasedEditorEWC
     {
     public:
-        Core::StringAtom getCacheHash() const override { return "BindingsTestOwner"_atom; }
+        [[nodiscard]] Core::StringAtom getCacheHash() const override
+        {
+            return "BindingsTestOwner"_atom;
+        }
 
         void selectComponent(const BaseComponent::Ptr& component) { _targetComponent = component; }
 
@@ -59,7 +65,10 @@ namespace
     class DiskOwner : public NxECSBasedEditorEWC
     {
     public:
-        Core::StringAtom getCacheHash() const override { return "DiskBindingsTest"_atom; }
+        [[nodiscard]] Core::StringAtom getCacheHash() const override
+        {
+            return "DiskBindingsTest"_atom;
+        }
         using NxECSBasedEditorEWC::onClose;
         void selectAsset(const NXECSAsset& asset, BaseComponent* component)
         {
@@ -114,7 +123,7 @@ namespace
             ImGui::Begin("BindingsListWidgetTests", nullptr, ImGuiWindowFlags_NoSavedSettings);
             ImGui::LogToBuffer();
             draw();
-            const std::string text = GImGui->LogBuffer.c_str();
+            std::string text = GImGui->LogBuffer.c_str();
             ImGui::LogFinish();
             ImGui::End();
             ImGui::EndFrame();
@@ -420,6 +429,12 @@ namespace
         struct TemporaryFile
         {
             std::filesystem::path path;
+            TemporaryFile(std::filesystem::path filePath)
+                : path(std::move(filePath))
+            {
+            }
+            TemporaryFile(const TemporaryFile&) = delete;
+            TemporaryFile& operator=(const TemporaryFile&) = delete;
             ~TemporaryFile() { std::filesystem::remove(path); }
         } file{ std::filesystem::temp_directory_path()
                 / ("nexium_binding_save_"
