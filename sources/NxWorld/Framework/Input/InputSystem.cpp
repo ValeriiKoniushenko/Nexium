@@ -58,11 +58,6 @@ namespace NX
 
         while (_collector.pollEvent(raw))
         {
-            if (raw.type == InputEventType::PointerMove)
-            {
-                continue;
-            }
-
             if (raw.type == InputEventType::Button)
             {
                 InputCapture::updateButton(raw.key, raw.state);
