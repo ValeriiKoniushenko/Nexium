@@ -32,7 +32,7 @@ namespace RawBackend
             Grey = 1,
             GreyA = 2,
             RGB = 3,
-            RGBA = 4
+            RGBA = 4,
         };
 
     public:

@@ -21,10 +21,10 @@
             "miDebuggerArgs": "-iex \"set debuginfod enabled off\""
         },
         {
-            "name": "TemplateGame (GDB, catch exceptions)",
+            "name": "Nexium_Tests (GDB)",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/build/bin/TemplateGame",
+            "program": "${workspaceFolder}/build/bin/Nexium_Tests",
             "args": [],
             "cwd": "${workspaceFolder}",
             "MIMode": "gdb",
@@ -34,11 +34,6 @@
                     "description": "Enable pretty-printing",
                     "text": "-enable-pretty-printing",
                     "ignoreFailures": true
-                },
-                {
-                    "description": "Stop at the throw site, including caught exceptions",
-                    "text": "-interpreter-exec console \"catch throw\"",
-                    "ignoreFailures": false
                 }
             ],
             "stopAtEntry": false,

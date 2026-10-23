@@ -28,6 +28,9 @@ namespace NX
     public:
         constexpr static const int max_side = 4096;
         constexpr static const int discard_step = -4;
+        // Pixels and UVs are written without handling rotation, so the packer must not rotate
+        // rects.
+        constexpr static const bool allow_rotation = false;
 
     public:
         TextureAtlas() = default;

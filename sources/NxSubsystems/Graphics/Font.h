@@ -54,7 +54,7 @@ namespace NX
     public:
         struct GlyphSize
         {
-            Core::UISize2 size;   // Size of glyph
+            Core::ISize2 size;    // Size of glyph
             Core::ISize2 bearing; // Offset from baseline to left/top of glyph
             int advance = 0;      // Offset to advance to next glyph
         };

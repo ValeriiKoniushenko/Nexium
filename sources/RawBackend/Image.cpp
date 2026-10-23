@@ -118,6 +118,7 @@ namespace RawBackend
         {
             clear();
             criticalLog("stbi lib can't load the image from memory by unknown reasons");
+            return false;
         }
 
         _channel = static_cast<Channel>(channel);

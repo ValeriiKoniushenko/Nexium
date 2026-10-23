@@ -70,7 +70,7 @@ namespace NX
 
     BaseGraphicsData::BaseGraphicsData(BaseGraphicsData&& other) noexcept
         : _shader(other._shader),
-          _drawModifiers({}),
+          _drawModifiers(std::move(other._drawModifiers)),
           _triangleCount(other._triangleCount),
           _vbo(other._vbo),
           _ebo(other._ebo),

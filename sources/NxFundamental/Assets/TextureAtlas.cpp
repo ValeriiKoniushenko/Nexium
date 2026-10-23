@@ -109,7 +109,8 @@ namespace NX
         const auto result_size = find_best_packing_dont_sort<spaces_type>(
             rectangles,
             make_finder_input(max_side, discard_step, report_successful, report_unsuccessful,
-                              rectpack2D::flipping_option::ENABLED));
+                              allow_rotation ? rectpack2D::flipping_option::ENABLED
+                                             : rectpack2D::flipping_option::DISABLED));
 
         if (discarded)
         {

@@ -110,7 +110,7 @@ namespace NX
             }
 
             _glyphs[c].glyph = GlyphSize{
-                .size = Core::UISize2{ glyph->bitmap.width, glyph->bitmap.rows },
+                .size = Core::ISize2(Core::UISize2{ glyph->bitmap.width, glyph->bitmap.rows }),
                 .bearing = Core::ISize2{ glyph->bitmap_left, glyph->bitmap_top },
                 .advance = static_cast<int>(glyph->advance.x),
             };
@@ -161,7 +161,7 @@ namespace NX
 
         for (const char c : text)
         {
-            if (c >= genGlyphCharLimit)
+            if (static_cast<std::size_t>(c) >= genGlyphCharLimit)
             {
                 continue;
             }

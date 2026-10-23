@@ -87,9 +87,7 @@ TEST(GraphicsPipelineIssues, GlyphVerticalOffsetIsSignedArithmetic)
 
     EXPECT_TRUE(std::is_signed_v<Diff>);
 
-    const G dash{ .size = Core::UISize2{ 20u, 3u },
-                  .bearing = Core::ISize2{ 2, 14 },
-                  .advance = 0 };
+    const G dash{ .size = Core::ISize2{ 20, 3 }, .bearing = Core::ISize2{ 2, 14 }, .advance = 0 };
     EXPECT_LT(static_cast<float>(dash.size.height - dash.bearing.height), 0.f);
 }
 
@@ -115,10 +113,12 @@ TEST(GraphicsPipelineIssues, AtlasPackerDoesNotRotateImages)
     }
 
     find_best_packing_dont_sort<spaces_type>(
-        rects, make_finder_input(
-                   TextureAtlas::max_side, TextureAtlas::discard_step,
-                   [](auto&) { return callback_result::CONTINUE_PACKING; },
-                   [](auto&) { return callback_result::ABORT_PACKING; }, flipping_option::ENABLED));
+        rects,
+        make_finder_input(
+            TextureAtlas::max_side, TextureAtlas::discard_step,
+            [](auto&) { return callback_result::CONTINUE_PACKING; },
+            [](auto&) { return callback_result::ABORT_PACKING; },
+            TextureAtlas::allow_rotation ? flipping_option::ENABLED : flipping_option::DISABLED));
 
     for (const auto& r : rects)
     {

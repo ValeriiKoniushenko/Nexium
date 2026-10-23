@@ -26,7 +26,12 @@ namespace RawBackend
             return GL_RGBA;
         }
 
-        return GL_RED;
+        if (static_cast<int>(data.getChannel()) == 2)
+        {
+            return GL_RG;
+        }
+
+        return GL_R;
     }
 
 } // namespace RawBackend
