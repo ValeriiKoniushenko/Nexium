@@ -132,12 +132,12 @@ TEST_F(InputControllerTests, DisableAndReenableDoesNotLeaveStuckKeys)
 // tag::input-binding-serialization[]
 TEST_F(InputControllerTests, BindingSerializationPreservesChordAndTrigger)
 {
-    const InputController::Binding binding{ .action = "Save"_atom,
-                                            .chord = { .triggerKey = Key::S,
-                                                       .requiredKeys = { Key::Left_Control } },
-                                            .trigger = InputActionTrigger::OnRelease };
+    const InputBinding binding{ .action = "Save"_atom,
+                                .chord
+                                = { .triggerKey = Key::S, .requiredKeys = { Key::Left_Control } },
+                                .trigger = InputActionTrigger::OnRelease };
     const nlohmann::json json = binding;
-    const auto restored = json.get<InputController::Binding>();
+    const auto restored = json.get<InputBinding>();
     EXPECT_EQ(restored.action, binding.action);
     EXPECT_EQ(restored.chord.triggerKey, Key::S);
     EXPECT_EQ(restored.chord.requiredKeys, binding.chord.requiredKeys);
@@ -548,22 +548,22 @@ TEST_F(InputControllerTests, MouseSerializationPreservesMixedChordAndTrigger)
                             "_5"_atom,   "_6"_atom,    "_7"_atom,     "_8"_atom };
     for (std::size_t i = 0; i < buttons.size(); ++i)
     {
-        const InputController::Binding binding{ .action = "Drag"_atom,
-                                                .chord = { .triggerKey = buttons[i],
-                                                           .requiredKeys = { Key::Left_Control } },
-                                                .trigger = InputActionTrigger::WhileHeld };
+        const InputBinding binding{ .action = "Drag"_atom,
+                                    .chord = { .triggerKey = buttons[i],
+                                               .requiredKeys = { Key::Left_Control } },
+                                    .trigger = InputActionTrigger::WhileHeld };
         const nlohmann::json json = binding;
         EXPECT_EQ(json["triggerKey"],
                   (nlohmann::json{ { "device", "Mouse" }, { "button", names[i].toStdString() } }));
         EXPECT_EQ(json["requiredKeys"][0], "Left_Control");
-        const auto restored = json.get<InputController::Binding>();
+        const auto restored = json.get<InputBinding>();
         EXPECT_EQ(restored.action, binding.action);
         EXPECT_EQ(restored.chord.triggerKey, binding.chord.triggerKey);
         EXPECT_EQ(restored.chord.requiredKeys, binding.chord.requiredKeys);
         EXPECT_EQ(restored.trigger, binding.trigger);
     }
 
-    const InputController::Binding binding{
+    const InputBinding binding{
         .action = "Move"_atom,
         .chord = { .triggerKey = Key::W, .requiredKeys = { MouseButton::Right, Key::Left_Control } }
     };
@@ -571,7 +571,7 @@ TEST_F(InputControllerTests, MouseSerializationPreservesMixedChordAndTrigger)
     EXPECT_EQ(json["triggerKey"], "W");
     EXPECT_EQ(json["requiredKeys"][0],
               (nlohmann::json{ { "device", "Mouse" }, { "button", "Right" } }));
-    const auto restored = json.get<InputController::Binding>();
+    const auto restored = json.get<InputBinding>();
     EXPECT_EQ(restored.chord.triggerKey, binding.chord.triggerKey);
     EXPECT_EQ(restored.chord.requiredKeys, binding.chord.requiredKeys);
 }
@@ -584,7 +584,7 @@ TEST_F(InputControllerTests, MouseSupportPreservesLegacyKeyboardSerialization)
                                  { "requiredKeys",
                                    { "Left_Shift", static_cast<int>(Key::Left_Alt) } },
                                  { "requiredModifiers", static_cast<int>(InputModifier_Control) } };
-    const auto restored = legacy.get<InputController::Binding>();
+    const auto restored = legacy.get<InputBinding>();
     EXPECT_EQ(restored.action, "Save"_atom);
     EXPECT_EQ(restored.chord.triggerKey, Key::S);
     EXPECT_EQ(restored.chord.requiredKeys,

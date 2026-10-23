@@ -30,7 +30,6 @@ namespace NX
     public:
         // tag::input-controller-api[]
         using ActionCallback = std::function<void(const InputActionEvent&)>;
-        using Binding = InputBinding;
 
         FIELD();
         float speed = 600.f;
@@ -52,14 +51,14 @@ namespace NX
                   InputActionTrigger trigger = InputActionTrigger::OnPress);
         bool bind(const Core::StringAtom& action, KeyChord chord, ActionCallback callback,
                   InputActionTrigger trigger = InputActionTrigger::OnPress);
-        bool bind(Binding binding);
+        bool bind(const InputBinding& binding);
 
         // Callback registration is independent of the editable bindings.
         // An empty callback unregisters the handler.
         void setActionCallback(const Core::StringAtom& action, ActionCallback callback);
         void clearBindings();
         bool unbind(const Core::StringAtom& action);
-        void setBindings(const std::vector<Binding>& bindings);
+        void setBindings(const std::vector<InputBinding>& bindings);
 
         void setInputMap(const InputMap& map);
         [[nodiscard]] InputMap getInputMap() const;
@@ -73,7 +72,7 @@ namespace NX
         [[nodiscard]] bool isActionPressed(const Core::StringAtom& action) const;
         [[nodiscard]] std::uint8_t getActionModifiers(const Core::StringAtom& action) const;
         [[nodiscard]] glm::vec2 getActionValue(const Core::StringAtom& action) const;
-        [[nodiscard]] const std::vector<Binding>& getBindings() const noexcept;
+        [[nodiscard]] const std::vector<InputBinding>& getBindings() const noexcept;
 
         [[nodiscard]] Tag getTags() const override;
         void onPostDeserialize(AbstractComponent* obj, const RLogsCollector& logs) override;
@@ -91,13 +90,13 @@ namespace NX
         friend class InputRouter;
         friend class InputControllerSynchronizer;
 
-        [[nodiscard]] std::optional<Binding> resolveBinding(const KeyInputEvent& event) const;
+        [[nodiscard]] std::optional<InputBinding> resolveBinding(const KeyInputEvent& event) const;
         void handleRoutedEvent(const KeyInputEvent& event);
-        void handleRoutedEvent(const KeyInputEvent& event, const Binding& binding);
+        void handleRoutedEvent(const KeyInputEvent& event, const InputBinding& binding);
         void handleReleasedEvent(const KeyInputEvent& event);
         void beginInputFrame();
         void cancelInput(std::uint8_t channels = InputChannel_All);
-        void cancelMatchingBindings(const std::function<bool(const Binding&)>& predicate);
+        void cancelMatchingBindings(const std::function<bool(const InputBinding&)>& predicate);
         void releaseAllActions();
         void emitAction(const InputActionEvent& event);
 
@@ -106,7 +105,7 @@ namespace NX
 
         // Keep the existing asset field name and array representation.
         FIELD();
-        std::vector<Binding> _bindings;
+        std::vector<InputBinding> _bindings;
 
         bool _inputEnabled = true;
         InputActionRuntime _runtime;

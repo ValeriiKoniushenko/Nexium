@@ -29,7 +29,7 @@ using namespace Platform;
 
 namespace
 {
-    Core::StringAtom BindingText(const NX::InputController::Binding& binding)
+    Core::StringAtom BindingText(const NX::InputBinding& binding)
     {
         Core::StringAtom text;
         const auto appendButton = [&text](NX::InputButton button)

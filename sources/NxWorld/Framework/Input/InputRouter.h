@@ -41,17 +41,17 @@ namespace NX
         [[nodiscard]] bool hasPointerCapture() const;
 
     private:
-        struct Handle
+        struct InputControllerHandle
         {
             InputController* controller = nullptr;
             std::uint64_t id = 0;
         };
 
-        struct Registration
+        struct InputControllerRegistration
         {
-            explicit Registration(Handle registeredHandle);
+            explicit InputControllerRegistration(const InputControllerHandle& registeredHandle);
 
-            Handle handle;
+            InputControllerHandle handle;
             std::uint64_t revision = 0;
             InputRoutingState state;
         };
@@ -59,40 +59,42 @@ namespace NX
         struct ResolvedInput
         {
             std::optional<InputBinding> binding;
-            std::optional<InputBinding> pointerBinding{};
+            std::optional<InputBinding> pointerBinding;
             [[nodiscard]] bool hasMatch() const;
         };
 
         struct PendingDelivery
         {
-            Handle handle;
+            InputControllerHandle handle;
             KeyInputEvent event;
             ResolvedInput input;
             std::uint64_t revision = 0;
         };
 
-        [[nodiscard]] static bool canReceive(const Registration& registration,
+        [[nodiscard]] static bool canReceive(const InputControllerRegistration& registration,
                                              std::uint8_t channel);
-        [[nodiscard]] static bool acceptsEvent(const Registration& registration,
+        [[nodiscard]] static bool acceptsEvent(const InputControllerRegistration& registration,
                                                const KeyInputEvent& event, bool pointerCaptured);
-        [[nodiscard]] Registration* find(Handle handle);
-        [[nodiscard]] const Registration* find(Handle handle) const;
-        [[nodiscard]] std::vector<Handle> inputControllerSnapshot() const;
-        void synchronize(Handle handle, const InputContextStack& contexts,
+        [[nodiscard]] InputControllerRegistration* find(const InputControllerHandle& handle);
+        [[nodiscard]] const InputControllerRegistration* find(
+            const InputControllerHandle& handle) const;
+        [[nodiscard]] std::vector<InputControllerHandle> inputControllerSnapshot() const;
+        void synchronize(const InputControllerHandle& handle, const InputContextStack& contexts,
                          const InputDeviceState& devices);
         [[nodiscard]] bool contextClaimsInput(InputContext context,
                                               const KeyInputEvent& event) const;
         [[nodiscard]] static ResolvedInput resolveInput(const InputController& controller,
                                                         const KeyInputEvent& event);
-        void routeReleasedEvent(const KeyInputEvent& event, std::span<const Handle> handles);
+        void routeReleasedEvent(const KeyInputEvent& event,
+                                std::span<const InputControllerHandle> handles);
         [[nodiscard]] std::vector<PendingDelivery> collectDeliveries(
             const KeyInputEvent& event, InputContext context,
-            std::span<const Handle> handles) const;
+            std::span<const InputControllerHandle> handles) const;
         void dispatchDeliveries(std::span<const PendingDelivery> deliveries, InputContext context,
                                 std::uint8_t channel, const InputContextStack& contexts);
 
         InputControllerSynchronizer _synchronizer;
-        std::vector<Registration> _controllers;
+        std::vector<InputControllerRegistration> _controllers;
         std::uint64_t _nextId = 1;
     };
 } // namespace NX

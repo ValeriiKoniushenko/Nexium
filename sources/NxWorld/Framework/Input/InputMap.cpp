@@ -141,7 +141,7 @@ namespace NX
         const auto appendOldModifier
             = [&binding, oldModifiers](std::uint8_t modifier, Platform::Keyboard::Key key)
         {
-            if ((oldModifiers & static_cast<std::uint8_t>(modifier)) != 0
+            if ((oldModifiers & modifier) != 0
                 && std::ranges::find(binding.chord.requiredKeys, key)
                        == binding.chord.requiredKeys.end())
             {
@@ -234,7 +234,7 @@ namespace NX
     }
 
     InputMap::InputMap(std::vector<InputBinding> bindings)
-        : _bindings(std::move(bindings))
+        : _bindings{ std::move(bindings) }
     {
     }
 

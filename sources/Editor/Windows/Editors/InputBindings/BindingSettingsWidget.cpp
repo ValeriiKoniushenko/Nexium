@@ -20,7 +20,7 @@
 
 namespace NX
 {
-    BindingSettingsWidget::DrawResult BindingSettingsWidget::draw(InputController::Binding* binding)
+    BindingSettingsWidget::DrawResult BindingSettingsWidget::draw(InputBinding* binding)
     {
         DrawResult result;
         if (!binding)
@@ -61,8 +61,7 @@ namespace NX
         _actionBufferInitialized = false;
     }
 
-    BindingSettingsWidget::DrawResult BindingSettingsWidget::drawSettings(
-        InputController::Binding& binding)
+    BindingSettingsWidget::DrawResult BindingSettingsWidget::drawSettings(InputBinding& binding)
     {
         ImGui::TextUnformatted("Shortcut settings"_atom.c_str());
         ImGui::Separator();
@@ -90,7 +89,7 @@ namespace NX
         return result;
     }
 
-    bool BindingSettingsWidget::drawAction(InputController::Binding& binding)
+    bool BindingSettingsWidget::drawAction(InputBinding& binding)
     {
         if (!_actionBufferInitialized || _displayedAction != binding.action)
         {
@@ -109,7 +108,7 @@ namespace NX
         return true;
     }
 
-    bool BindingSettingsWidget::drawChord(InputController::Binding& binding)
+    bool BindingSettingsWidget::drawChord(InputBinding& binding)
     {
         bool changed = false;
         const bool finishedRecording = _recording && _cancellationRequested;
@@ -151,7 +150,7 @@ namespace NX
         return changed;
     }
 
-    bool BindingSettingsWidget::drawTrigger(InputController::Binding& binding)
+    bool BindingSettingsWidget::drawTrigger(InputBinding& binding)
     {
         bool changed = false;
         if (ImGui::BeginCombo("Trigger"_atom.c_str(), triggerText(binding.trigger).c_str()))

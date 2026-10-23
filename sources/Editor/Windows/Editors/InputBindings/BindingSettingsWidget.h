@@ -27,15 +27,15 @@ namespace NX
             bool deleteRequested = false;
         };
 
-        [[nodiscard]] DrawResult draw(InputController::Binding* binding);
+        [[nodiscard]] DrawResult draw(InputBinding* binding);
 
         void cancelRecording();
 
     private:
-        [[nodiscard]] DrawResult drawSettings(InputController::Binding& binding);
-        [[nodiscard]] bool drawAction(InputController::Binding& binding);
-        [[nodiscard]] bool drawChord(InputController::Binding& binding);
-        [[nodiscard]] bool drawTrigger(InputController::Binding& binding);
+        [[nodiscard]] DrawResult drawSettings(InputBinding& binding);
+        [[nodiscard]] bool drawAction(InputBinding& binding);
+        [[nodiscard]] bool drawChord(InputBinding& binding);
+        [[nodiscard]] bool drawTrigger(InputBinding& binding);
 
         void startRecording();
         void recordButton(InputButton button);

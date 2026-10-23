@@ -29,14 +29,15 @@ namespace NX
         }
     } // namespace
 
-    bool InputRouter::canReceive(const Registration& registration, std::uint8_t channel)
+    bool InputRouter::canReceive(const InputControllerRegistration& registration,
+                                 std::uint8_t channel)
     {
         return registration.handle.controller->isInputEnabled()
                && registration.state.canReceive(channel);
     }
 
-    bool InputRouter::acceptsEvent(const Registration& registration, const KeyInputEvent& event,
-                                   bool pointerCaptured)
+    bool InputRouter::acceptsEvent(const InputControllerRegistration& registration,
+                                   const KeyInputEvent& event, bool pointerCaptured)
     {
         return registration.handle.controller->isInputEnabled()
                && registration.state.acceptsEvent(event, pointerCaptured);
@@ -45,44 +46,45 @@ namespace NX
     void InputRouter::registerController(InputController* controller)
     {
         if (controller
-            && std::ranges::none_of(_controllers, [controller](const Registration& entry)
+            && std::ranges::none_of(_controllers, [controller](const auto& entry)
                                     { return entry.handle.controller == controller; }))
         {
-            _controllers.emplace_back(Handle{ controller, _nextId++ });
+            _controllers.emplace_back(InputControllerHandle{ controller, _nextId++ });
         }
     }
 
     void InputRouter::unregisterController(InputController* controller)
     {
-        std::erase_if(_controllers, [controller](const Registration& entry)
+        std::erase_if(_controllers, [controller](const auto& entry)
                       { return entry.handle.controller == controller; });
     }
 
-    InputRouter::Registration* InputRouter::find(Handle handle)
+    InputRouter::InputControllerRegistration* InputRouter::find(const InputControllerHandle& handle)
     {
         const auto it = std::ranges::find_if(
             _controllers,
-            [handle](const Registration& entry)
+            [handle](const auto& entry)
             {
                 return entry.handle.id == handle.id && entry.handle.controller == handle.controller;
             });
         return it == _controllers.end() ? nullptr : &*it;
     }
 
-    const InputRouter::Registration* InputRouter::find(Handle handle) const
+    const InputRouter::InputControllerRegistration* InputRouter::find(
+        const InputControllerHandle& handle) const
     {
         const auto it = std::ranges::find_if(
             _controllers,
-            [handle](const Registration& entry)
+            [handle](const auto& entry)
             {
                 return entry.handle.id == handle.id && entry.handle.controller == handle.controller;
             });
         return it == _controllers.end() ? nullptr : &*it;
     }
 
-    std::vector<InputRouter::Handle> InputRouter::inputControllerSnapshot() const
+    std::vector<InputRouter::InputControllerHandle> InputRouter::inputControllerSnapshot() const
     {
-        std::vector<Handle> result;
+        std::vector<InputControllerHandle> result;
         result.reserve(_controllers.size());
         for (const auto& entry : _controllers)
         {
@@ -91,7 +93,8 @@ namespace NX
         return result;
     }
 
-    void InputRouter::synchronize(Handle handle, const InputContextStack& currentContext,
+    void InputRouter::synchronize(const InputControllerHandle& handle,
+                                  const InputContextStack& currentContext,
                                   const InputDeviceState& currentDevices)
     {
         if (auto* entry = find(handle))
@@ -113,7 +116,7 @@ namespace NX
     bool InputRouter::contextClaimsInput(InputContext context, const KeyInputEvent& event) const
     {
         return std::ranges::any_of(_controllers,
-                                   [context, &event](const Registration& entry)
+                                   [context, &event](const auto& entry)
                                    {
                                        const auto& controller = *entry.handle.controller;
                                        return controller.isInputEnabled()
@@ -143,7 +146,7 @@ namespace NX
                                   const InputDeviceState& devices)
     {
         observeDevicesAndEraseReleasedButtons(devices);
-        for (const Handle handle : inputControllerSnapshot())
+        for (const auto& handle : inputControllerSnapshot())
         {
             synchronize(handle, contexts, devices);
         }
@@ -162,7 +165,8 @@ namespace NX
                                         const InputContextStack& contexts,
                                         const InputDeviceState& devices)
     {
-        const auto it = std::ranges::find_if(_controllers, [controller](const Registration& entry)
+        const auto it = std::ranges::find_if(_controllers,
+                                             [controller](const InputControllerRegistration& entry)
                                              { return entry.handle.controller == controller; });
         if (it != _controllers.end())
         {
@@ -223,7 +227,7 @@ namespace NX
     }
 
     void InputRouter::routeReleasedEvent(const KeyInputEvent& event,
-                                         std::span<const Handle> handles)
+                                         std::span<const InputControllerHandle> handles)
     {
         for (const auto handle : handles)
         {
@@ -238,7 +242,8 @@ namespace NX
     }
 
     std::vector<InputRouter::PendingDelivery> InputRouter::collectDeliveries(
-        const KeyInputEvent& event, InputContext context, std::span<const Handle> handles) const
+        const KeyInputEvent& event, InputContext context,
+        std::span<const InputControllerHandle> handles) const
     {
         const bool capturedPointer = event.isPointerMoveEventType() && hasPointerCapture();
         std::vector<PendingDelivery> deliveries;
@@ -296,7 +301,7 @@ namespace NX
 
     bool InputRouter::hasPointerCapture() const
     {
-        return std::ranges::any_of(_controllers, [](const Registration& entry)
+        return std::ranges::any_of(_controllers, [](const auto& entry)
                                    { return entry.state.hasPointerCapture(); });
     }
 
@@ -321,7 +326,8 @@ namespace NX
         }
     }
 
-    InputRouter::Registration::Registration(Handle registeredHandle)
+    InputRouter::InputControllerRegistration::InputControllerRegistration(
+        const InputControllerHandle& registeredHandle)
         : handle(registeredHandle)
     {
     }

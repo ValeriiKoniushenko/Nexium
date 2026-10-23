@@ -10,6 +10,7 @@
 #include "InputController.h"
 
 #include "InputSystem.h"
+#include "NxWorld/Framework/Input/InputMap.h"
 
 namespace NX
 {
@@ -47,7 +48,12 @@ namespace NX
     bool InputController::bind(const Core::StringAtom& action, KeyChord chord,
                                ActionCallback callback, InputActionTrigger trigger)
     {
-        const Binding binding{ .action = action, .chord = std::move(chord), .trigger = trigger };
+        const InputBinding binding{
+            .action = action,
+            .chord = std::move(chord),
+            .trigger = trigger,
+        };
+
         if (!InputMap::IsValid(binding))
         {
             return false;
@@ -60,14 +66,14 @@ namespace NX
         return inserted;
     }
 
-    bool InputController::bind(Binding binding)
+    bool InputController::bind(const InputBinding& binding)
     {
         if (!InputMap::IsValid(binding))
         {
             return false;
         }
         cancelInput();
-        const auto inserted = InputMap::Bind(_bindings, std::move(binding));
+        const auto inserted = InputMap::Bind(_bindings, binding);
         GetInputSystem().refreshController(this);
         return inserted;
     }
@@ -106,11 +112,11 @@ namespace NX
         GetInputSystem().refreshController(this);
     }
 
-    void InputController::setBindings(const std::vector<Binding>& bindings)
+    void InputController::setBindings(const std::vector<InputBinding>& bindings)
     {
-        const auto updated = bindings;
+        auto updated = bindings;
         cancelInput();
-        _bindings = updated;
+        _bindings = std::move(updated);
         GetInputSystem().refreshController(this);
     }
 
@@ -194,8 +200,7 @@ namespace NX
         BaseComponent::onDeinitialize();
     }
 
-    std::optional<InputController::Binding> InputController::resolveBinding(
-        const KeyInputEvent& event) const
+    std::optional<InputBinding> InputController::resolveBinding(const KeyInputEvent& event) const
     {
         return InputMap::ResolveBinding(_bindings, event);
     }
@@ -214,7 +219,7 @@ namespace NX
         }
     }
 
-    void InputController::handleRoutedEvent(const KeyInputEvent& event, const Binding& binding)
+    void InputController::handleRoutedEvent(const KeyInputEvent& event, const InputBinding& binding)
     {
         if (!isInputEnabled()
             || (event.type == InputEventType::Button
@@ -267,7 +272,7 @@ namespace NX
     }
 
     void InputController::cancelMatchingBindings(
-        const std::function<bool(const Binding&)>& predicate)
+        const std::function<bool(const InputBinding&)>& predicate)
     {
         ++_runtimeRevision;
         _runtime.cancelMatching(predicate);
@@ -315,7 +320,7 @@ namespace NX
         return isActive(action);
     }
 
-    const std::vector<InputController::Binding>& InputController::getBindings() const noexcept
+    const std::vector<InputBinding>& InputController::getBindings() const noexcept
     {
         return _bindings;
     }

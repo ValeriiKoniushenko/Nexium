@@ -27,7 +27,7 @@ namespace NX
         ECS_DECL(InputBindingsEditor, NX::BaseFloatEWC);
 
     public:
-        void setBindings(const std::vector<InputController::Binding>& bindings);
+        void setBindings(const std::vector<InputBinding>& bindings);
         void setTarget(InputController* controller, NxECSBasedEditorEWC* owner = nullptr);
         void selectBinding(std::size_t index);
 
@@ -50,7 +50,7 @@ namespace NX
     private:
         BindingsListWidget _bindingsList;
         BindingSettingsWidget _bindingSettings;
-        std::vector<InputController::Binding> _bindings;
+        std::vector<InputBinding> _bindings;
         std::optional<std::size_t> _selectedBinding;
         std::size_t _bindingSession = 0;
         Core::WeakPtr<InputController> _targetController;

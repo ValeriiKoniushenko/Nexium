@@ -110,7 +110,7 @@ namespace NX
         validateTarget();
     }
 
-    void InputBindingsEditor::setBindings(const std::vector<InputController::Binding>& bindings)
+    void InputBindingsEditor::setBindings(const std::vector<InputBinding>& bindings)
     {
         _bindings = bindings;
         ++_bindingSession;
