@@ -37,6 +37,7 @@ Checks: >
     -misc-no-recursion,
     -misc-non-private-member-variables-in-classes,
     -misc-unused-parameters,
+    -misc-const-correctness,
 
     -modernize-concat-nested-namespaces,
     -modernize-use-trailing-return-type,
