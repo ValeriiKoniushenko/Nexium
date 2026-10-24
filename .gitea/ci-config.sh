@@ -58,3 +58,5 @@ CI_COPYRIGHT_LICENSE_LINE_3='// you may not use this file except in compliance w
 CI_COPYRIGHT_LICENSE_LINE_4='// You may obtain a copy of the License at'
 CI_COPYRIGHT_LICENSE_LINE_5='//'
 CI_COPYRIGHT_LICENSE_LINE_6='//     http://www.apache.org/licenses/LICENSE-2.0'
+
+CI_MODULE_HEADER_PREFIX=sources/
