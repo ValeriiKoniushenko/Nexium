@@ -9,7 +9,7 @@ nexium_add_public_headers(Nexium_RawBackend_Fonts
 
 target_link_libraries(Nexium_RawBackend_Fonts
     PUBLIC
-    Nexium::Foundation
+    Nexium::Foundation::Base
     Utils::Core
     freetype
     PRIVATE

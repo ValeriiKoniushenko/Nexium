@@ -17,17 +17,17 @@ add_subdirectory(GameUtils)  # Nexium::Runtime::GameUtils
 
 # ====================== Runtime ======================
 
-add_library(Nexium_Runtime STATIC)
-add_library(Nexium::Runtime ALIAS Nexium_Runtime)
-target_sources(Nexium_Runtime PRIVATE
+add_library(Nexium_Runtime_Base STATIC)
+add_library(Nexium::Runtime::Base ALIAS Nexium_Runtime_Base)
+target_sources(Nexium_Runtime_Base PRIVATE
     Runtime.cpp
 )
-nexium_add_public_headers(Nexium_Runtime
+nexium_add_public_headers(Nexium_Runtime_Base
     NxRuntime/Runtime.h
 )
-target_link_libraries(Nexium_Runtime
+target_link_libraries(Nexium_Runtime_Base
     PUBLIC
-    "$<LINK_LIBRARY:WHOLE_ARCHIVE,Nexium::World>"
+    "$<LINK_LIBRARY:WHOLE_ARCHIVE,Nexium::World::Base>"
     PRIVATE
     Nexium::Foundation::Debug
     Nexium::Runtime::GameUtils
@@ -37,7 +37,7 @@ target_link_libraries(Nexium_Runtime
 
 foreach(TARGET_NAME IN ITEMS
     ${MODULE_PRIVATE_TARGET}
-    Nexium_Runtime
+    Nexium_Runtime_Base
 )
     nexium_configure_target(${TARGET_NAME})
 endforeach()

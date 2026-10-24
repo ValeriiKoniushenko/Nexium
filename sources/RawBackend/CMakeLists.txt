@@ -31,7 +31,7 @@ nexium_add_public_headers(Nexium_RawBackend_Common
 
 target_link_libraries(Nexium_RawBackend_Common
     PUBLIC
-    Nexium::Foundation
+    Nexium::Foundation::Base
     JustReflectMe::Adapter
     Nexium::Platform::Graphics
     Utils::Core

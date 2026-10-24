@@ -44,33 +44,33 @@ if(NOT NEXIUM_ENABLE_3D_MODULE)
     )
 endif()
 
-add_library(Nexium_Editor STATIC)
-add_library(Nexium::Editor ALIAS Nexium_Editor)
-target_sources(Nexium_Editor
+add_library(Nexium_Editor_Base STATIC)
+add_library(Nexium::Editor::Base ALIAS Nexium_Editor_Base)
+target_sources(Nexium_Editor_Base
     PRIVATE ${EDITOR_SOURCES}
     PUBLIC
         FILE_SET HEADERS
         BASE_DIRS "${PROJECT_SOURCE_DIR}/sources"
         FILES ${EDITOR_HEADERS}
 )
-target_link_libraries(Nexium_Editor
+target_link_libraries(Nexium_Editor_Base
     PUBLIC
     Core::ImGui
     Nexium::Editor::GuiComponents
-    Nexium::Foundation
+    Nexium::Foundation::Base
     Nexium::Foundation::Interfaces
     Nexium::Fundamental::Assets
     Nexium::Fundamental::ECS
     Nexium::Fundamental::ResourceManagement
     JustReflectMe::Adapter
     Nexium::RawBackend::Graphics
-    Nexium::Runtime
+    Nexium::Runtime::Base
     Nexium::Subsystem::AssetsManager
     Nexium::Subsystem::Graphics
     Nexium::Subsystem::Input
     Utils::Core
     Utils::Utils
-    Nexium::World
+    Nexium::World::Base
     Nexium::World::Animation
     glm
     imguizmo::imguizmo
@@ -79,15 +79,15 @@ target_link_libraries(Nexium_Editor
     Nexium::Fundamental::Utils
     ${MODULE_PRIVATE_TARGET}
 )
-target_precompile_headers(Nexium_Editor PRIVATE EditorPCH.h)
+target_precompile_headers(Nexium_Editor_Base PRIVATE EditorPCH.h)
 
 if(NEXIUM_ENABLE_3D_MODULE)
-    target_compile_definitions(Nexium_Editor PUBLIC NEXIUM_ENABLE_3D_MODULE=1)
-    target_link_libraries(Nexium_Editor
+    target_compile_definitions(Nexium_Editor_Base PUBLIC NEXIUM_ENABLE_3D_MODULE=1)
+    target_link_libraries(Nexium_Editor_Base
         PUBLIC assimp::assimp
         PRIVATE Nexium::World::AssimpMisc
     )
 endif()
 
-nexium_configure_target(Nexium_Editor)
-add_dependencies(Nexium_Editor CodeGenerator)
+nexium_configure_target(Nexium_Editor_Base)
+add_dependencies(Nexium_Editor_Base CodeGenerator)

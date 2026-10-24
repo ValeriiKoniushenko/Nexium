@@ -8,7 +8,7 @@ nexium_add_public_headers(Nexium_Fundamental_TextureAtlas
 )
 target_link_libraries(Nexium_Fundamental_TextureAtlas
     PUBLIC
-    Nexium::Foundation
+    Nexium::Foundation::Base
     Nexium::RawBackend::Common
     Nexium::RawBackend::Graphics
     Utils::Core

@@ -37,7 +37,7 @@ int main() {
     foreach(_layer IN ITEMS Foundation Graphics Input RawBackend)
         add_executable(Nexium_Check${_layer} EXCLUDE_FROM_ALL "${_directory}/${_layer}.cpp")
     endforeach()
-    target_link_libraries(Nexium_CheckFoundation PRIVATE Nexium::Foundation)
+    target_link_libraries(Nexium_CheckFoundation PRIVATE Nexium::Foundation::Base)
     target_link_libraries(Nexium_CheckGraphics PRIVATE Nexium::Platform::Graphics)
     target_link_libraries(Nexium_CheckInput PRIVATE Nexium::Platform::Input)
     target_link_libraries(Nexium_CheckRawBackend PRIVATE Nexium::RawBackend::Common)

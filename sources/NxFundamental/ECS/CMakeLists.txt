@@ -8,7 +8,7 @@ nexium_add_public_headers(Nexium_Fundamental_ECS
 )
 target_link_libraries(Nexium_Fundamental_ECS
     PUBLIC
-    Nexium::Foundation
+    Nexium::Foundation::Base
     Nexium::Fundamental::Base
     Nexium::Fundamental::ResourceManagement
     Utils::Core

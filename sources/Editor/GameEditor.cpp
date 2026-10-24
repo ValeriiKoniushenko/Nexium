@@ -26,6 +26,7 @@
 #include "NxWorld/Framework/GameInstance.h"
 #include "PrivateModuleInfo.h"
 
+#include <algorithm>
 #include <array>
 #include <exception>
 #include <string>
@@ -125,6 +126,11 @@ namespace NX
                 = dynamic_cast<BaseEWC*>(GetGlobalComponentFactory().create(wnd));
             registerNewWindow(std::move(tmp));
         }
+
+        // ImGui allows docking only into a DockSpace that was submitted earlier in the same frame,
+        // while the registration order depends on the link order. So the root dock must tick first.
+        std::ranges::stable_partition(_windows, [](const auto& wnd)
+                                      { return dynamic_cast<RootDockWindowEWC*>(wnd.get()); });
 
         if (auto* viewport = getWindow<GameViewportEWC>(); Verify(viewport))
         {

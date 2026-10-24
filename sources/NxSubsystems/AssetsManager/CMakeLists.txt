@@ -19,7 +19,7 @@ target_link_libraries(Nexium_Subsystem_AssetsManager
     Nexium::RawBackend::Graphics
     Utils::Utils
     PRIVATE
-    Nexium::Foundation
+    Nexium::Foundation::Base
     ${MODULE_PRIVATE_TARGET}
 )
 if(WIN32)

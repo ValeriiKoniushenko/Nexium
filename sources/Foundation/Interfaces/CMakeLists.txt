@@ -14,7 +14,7 @@ target_link_libraries(Nexium_Foundation_Interfaces
     JustReflectMe::Adapter
     Utils::Core
     PRIVATE
-    Nexium::Foundation
+    Nexium::Foundation::Base
 )
 
 nexium_configure_target(Nexium_Foundation_Interfaces)

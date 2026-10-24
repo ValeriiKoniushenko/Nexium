@@ -27,7 +27,7 @@ Foundation's separate private logging target is disabled.
 [cols="3,4,4",options="header"]
 |===
 |Public alias |Contents |Direct public dependencies
-|`Nexium::Foundation` |Configs, BaseLog, BaseUsings |Utils::Core, spdlog::spdlog.
+|`Nexium::Foundation::Base` |Configs, BaseLog, BaseUsings |Utils::Core, spdlog::spdlog.
 |`Nexium::Foundation::Debug` |Latency collector/report/printer |None (standard library only).
 |`Nexium::Foundation::Interfaces` |IDataIO (DataStream), IOutliner |Utils::Core, JustReflectMe::Adapter.
 |`Nexium::Platform::Graphics` |OpenGL access |Core::Glad.
@@ -48,11 +48,11 @@ Foundation's separate private logging target is disabled.
 |`Nexium::Subsystem::AssimpImporter` |Optional mesh importer |Subsystem Graphics.
 |`Nexium::World::Animation` |BaseAnimation, FrameByFrameAnimation |Foundation, Fundamental ECS and ResourceManagement, Utils::Core, JustReflectMe::Adapter.
 |`Nexium::World::AssimpMisc` |AssimpHelper (3D only) |Foundation is private; Utils::Core, assimp::assimp.
-|`Nexium::World` |World/framework, InputSystem/InputController, framework managers and state, Scene, actors, cameras, rectangles, animator, skybox types |Foundation, Foundation Interfaces, World Animation, Fundamental Assets/Base/ECS/ResourceManagement, Subsystem AssetsManager/Graphics/Input, Platform Input, RawBackend Common, Utils::Core, JustReflectMe::Adapter.
-|`Nexium::Runtime` |Runtime |World through WHOLE_ARCHIVE.
+|`Nexium::World::Base` |World/framework, InputSystem/InputController, framework managers and state, Scene, actors, cameras, rectangles, animator, skybox types |Foundation, Foundation Interfaces, World Animation, Fundamental Assets/Base/ECS/ResourceManagement, Subsystem AssetsManager/Graphics/Input, Platform Input, RawBackend Common, Utils::Core, JustReflectMe::Adapter.
+|`Nexium::Runtime::Base` |Runtime |World through WHOLE_ARCHIVE.
 |`Nexium::Runtime::GameUtils` |FPSCounter |None.
 |`Nexium::Editor::GuiComponents` |Widgets and layouts |Foundation, Fundamental ECS and ResourceManagement, Platform Input, Subsystem AssetsManager, Core::ImGui, Utils::Core, Utils::Utils.
-|`Nexium::Editor` |EditorIntegration, GameEditor, windows, gizmos, picking, toasts, tools |Runtime, Editor GuiComponents, World, World Animation, Foundation, Fundamental Assets/ECS/ResourceManagement, Subsystem AssetsManager/Graphics/Input, RawBackend Graphics, Core::ImGui, imguizmo::imguizmo, Utils::Core, Utils::Utils, glm, JustReflectMe::Adapter.
+|`Nexium::Editor::Base` |EditorIntegration, GameEditor, windows, gizmos, picking, toasts, tools |Runtime, Editor GuiComponents, World, World Animation, Foundation, Fundamental Assets/ECS/ResourceManagement, Subsystem AssetsManager/Graphics/Input, RawBackend Graphics, Core::ImGui, imguizmo::imguizmo, Utils::Core, Utils::Utils, glm, JustReflectMe::Adapter.
 |===
 
 Every target links only the targets whose headers its own sources include; there are no
@@ -67,8 +67,8 @@ AssetsManager privately links comdlg32 on Windows.
 Known layering violation: `Subsystem::Graphics` (`Font.cpp`) includes
 `NxWorld/Entities/Camera/Camera.h` without linking World, because that would be a cycle.
 `Editor::GuiComponents` likewise only uses the header `Editor/IconsFontAwesome.h`.
-There is no combined `Nexium::RawBackend`, `Nexium::Fundamental` or `Nexium::Foundation`
-umbrella target.
+No target name is also a prefix of another target: each module's root-folder library is named `<Module>::Base` (`Foundation`, `World`, `Runtime`, `Editor`) next to its nested libraries,
+and there is no combined `Nexium::RawBackend` or `Nexium::Fundamental` target.
 
 The application chain is `TemplateGame -> Editor -> Runtime -> World`.
 TemplateGame retains Editor with WHOLE_ARCHIVE.

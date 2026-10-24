@@ -18,7 +18,7 @@ target_sources(Nexium_Editor_GuiComponents
 target_link_libraries(Nexium_Editor_GuiComponents
     PUBLIC
     Core::ImGui
-    Nexium::Foundation
+    Nexium::Foundation::Base
     Nexium::Fundamental::ECS
     Nexium::Fundamental::ResourceManagement
     Nexium::Platform::Input

@@ -21,7 +21,7 @@ nexium_add_public_headers(Nexium_Subsystem_Graphics
 
 target_link_libraries(Nexium_Subsystem_Graphics
     PUBLIC
-    Nexium::Foundation
+    Nexium::Foundation::Base
     Nexium::Foundation::Interfaces
     Nexium::Fundamental::ResourceManagement
     JustReflectMe::Adapter

@@ -16,34 +16,34 @@ endif()
 # ============== Foundation ===============
 add_subdirectory(Debug)       # Nexium::Foundation::Debug
 
-add_library(Nexium_Foundation STATIC)
-add_library(Nexium::Foundation ALIAS Nexium_Foundation)
-target_sources(Nexium_Foundation PRIVATE
+add_library(Nexium_Foundation_Base STATIC)
+add_library(Nexium::Foundation::Base ALIAS Nexium_Foundation_Base)
+target_sources(Nexium_Foundation_Base PRIVATE
     Configs.cpp
     BaseLog.cpp
 )
 
-nexium_add_public_headers(Nexium_Foundation
+nexium_add_public_headers(Nexium_Foundation_Base
     Foundation/Configs.h
     Foundation/BaseLog.h
     Foundation/BaseUsings.h
 )
 
-target_link_libraries(Nexium_Foundation
+target_link_libraries(Nexium_Foundation_Base
     PUBLIC
     Utils::Core
     spdlog::spdlog
 )
 
 if(TARGET ${MODULE_PRIVATE_TARGET})
-    target_link_libraries(Nexium_Foundation PRIVATE ${MODULE_PRIVATE_TARGET})
+    target_link_libraries(Nexium_Foundation_Base PRIVATE ${MODULE_PRIVATE_TARGET})
 endif()
 
 # =========================================
 
-nexium_configure_target(Nexium_Foundation PROJECT_DIR)
+nexium_configure_target(Nexium_Foundation_Base PROJECT_DIR)
 
-add_dependencies(Nexium_Foundation CodeGenerator)
+add_dependencies(Nexium_Foundation_Base CodeGenerator)
 
 # Interfaces depends on Foundation, so it is added after the Foundation target exists.
 add_subdirectory(Interfaces)  # Nexium::Foundation::Interfaces

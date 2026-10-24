@@ -15,7 +15,7 @@ target_link_libraries(Nexium_RawBackend_Graphics
     Nexium::RawBackend::Common
     Utils::Core
     PRIVATE
-    Nexium::Foundation
+    Nexium::Foundation::Base
     ${MODULE_PRIVATE_TARGET}
 )
 

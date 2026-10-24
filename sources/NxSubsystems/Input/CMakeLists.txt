@@ -14,7 +14,7 @@ nexium_add_public_headers(Nexium_Subsystem_Input
 )
 target_link_libraries(Nexium_Subsystem_Input
     PUBLIC
-    Nexium::Foundation
+    Nexium::Foundation::Base
     Nexium::Foundation::Interfaces
     Nexium::Platform::Input
     Utils::Core

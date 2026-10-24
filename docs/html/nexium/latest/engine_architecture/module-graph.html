@@ -317,7 +317,7 @@ Foundation&#8217;s separate private logging target is disabled.</p>
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Nexium::Foundation</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Nexium::Foundation::Base</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Configs, BaseLog, BaseUsings</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Utils::Core, spdlog::spdlog.</p></td>
 </tr>
@@ -422,12 +422,12 @@ Foundation&#8217;s separate private logging target is disabled.</p>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Foundation is private; Utils::Core, assimp::assimp.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Nexium::World</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Nexium::World::Base</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">World/framework, InputSystem/InputController, framework managers and state, Scene, actors, cameras, rectangles, animator, skybox types</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Foundation, Foundation Interfaces, World Animation, Fundamental Assets/Base/ECS/ResourceManagement, Subsystem AssetsManager/Graphics/Input, Platform Input, RawBackend Common, Utils::Core, JustReflectMe::Adapter.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Nexium::Runtime</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Nexium::Runtime::Base</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Runtime</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">World through WHOLE_ARCHIVE.</p></td>
 </tr>
@@ -442,7 +442,7 @@ Foundation&#8217;s separate private logging target is disabled.</p>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Foundation, Fundamental ECS and ResourceManagement, Platform Input, Subsystem AssetsManager, Core::ImGui, Utils::Core, Utils::Utils.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Nexium::Editor</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Nexium::Editor::Base</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">EditorIntegration, GameEditor, windows, gizmos, picking, toasts, tools</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Runtime, Editor GuiComponents, World, World Animation, Foundation, Fundamental Assets/ECS/ResourceManagement, Subsystem AssetsManager/Graphics/Input, RawBackend Graphics, Core::ImGui, imguizmo::imguizmo, Utils::Core, Utils::Utils, glm, JustReflectMe::Adapter.</p></td>
 </tr>
@@ -461,8 +461,8 @@ AssetsManager privately links comdlg32 on Windows.
 Known layering violation: <code>Subsystem::Graphics</code> (<code>Font.cpp</code>) includes
 <code>NxWorld/Entities/Camera/Camera.h</code> without linking World, because that would be a cycle.
 <code>Editor::GuiComponents</code> likewise only uses the header <code>Editor/IconsFontAwesome.h</code>.
-There is no combined <code>Nexium::RawBackend</code>, <code>Nexium::Fundamental</code> or <code>Nexium::Foundation</code>
-umbrella target.</p>
+No target name is also a prefix of another target: each module&#8217;s root-folder library is named <code>&lt;Module&gt;::Base</code> (<code>Foundation</code>, <code>World</code>, <code>Runtime</code>, <code>Editor</code>) next to its nested libraries,
+and there is no combined <code>Nexium::RawBackend</code> or <code>Nexium::Fundamental</code> target.</p>
 </div>
 <div class="paragraph">
 <p>The application chain is <code>TemplateGame &#8594; Editor &#8594; Runtime &#8594; World</code>.

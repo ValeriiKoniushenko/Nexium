@@ -7,7 +7,7 @@ file(GLOB_RECURSE HEADERS "*.h")
 
 add_executable(${TARGET_NAME} ${CPP_SOURCES} ${HEADERS})
 target_link_libraries(${TARGET_NAME} PRIVATE
-    "$<LINK_LIBRARY:WHOLE_ARCHIVE,Nexium::Editor>"
+    "$<LINK_LIBRARY:WHOLE_ARCHIVE,Nexium::Editor::Base>"
 )
 
 nexium_configure_target(${TARGET_NAME})

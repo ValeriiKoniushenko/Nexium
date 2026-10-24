@@ -11,7 +11,7 @@ target_link_libraries(Nexium_World_AssimpMisc
     Utils::Core
     assimp::assimp
     PRIVATE
-    Nexium::Foundation
+    Nexium::Foundation::Base
 )
 
 nexium_configure_target(Nexium_World_AssimpMisc)
