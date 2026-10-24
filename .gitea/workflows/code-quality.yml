@@ -30,6 +30,12 @@ jobs:
       - name: CI helper tests
         working-directory: cache/gcc/debug
         run: python3 -m unittest discover -s scripts/ci/gitea/tests -v
+      - name: Remove previous CI reviews
+        working-directory: cache/gcc/debug
+        env:
+          GITEA_TOKEN: ${{ secrets.GITEA_TOKEN }}
+          GITEA_AUTH_SCHEME: Bearer
+        run: sh scripts/ci/gitea/runners/run_ci_check.sh .gitea/ci-config.sh purge-reviews
       - name: Copyright
         working-directory: cache/gcc/debug
         env:
