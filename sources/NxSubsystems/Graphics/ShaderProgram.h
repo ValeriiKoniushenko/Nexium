@@ -74,7 +74,7 @@ namespace NX
 
     public:
         ShaderProgram() = default;
-        ~ShaderProgram() override = default;
+        ~ShaderProgram() override;
 
         ShaderProgram(const ShaderProgram&) = delete;
         ShaderProgram& operator=(const ShaderProgram&) = delete;

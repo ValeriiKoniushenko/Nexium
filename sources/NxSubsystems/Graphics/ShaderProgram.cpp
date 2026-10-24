@@ -189,4 +189,9 @@ namespace NX
         Assert(_uniforms.at(name) != -1);
 #endif
     }
+
+    ShaderProgram::~ShaderProgram()
+    {
+        clear();
+    }
 } // namespace NX
