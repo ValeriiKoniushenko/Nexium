@@ -30,10 +30,10 @@ namespace
         BaseGraphicsData data;
         data.generate();
 
-        auto* lineShader = GetShaderManager().getShaderProgram("2d_rect"_atom);
+        auto* lineShader = GetShaderManager().getShaderProgram("line"_atom);
         if (!lineShader)
         {
-            LOG_ASSERT_ERROR_ONCE_P(gGlobalLog, "Can't get shader program '2d_rect'.");
+            LOG_ASSERT_ERROR_ONCE_P(gGlobalLog, "Can't get shader program 'line'.");
             return {};
         }
         data.setShader(lineShader);
