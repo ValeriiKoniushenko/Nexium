@@ -318,8 +318,18 @@ Foundation&#8217;s separate private logging target is disabled.</p>
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Nexium::Foundation</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Configs, BaseLog, IDataIO, IOutliner, Latency collector/report/printer</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Utils::Core, spdlog::spdlog, JustReflectMe::Adapter.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Configs, BaseLog, BaseUsings</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Utils::Core, spdlog::spdlog.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Nexium::Foundation::Debug</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Latency collector/report/printer</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">None (standard library only).</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Nexium::Foundation::Interfaces</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">IDataIO (DataStream), IOutliner</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Utils::Core, JustReflectMe::Adapter.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Nexium::Platform::Graphics</code></p></td>
@@ -327,69 +337,74 @@ Foundation&#8217;s separate private logging target is disabled.</p>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Core::Glad.</p></td>
 </tr>
 <tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Nexium::Platform::Resources</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Windows icon resource ids (header only)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">None.</p></td>
+</tr>
+<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Nexium::Platform::Input</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Window, Keyboard, Mouse</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Foundation, glfw, Utils::Core, JustReflectMe::Adapter, glm.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Nexium::RawBackend::Graphics</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Texture, RenderTargetToTexture</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Foundation, Platform Graphics.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Nexium::RawBackend::Fonts</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">FreeTypeLibrary, FreeType face adapter</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Foundation, freetype.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Foundation, Foundation Interfaces, glfw, Utils::Core, JustReflectMe::Adapter, glm.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Nexium::RawBackend::Common</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Image, IDrawable, Utils</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">RawBackend Graphics.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Foundation, Platform Graphics, Utils::Core, JustReflectMe::Adapter.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Nexium::RawBackend::Graphics</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Texture, RenderTargetToTexture</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Platform Graphics, RawBackend Common, Utils::Core.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Nexium::RawBackend::Fonts</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">FreeTypeLibrary, FreeType face adapter</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Foundation, Utils::Core, freetype.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Nexium::Fundamental::Utils</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Stringifier</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Platform Graphics.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">None.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Nexium::Fundamental::Base</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">ITagHolder, Transformable</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Foundation, Fundamental Utils.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Fundamental ResourceManagement, Utils::Core.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Nexium::Fundamental::ResourceManagement</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">CacheSystem, DataStream, atomic replacement, JSON adapter</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Foundation.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Foundation, Foundation Interfaces, Fundamental Utils, Utils::Core, JustReflectMe::Adapter.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Nexium::Fundamental::ECS</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">AbstractComponent, BaseComponent, GlobalComponentFactory</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Fundamental Base and ResourceManagement.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Foundation, Fundamental Base and ResourceManagement, Utils::Core.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Nexium::Fundamental::Assets</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">BaseAsset, AssetRef, ECSAsset, Factory</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Fundamental ECS and ResourceManagement, Platform Graphics, Core::Rectpack2D.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Foundation, Fundamental Base/ECS/ResourceManagement, Utils::Core, JustReflectMe::Adapter.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Nexium::Fundamental::TextureAtlas</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Atlas packing and GPU texture</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Foundation, RawBackend Common, Core::Rectpack2D.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Foundation, RawBackend Common and Graphics, Utils::Core.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Nexium::Subsystem::Graphics</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">ShaderManager, ShaderProgram, metadata, graphics data, debug lines, Font/Face text rendering</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Foundation, Platform Graphics, Fundamental ResourceManagement.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Foundation, Foundation Interfaces, Fundamental ResourceManagement, Platform Graphics, RawBackend Graphics, Utils::Core, JustReflectMe::Adapter, glm.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Nexium::Subsystem::AssetsManager</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Filesystem index and loading, TextureAsset</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Subsystem Graphics, Fundamental Assets and TextureAtlas, RawBackend Common.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Fundamental Assets/ECS/ResourceManagement/TextureAtlas, RawBackend Graphics, Utils::Utils.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Nexium::Subsystem::Input</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">InputAction, keyboard/mouse managers, InputTypes (contexts, chords, triggers)</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Foundation, Platform Input.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Foundation, Foundation Interfaces, Platform Input, Utils::Core, glm.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Nexium::Subsystem::AssimpImporter</code></p></td>
@@ -399,41 +414,55 @@ Foundation&#8217;s separate private logging target is disabled.</p>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Nexium::World::Animation</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">BaseAnimation, FrameByFrameAnimation</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Fundamental ECS.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Foundation, Fundamental ECS and ResourceManagement, Utils::Core, JustReflectMe::Adapter.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Nexium::World::AssimpMisc</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">AssimpHelper (3D only)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Foundation is private; Utils::Core, assimp::assimp.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Nexium::World</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">World/framework, InputSystem/InputController, framework managers and state, Scene, actors, cameras, rectangles, animator, skybox types</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">World Animation, Fundamental Assets/ECS, Subsystem AssetsManager/Graphics/Input, both Platform targets, RawBackend Common.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Foundation, Foundation Interfaces, World Animation, Fundamental Assets/Base/ECS/ResourceManagement, Subsystem AssetsManager/Graphics/Input, Platform Input, RawBackend Common, Utils::Core, JustReflectMe::Adapter.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Nexium::Runtime</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Runtime, FPSCounter</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Runtime</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">World through WHOLE_ARCHIVE.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Nexium::Runtime::GameUtils</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">FPSCounter</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">None.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Nexium::Editor::GuiComponents</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Widgets and layouts</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Foundation, Fundamental ECS and ResourceManagement, Platform Input, Subsystem AssetsManager, Core::ImGui, Utils::Core, Utils::Utils.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Nexium::Editor</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">EditorIntegration, GameEditor, windows, gizmos, picking, toasts, tools</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Runtime, Core::ImGui.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Runtime, Editor GuiComponents, World, World Animation, Foundation, Fundamental Assets/ECS/ResourceManagement, Subsystem AssetsManager/Graphics/Input, RawBackend Graphics, Core::ImGui, imguizmo::imguizmo, Utils::Core, Utils::Utils, glm, JustReflectMe::Adapter.</p></td>
 </tr>
 </tbody>
 </table>
 <div class="paragraph">
-<p>Platform Input privately links Platform Graphics and Core::Stb.
-All three RawBackend targets privately link Core::Stb.
-Subsystem Graphics privately links RawBackend Fonts and Utils::Utils, so FreeType stays
-behind the <code>NX::Face</code> abstraction.
-AssimpImporter privately links assimp::assimp; World additionally exposes Assimp and the importer when 3D is enabled.
+<p>Every target links only the targets whose headers its own sources include; there are no
+umbrella or aggregate targets, so link exactly the focused target you need.
+Dependencies needed only by a <code>.cpp</code> file are private, for example Core::Stb,
+Platform Graphics and Platform Resources in Platform Input, RawBackend Fonts and
+Utils::Utils in Subsystem Graphics, and Foundation Debug in World and Runtime.
+AssimpImporter privately links assimp::assimp; when 3D is enabled World and Editor expose
+assimp::assimp and privately link AssimpImporter/AssimpMisc.
 AssetsManager privately links comdlg32 on Windows.
-Editor privately links imguizmo::imguizmo.</p>
-</div>
-<div class="paragraph">
-<p><code>Nexium::Fundamental</code> is an INTERFACE aggregate of its six focused targets, including
-<code>Nexium::Fundamental::Utils</code>.
-<code>Nexium::NxFundamental</code>, <code>Nexium::NxWorld</code>, and <code>Nexium::NxRuntime</code> preserve old aliases.
-<code>Nexium::World::Scene</code> aliases World; it is not a separate scene library.
-There is no combined <code>Nexium::RawBackend</code> target: link the Graphics, Fonts, or Common
-target you actually need.</p>
+<code>nlohmann/json.hpp</code> is a system header and has no CMake target.
+Known layering violation: <code>Subsystem::Graphics</code> (<code>Font.cpp</code>) includes
+<code>NxWorld/Entities/Camera/Camera.h</code> without linking World, because that would be a cycle.
+<code>Editor::GuiComponents</code> likewise only uses the header <code>Editor/IconsFontAwesome.h</code>.
+There is no combined <code>Nexium::RawBackend</code>, <code>Nexium::Fundamental</code> or <code>Nexium::Foundation</code>
+umbrella target.</p>
 </div>
 <div class="paragraph">
 <p>The application chain is <code>TemplateGame &#8594; Editor &#8594; Runtime &#8594; World</code>.

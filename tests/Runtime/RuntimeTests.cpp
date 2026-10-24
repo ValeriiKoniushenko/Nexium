@@ -12,7 +12,7 @@
 #include "NxSubsystems/Input/InputManager.h"
 #include "NxWorld/Entities/Camera/Camera.h"
 #include "NxWorld/Framework/GameInstance.h"
-#include "Platform/Window.h"
+#include "Platform/Input/Window.h"
 
 #include "gtest/gtest.h"
 #include <array>

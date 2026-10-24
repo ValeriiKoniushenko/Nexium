@@ -12,7 +12,7 @@
 #pragma once
 
 #include "../Image.h"
-#include "Platform/Graphics.h"
+#include "Platform/Graphics/Graphics.h"
 
 #include <Core/IntrusivePtr.h>
 #include <filesystem>

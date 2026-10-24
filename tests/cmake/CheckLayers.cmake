@@ -12,14 +12,14 @@ function(nexium_add_layer_checks)
 int main() { return Foundation::Config::Path::projectAbsPath.empty(); }
 ]=])
     file(WRITE "${_directory}/Graphics.cpp" [=[
-#include "Platform/Graphics.h"
+#include "Platform/Graphics/Graphics.h"
 int main() { return GL_NO_ERROR != 0; }
 ]=])
     file(WRITE "${_directory}/Input.cpp" [=[
 #include "Foundation/Configs.h"
-#include "Platform/Window.h"
-#include "Platform/Keyboard.h"
-#include "Platform/Mouse.h"
+#include "Platform/Input/Window.h"
+#include "Platform/Input/Keyboard.h"
+#include "Platform/Input/Mouse.h"
 int main() {
     return Foundation::Config::Path::projectAbsPath.empty()
         || !RInternal::GetClassFieldsAsMap({}).empty();

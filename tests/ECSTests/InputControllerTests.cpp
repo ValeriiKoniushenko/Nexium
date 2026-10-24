@@ -9,7 +9,7 @@
 
 #include "NxWorld/Framework/InputController.h"
 #include "NxWorld/Framework/InputSystem.h"
-#include "Platform/Window.h"
+#include "Platform/Input/Window.h"
 
 #include "gtest/gtest.h"
 

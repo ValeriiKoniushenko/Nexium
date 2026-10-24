@@ -7,7 +7,7 @@
 //
 //     http://www.apache.org/licenses/LICENSE-2.0
 
-#include "NxFundamental/Assets/TextureAtlas.h"
+#include "NxFundamental/TextureAtlas/TextureAtlas.h"
 #include "NxSubsystems/Graphics/Font.h"
 #include "NxSubsystems/Graphics/GraphicsComponents.h"
 #include "RawBackend/Image.h"

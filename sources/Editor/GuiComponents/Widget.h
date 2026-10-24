@@ -15,8 +15,8 @@
 #include "ImGui/imgui.h"
 #include "NxFundamental/ECS/BaseComponent.h"
 #include "NxFundamental/ResourceManagement/JsonAdapter.h"
-#include "Platform/Keyboard.h"
-#include "Platform/Mouse.h"
+#include "Platform/Input/Keyboard.h"
+#include "Platform/Input/Mouse.h"
 
 namespace NX
 {

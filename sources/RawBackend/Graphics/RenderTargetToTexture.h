@@ -12,7 +12,7 @@
 #pragma once
 
 #include "Core/Size.h"
-#include "Platform/Graphics.h"
+#include "Platform/Graphics/Graphics.h"
 
 namespace NX
 {

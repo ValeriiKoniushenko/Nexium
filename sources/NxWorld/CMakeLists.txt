@@ -11,31 +11,14 @@ target_sources(${MODULE_PRIVATE_TARGET} PRIVATE
 target_link_libraries(${MODULE_PRIVATE_TARGET} PRIVATE spdlog::spdlog)
 target_compile_definitions(${MODULE_PRIVATE_TARGET} PRIVATE PRIVATE_MODULE_NAME="${MODULE_NAME}")
 
-# ================ World::Animation =================
+# ============== Sub-libraries ===============
 
-add_library(Nexium_World_Animation STATIC)
-add_library(Nexium::World::Animation ALIAS Nexium_World_Animation)
-target_sources(Nexium_World_Animation PRIVATE
-    Animations/BaseAnimation.cpp
-    Animations/FrameByFrame/FrameByFrameAnimation.cpp
-)
-nexium_add_public_headers(Nexium_World_Animation
-    NxWorld/Animations/BaseAnimation.h
-    NxWorld/Animations/BaseAnimation.generated.h
-    NxWorld/Animations/FrameByFrame/FrameByFrameAnimation.h
-    NxWorld/Animations/FrameByFrame/FrameByFrameAnimation.generated.h
-)
-target_link_libraries(Nexium_World_Animation
-    PUBLIC Nexium::Fundamental::ECS
-    PRIVATE ${MODULE_PRIVATE_TARGET}
-)
+add_subdirectory(Animations)  # Nexium::World::Animation
 
 # ======================= World =======================
 
 add_library(Nexium_World STATIC)
 add_library(Nexium::World ALIAS Nexium_World)
-add_library(Nexium::NxWorld ALIAS Nexium_World)
-add_library(Nexium::World::Scene ALIAS Nexium_World)
 target_sources(Nexium_World PRIVATE
     Animations/FrameByFrame/FrameByFrameAnimator.cpp
     Assets/SkyboxAsset.cpp
@@ -98,18 +81,27 @@ nexium_add_public_headers(Nexium_World
 )
 target_link_libraries(Nexium_World
     PUBLIC
-    Nexium::World::Animation
+    Nexium::Foundation
+    Nexium::Foundation::Interfaces
     Nexium::Fundamental::Assets
+    Nexium::Fundamental::Base
     Nexium::Fundamental::ECS
+    Nexium::Fundamental::ResourceManagement
+    JustReflectMe::Adapter
+    Nexium::Platform::Input
+    Nexium::RawBackend::Common
     Nexium::Subsystem::AssetsManager
     Nexium::Subsystem::Graphics
     Nexium::Subsystem::Input
-    Nexium::Platform::Graphics
-    Nexium::Platform::Input
-    Nexium::RawBackend::Common
+    Utils::Core
+    Nexium::World::Animation
     PRIVATE
-    ${MODULE_PRIVATE_TARGET}
+    Nexium::Foundation::Debug
+    Nexium::Fundamental::Utils
+    glfw
+    glm
     spdlog::spdlog
+    ${MODULE_PRIVATE_TARGET}
 )
 target_precompile_headers(Nexium_World PRIVATE WorldPCH.h)
 
@@ -117,28 +109,28 @@ if(NEXIUM_ENABLE_3D_MODULE)
     target_compile_definitions(Nexium_World PRIVATE NEXIUM_ENABLE_3D_MODULE=1)
     target_sources(Nexium_World PRIVATE
         Entities/Mesh/AssetImpls/StaticMeshBundle.cpp
-        Entities/Mesh/AssimpMisc/AssimpHelper.cpp
         Entities/Mesh/StaticMesh.cpp
         Entities/Mesh/StaticMeshBundle.cpp
     )
     nexium_add_public_headers(Nexium_World
         NxWorld/Entities/Mesh/AssetImpls/StaticMeshBundle.h
         NxWorld/Entities/Mesh/AssetImpls/StaticMeshBundle.generated.h
-        NxWorld/Entities/Mesh/AssimpMisc/AssimpHelper.h
         NxWorld/Entities/Mesh/StaticMesh.h
         NxWorld/Entities/Mesh/StaticMesh.generated.h
         NxWorld/Entities/Mesh/StaticMeshBundle.h
         NxWorld/Entities/Mesh/StaticMeshBundle.generated.h
     )
-    target_link_libraries(Nexium_World PUBLIC
+    add_subdirectory(Entities/Mesh/AssimpMisc)  # Nexium::World::AssimpMisc
+    target_link_libraries(Nexium_World
+        PUBLIC assimp::assimp
+        PRIVATE
+        Nexium::World::AssimpMisc
         Nexium::Subsystem::AssimpImporter
-        assimp::assimp
     )
 endif()
 
 foreach(TARGET_NAME IN ITEMS
     ${MODULE_PRIVATE_TARGET}
-    Nexium_World_Animation
     Nexium_World
 )
     nexium_configure_target(${TARGET_NAME})

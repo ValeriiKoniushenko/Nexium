@@ -11,22 +11,28 @@ target_sources(${MODULE_PRIVATE_TARGET} PRIVATE
 target_link_libraries(${MODULE_PRIVATE_TARGET} PRIVATE spdlog::spdlog)
 target_compile_definitions(${MODULE_PRIVATE_TARGET} PRIVATE PRIVATE_MODULE_NAME="${MODULE_NAME}")
 
+# ============== Sub-libraries ===============
+
+add_subdirectory(GameUtils)  # Nexium::Runtime::GameUtils
+
 # ====================== Runtime ======================
 
 add_library(Nexium_Runtime STATIC)
 add_library(Nexium::Runtime ALIAS Nexium_Runtime)
-add_library(Nexium::NxRuntime ALIAS Nexium_Runtime)
 target_sources(Nexium_Runtime PRIVATE
-    GameUtils/FPSCounter.cpp
     Runtime.cpp
 )
 nexium_add_public_headers(Nexium_Runtime
-    NxRuntime/GameUtils/FPSCounter.h
     NxRuntime/Runtime.h
 )
 target_link_libraries(Nexium_Runtime
-    PUBLIC "$<LINK_LIBRARY:WHOLE_ARCHIVE,Nexium::World>"
-    PRIVATE ${MODULE_PRIVATE_TARGET}
+    PUBLIC
+    "$<LINK_LIBRARY:WHOLE_ARCHIVE,Nexium::World>"
+    PRIVATE
+    Nexium::Foundation::Debug
+    Nexium::Runtime::GameUtils
+    Utils::Core
+    ${MODULE_PRIVATE_TARGET}
 )
 
 foreach(TARGET_NAME IN ITEMS

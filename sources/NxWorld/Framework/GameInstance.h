@@ -16,7 +16,7 @@
 #include "NxSubsystems/AssetsManager/AssetsManager.h"
 #include "NxSubsystems/Graphics/ShaderManager.h"
 #include "NxWorld/Scene/Scene.h"
-#include "Platform/Window.h"
+#include "Platform/Input/Window.h"
 #include "UserInterface.h"
 #include "World.h"
 

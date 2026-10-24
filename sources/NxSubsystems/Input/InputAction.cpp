@@ -9,8 +9,8 @@
 
 #include "InputAction.h"
 
-#include "Platform/Keyboard.h"
-#include "Platform/Window.h"
+#include "Platform/Input/Keyboard.h"
+#include "Platform/Input/Window.h"
 
 using namespace Platform;
 

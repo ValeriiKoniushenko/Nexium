@@ -10,7 +10,7 @@
 
 #include "GLFW/glfw3.h"
 #include "NxWorld/Framework/InputController.h"
-#include "Platform/Window.h"
+#include "Platform/Input/Window.h"
 
 #include <ranges>
 

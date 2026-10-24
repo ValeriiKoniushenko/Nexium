@@ -10,14 +10,14 @@
 #include "Window.h"
 
 #include "Foundation/Configs.h"
-#include "Graphics.h"
+#include "Platform/Graphics/Graphics.h"
 #include "Platform/PrivateModuleInfo.h"
 #include "Stb/Image.h"
 
 #include <cstdlib>
 
 #ifdef _WIN32
-    #include "Resources/Resources.h"
+    #include "Platform/Resources/Resources.h"
 
     #include <windows.h>
 #endif

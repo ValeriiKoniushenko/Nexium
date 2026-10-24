@@ -10,7 +10,7 @@
 #pragma once
 
 #include "Core/String.h"
-#include "Platform/Keyboard.h"
+#include "Platform/Input/Keyboard.h"
 
 #include <cstdint>
 #include <vector>

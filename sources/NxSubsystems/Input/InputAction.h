@@ -14,8 +14,8 @@
 #include "Core/Delegate.h"
 #include "Core/IntrusivePtr.h"
 #include "Core/String.h"
-#include "Platform/Keyboard.h"
-#include "Platform/Mouse.h"
+#include "Platform/Input/Keyboard.h"
+#include "Platform/Input/Mouse.h"
 #include "glm/glm.hpp"
 
 #include <chrono>

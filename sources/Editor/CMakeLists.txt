@@ -17,8 +17,12 @@ nexium_configure_target(${MODULE_PRIVATE_TARGET})
 
 # ======================= Editor =======================
 
+add_subdirectory(GuiComponents)  # Nexium::Editor::GuiComponents
+
 file(GLOB_RECURSE EDITOR_SOURCES CONFIGURE_DEPENDS "*.cpp")
 file(GLOB_RECURSE EDITOR_HEADERS CONFIGURE_DEPENDS "*.h")
+list(FILTER EDITOR_SOURCES EXCLUDE REGEX "^${CMAKE_CURRENT_SOURCE_DIR}/GuiComponents/")
+list(FILTER EDITOR_HEADERS EXCLUDE REGEX "^${CMAKE_CURRENT_SOURCE_DIR}/GuiComponents/")
 list(REMOVE_ITEM EDITOR_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/PrivateModuleInfo.cpp")
 list(REMOVE_ITEM EDITOR_HEADERS "${CMAKE_CURRENT_SOURCE_DIR}/PrivateModuleInfo.h")
 list(REMOVE_ITEM EDITOR_HEADERS "${CMAKE_CURRENT_SOURCE_DIR}/ImGuizmoIntegration.h")
@@ -51,14 +55,38 @@ target_sources(Nexium_Editor
 )
 target_link_libraries(Nexium_Editor
     PUBLIC
-        Nexium::Runtime
-        Core::ImGui
-    PRIVATE ${MODULE_PRIVATE_TARGET} imguizmo::imguizmo
+    Core::ImGui
+    Nexium::Editor::GuiComponents
+    Nexium::Foundation
+    Nexium::Foundation::Interfaces
+    Nexium::Fundamental::Assets
+    Nexium::Fundamental::ECS
+    Nexium::Fundamental::ResourceManagement
+    JustReflectMe::Adapter
+    Nexium::RawBackend::Graphics
+    Nexium::Runtime
+    Nexium::Subsystem::AssetsManager
+    Nexium::Subsystem::Graphics
+    Nexium::Subsystem::Input
+    Utils::Core
+    Utils::Utils
+    Nexium::World
+    Nexium::World::Animation
+    glm
+    imguizmo::imguizmo
+    PRIVATE
+    Nexium::Fundamental::Base
+    Nexium::Fundamental::Utils
+    ${MODULE_PRIVATE_TARGET}
 )
 target_precompile_headers(Nexium_Editor PRIVATE EditorPCH.h)
 
 if(NEXIUM_ENABLE_3D_MODULE)
     target_compile_definitions(Nexium_Editor PUBLIC NEXIUM_ENABLE_3D_MODULE=1)
+    target_link_libraries(Nexium_Editor
+        PUBLIC assimp::assimp
+        PRIVATE Nexium::World::AssimpMisc
+    )
 endif()
 
 nexium_configure_target(Nexium_Editor)

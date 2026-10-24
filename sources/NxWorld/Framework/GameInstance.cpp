@@ -19,8 +19,8 @@
 #include "NxWorld/Entities/Camera/Camera.h"
 #include "NxWorld/PrivateModuleInfo.h"
 #include "NxWorld/Scene/Rectangle.h"
-#include "Platform/Glfw.h"
-#include "Platform/Window.h"
+#include "Platform/Input/Glfw.h"
+#include "Platform/Input/Window.h"
 #include "spdlog/common.h"
 #include "spdlog/spdlog.h"
 

@@ -13,7 +13,7 @@
 
 #include "Core/Color.h"
 #include "Foundation/BaseLog.h"
-#include "Platform/Graphics.h"
+#include "Platform/Graphics/Graphics.h"
 #include "glm/fwd.hpp"
 #include "glm/gtc/type_ptr.hpp"
 

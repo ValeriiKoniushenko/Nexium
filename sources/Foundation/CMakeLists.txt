@@ -14,34 +14,25 @@ if(0) # It's disabled due to it's unused. Feel free to active it when it will be
 endif()
 
 # ============== Foundation ===============
+add_subdirectory(Debug)       # Nexium::Foundation::Debug
+
 add_library(Nexium_Foundation STATIC)
 add_library(Nexium::Foundation ALIAS Nexium_Foundation)
 target_sources(Nexium_Foundation PRIVATE
     Configs.cpp
     BaseLog.cpp
-    Interfaces/DataStream.cpp
-    Debug/Latency.cpp
-    Debug/LatencyExtractor.cpp
-    Debug/LatencyTerminalPrinter.cpp
 )
 
 nexium_add_public_headers(Nexium_Foundation
     Foundation/Configs.h
     Foundation/BaseLog.h
     Foundation/BaseUsings.h
-    Foundation/Interfaces/DataStream.h
-    Foundation/Interfaces/IOutliner.h
-    Foundation/Interfaces/IOutliner.generated.h
-    Foundation/Debug/Latency.h
-    Foundation/Debug/LatencyExtractor.h
-    Foundation/Debug/LatencyTerminalPrinter.h
 )
 
 target_link_libraries(Nexium_Foundation
     PUBLIC
     Utils::Core
     spdlog::spdlog
-    JustReflectMe::Adapter
 )
 
 if(TARGET ${MODULE_PRIVATE_TARGET})
@@ -53,3 +44,6 @@ endif()
 nexium_configure_target(Nexium_Foundation PROJECT_DIR)
 
 add_dependencies(Nexium_Foundation CodeGenerator)
+
+# Interfaces depends on Foundation, so it is added after the Foundation target exists.
+add_subdirectory(Interfaces)  # Nexium::Foundation::Interfaces

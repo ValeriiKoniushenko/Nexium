@@ -9,7 +9,7 @@
 
 #include "InputManager.h"
 
-#include "Platform/Window.h"
+#include "Platform/Input/Window.h"
 
 namespace NX
 {

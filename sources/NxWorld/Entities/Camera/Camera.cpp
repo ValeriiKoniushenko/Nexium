@@ -10,7 +10,7 @@
 #include "Camera.h"
 
 #include "NxWorld/Framework/GameInstance.h"
-#include "Platform/Window.h"
+#include "Platform/Input/Window.h"
 #include "glm/ext/matrix_clip_space.hpp"
 #include "glm/ext/matrix_transform.hpp"
 #define GLM_ENABLE_EXPERIMENTAL

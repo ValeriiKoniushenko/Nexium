@@ -12,7 +12,7 @@
 #pragma once
 
 #include "NxFundamental/Assets/ECSAsset.h"
-#include "NxFundamental/Assets/TextureAtlas.h"
+#include "NxFundamental/TextureAtlas/TextureAtlas.h"
 #include "NxSubsystems/AssetsManager/TextureAsset.h"
 #include "Utils/Functions.h"
 

@@ -27,42 +27,48 @@ Foundation's separate private logging target is disabled.
 [cols="3,4,4",options="header"]
 |===
 |Public alias |Contents |Direct public dependencies
-|`Nexium::Foundation` |Configs, BaseLog, IDataIO, IOutliner, Latency collector/report/printer |Utils::Core, spdlog::spdlog, JustReflectMe::Adapter.
+|`Nexium::Foundation` |Configs, BaseLog, BaseUsings |Utils::Core, spdlog::spdlog.
+|`Nexium::Foundation::Debug` |Latency collector/report/printer |None (standard library only).
+|`Nexium::Foundation::Interfaces` |IDataIO (DataStream), IOutliner |Utils::Core, JustReflectMe::Adapter.
 |`Nexium::Platform::Graphics` |OpenGL access |Core::Glad.
-|`Nexium::Platform::Input` |Window, Keyboard, Mouse |Foundation, glfw, Utils::Core, JustReflectMe::Adapter, glm.
-|`Nexium::RawBackend::Graphics` |Texture, RenderTargetToTexture |Foundation, Platform Graphics.
-|`Nexium::RawBackend::Fonts` |FreeTypeLibrary, FreeType face adapter |Foundation, freetype.
-|`Nexium::RawBackend::Common` |Image, IDrawable, Utils |RawBackend Graphics.
-|`Nexium::Fundamental::Utils` |Stringifier |Platform Graphics.
-|`Nexium::Fundamental::Base` |ITagHolder, Transformable |Foundation, Fundamental Utils.
-|`Nexium::Fundamental::ResourceManagement` |CacheSystem, DataStream, atomic replacement, JSON adapter |Foundation.
-|`Nexium::Fundamental::ECS` |AbstractComponent, BaseComponent, GlobalComponentFactory |Fundamental Base and ResourceManagement.
-|`Nexium::Fundamental::Assets` |BaseAsset, AssetRef, ECSAsset, Factory |Fundamental ECS and ResourceManagement, Platform Graphics, Core::Rectpack2D.
-|`Nexium::Fundamental::TextureAtlas` |Atlas packing and GPU texture |Foundation, RawBackend Common, Core::Rectpack2D.
-|`Nexium::Subsystem::Graphics` |ShaderManager, ShaderProgram, metadata, graphics data, debug lines, Font/Face text rendering |Foundation, Platform Graphics, Fundamental ResourceManagement.
-|`Nexium::Subsystem::AssetsManager` |Filesystem index and loading, TextureAsset |Subsystem Graphics, Fundamental Assets and TextureAtlas, RawBackend Common.
-|`Nexium::Subsystem::Input` |InputAction, keyboard/mouse managers, InputTypes (contexts, chords, triggers) |Foundation, Platform Input.
+|`Nexium::Platform::Resources` |Windows icon resource ids (header only) |None.
+|`Nexium::Platform::Input` |Window, Keyboard, Mouse |Foundation, Foundation Interfaces, glfw, Utils::Core, JustReflectMe::Adapter, glm.
+|`Nexium::RawBackend::Common` |Image, IDrawable, Utils |Foundation, Platform Graphics, Utils::Core, JustReflectMe::Adapter.
+|`Nexium::RawBackend::Graphics` |Texture, RenderTargetToTexture |Platform Graphics, RawBackend Common, Utils::Core.
+|`Nexium::RawBackend::Fonts` |FreeTypeLibrary, FreeType face adapter |Foundation, Utils::Core, freetype.
+|`Nexium::Fundamental::Utils` |Stringifier |None.
+|`Nexium::Fundamental::Base` |ITagHolder, Transformable |Fundamental ResourceManagement, Utils::Core.
+|`Nexium::Fundamental::ResourceManagement` |CacheSystem, DataStream, atomic replacement, JSON adapter |Foundation, Foundation Interfaces, Fundamental Utils, Utils::Core, JustReflectMe::Adapter.
+|`Nexium::Fundamental::ECS` |AbstractComponent, BaseComponent, GlobalComponentFactory |Foundation, Fundamental Base and ResourceManagement, Utils::Core.
+|`Nexium::Fundamental::Assets` |BaseAsset, AssetRef, ECSAsset, Factory |Foundation, Fundamental Base/ECS/ResourceManagement, Utils::Core, JustReflectMe::Adapter.
+|`Nexium::Fundamental::TextureAtlas` |Atlas packing and GPU texture |Foundation, RawBackend Common and Graphics, Utils::Core.
+|`Nexium::Subsystem::Graphics` |ShaderManager, ShaderProgram, metadata, graphics data, debug lines, Font/Face text rendering |Foundation, Foundation Interfaces, Fundamental ResourceManagement, Platform Graphics, RawBackend Graphics, Utils::Core, JustReflectMe::Adapter, glm.
+|`Nexium::Subsystem::AssetsManager` |Filesystem index and loading, TextureAsset |Fundamental Assets/ECS/ResourceManagement/TextureAtlas, RawBackend Graphics, Utils::Utils.
+|`Nexium::Subsystem::Input` |InputAction, keyboard/mouse managers, InputTypes (contexts, chords, triggers) |Foundation, Foundation Interfaces, Platform Input, Utils::Core, glm.
 |`Nexium::Subsystem::AssimpImporter` |Optional mesh importer |Subsystem Graphics.
-|`Nexium::World::Animation` |BaseAnimation, FrameByFrameAnimation |Fundamental ECS.
-|`Nexium::World` |World/framework, InputSystem/InputController, framework managers and state, Scene, actors, cameras, rectangles, animator, skybox types |World Animation, Fundamental Assets/ECS, Subsystem AssetsManager/Graphics/Input, both Platform targets, RawBackend Common.
-|`Nexium::Runtime` |Runtime, FPSCounter |World through WHOLE_ARCHIVE.
-|`Nexium::Editor` |EditorIntegration, GameEditor, windows, gizmos, picking, toasts, tools |Runtime, Core::ImGui.
+|`Nexium::World::Animation` |BaseAnimation, FrameByFrameAnimation |Foundation, Fundamental ECS and ResourceManagement, Utils::Core, JustReflectMe::Adapter.
+|`Nexium::World::AssimpMisc` |AssimpHelper (3D only) |Foundation is private; Utils::Core, assimp::assimp.
+|`Nexium::World` |World/framework, InputSystem/InputController, framework managers and state, Scene, actors, cameras, rectangles, animator, skybox types |Foundation, Foundation Interfaces, World Animation, Fundamental Assets/Base/ECS/ResourceManagement, Subsystem AssetsManager/Graphics/Input, Platform Input, RawBackend Common, Utils::Core, JustReflectMe::Adapter.
+|`Nexium::Runtime` |Runtime |World through WHOLE_ARCHIVE.
+|`Nexium::Runtime::GameUtils` |FPSCounter |None.
+|`Nexium::Editor::GuiComponents` |Widgets and layouts |Foundation, Fundamental ECS and ResourceManagement, Platform Input, Subsystem AssetsManager, Core::ImGui, Utils::Core, Utils::Utils.
+|`Nexium::Editor` |EditorIntegration, GameEditor, windows, gizmos, picking, toasts, tools |Runtime, Editor GuiComponents, World, World Animation, Foundation, Fundamental Assets/ECS/ResourceManagement, Subsystem AssetsManager/Graphics/Input, RawBackend Graphics, Core::ImGui, imguizmo::imguizmo, Utils::Core, Utils::Utils, glm, JustReflectMe::Adapter.
 |===
 
-Platform Input privately links Platform Graphics and Core::Stb.
-All three RawBackend targets privately link Core::Stb.
-Subsystem Graphics privately links RawBackend Fonts and Utils::Utils, so FreeType stays
-behind the `NX::Face` abstraction.
-AssimpImporter privately links assimp::assimp; World additionally exposes Assimp and the importer when 3D is enabled.
+Every target links only the targets whose headers its own sources include; there are no
+umbrella or aggregate targets, so link exactly the focused target you need.
+Dependencies needed only by a `.cpp` file are private, for example Core::Stb,
+Platform Graphics and Platform Resources in Platform Input, RawBackend Fonts and
+Utils::Utils in Subsystem Graphics, and Foundation Debug in World and Runtime.
+AssimpImporter privately links assimp::assimp; when 3D is enabled World and Editor expose
+assimp::assimp and privately link AssimpImporter/AssimpMisc.
 AssetsManager privately links comdlg32 on Windows.
-Editor privately links imguizmo::imguizmo.
-
-`Nexium::Fundamental` is an INTERFACE aggregate of its six focused targets, including
-`Nexium::Fundamental::Utils`.
-`Nexium::NxFundamental`, `Nexium::NxWorld`, and `Nexium::NxRuntime` preserve old aliases.
-`Nexium::World::Scene` aliases World; it is not a separate scene library.
-There is no combined `Nexium::RawBackend` target: link the Graphics, Fonts, or Common
-target you actually need.
+`nlohmann/json.hpp` is a system header and has no CMake target.
+Known layering violation: `Subsystem::Graphics` (`Font.cpp`) includes
+`NxWorld/Entities/Camera/Camera.h` without linking World, because that would be a cycle.
+`Editor::GuiComponents` likewise only uses the header `Editor/IconsFontAwesome.h`.
+There is no combined `Nexium::RawBackend`, `Nexium::Fundamental` or `Nexium::Foundation`
+umbrella target.
 
 The application chain is `TemplateGame -> Editor -> Runtime -> World`.
 TemplateGame retains Editor with WHOLE_ARCHIVE.
