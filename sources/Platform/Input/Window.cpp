@@ -132,6 +132,10 @@ namespace Platform
         glfwWindowHintString(GLFW_X11_CLASS_NAME, Foundation::Config::applicationId);
         glfwWindowHintString(GLFW_X11_INSTANCE_NAME, Foundation::Config::applicationId);
 
+#if defined(NEXIUM_DEBUG)
+        glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
+#endif
+
         _window = glfwCreateWindow(_size.width, _size.height, title.c_str(), nullptr, nullptr);
         if (!_window)
         {
@@ -159,21 +163,25 @@ namespace Platform
             criticalLogAndThrow("Impossible to initialize GLAD.");
         }
 
-#if defined(NEXIUM_DEBUG)
-        glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
-        glEnable(GL_DEBUG_OUTPUT);
-        glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS); // fires on the offending call's stack frame
-        glDebugMessageCallback(
-            [](GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei, const GLchar* msg,
-               const void*)
-            {
-                if (severity != GL_DEBUG_SEVERITY_NOTIFICATION)
+        GLint flags = 0;
+        glGetIntegerv(GL_CONTEXT_FLAGS, &flags);
+        if (flags & GL_CONTEXT_FLAG_DEBUG_BIT)
+        {
+            glEnable(GL_DEBUG_OUTPUT);
+            glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS); // fires on the offending call's stack frame
+            glDebugMessageCallback(
+                [](GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei,
+                   const GLchar* msg, const void*)
                 {
-                    gGlobalLog.errorLog("[GL] {}"_f << msg);
-                }
-            },
-            nullptr);
-#endif
+                    if (severity != GL_DEBUG_SEVERITY_NOTIFICATION)
+                    {
+                        gGlobalLog.errorLog("[GL] {}"_f << msg);
+                    }
+                },
+                nullptr);
+            glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
+            debugLog("GLFW debug has enabled");
+        }
 
         glfwSetMouseButtonCallback(_window, MouseKeyPressHandler);
         glfwSetCursorPosCallback(_window, MouseMoveHandler);
