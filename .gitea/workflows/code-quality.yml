@@ -42,9 +42,13 @@ jobs:
           printf 'COPYRIGHT_FAILED=%s\n' "$COPYRIGHT_FAILED" >> "$GITHUB_ENV"
       - name: Module header
         working-directory: cache/gcc/debug
+        env:
+          GITEA_TOKEN: ${{ secrets.GITEA_TOKEN }}
+          GITEA_AUTH_SCHEME: Bearer
         run: |
           MODULE_HEADER_FAILED=0
           sh scripts/ci/gitea/runners/run_ci_check.sh .gitea/ci-config.sh module-header || MODULE_HEADER_FAILED=1
+          sh scripts/ci/gitea/runners/run_ci_check.sh .gitea/ci-config.sh publish-module-header || MODULE_HEADER_FAILED=1
           printf 'MODULE_HEADER_FAILED=%s\n' "$MODULE_HEADER_FAILED" >> "$GITHUB_ENV"
       - name: Clang-format
         working-directory: cache/gcc/debug

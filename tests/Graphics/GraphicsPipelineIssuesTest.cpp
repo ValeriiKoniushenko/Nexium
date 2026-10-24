@@ -99,7 +99,7 @@ TEST(GraphicsPipelineIssues, AtlasPackerDoesNotRotateImages)
     using rect_type = output_rect_t<spaces_type>;
 
     std::vector<rect_type> rects;
-    for (const auto [w, h] : std::array<std::pair<int, int>, 4>{ {
+    for (const auto& [w, h] : std::array<std::pair<int, int>, 4>{ {
              { 256, 32 },
              { 32, 256 },
              { 256, 32 },
