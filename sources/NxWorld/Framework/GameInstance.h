@@ -31,7 +31,7 @@ namespace NX
         enum class RenderMode
         {
             GameOnly,
-            Editor
+            Editor,
         };
 
     public:

@@ -157,16 +157,26 @@ namespace NX
     void AssetsManagerWindowEWC::createGui()
     {
         _nodeTypesData = {
-            { NodeType::Default,
-              GetAssetsManager()->getTexture("data/assets/baked/document.nxtex"_atom) },
-            { NodeType::Code,
-              GetAssetsManager()->getTexture("data/assets/baked/code_document.nxtex"_atom) },
-            { NodeType::Image,
-              GetAssetsManager()->getTexture("data/assets/baked/image_document.nxtex"_atom) },
-            { NodeType::Folder,
-              GetAssetsManager()->getTexture("data/assets/baked/folder.nxtex"_atom) },
-            { NodeType::NxFile,
-              GetAssetsManager()->getTexture("data/assets/baked/nxfile.nxtex"_atom) },
+            {
+                NodeType::Default,
+                GetAssetsManager()->getTexture("data/assets/baked/document.nxtex"_atom),
+            },
+            {
+                NodeType::Code,
+                GetAssetsManager()->getTexture("data/assets/baked/code_document.nxtex"_atom),
+            },
+            {
+                NodeType::Image,
+                GetAssetsManager()->getTexture("data/assets/baked/image_document.nxtex"_atom),
+            },
+            {
+                NodeType::Folder,
+                GetAssetsManager()->getTexture("data/assets/baked/folder.nxtex"_atom),
+            },
+            {
+                NodeType::NxFile,
+                GetAssetsManager()->getTexture("data/assets/baked/nxfile.nxtex"_atom),
+            },
         };
 
         const auto gap = ImGui::GetStyle().WindowPadding.x;

@@ -42,12 +42,14 @@ namespace NX
     {
         json = nlohmann::json{
             { "action", binding.action },
-            { "triggerKey",
-              std::string{ R<Platform::Keyboard::Key>::ToString(binding.chord.triggerKey) } },
+            {
+                "triggerKey",
+                std::string{ R<Platform::Keyboard::Key>::ToString(binding.chord.triggerKey) },
+            },
             { "trigger",
               binding.trigger == InputActionTrigger::WhileHeld
                   ? "WhileHeld"
-                  : (binding.trigger == InputActionTrigger::OnRelease ? "OnRelease" : "OnPress") }
+                  : (binding.trigger == InputActionTrigger::OnRelease ? "OnRelease" : "OnPress") },
         };
         auto& keys = json["requiredKeys"] = nlohmann::json::array();
         for (const auto key : binding.chord.requiredKeys)

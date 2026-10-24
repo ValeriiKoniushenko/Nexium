@@ -98,7 +98,7 @@ namespace NX
         {
             Menu_Appearance,
             Menu_Keymap,
-            Menu_COUNT
+            Menu_COUNT,
         };
 
     protected:

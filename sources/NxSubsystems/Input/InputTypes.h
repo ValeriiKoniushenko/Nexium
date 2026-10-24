@@ -21,7 +21,7 @@ namespace NX
     enum class InputContext : std::uint8_t
     {
         Editor,
-        Gameplay
+        Gameplay,
     };
 
     ENUM_CLASS();
@@ -32,7 +32,7 @@ namespace NX
         Control = 1 << 1,
         Alt = 1 << 2,
         Super = 1 << 3,
-        All = (1 << 4) - 1
+        All = (1 << 4) - 1,
     };
 
     struct KeyChord
@@ -55,7 +55,7 @@ namespace NX
     {
         WhileHeld,
         OnPress,
-        OnRelease
+        OnRelease,
     };
 
     struct KeyInputEvent

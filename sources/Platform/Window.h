@@ -45,7 +45,7 @@ namespace Platform
         {
             Idle,
             Started,
-            Dragging
+            Dragging,
         };
 
         constexpr static float dragTreshold = 15.f;
@@ -102,7 +102,7 @@ namespace Platform
         {
             Normal = GLFW_CURSOR_NORMAL,
             Disabled = GLFW_CURSOR_DISABLED,
-            Hidden = GLFW_CURSOR_HIDDEN
+            Hidden = GLFW_CURSOR_HIDDEN,
         };
 
     public:

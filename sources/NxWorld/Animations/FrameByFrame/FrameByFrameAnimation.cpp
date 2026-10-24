@@ -113,11 +113,12 @@ namespace NX::Animation
             return false;
         }
 
-        _frames.emplace_back(
-            Frame{ .name = "Frame "_atom + Core::StringAtom::MakeFrom(_frames.size() + 1),
-                   .textureName = std::nullopt,
-                   .uvOffset = std::move(uvOffset),
-                   .uvSize = std::move(uvSize) });
+        _frames.emplace_back(Frame{
+            .name = "Frame "_atom + Core::StringAtom::MakeFrom(_frames.size() + 1),
+            .textureName = std::nullopt,
+            .uvOffset = std::move(uvOffset),
+            .uvSize = std::move(uvSize),
+        });
         return true;
     }
 
@@ -153,12 +154,13 @@ namespace NX::Animation
             const auto sheetIndex = startRow * columns + index;
             const auto column = sheetIndex % columns;
             const auto row = sheetIndex / columns;
-            _frames.emplace_back(
-                Frame{ .name = "Frame "_atom + Core::StringAtom::MakeFrom(_frames.size() + 1),
-                       .textureName = std::nullopt,
-                       .uvOffset = GlobalPosition2F{ static_cast<float>(column) * frameSize.x,
-                                                     static_cast<float>(row) * frameSize.y },
-                       .uvSize = frameSize });
+            _frames.emplace_back(Frame{
+                .name = "Frame "_atom + Core::StringAtom::MakeFrom(_frames.size() + 1),
+                .textureName = std::nullopt,
+                .uvOffset = GlobalPosition2F{ static_cast<float>(column) * frameSize.x,
+                                              static_cast<float>(row) * frameSize.y },
+                .uvSize = frameSize,
+            });
         }
 
         return true;

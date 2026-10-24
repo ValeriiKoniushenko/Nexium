@@ -42,10 +42,12 @@ namespace
         {
             const NX::SceneObject object("Template"_atom);
             const auto path = root / "object.nx";
-            const nlohmann::json data = { { "type", NX::SceneObject::componentType },
-                                          { "name", "Template" },
-                                          { "tags", "WorldObject" },
-                                          { "data", object.serialize() } };
+            const nlohmann::json data = {
+                { "type", NX::SceneObject::componentType },
+                { "name", "Template" },
+                { "tags", "WorldObject" },
+                { "data", object.serialize() },
+            };
             std::ofstream(path) << data.dump();
             gGameInstance->assets.registerNewAssetPath(root);
             gGameInstance->assets.initScanFileSystem();

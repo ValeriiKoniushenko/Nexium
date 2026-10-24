@@ -22,9 +22,12 @@ namespace
 {
     [[nodiscard]] NX::BaseGraphicsData GetDefaultGraphicsData(float defSize)
     {
-        std::vector<NX::BaseGraphicsData::ModifierParam> modifiers
-            = { { .value = NX::BaseGraphicsData::ModifiedValue::CullFace,
-                  .modifier = NX::BaseGraphicsData::Modifier::Disable } };
+        std::vector<NX::BaseGraphicsData::ModifierParam> modifiers = {
+            {
+                .value = NX::BaseGraphicsData::ModifiedValue::CullFace,
+                .modifier = NX::BaseGraphicsData::Modifier::Disable,
+            },
+        };
 
         const float w = defSize;
         const float h = defSize;
@@ -39,12 +42,12 @@ namespace
             0, h, 0, // 0  top-left         | (0 , 64) * (0, 1)
             0, 0, 0, // 1  bottom-left      | (0 , 0 ) * (0, 0)
             w, 0, 0, // 2  bottom-right     | (64, 0 ) * (1, 0)
-            w, h, 0  // 3  top-right        | (64, 64) * (1, 1)
+            w, h, 0, // 3  top-right        | (64, 64) * (1, 1)
         };
 
         const std::vector<GLuint> ind = {
             0, 1, 2, // triangle 1
-            2, 3, 0  // triangle 2
+            2, 3, 0, // triangle 2
         };
 
         NX::BaseGraphicsData data;
@@ -108,7 +111,7 @@ namespace NX::SceneObj
             glm::vec3(0.0f, 0.0f, 0.0f),     // top-left (pivot)
             glm::vec3(size.x, 0.0f, 0.0f),   // top-right
             glm::vec3(size.x, size.y, 0.0f), // bottom-right
-            glm::vec3(0.0f, size.y, 0.0f)    // bottom-left
+            glm::vec3(0.0f, size.y, 0.0f),   // bottom-left
         };
 
         std::array<glm::vec3, 4> worldCorners{};

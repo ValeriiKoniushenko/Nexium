@@ -31,7 +31,7 @@ namespace Platform
             Alt = GLFW_MOD_ALT,
             Super = GLFW_MOD_SUPER,
             CapsLock = GLFW_MOD_CAPS_LOCK,
-            NumLock = GLFW_MOD_NUM_LOCK
+            NumLock = GLFW_MOD_NUM_LOCK,
         };
 
         ENUM_CLASS();
@@ -49,7 +49,7 @@ namespace Platform
             Left = GLFW_MOUSE_BUTTON_LEFT,
             Right = GLFW_MOUSE_BUTTON_RIGHT,
             Middle = GLFW_MOUSE_BUTTON_MIDDLE,
-            None = ~0
+            None = ~0,
         };
 
         ENUM_CLASS();

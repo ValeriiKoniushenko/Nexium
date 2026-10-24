@@ -152,7 +152,7 @@ namespace Platform
             None = 0,
             Pressed = GLFW_PRESS,
             Released = GLFW_RELEASE,
-            Repeated = GLFW_REPEAT
+            Repeated = GLFW_REPEAT,
         };
 
         Keyboard() = delete;

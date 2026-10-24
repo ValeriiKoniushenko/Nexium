@@ -36,7 +36,7 @@ namespace NX::Gui
         SpaceBetween, // For horizontal align
         Center,       // For horizontal & vertical align
         Top,          // For vertical align
-        Bottom        // For vertical align
+        Bottom,       // For vertical align
     };
 
     ENUM_CLASS();
@@ -45,8 +45,8 @@ namespace NX::Gui
         None = 0,
         Fixed = 1,
         FlexWidth = 1 << 1,
-        FlexHeight = 1 << 2,                        // Alpha version, poor supporting
-        FlexWidthAndHeight = FlexWidth | FlexHeight // Alpha version, poor supporting
+        FlexHeight = 1 << 2,                         // Alpha version, poor supporting
+        FlexWidthAndHeight = FlexWidth | FlexHeight, // Alpha version, poor supporting
     };
 
     CLASS();

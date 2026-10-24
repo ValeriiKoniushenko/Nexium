@@ -154,16 +154,28 @@ namespace
 
         void writeTextureAsset(const fs::path& path)
         {
-            writeJson(path, { { "AssetData",
-                                { { "_path", "missing-test-image.png" },
-                                  { "_isFlipVertically", false } } } });
+            writeJson(path, {
+                                {
+                                    "AssetData",
+                                    {
+                                        { "_path", "missing-test-image.png" },
+                                        { "_isFlipVertically", false },
+                                    },
+                                },
+                            });
         }
 
         void writeSkyboxAsset(const fs::path& path)
         {
-            writeJson(path, { { "AssetData",
-                                { { "_paths", std::array<std::string, 6>{} },
-                                  { "_isFlipVertically", false } } } });
+            writeJson(path, {
+                                {
+                                    "AssetData",
+                                    {
+                                        { "_paths", std::array<std::string, 6>{} },
+                                        { "_isFlipVertically", false },
+                                    },
+                                },
+                            });
         }
 
         void writeTextFile(const fs::path& path, std::string_view contents = {})

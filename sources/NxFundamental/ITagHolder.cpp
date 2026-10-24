@@ -35,7 +35,7 @@ namespace
         { .tag = NX::Tag_AnimationController, .name = "AnimationController" },
         { .tag = NX::Tag_EditorWindow,      .name = "EditorWindow" },
         { .tag = NX::Tag_InputController,   .name = "InputController" },
-    }};
+    }, };
     // clang-format on
 
 } // namespace

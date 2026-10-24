@@ -56,7 +56,7 @@ namespace NX
             -1.0f,  1.0f,  1.0f,  // 4
             -1.0f, -1.0f,  1.0f,  // 5
              1.0f, -1.0f,  1.0f,  // 6
-             1.0f,  1.0f,  1.0f   // 7
+             1.0f,  1.0f,  1.0f,  // 7
         };
         const std::vector<GLuint> skyboxIndices = {
             // back face
@@ -76,13 +76,16 @@ namespace NX
             3, 0, 4,
             // bottom face
             1, 2, 6,
-            6, 5, 1
+            6, 5, 1,
         };
         // clang-format on
 
-        std::vector<BaseGraphicsData::ModifierParam> modifiers
-            = { { .value = BaseGraphicsData::ModifiedValue::CullFace,
-                  .modifier = BaseGraphicsData::Modifier::Disable } };
+        std::vector<BaseGraphicsData::ModifierParam> modifiers = {
+            {
+                .value = BaseGraphicsData::ModifiedValue::CullFace,
+                .modifier = BaseGraphicsData::Modifier::Disable,
+            },
+        };
 
         _gcd.generate();
         _gcd.setVertexBuffer(skyboxVertices);

@@ -70,7 +70,7 @@ namespace NX
             PreLoaded,       // Loaded only the main information: type & ID & name
             Loaded,          // Full asset's data is loaded (corresponding to asset's type)
             PreLoadingError, // Error while preloading data
-            LoadingError     // Error while loading of the main data
+            LoadingError,    // Error while loading of the main data
         };
 
         struct StreamData

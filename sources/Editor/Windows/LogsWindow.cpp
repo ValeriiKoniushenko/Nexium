@@ -34,13 +34,14 @@ namespace NX
         }
     }
 
-    const std::unordered_map<spdlog::level::level_enum, Color4> LogsWindowEWC::_levelColor
-        = { { spdlog::level::level_enum::critical, Foundation::Config::ColorRed },
-            { spdlog::level::level_enum::err, Foundation::Config::ColorYellow },
-            { spdlog::level::level_enum::warn, Foundation::Config::ColorHalfYellow },
-            { spdlog::level::level_enum::info, Foundation::Config::ColorWhite },
-            { spdlog::level::level_enum::debug, Foundation::Config::ColorSoftWhite },
-            { spdlog::level::level_enum::trace, Foundation::Config::ColorGrey } };
+    const std::unordered_map<spdlog::level::level_enum, Color4> LogsWindowEWC::_levelColor = {
+        { spdlog::level::level_enum::critical, Foundation::Config::ColorRed },
+        { spdlog::level::level_enum::err, Foundation::Config::ColorYellow },
+        { spdlog::level::level_enum::warn, Foundation::Config::ColorHalfYellow },
+        { spdlog::level::level_enum::info, Foundation::Config::ColorWhite },
+        { spdlog::level::level_enum::debug, Foundation::Config::ColorSoftWhite },
+        { spdlog::level::level_enum::trace, Foundation::Config::ColorGrey },
+    };
 
     const char* LogsWindowEWC::getIcon()
     {

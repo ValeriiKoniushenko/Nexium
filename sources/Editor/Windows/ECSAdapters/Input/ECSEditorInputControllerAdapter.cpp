@@ -255,9 +255,11 @@ namespace NX
 
         if (ImGui::Button(ICON_FA_PLUS " Add shortcut"))
         {
-            bindings.push_back({ .action = "New action"_atom,
-                                 .chord = KeyChord::Exact(Platform::Keyboard::Key::None),
-                                 .trigger = InputActionTrigger::OnPress });
+            bindings.push_back({
+                .action = "New action"_atom,
+                .chord = KeyChord::Exact(Platform::Keyboard::Key::None),
+                .trigger = InputActionTrigger::OnPress,
+            });
             changed = true;
         }
 

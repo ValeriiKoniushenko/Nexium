@@ -35,7 +35,7 @@ namespace NX
         enum class State
         {
             None,
-            Pressed
+            Pressed,
         };
 
     public:
@@ -58,12 +58,13 @@ namespace NX
             /// @return SpecKeysState with current states of Shift, Alt, and Ctrl.
             static SpecKeysState fillAndGet()
             {
-                return { .leftShift
-                         = Platform::Keyboard::getKeyState(Platform::Keyboard::Key::Left_Shift),
-                         .leftAlt
-                         = Platform::Keyboard::getKeyState(Platform::Keyboard::Key::Left_Alt),
-                         .leftCtrl
-                         = Platform::Keyboard::getKeyState(Platform::Keyboard::Key::Left_Control) };
+                return {
+                    .leftShift
+                    = Platform::Keyboard::getKeyState(Platform::Keyboard::Key::Left_Shift),
+                    .leftAlt = Platform::Keyboard::getKeyState(Platform::Keyboard::Key::Left_Alt),
+                    .leftCtrl
+                    = Platform::Keyboard::getKeyState(Platform::Keyboard::Key::Left_Control),
+                };
             }
 
             [[nodiscard]] bool isNothingPressed() const noexcept

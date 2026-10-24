@@ -26,7 +26,7 @@ namespace NX
         None = 0,
         Fragment = GL_FRAGMENT_SHADER,
         Vertex = GL_VERTEX_SHADER,
-        Geometry = GL_GEOMETRY_SHADER
+        Geometry = GL_GEOMETRY_SHADER,
     };
 
     class ShaderProgramMeta final : public Foundation::BaseLog

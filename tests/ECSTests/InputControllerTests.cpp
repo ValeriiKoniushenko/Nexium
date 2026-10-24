@@ -118,8 +118,8 @@ TEST_F(InputControllerTests, BindingSerializationPreservesChordAndTrigger)
 {
     const InputController::Binding binding{ .action = "Save"_atom,
                                             .chord = { .triggerKey = Key::S,
-                                                       .requiredKeys = { Key::Left_Control } },
-                                            .trigger = InputActionTrigger::OnRelease };
+                                                       .requiredKeys = { Key::Left_Control }, },
+                                            .trigger = InputActionTrigger::OnRelease, };
     const nlohmann::json json = binding;
     const auto restored = json.get<InputController::Binding>();
     EXPECT_EQ(restored.action, binding.action);

@@ -72,10 +72,17 @@ namespace Foundation::Latency
                 {
                     const auto duration = samples[i].timestamp - samples[i - 1].timestamp;
                     const Transition transition{ samples[i - 1].source, samples[i].source };
-                    auto [it, inserted] = aggregated.try_emplace(
-                        transition, Hotspot{ samples[i - 1].source, samples[i].source,
-                                             samples[i - 1].description, samples[i].description, 1,
-                                             duration, duration, duration });
+                    auto [it, inserted]
+                        = aggregated.try_emplace(transition, Hotspot{
+                                                                 samples[i - 1].source,
+                                                                 samples[i].source,
+                                                                 samples[i - 1].description,
+                                                                 samples[i].description,
+                                                                 1,
+                                                                 duration,
+                                                                 duration,
+                                                                 duration,
+                                                             });
                     if (!inserted)
                     {
                         auto& hotspot = it->second;

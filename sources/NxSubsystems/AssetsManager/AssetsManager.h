@@ -81,7 +81,7 @@ namespace NX
             Code,
             Image,
             Folder,
-            NxFile
+            NxFile,
         };
 
     public:

@@ -148,9 +148,11 @@ namespace NX
             std::unordered_set<ShaderVariable, ShaderVariable::Hasher>& output;
         };
 
-        std::vector<Group> groups = { { .interfaceType = GL_UNIFORM, .output = _uniforms },
-                                      { .interfaceType = GL_PROGRAM_INPUT, .output = _inputs },
-                                      { .interfaceType = GL_PROGRAM_OUTPUT, .output = _outputs } };
+        std::vector<Group> groups = {
+            { .interfaceType = GL_UNIFORM, .output = _uniforms },
+            { .interfaceType = GL_PROGRAM_INPUT, .output = _inputs },
+            { .interfaceType = GL_PROGRAM_OUTPUT, .output = _outputs },
+        };
 
         constexpr std::array<GLenum, 3> props = { GL_NAME_LENGTH, GL_TYPE, GL_LOCATION };
 

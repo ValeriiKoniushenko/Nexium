@@ -31,7 +31,7 @@ namespace Editor
             Info,
             Success,
             Warning,
-            Error
+            Error,
         };
 
         using Timeout = std::chrono::milliseconds;

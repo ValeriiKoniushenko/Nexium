@@ -171,7 +171,7 @@ namespace NX
         enum class Mode
         {
             Input,
-            Output
+            Output,
         };
 
         ENUM_CLASS();
@@ -181,7 +181,7 @@ namespace NX
             ReadFailed,
             WriteFailed,
             InvalidPassedData,
-            CustomProcessingError
+            CustomProcessingError,
         };
 
         using Json = nlohmann::json;
