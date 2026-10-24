@@ -7,7 +7,7 @@
 //
 //     http://www.apache.org/licenses/LICENSE-2.0
 
-// Nexium::Editor
+// Module: Nexium::Editor
 
 #pragma once
 
