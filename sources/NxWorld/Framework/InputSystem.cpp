@@ -16,27 +16,6 @@
 
 namespace
 {
-    NX::InputModifier ConvertModifiers(int mods)
-    {
-        auto result = NX::InputModifier::None;
-        if (mods & GLFW_MOD_SHIFT)
-        {
-            result = result | NX::InputModifier::Shift;
-        }
-        if (mods & GLFW_MOD_CONTROL)
-        {
-            result = result | NX::InputModifier::Control;
-        }
-        if (mods & GLFW_MOD_ALT)
-        {
-            result = result | NX::InputModifier::Alt;
-        }
-        if (mods & GLFW_MOD_SUPER)
-        {
-            result = result | NX::InputModifier::Super;
-        }
-        return result;
-    }
 
     Platform::Keyboard::Key NormalizeModifier(Platform::Keyboard::Key key)
     {
@@ -63,6 +42,44 @@ namespace
 
 namespace NX
 {
+
+    NX::InputModifier InputSystem::ConvertModifiers(int mods)
+    {
+        auto result = NX::InputModifier::None;
+
+        if (mods & GLFW_MOD_SHIFT)
+        {
+            result = result | NX::InputModifier::Shift;
+        }
+
+        if (mods & GLFW_MOD_CONTROL)
+        {
+            result = result | NX::InputModifier::Control;
+        }
+
+        if (mods & GLFW_MOD_ALT)
+        {
+            result = result | NX::InputModifier::Alt;
+        }
+
+        if (mods & GLFW_MOD_SUPER)
+        {
+            result = result | NX::InputModifier::Super;
+        }
+
+        if (mods & GLFW_MOD_CAPS_LOCK)
+        {
+            result = result | NX::InputModifier::CapsLock;
+        }
+
+        if (mods & GLFW_MOD_NUM_LOCK)
+        {
+            result = result | NX::InputModifier::NumLock;
+        }
+
+        return result;
+    }
+
     void InputSystem::initialize(Platform::Window& window)
     {
         if (_initialized)
@@ -71,8 +88,12 @@ namespace NX
         }
 
         _subscriptions << window.onKeyPressed->subscribeAndGetID(
-            [this](Platform::Keyboard::Key key, int scancode, Platform::Keyboard::KeyState state,
-                   int mods) { pushKeyEvent(key, scancode, state, mods); });
+            [this](NX::InputButton key, int scancode, NX::InputState state, NX::InputModifier mods)
+            { pushKeyEvent(key, state, mods, scancode); });
+        _subscriptions << window.onMouseKeyPressed->subscribeAndGetID(
+            [this](NX::InputButton key, NX::InputState state, NX::InputModifier mods)
+            { pushKeyEvent(key, state, mods); });
+
         _subscriptions << window.onFocusChanged->subscribeAndGetID(
             [this](bool focused)
             {
@@ -83,6 +104,7 @@ namespace NX
             });
         _initialized = true;
     }
+
     void InputSystem::setActiveContext(InputContext context)
     {
         if (_activeContext == context)
@@ -93,17 +115,14 @@ namespace NX
         _activeContext = context;
         refreshRoutedControllers();
     }
-    void InputSystem::pushKeyEvent(Platform::Keyboard::Key key, int scancode,
-                                   Platform::Keyboard::KeyState state, int mods)
+
+    void InputSystem::pushKeyEvent(NX::InputButton key, NX::InputState state,
+                                   NX::InputModifier mods, int scancode)
     {
-        _events.push_back({
-            .key = NormalizeModifier(key),
-            .state = state,
-            .modifiers = ConvertModifiers(mods),
-            .scancode = scancode,
-            .pressedKeys = {},
-        });
+        _events.emplace_back(
+            InputEvent{ .button = key, .state = state, .mods = mods, .scancode = scancode });
     }
+
     void InputSystem::registerController(InputController* controller)
     {
         if (!controller)
@@ -147,24 +166,24 @@ namespace NX
 
         while (!_events.empty())
         {
-            const auto event = _events.front();
+            const InputEvent event = _events.front();
             _events.pop_front();
             dispatch(event);
         }
     }
-    void InputSystem::dispatch(const KeyInputEvent& event)
+    void InputSystem::dispatch(const InputEvent& event)
     {
         auto routedEvent = event;
-        if (event.state == Platform::Keyboard::KeyState::Pressed
-            && std::ranges::find(_pressedKeys, event.key) == _pressedKeys.end())
+        if (event.state == InputState::Pressed
+            && std::ranges::find(_pressedKeys, event.button) == _pressedKeys.end())
         {
-            _pressedKeys.push_back(event.key);
+            _pressedKeys.push_back(event.button);
         }
-        routedEvent.pressedKeys = _pressedKeys;
+        routedEvent.allPressedButtons = _pressedKeys;
 
-        if (event.state == Platform::Keyboard::KeyState::Released)
+        if (event.state == InputState::Released)
         {
-            std::erase(_pressedKeys, event.key);
+            std::erase(_pressedKeys, event.button);
         }
 
         const auto controllers = _routedControllers;
@@ -175,15 +194,13 @@ namespace NX
             {
                 InputController::Ptr keepAlive
                     = controller->getHardRefCount() ? controller : nullptr;
-                controller->handleRoutedEvent(routedEvent);
+
+                // NEW IMPL
+                // controller->handleRoutedEvent(routedEvent);
             }
         }
     }
     std::vector<InputController*>& InputSystem::controllersFor(InputContext context)
-    {
-        return context == InputContext::Editor ? _editorControllers : _gameplayControllers;
-    }
-    const std::vector<InputController*>& InputSystem::controllersFor(InputContext context) const
     {
         return context == InputContext::Editor ? _editorControllers : _gameplayControllers;
     }
@@ -220,7 +237,8 @@ namespace NX
 
         _routedControllers = std::move(controllers);
     }
-    std::vector<InputController*> InputSystem::selectControllers() const
+
+    std::vector<InputController*> InputSystem::selectControllers()
     {
         std::vector<InputController*> selected;
         for (auto* controller : controllersFor(_activeContext))

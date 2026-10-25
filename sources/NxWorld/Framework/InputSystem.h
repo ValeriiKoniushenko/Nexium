@@ -44,22 +44,21 @@ namespace NX
         void registerController(InputController* controller);
         void unregisterController(InputController* controller);
 
+        NX::InputModifier ConvertModifiers(int mods);
+
     private:
-        void pushKeyEvent(Platform::Keyboard::Key key, int scancode,
-                          Platform::Keyboard::KeyState state, int mods);
+        void pushKeyEvent(NX::InputButton key, NX::InputState state, NX::InputModifier mods,
+                          int scancode = 0);
 
-        void dispatch(const KeyInputEvent& event);
+        void dispatch(const InputEvent& event);
 
-        [[nodiscard]] std::vector<InputController*> selectControllers() const;
+        [[nodiscard]] std::vector<InputController*> selectControllers();
 
         [[nodiscard]] std::vector<InputController*>& controllersFor(InputContext context);
 
-        [[nodiscard]] const std::vector<InputController*>& controllersFor(
-            InputContext context) const;
-
         void refreshRoutedControllers();
 
-        std::deque<KeyInputEvent> _events;
+        std::deque<InputEvent> _events;
 
         /// Non-owning pointers. Every controller unregisters itself before destruction.
         /// Controllers registered for shortcuts that are active while editor UI owns input.
@@ -71,7 +70,7 @@ namespace NX
         std::vector<InputController*> _routedControllers;
         InputContext _activeContext = InputContext::Editor;
 
-        std::vector<Platform::Keyboard::Key> _pressedKeys;
+        std::vector<InputButton> _pressedKeys;
 
         Core::DelegateSubscriberPoolGuard _subscriptions;
 

@@ -33,7 +33,7 @@ namespace
 
         static void key(Key key, State state, int modifiers = 0)
         {
-            Platform::GetWindow().onKeyPressed->trigger(key, 0, state, modifiers);
+            // Platform::GetWindow().onKeyPressed->trigger(key, 0, state, modifiers);
         }
 
         static void frame() { GetInputSystem().processEvents(); }

@@ -1,7 +1,73 @@
 {
-    "_sceneName": "MenuScene",
+    "_sceneName": "Default",
     "formatVersion": 1,
     "sceneObjects": [
+        {
+            "assetType": "NX::SceneObj::Rectangle",
+            "name": "BaseRectangle",
+            "referenceAsset": "data/assets/BaseRectangle.nx",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    200.0,
+                    200.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    0.4000000059604645,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_atlasName": "player_walk",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "MPlayer_walk.png"
+            }
+        },
+        {
+            "assetType": "NX::SceneObj::Rectangle",
+            "name": "BaseRectangle_0",
+            "referenceAsset": "data/assets/BaseRectangle.nx",
+            "trans": {
+                "_origin": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_position": [
+                    200.0,
+                    0.0,
+                    0.0
+                ],
+                "_rotation": [
+                    0.0,
+                    0.0,
+                    0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_atlasName": "santa_walk",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "Walk_11.png"
+            }
+        },
         {
             "assetType": "NX::Spectator2D",
             "name": "2D_Spectator",
@@ -13,9 +79,9 @@
                     0.0
                 ],
                 "_position": [
-                    -131.46563720703125,
-                    -119.99872589111328,
-                    -5.2453110583883245e-06
+                    -401.35101318359375,
+                    -204.27001953125,
+                    1005.0285034179688
                 ],
                 "_rotation": [
                     0.0,
@@ -33,9 +99,9 @@
             }
         },
         {
-            "assetType": "NX::SceneObj::Rectangle",
-            "name": "BaseRectangle",
-            "referenceAsset": "data/assets/BaseRectangle.nx",
+            "assetType": "NX::SceneObj::RectangleAnimated",
+            "name": "AnimatedPlayersa_3",
+            "referenceAsset": "data/assets/AnimatedPlayer.nx",
             "trans": {
                 "_origin": [
                     0.0,
@@ -43,8 +109,8 @@
                     0.0
                 ],
                 "_position": [
-                    607.0000610351563,
-                    202.00006103515625,
+                    97.10975646972656,
+                    100.40267944335938,
                     0.0
                 ],
                 "_rotation": [
@@ -59,46 +125,13 @@
                 ]
             },
             "typeSpecificData": {
+                "_animationEnabled": true,
+                "_animationFPS": 27.5,
+                "_animationName": "New animation",
                 "_atlasName": "santa_walk",
                 "_blendingEnabled": true,
                 "_isEnabled": true,
-                "_textureName": "Walk_9.png"
-            }
-        },
-        {
-            "assetType": "NX::SceneObj::RectangleAnimated",
-            "name": "AnimatedRect",
-            "referenceAsset": "data/assets/AnimatedRect.nx",
-            "trans": {
-                "_origin": [
-                    0.0,
-                    0.0,
-                    0.0
-                ],
-                "_position": [
-                    381.0002746582031,
-                    209.00027465820313,
-                    0.0
-                ],
-                "_rotation": [
-                    -0.0,
-                    0.0,
-                    0.419647753238678
-                ],
-                "_scale": [
-                    1.0,
-                    1.0,
-                    1.0
-                ]
-            },
-            "typeSpecificData": {
-                "_animationEnabled": true,
-                "_animationFPS": 13.0,
-                "_animationName": "PLayerWalkLeft",
-                "_atlasName": "player_walk",
-                "_blendingEnabled": true,
-                "_isEnabled": true,
-                "_textureName": "MPlayer_walk.png"
+                "_textureName": "Walk_7.png"
             }
         }
     ]
