@@ -12,6 +12,7 @@
 #include "Core/Math.h"
 #include "NxWorld/Entities/Camera/Camera.h"
 #include "NxWorld/Framework/GameInstance.h"
+#include "Platform/Input/Window.h"
 
 namespace NX
 {
@@ -96,9 +97,8 @@ namespace NX
 
         auto mouseMove = [this](glm::vec2 delta, MouseIA::SpecKeysState state)
         {
-            auto mlt
-                = (speed * (state.leftShift == Platform::Keyboard::KeyState::Pressed ? 5.f : 1.f))
-                  * gGameInstance->world.getTimeDelta();
+            auto mlt = (speed * (state.leftShift == InputState::Pressed ? 5.f : 1.f))
+                       * gGameInstance->world.getTimeDelta();
 
             moveRight(-delta.x * mlt);
             moveUp(delta.y * mlt);
@@ -113,13 +113,24 @@ namespace NX
                 if (gGameInstance->isApplicationViewportFocused())
                 {
                     float mlt = baseMlt;
-                    if (Platform::Keyboard::IsKeyPressed(Platform::Keyboard::Key::Left_Shift))
+
+                    const auto isLeftShiftPressed
+                        = glfwGetKey(Platform::GetWindow().getRawWindow(),
+                                     static_cast<int>(Platform::Keyboard::Key::Left_Shift))
+                          == GLFW_PRESS;
+
+                    if (isLeftShiftPressed)
                     {
                         mlt = leftShiftMlt;
                     }
                     offset *= mlt;
 
-                    if (Platform::Keyboard::IsKeyPressed(Platform::Keyboard::Key::Left_Control))
+                    const auto isLeftControlPressed
+                        = glfwGetKey(Platform::GetWindow().getRawWindow(),
+                                     static_cast<int>(Platform::Keyboard::Key::Left_Control))
+                          == GLFW_PRESS;
+
+                    if (isLeftControlPressed)
                     {
                         if (auto* camera = findFirstChildOf<OrthographicCamera>())
                         {

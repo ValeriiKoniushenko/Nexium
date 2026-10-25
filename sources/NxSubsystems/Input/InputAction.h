@@ -14,8 +14,10 @@
 #include "Core/Delegate.h"
 #include "Core/IntrusivePtr.h"
 #include "Core/String.h"
+#include "NxSubsystems/Input/InputTypes.h"
 #include "Platform/Input/Keyboard.h"
 #include "Platform/Input/Mouse.h"
+#include "Platform/Input/Window.h"
 #include "glm/glm.hpp"
 
 #include <chrono>
@@ -50,26 +52,33 @@ namespace NX
         /// Represents the state of special modifier keys (Shift, Alt, Ctrl).
         struct SpecKeysState
         {
-            Platform::Keyboard::KeyState leftShift = Platform::Keyboard::KeyState::None;
-            Platform::Keyboard::KeyState leftAlt = Platform::Keyboard::KeyState::None;
-            Platform::Keyboard::KeyState leftCtrl = Platform::Keyboard::KeyState::None;
+            InputState leftShift = InputState::None;
+            InputState leftAlt = InputState::None;
+            InputState leftCtrl = InputState::None;
 
             /// Reads the current state of modifier keys and returns it.
             /// @return SpecKeysState with current states of Shift, Alt, and Ctrl.
             static SpecKeysState fillAndGet()
             {
-                return { .leftShift
-                         = Platform::Keyboard::getKeyState(Platform::Keyboard::Key::Left_Shift),
-                         .leftAlt
-                         = Platform::Keyboard::getKeyState(Platform::Keyboard::Key::Left_Alt),
-                         .leftCtrl
-                         = Platform::Keyboard::getKeyState(Platform::Keyboard::Key::Left_Control) };
+                // FOR REVIEWERS how can i use here
+                // Platform::Keyboard::getKeyState(Platform::Keyboard::Key::Left_Control)
+                return {
+                    .leftShift = static_cast<NX::InputState>(
+                        glfwGetKey(Platform::GetWindow().getRawWindow(),
+                                   static_cast<int>(Platform::Keyboard::Key::Left_Shift))),
+                    .leftAlt = static_cast<NX::InputState>(
+                        glfwGetKey(Platform::GetWindow().getRawWindow(),
+                                   static_cast<int>(Platform::Keyboard::Key::Left_Alt))),
+                    .leftCtrl = static_cast<NX::InputState>(
+                        glfwGetKey(Platform::GetWindow().getRawWindow(),
+                                   static_cast<int>(Platform::Keyboard::Key::Left_Control))),
+                };
             }
 
             [[nodiscard]] bool isNothingPressed() const noexcept
             {
-                using KS = Platform::Keyboard::KeyState;
-                return leftAlt == KS::None && leftShift == KS::None && leftCtrl == KS::None;
+                return leftAlt == NX::InputState::None && leftShift == NX::InputState::None
+                       && leftCtrl == NX::InputState::None;
             }
         };
 
