@@ -19,11 +19,36 @@
 
 namespace NX
 {
+
     ENUM_CLASS();
-    enum class InputContext : std::uint8_t
+    enum class InputState
     {
-        Editor,
-        Gameplay
+        None = 0,
+        // mouse event states
+        Move,
+        Wheel,
+        // any phisical buttons
+        Pressed = GLFW_PRESS,
+        Released = GLFW_RELEASE,
+        Repeated = GLFW_REPEAT
+    };
+
+    class InputButton
+    {
+    public:
+        InputButton() = default;
+        constexpr InputButton(std::uint32_t index)
+            : _index(index)
+        {
+        }
+
+        void reset() { _index = 0; }
+
+        [[nodiscard]] constexpr std::uint32_t getIndex() const { return _index; }
+        [[nodiscard]] constexpr bool operator==(const InputButton&) const = default;
+
+    private:
+        std::uint32_t _index;
     };
 
     ENUM_CLASS();
@@ -34,7 +59,27 @@ namespace NX
         Control = 1 << 1,
         Alt = 1 << 2,
         Super = 1 << 3,
-        All = (1 << 4) - 1
+        CapsLock = 1 << 4,
+        NumLock = 1 << 5,
+        All = (1 << 6) - 1
+    };
+
+    struct InputEvent
+    {
+        InputButton button;
+        InputState state;
+        InputModifier mods;
+        int scancode;
+        std::vector<InputButton> allPressedButtons;
+    };
+
+    //////////////////////////////
+
+    ENUM_CLASS();
+    enum class InputContext : std::uint8_t
+    {
+        Editor,
+        Gameplay
     };
 
     struct KeyChord
@@ -62,8 +107,8 @@ namespace NX
 
     struct KeyInputEvent
     {
-        Platform::Keyboard::Key key = Platform::Keyboard::Key::None;
         Platform::Keyboard::KeyState state = Platform::Keyboard::KeyState::None;
+        Platform::Keyboard::Key key = Platform::Keyboard::Key::None;
         InputModifier modifiers = InputModifier::None;
         int scancode = 0;
         std::vector<Platform::Keyboard::Key> pressedKeys;

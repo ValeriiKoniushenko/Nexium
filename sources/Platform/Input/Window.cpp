@@ -10,6 +10,8 @@
 #include "Window.h"
 
 #include "Foundation/Configs.h"
+#include "NxSubsystems/Input/InputTypes.h"
+#include "NxWorld/Framework/InputSystem.h"
 #include "Platform/Graphics/Graphics.h"
 #include "Platform/PrivateModuleInfo.h"
 #include "Stb/Image.h"
@@ -39,15 +41,16 @@ namespace
 
     void MouseKeyPressHandler(GLFWwindow*, int button, int action, int mods)
     {
-        GetWindow().onMouseKeyPressed->trigger(static_cast<Mouse::Key>(button),
-                                               static_cast<Mouse::State>(action),
-                                               static_cast<Mouse::Mod>(mods));
+        GetWindow().onMouseKeyPressed->trigger(static_cast<NX::InputButton>(button),
+                                               static_cast<NX::InputState>(action),
+                                               NX::GetInputSystem().ConvertModifiers(mods));
     }
 
     void KeyPressHandler(auto*, int key, int scancode, int action, int mods)
     {
-        GetWindow().onKeyPressed->trigger(static_cast<Keyboard::Key>(key), scancode,
-                                          static_cast<Keyboard::KeyState>(action), mods);
+        GetWindow().onKeyPressed->trigger(static_cast<NX::InputButton>(key), scancode,
+                                          static_cast<NX::InputState>(action),
+                                          NX::GetInputSystem().ConvertModifiers(mods));
     }
 
     void TextInputHandler(auto*, unsigned int scancode)
@@ -323,9 +326,9 @@ namespace Platform
             });
 
         _subscriptionPool << onMouseKeyPressed->subscribeAndGetID(
-            [](Mouse::Key key, Mouse::State state, Mouse::Mod mod)
+            [](NX::InputButton key, NX::InputState state, NX::InputModifier mod)
             {
-                if (state == Mouse::State::Release)
+                if (state == NX::InputState::Released)
                 {
                     if (glm::distance(gDragDrop._startPos, Mouse::GetPosition())
                         >= DragAndDrop::dragTreshold)
@@ -334,12 +337,12 @@ namespace Platform
                     }
                     gDragDrop._state = DragAndDrop::State::Idle;
                     gDragDrop.payload = {};
-                    gDragDrop._key = Mouse::Key::None;
+                    gDragDrop._key.reset();
                 }
-                else if (state == Mouse::State::Press)
+                else if (state == NX::InputState::Pressed)
                 {
                     gDragDrop._state = DragAndDrop::State::Started;
-                    gDragDrop._key = key;
+                    gDragDrop._key.reset();
                     gDragDrop.payload.type = ""_atom;
                     gDragDrop._startPos = Mouse::GetPosition();
                 }

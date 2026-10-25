@@ -19,6 +19,7 @@
 #include "Glfw.h"
 #include "Keyboard.h"
 #include "Mouse.h"
+#include "NxSubsystems/Input/InputTypes.h"
 
 namespace Platform
 {
@@ -57,7 +58,7 @@ namespace Platform
         [[nodiscard]] glm::vec2 getCurrentPos() const noexcept { return _currentPos; }
         [[nodiscard]] glm::vec2 getLastDelta() const noexcept { return _lastDelta; }
         [[nodiscard]] State getState() const noexcept { return _state; }
-        [[nodiscard]] Mouse::Key getKey() const noexcept { return _key; }
+        [[nodiscard]] NX::InputButton getKey() const noexcept { return _key; }
 
         template<class T>
             requires std::derived_from<std::remove_reference_t<T>, Data>
@@ -78,7 +79,7 @@ namespace Platform
         glm::vec2 _lastDelta = {};
         glm::vec2 _startPos = {};
         glm::vec2 _currentPos = {};
-        Mouse::Key _key = Mouse::Key::None;
+        NX::InputButton _key;
         State _state = State::Idle;
 
         friend class Window;
@@ -152,8 +153,9 @@ namespace Platform
         /// @param Mouse::Key is a key
         /// @param Mouse::State pressed or released
         /// @param Mouse::Mod is a mod
-        Core::Delegate<void(Mouse::Key, Mouse::State, Mouse::Mod)>::Ptr onMouseKeyPressed
-            = Core::Delegate<void(Mouse::Key, Mouse::State, Mouse::Mod)>::Create();
+        Core::Delegate<void(NX::InputButton, NX::InputState, NX::InputModifier)>::Ptr
+            onMouseKeyPressed
+            = Core::Delegate<void(NX::InputButton, NX::InputState, NX::InputModifier)>::Create();
 
         /// @param glm::vec2 mouse scroll offsets (X & Y)
         Core::Delegate<void(glm::vec2)>::Ptr onMouseWheel
@@ -163,8 +165,10 @@ namespace Platform
         /// @param int is a scancode
         /// @param Keyboard::KeyState is an action: GLFW_PRESS, GLFW_RELEASE or GLFW_REPEAT
         /// @param int is a mod
-        Core::Delegate<void(Keyboard::Key, int, Keyboard::KeyState, int)>::Ptr onKeyPressed
-            = Core::Delegate<void(Keyboard::Key, int, Keyboard::KeyState, int)>::Create();
+        Core::Delegate<void(NX::InputButton, int, NX::InputState, NX::InputModifier)>::Ptr
+            onKeyPressed
+            = Core::Delegate<void(NX::InputButton, int, NX::InputState,
+                                  NX::InputModifier)>::Create();
 
         /// @param unsigned int is a Scancode
         Core::Delegate<void(unsigned int)>::Ptr onTextInput
