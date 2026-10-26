@@ -113,6 +113,30 @@ namespace NX
             drawTreeNode(object.get(), internalId++);
         }
 
+        // Deleting or duplicating while the tree is traversed would invalidate the iterated
+        // objects.
+        if (_pendingDelete)
+        {
+            auto* component = _pendingDelete;
+            _pendingDelete = nullptr;
+            if (selectedObject == component)
+            {
+                selectedObject = nullptr;
+                _lastSelectedObject = nullptr;
+            }
+            if (_highlightTracerObject == component)
+            {
+                _highlightTracerObject = nullptr;
+            }
+            gGameInstance->scenes.getCurrentScene()->deleteFromSceneOrFromObject(component);
+        }
+        if (_pendingDuplicate)
+        {
+            auto* component = _pendingDuplicate;
+            _pendingDuplicate = nullptr;
+            gGameInstance->scenes.getCurrentScene()->duplicateSceneObject(component);
+        }
+
         if (ImGui::IsWindowHovered(ImGuiHoveredFlags_ChildWindows)
             && (ImGui::IsMouseClicked(ImGuiMouseButton_Left)
                 || ImGui::IsMouseClicked(ImGuiMouseButton_Right)))
@@ -209,7 +233,7 @@ namespace NX
             flags |= ImGuiTreeNodeFlags_Leaf;
         }
 
-        ImGui::PushID(id);
+        ImGui::PushID(n);
 
         ImGui::PushStyleColor(ImGuiCol_Button, glm::vec4(0, 0, 0, 0));
         ImGui::PushStyleColor(ImGuiCol_ButtonHovered, glm::vec4(0, 0, 0, 0));
@@ -270,7 +294,7 @@ namespace NX
         {
             if (ImGui::IsKeyPressed(ImGuiKey_Delete))
             {
-                gGameInstance->scenes.getCurrentScene()->deleteFromSceneOrFromObject(n);
+                _pendingDelete = n;
             }
             else if (ImGui::IsItemClicked())
             {
@@ -286,11 +310,11 @@ namespace NX
         {
             if (ImGui::MenuItem(ICON_FA_TRASH " Delete"))
             {
-                gGameInstance->scenes.getCurrentScene()->deleteFromSceneOrFromObject(n);
+                _pendingDelete = n;
             }
             if (ImGui::MenuItem(ICON_FA_CLONE " Duplicate"))
             {
-                gGameInstance->scenes.getCurrentScene()->duplicateSceneObject(n);
+                _pendingDuplicate = n;
             }
 
             if (auto* camera = n->tryCastTo<BaseCamera>())
@@ -320,7 +344,7 @@ namespace NX
         {
             for (auto& child : n->getChildren())
             {
-                drawTreeNode(child.get(), ++id);
+                drawTreeNode(child.get(), ++id, isInSelectedSubtree);
             }
 
             ImGui::TreePop();

@@ -126,6 +126,8 @@ namespace NX
         std::vector<Actor*> _postDrawBuffer;
 
         NX::Face nxFace;
+        // Generated on the first draw: scenes may initialize before shaders are loaded.
+        bool _isFaceGenerated = false;
 
         uint32_t _uniqueCounterName = 0;
         bool _isInitialized = false;

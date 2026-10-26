@@ -58,6 +58,8 @@ namespace NX
         NX::Scene* _scene = nullptr;
         int _commonTreeFlags = 0;
         NX::BaseComponent* _lastSelectedObject = nullptr;
+        NX::BaseComponent* _pendingDelete = nullptr;
+        NX::BaseComponent* _pendingDuplicate = nullptr;
 
     private:
         const NX::SceneObject* _highlightTracerObject = nullptr;
