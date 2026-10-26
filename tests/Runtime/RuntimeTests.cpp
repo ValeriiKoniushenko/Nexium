@@ -17,6 +17,7 @@
 #include "NxWorld/Scene/SceneObjects/Rectangle/Rectangle.h"
 #include "NxWorld/Scene/SceneObjects/Spectator/Spectator.h"
 #include "Platform/Input/Window.h"
+#include "Runtime/SceneFilesGuard.h"
 
 #include "gtest/gtest.h"
 #include <array>
@@ -81,6 +82,7 @@ TEST(RuntimeTests, GameInstanceAccessExposesAvailableSubsystems)
 
 TEST(RuntimeTests, SceneChangesClearSelectionWithoutEditorWindows)
 {
+    const SceneFilesGuard sceneFiles;
     auto executableName = std::to_array("Nexium_Tests");
     std::array<char*, 1> arguments{ executableName.data() };
     NX::GameInstance gameInstance{ 1, arguments.data() };

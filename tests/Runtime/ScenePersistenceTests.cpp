@@ -12,6 +12,7 @@
 #include "NxWorld/Entities/Camera/Camera.h"
 #include "NxWorld/Framework/GameInstance.h"
 #include "NxWorld/Scene/Scene/Scene.h"
+#include "Runtime/SceneFilesGuard.h"
 
 #include "gtest/gtest.h"
 #include <chrono>
@@ -80,10 +81,102 @@ namespace
             savedFiles.emplace_back(path, std::move(contents));
         }
 
+        static std::string readFile(const std::filesystem::path& path)
+        {
+            std::ifstream file(path, std::ios::binary);
+            return { std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>() };
+        }
+
+        std::filesystem::path sceneFile(const std::string& name) const
+        {
+            return Foundation::Config::Path::data / "scenes" / (name + ".json");
+        }
+
+        // Unique per test run, so it never matches a real scene file.
+        std::string uniqueName(const std::string& suffix) const
+        {
+            return root.filename().generic_string() + "_" + suffix;
+        }
+
+        SceneFilesGuard sceneFiles;
         std::filesystem::path root;
         std::vector<std::pair<std::filesystem::path, std::optional<std::string>>> savedFiles;
     };
 } // namespace
+
+TEST_F(ScenePersistenceTest, NewScenesSkipNamesOfUnloadedSceneFiles)
+{
+    NX::SceneManager manager;
+    const auto unloaded = sceneFile("Scene_1");
+    preserveFile(unloaded);
+    std::filesystem::create_directories(unloaded.parent_path());
+    NX::WriteFileAtomically(unloaded, "unloaded scene");
+
+    const auto& added = manager.createNewScene();
+
+    EXPECT_NE(added.getSceneName(), "Scene_1"_atom);
+    EXPECT_EQ(readFile(unloaded), "unloaded scene");
+    EXPECT_TRUE(std::filesystem::exists(sceneFile(added.getSceneName().toStdString())));
+}
+
+TEST_F(ScenePersistenceTest, RenameDoesNotReplaceUnloadedSceneFiles)
+{
+    NX::SceneManager manager;
+    auto& added = manager.createNewScene();
+    const auto oldName = added.getSceneName();
+    const auto taken = uniqueName("Taken");
+    const auto unloaded = sceneFile(taken);
+    preserveFile(unloaded);
+    NX::WriteFileAtomically(unloaded, "unloaded scene");
+
+    EXPECT_FALSE(manager.renameScene(&added, Core::StringAtom::Intern(taken)));
+
+    EXPECT_EQ(added.getSceneName(), oldName);
+    EXPECT_EQ(readFile(unloaded), "unloaded scene");
+    EXPECT_TRUE(std::filesystem::exists(sceneFile(oldName.toStdString())));
+}
+
+TEST_F(ScenePersistenceTest, SceneWithoutOwnFileNeverDeletesTheFileMatchingItsName)
+{
+    const auto name = Core::StringAtom::Intern(uniqueName("Unloaded"));
+    const auto unloaded = sceneFile(name.toStdString());
+    preserveFile(unloaded);
+    NX::WriteFileAtomically(unloaded, "unloaded scene");
+    {
+        // Mirrors the placeholder scene kept after a failed import.
+        NX::SceneManager manager;
+        auto* placeholder = manager.getCurrentScene();
+        placeholder->setSceneName(name);
+        ASSERT_TRUE(
+            manager.renameScene(placeholder, Core::StringAtom::Intern(uniqueName("Renamed"))));
+        EXPECT_EQ(readFile(unloaded), "unloaded scene");
+    }
+    {
+        NX::SceneManager manager;
+        auto* placeholder = manager.getCurrentScene();
+        placeholder->setSceneName(name);
+        manager.createNewScene();
+        ASSERT_TRUE(manager.removeScene(placeholder));
+        EXPECT_EQ(readFile(unloaded), "unloaded scene");
+    }
+}
+
+TEST_F(ScenePersistenceTest, RenameMovesOwnedSceneFileIncludingToTheSamePath)
+{
+    NX::SceneManager manager;
+    auto& added = manager.createNewScene();
+    const auto oldFile = sceneFile(added.getSceneName().toStdString());
+    const auto spaced = uniqueName("Main Menu");
+    const auto underscored = uniqueName("Main_Menu");
+
+    ASSERT_TRUE(manager.renameScene(&added, Core::StringAtom::Intern(spaced)));
+    EXPECT_FALSE(std::filesystem::exists(oldFile));
+    EXPECT_TRUE(std::filesystem::exists(sceneFile(underscored)));
+
+    // Both names share one file, which already belongs to this scene.
+    ASSERT_TRUE(manager.renameScene(&added, Core::StringAtom::Intern(underscored)));
+    EXPECT_TRUE(std::filesystem::exists(sceneFile(underscored)));
+}
 
 TEST_F(ScenePersistenceTest, AssetInstanceNamesAndTransformsSurviveRepeatedLoading)
 {
@@ -278,7 +371,8 @@ TEST_F(ScenePersistenceTest, StreamAndJsonRestoreTheSameTabs)
     NX::SceneManager fromStream;
     auto& jsonScene = fromJson.createNewScene();
     auto& streamScene = fromStream.createNewScene();
-    ASSERT_EQ(jsonScene.getSceneName(), streamScene.getSceneName());
+    // The second manager cannot take the first one's file, so align the names in memory.
+    streamScene.setSceneName(jsonScene.getSceneName());
     const nlohmann::json tabs = { { "formatVersion", 1 },
                                   { "open", { jsonScene.getSceneName().c_str() } },
                                   { "current", jsonScene.getSceneName().c_str() } };

@@ -8,10 +8,20 @@
 //     http://www.apache.org/licenses/LICENSE-2.0
 
 #include "NxWorld/Scene/Scene/SceneManager.h"
+#include "Runtime/SceneFilesGuard.h"
 
 #include "gtest/gtest.h"
 
-TEST(SceneManagerTests, WeakSceneReferenceExpiresAfterRemoval)
+namespace
+{
+    class SceneManagerTests : public ::testing::Test
+    {
+    protected:
+        SceneFilesGuard sceneFiles;
+    };
+} // namespace
+
+TEST_F(SceneManagerTests, WeakSceneReferenceExpiresAfterRemoval)
 {
     NX::SceneManager manager;
     Core::WeakPtr<NX::Scene> pending = &manager.createNewScene();
@@ -21,7 +31,7 @@ TEST(SceneManagerTests, WeakSceneReferenceExpiresAfterRemoval)
     EXPECT_FALSE(pending.tryLoad());
 }
 
-TEST(SceneManagerTests, LoadedSceneSurvivesRemovalUntilReleased)
+TEST_F(SceneManagerTests, LoadedSceneSurvivesRemovalUntilReleased)
 {
     NX::SceneManager manager;
     Core::WeakPtr<NX::Scene> pending = &manager.createNewScene();
@@ -35,7 +45,7 @@ TEST(SceneManagerTests, LoadedSceneSurvivesRemovalUntilReleased)
     EXPECT_FALSE(pending);
 }
 
-TEST(SceneManagerTests, KeepsCurrentSceneStableWhenAddingScenes)
+TEST_F(SceneManagerTests, KeepsCurrentSceneStableWhenAddingScenes)
 {
     NX::SceneManager manager;
     auto* initial = manager.getCurrentScene();
@@ -49,7 +59,7 @@ TEST(SceneManagerTests, KeepsCurrentSceneStableWhenAddingScenes)
     EXPECT_EQ(manager.getScene("Default"_atom), initial);
 }
 
-TEST(SceneManagerTests, SwitchesAndRemovesScenesWithoutBecomingEmpty)
+TEST_F(SceneManagerTests, SwitchesAndRemovesScenesWithoutBecomingEmpty)
 {
     NX::SceneManager manager;
     auto* initial = manager.getCurrentScene();
@@ -69,7 +79,7 @@ TEST(SceneManagerTests, SwitchesAndRemovesScenesWithoutBecomingEmpty)
     EXPECT_EQ(manager.getCurrentScene(), initial);
 }
 
-TEST(SceneManagerTests, ClosingCurrentSceneSelectsNextThenPreviousTab)
+TEST_F(SceneManagerTests, ClosingCurrentSceneSelectsNextThenPreviousTab)
 {
     NX::SceneManager manager;
     auto* first = manager.getCurrentScene();
@@ -86,7 +96,7 @@ TEST(SceneManagerTests, ClosingCurrentSceneSelectsNextThenPreviousTab)
     EXPECT_FALSE(manager.closeScene(first));
 }
 
-TEST(SceneManagerTests, RemovingCurrentSceneSelectsAdjacentOpenTab)
+TEST_F(SceneManagerTests, RemovingCurrentSceneSelectsAdjacentOpenTab)
 {
     NX::SceneManager manager;
     auto* first = manager.getCurrentScene();
@@ -104,7 +114,7 @@ TEST(SceneManagerTests, RemovingCurrentSceneSelectsAdjacentOpenTab)
     EXPECT_FALSE(manager.removeScene(first));
 }
 
-TEST(SceneManagerTests, RemovingOnlyOpenSceneOpensAnotherOwnedScene)
+TEST_F(SceneManagerTests, RemovingOnlyOpenSceneOpensAnotherOwnedScene)
 {
     NX::SceneManager manager;
     auto* first = manager.getCurrentScene();
@@ -117,7 +127,7 @@ TEST(SceneManagerTests, RemovingOnlyOpenSceneOpensAnotherOwnedScene)
     EXPECT_EQ(manager.getOpenScenes().front(), &replacement);
 }
 
-TEST(SceneManagerTests, RemovesInactiveSceneAndResetsToDefault)
+TEST_F(SceneManagerTests, RemovesInactiveSceneAndResetsToDefault)
 {
     NX::SceneManager manager;
     auto& added = manager.createNewScene();
@@ -155,7 +165,7 @@ namespace
     };
 } // namespace
 
-TEST(SceneManagerTests, InitializesOnOpenAndDeinitializesOnClose)
+TEST_F(SceneManagerTests, InitializesOnOpenAndDeinitializesOnClose)
 {
     NX::SceneManager manager;
     auto& scene = manager.createNewScene();
@@ -182,7 +192,7 @@ TEST(SceneManagerTests, InitializesOnOpenAndDeinitializesOnClose)
     EXPECT_EQ(object->initializationCount, 2);
 }
 
-TEST(SceneManagerTests, DeinitializesRetainedSceneOnRemovalAndReset)
+TEST_F(SceneManagerTests, DeinitializesRetainedSceneOnRemovalAndReset)
 {
     NX::SceneManager manager;
     Core::IntrusivePtr<NX::Scene> scene = &manager.createNewScene();
@@ -203,7 +213,7 @@ TEST(SceneManagerTests, DeinitializesRetainedSceneOnRemovalAndReset)
     EXPECT_TRUE(manager.getCurrentScene()->isInitialized());
 }
 
-TEST(SceneManagerTests, ShutdownDeinitializesScenesRetainedElsewhere)
+TEST_F(SceneManagerTests, ShutdownDeinitializesScenesRetainedElsewhere)
 {
     Core::IntrusivePtr<NX::Scene> scene;
     Core::IntrusivePtr<SceneLifecycleObject> object = new SceneLifecycleObject;

@@ -15,6 +15,7 @@
 #include "Scene.h"
 
 #include <memory>
+#include <unordered_set>
 #include <vector>
 
 namespace NX
@@ -74,8 +75,15 @@ namespace NX
 
     private:
         void restoreOpenedScenes(std::vector<Scene*> opened, Scene* current);
+        [[nodiscard]] bool isSceneFileTaken(const Scene& scene,
+                                            const Core::StringAtom& name) const;
+        bool writeSceneFile(const Scene& scene, CacheWriteMode mode = CacheWriteMode::Automatic);
+        void clearSceneFile(const Scene& scene);
 
         std::vector<Core::IntrusivePtr<Scene>> _scenes{};
+        // Scenes whose file was loaded or written by this manager. Only they may replace or
+        // delete their file, so a scene file that failed to import is never touched implicitly.
+        std::unordered_set<const Scene*> _scenesOwningFile{};
         std::vector<Scene*> _openScenes{};
         Scene* _currentScene = nullptr;
         bool _importFailed = false;

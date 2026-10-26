@@ -9,6 +9,7 @@
 
 #include "Editor/Windows/Scenes/SceneTabs/SceneDeleteConfirmation.h"
 #include "NxWorld/Framework/GameInstance.h"
+#include "Runtime/SceneFilesGuard.h"
 
 #include "gtest/gtest.h"
 #include <array>
@@ -48,6 +49,8 @@ namespace
             ImGui::EndFrame();
             ImGui::NewFrame();
         }
+
+        SceneFilesGuard sceneFiles;
     };
 
     TEST_F(SceneDeleteConfirmationTests, UsesWindowLifecycleAndReopensAfterClose)

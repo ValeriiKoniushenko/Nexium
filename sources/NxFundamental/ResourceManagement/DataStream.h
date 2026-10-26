@@ -120,10 +120,11 @@ namespace NX
 
         void clearCache(const Foundation::IDataIO& data);
 
+        [[nodiscard]] std::filesystem::path getPath(const Foundation::IDataIO& data) const;
+
         [[nodiscard]] spdlog::logger* getLogger() const override;
 
     private:
-        [[nodiscard]] std::filesystem::path getPath(const Foundation::IDataIO& data) const;
         [[nodiscard]] std::filesystem::path getCachePath(const Foundation::IDataIO& data) const;
         [[nodiscard]] bool createCacheDirIfNotExist(const Foundation::IDataIO& data) const;
 

@@ -17,6 +17,27 @@
 #include <iterator>
 #include <string>
 
+namespace
+{
+    // Addresses the file a scene would use under another name.
+    class SceneFile final : public Foundation::IDataIO
+    {
+    public:
+        SceneFile(std::filesystem::path directory, Core::StringAtom name)
+            : _directory(std::move(directory)),
+              _name(std::move(name))
+        {
+        }
+
+        [[nodiscard]] std::filesystem::path getCacheDir() const override { return _directory; }
+        [[nodiscard]] Core::StringAtom getCacheHash() const override { return _name; }
+
+    private:
+        std::filesystem::path _directory;
+        Core::StringAtom _name;
+    };
+} // namespace
+
 namespace NX
 {
     SceneManager::SceneManager()
@@ -67,10 +88,10 @@ namespace NX
         do
         {
             name = Core::StringAtom::Intern("Scene_" + std::to_string(suffix++));
-        } while (getScene(name));
+        } while (getScene(name) || isSceneFileTaken(*scene, name));
         scene->setSceneName(name);
         _scenes.push_back(std::move(scene));
-        GetCacheSystem().write(*_scenes.back());
+        writeSceneFile(*_scenes.back());
         return *_scenes.back();
     }
 
@@ -92,10 +113,44 @@ namespace NX
         {
             return true;
         }
-        GetCacheSystem().clearCache(*scene);
+        if (isSceneFileTaken(*scene, newName))
+        {
+            return false;
+        }
+        clearSceneFile(*scene);
         scene->setSceneName(newName);
-        GetCacheSystem().write(*scene);
+        writeSceneFile(*scene);
         return true;
+    }
+
+    bool SceneManager::isSceneFileTaken(const Scene& scene, const Core::StringAtom& name) const
+    {
+        const SceneFile target(scene.getCacheDir(), name);
+        if (!GetCacheSystem().hasCache(target))
+        {
+            return false;
+        }
+        // Different names can map to the same file, which the scene may keep using.
+        return !_scenesOwningFile.contains(&scene)
+               || GetCacheSystem().getPath(target) != GetCacheSystem().getPath(scene);
+    }
+
+    bool SceneManager::writeSceneFile(const Scene& scene, CacheWriteMode mode)
+    {
+        if (!GetCacheSystem().write(scene, mode))
+        {
+            return false;
+        }
+        _scenesOwningFile.insert(&scene);
+        return true;
+    }
+
+    void SceneManager::clearSceneFile(const Scene& scene)
+    {
+        if (_scenesOwningFile.erase(&scene) != 0)
+        {
+            GetCacheSystem().clearCache(scene);
+        }
     }
 
     Scene* SceneManager::getScene(const Core::StringAtom& sceneName) const
@@ -172,7 +227,7 @@ namespace NX
         {
             return false;
         }
-        GetCacheSystem().clearCache(*scene);
+        clearSceneFile(*scene);
         auto* replacement = _currentScene;
         const auto opened = std::ranges::find(_openScenes, scene);
         if (opened != _openScenes.end())
@@ -203,6 +258,7 @@ namespace NX
         auto scene = Core::IntrusivePtr<Scene>(new Scene());
         replacement.push_back(std::move(scene));
         _scenes.swap(replacement);
+        _scenesOwningFile.clear();
         restoreOpenedScenes({ _scenes.front().get() }, _scenes.front().get());
     }
 

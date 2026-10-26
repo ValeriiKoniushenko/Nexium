@@ -102,6 +102,11 @@ namespace NX
         if (!replacement.empty())
         {
             _scenes.swap(replacement);
+            _scenesOwningFile.clear();
+            for (const auto& scene : _scenes)
+            {
+                _scenesOwningFile.insert(scene.get());
+            }
             restoreOpenedScenes({ _scenes.front().get() }, _scenes.front().get());
         }
         _importFailed = false;
@@ -139,7 +144,7 @@ namespace NX
         bool saved = true;
         for (const auto& scene : _scenes)
         {
-            saved = GetCacheSystem().write(*scene, mode) && saved;
+            saved = writeSceneFile(*scene, mode) && saved;
         }
         saved = GetCacheSystem().write(*this, mode) && saved;
         if (saved)
