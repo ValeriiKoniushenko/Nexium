@@ -301,7 +301,7 @@ TEST_F(ScenePersistenceTest, SceneFilesPreserveObjectsInClosedScenes)
     EXPECT_EQ(restored.getCurrentScene(), closed);
 }
 
-TEST_F(ScenePersistenceTest, ImportsExistingSceneFilesWithoutDeletingThem)
+TEST_F(ScenePersistenceTest, ImportSkipsBrokenSceneFilesWithoutDeletingAnything)
 {
     const NX::Scene first;
     NX::Scene second;
@@ -315,9 +315,24 @@ TEST_F(ScenePersistenceTest, ImportsExistingSceneFilesWithoutDeletingThem)
     EXPECT_NE(manager.getScene("Another"_atom), nullptr);
     EXPECT_TRUE(std::filesystem::exists(root / "Default.json"));
     EXPECT_TRUE(std::filesystem::exists(root / "Another.json"));
-    auto* current = manager.getCurrentScene();
+    EXPECT_FALSE(manager.hasImportError());
     std::ofstream(root / "Broken.json") << "invalid JSON";
-    EXPECT_THROW(manager.importScenes(root), std::exception);
+    ASSERT_NO_THROW(manager.importScenes(root));
+    EXPECT_TRUE(manager.hasImportError());
+    EXPECT_EQ(manager.getSkippedSceneFiles(), std::vector{ root / "Broken.json" });
+    EXPECT_EQ(manager.getScenes().size(), 2);
+    EXPECT_NE(manager.getScene("Default"_atom), nullptr);
+    EXPECT_NE(manager.getScene("Another"_atom), nullptr);
+    EXPECT_TRUE(std::filesystem::exists(root / "Broken.json"));
+}
+
+TEST_F(ScenePersistenceTest, OnlyBrokenSceneFilesKeepTheCurrentScenes)
+{
+    std::ofstream(root / "Broken.json") << "invalid JSON";
+    NX::SceneManager manager;
+    auto* current = manager.getCurrentScene();
+    ASSERT_NO_THROW(manager.importScenes(root));
+    EXPECT_TRUE(manager.hasImportError());
     EXPECT_EQ(manager.getCurrentScene(), current);
 }
 
@@ -427,27 +442,18 @@ TEST_F(ScenePersistenceTest, ReloadingCurrentSceneSelectsReplacementCamera)
     EXPECT_EQ(gGameInstance->world.currentCamera, nullptr);
 }
 
-TEST_F(ScenePersistenceTest, DuplicateImportNamesIdentifyNameAndFileAndCanRecover)
+TEST_F(ScenePersistenceTest, DuplicateImportNamesSkipTheLaterFileAndCanRecover)
 {
     NX::Scene source;
     source.setSceneName("Duplicated"_atom);
     std::ofstream(root / "First.json") << source.serialize().dump();
     std::ofstream(root / "Second.json") << source.serialize().dump();
     NX::SceneManager manager;
-    auto* initial = manager.getCurrentScene();
-    try
-    {
-        manager.importScenes(root);
-        FAIL() << "Expected duplicate scene names to fail import";
-    }
-    catch (const std::runtime_error& error)
-    {
-        const std::string message = error.what();
-        EXPECT_NE(message.find("Duplicated"), std::string::npos);
-        EXPECT_NE(message.find((root / "Second.json").generic_string()), std::string::npos);
-    }
+    ASSERT_NO_THROW(manager.importScenes(root));
     EXPECT_TRUE(manager.hasImportError());
-    EXPECT_EQ(manager.getCurrentScene(), initial);
+    EXPECT_EQ(manager.getSkippedSceneFiles(), std::vector{ root / "Second.json" });
+    EXPECT_EQ(manager.getScenes().size(), 1);
+    EXPECT_NE(manager.getScene("Duplicated"_atom), nullptr);
     std::filesystem::remove(root / "Second.json");
     ASSERT_NO_THROW(manager.importScenes(root));
     EXPECT_FALSE(manager.hasImportError());
@@ -506,31 +512,31 @@ TEST_F(ScenePersistenceTest, InvalidObjectReferencesAndNamesPreserveAuthoredScen
     }
 }
 
-TEST_F(ScenePersistenceTest, ExplicitSceneSaveRecoversFailedImportAndReenablesAutosave)
+TEST_F(ScenePersistenceTest, SavesWorkAfterSkippedFilesButNeverOverwriteUnloadedFiles)
 {
-    NX::SceneManager manager;
-    auto* scene = manager.getCurrentScene();
-    scene->setSceneName(Core::StringAtom::Intern(root.filename().generic_string()));
-    const auto sceneFile = Foundation::Config::Path::data / "scenes"
-                           / (scene->getSceneName().toStdString() + ".json");
-    preserveFile(sceneFile);
-    preserveFile(Foundation::Config::Path::data / "cache" / "SceneTabs.json");
-    std::filesystem::create_directories(sceneFile.parent_path());
-    NX::WriteFileAtomically(sceneFile, "unreadable scene");
+    const auto good = Core::StringAtom::Intern(uniqueName("Good"));
+    NX::Scene source;
+    source.setSceneName(good);
+    std::ofstream(root / "Good.json") << source.serialize().dump();
     std::ofstream(root / "Broken.json") << "unreadable scene";
-    ASSERT_THROW(manager.importScenes(root), std::exception);
+    NX::SceneManager manager;
+    ASSERT_NO_THROW(manager.importScenes(root));
     EXPECT_TRUE(manager.hasImportError());
+    auto* loaded = manager.getScene(good);
+    ASSERT_NE(loaded, nullptr);
+
+    // A file this manager never loaded sits at the loaded scene's save path.
+    const auto unloaded = sceneFile(good.toStdString());
+    preserveFile(unloaded);
+    preserveFile(Foundation::Config::Path::data / "cache" / "SceneTabs.json");
+    NX::WriteFileAtomically(unloaded, "unloaded scene");
     EXPECT_FALSE(manager.writeToCache());
-    {
-        std::ifstream file(sceneFile);
-        const std::string contents{ std::istreambuf_iterator<char>(file),
-                                    std::istreambuf_iterator<char>() };
-        EXPECT_EQ(contents, "unreadable scene");
-    }
-    ASSERT_TRUE(manager.writeToCache(NX::CacheWriteMode::Explicit));
-    EXPECT_FALSE(manager.hasImportError());
-    scene->addObjectToScene(NX::SceneObject::Create());
+    EXPECT_FALSE(manager.writeToCache(NX::CacheWriteMode::Explicit));
+    EXPECT_EQ(readFile(unloaded), "unloaded scene");
+
+    std::filesystem::remove(unloaded);
+    loaded->addObjectToScene(NX::SceneObject::Create());
     ASSERT_TRUE(manager.writeToCache());
-    std::ifstream file(sceneFile);
-    EXPECT_EQ(nlohmann::json::parse(file).at("sceneObjects").size(), 1u);
+    EXPECT_EQ(nlohmann::json::parse(readFile(unloaded)).at("sceneObjects").size(), 1u);
+    EXPECT_EQ(readFile(root / "Broken.json"), "unreadable scene");
 }

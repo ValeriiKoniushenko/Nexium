@@ -48,10 +48,16 @@ namespace NX
         {
             deserialize(stream.getData());
         }
+        // Loads every valid scene file. Broken files and duplicate names are logged, skipped
+        // and left untouched on disk.
         void importScenes(const std::filesystem::path& directory);
         void readFromCache();
         bool writeToCache(CacheWriteMode mode = CacheWriteMode::Automatic);
         [[nodiscard]] bool hasImportError() const noexcept { return _importFailed; }
+        [[nodiscard]] const std::vector<std::filesystem::path>& getSkippedSceneFiles() const noexcept
+        {
+            return _skippedSceneFiles;
+        }
 
         [[nodiscard]] std::filesystem::path getCacheDir() const override { return "cache"; }
         [[nodiscard]] StringAtom getCacheHash() const override { return "SceneTabs"_atom; }
@@ -84,6 +90,7 @@ namespace NX
         // Scenes whose file was loaded or written by this manager. Only they may replace or
         // delete their file, so a scene file that failed to import is never touched implicitly.
         std::unordered_set<const Scene*> _scenesOwningFile{};
+        std::vector<std::filesystem::path> _skippedSceneFiles{};
         std::vector<Scene*> _openScenes{};
         Scene* _currentScene = nullptr;
         bool _importFailed = false;

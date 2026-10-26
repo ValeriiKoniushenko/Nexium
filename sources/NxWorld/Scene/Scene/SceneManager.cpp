@@ -137,6 +137,13 @@ namespace NX
 
     bool SceneManager::writeSceneFile(const Scene& scene, CacheWriteMode mode)
     {
+        if (!_scenesOwningFile.contains(&scene) && GetCacheSystem().hasCache(scene))
+        {
+            errorLog("Scene '{}' was not saved: {} was not loaded by this editor and is kept "
+                     "untouched. Fix or remove that file to save the scene."_f
+                     << scene.getSceneName() << GetCacheSystem().getPath(scene).generic_string());
+            return false;
+        }
         if (!GetCacheSystem().write(scene, mode))
         {
             return false;

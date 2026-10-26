@@ -14,6 +14,7 @@
 
 #include <algorithm>
 #include <fstream>
+#include <iterator>
 #include <stdexcept>
 
 namespace NX
@@ -64,52 +65,75 @@ namespace NX
     try
     {
         NX_LATENCY_POINT("Scene import started");
+        _importFailed = false;
+        _skippedSceneFiles.clear();
         if (!std::filesystem::exists(directory))
         {
-            _importFailed = false;
             NX_LATENCY_POINT("Scene import finished");
             return;
         }
-        std::vector<std::string> paths;
+        std::vector<std::filesystem::path> paths;
         for (const auto& entry : std::filesystem::directory_iterator(directory))
         {
-            if (entry.is_regular_file() && entry.path().extension().generic_string() == ".json")
+            if (entry.is_regular_file() && entry.path().extension() == ".json")
             {
-                paths.push_back(entry.path().generic_string());
+                paths.push_back(entry.path());
             }
         }
         std::ranges::sort(paths);
         std::vector<Core::IntrusivePtr<Scene>> replacement;
+        std::vector<std::filesystem::path> sources;
         for (const auto& path : paths)
         {
-            std::ifstream file(path);
-            auto stream = RResourceStream<RJsonResourceStream>(nlohmann::json::parse(file));
-            auto scene = Core::IntrusivePtr<Scene>(new Scene());
-            scene->deserialize(stream);
-            const auto name = scene->getSceneName();
-            if (name.isEmpty())
+            try
             {
-                throw std::runtime_error("Empty scene name in file: " + path);
+                std::ifstream file(path);
+                auto stream = RResourceStream<RJsonResourceStream>(nlohmann::json::parse(file));
+                auto scene = Core::IntrusivePtr<Scene>(new Scene());
+                scene->deserialize(stream);
+                const auto name = scene->getSceneName();
+                if (name.isEmpty())
+                {
+                    throw std::runtime_error("Empty scene name.");
+                }
+                const auto duplicate = std::ranges::find_if(
+                    replacement,
+                    [&name](const auto& existing) { return existing->getSceneName() == name; });
+                if (duplicate != replacement.end())
+                {
+                    const auto& firstSource = sources[static_cast<std::size_t>(
+                        std::distance(replacement.begin(), duplicate))];
+                    throw std::runtime_error("Duplicate scene name '" + name.toStdString()
+                                             + "', already loaded from: "
+                                             + firstSource.generic_string());
+                }
+                replacement.push_back(std::move(scene));
+                sources.push_back(path);
             }
-            if (std::ranges::any_of(replacement, [&name](const auto& existing)
-                                    { return existing->getSceneName() == name; }))
+            catch (const std::exception& error)
             {
-                throw std::runtime_error("Duplicate scene name '" + name.toStdString()
-                                         + "' in file: " + path);
+                _importFailed = true;
+                _skippedSceneFiles.push_back(path);
+                errorLog("Skipped scene file {}: {}"_f << path.generic_string() << error.what());
             }
-            replacement.push_back(std::move(scene));
         }
         if (!replacement.empty())
         {
             _scenes.swap(replacement);
             _scenesOwningFile.clear();
-            for (const auto& scene : _scenes)
+            for (std::size_t i = 0; i < _scenes.size(); ++i)
             {
-                _scenesOwningFile.insert(scene.get());
+                // A scene owns only the file it was read from; another file at its save path
+                // stays untouched.
+                std::error_code error;
+                if (std::filesystem::equivalent(sources[i], GetCacheSystem().getPath(*_scenes[i]),
+                                                error))
+                {
+                    _scenesOwningFile.insert(_scenes[i].get());
+                }
             }
             restoreOpenedScenes({ _scenes.front().get() }, _scenes.front().get());
         }
-        _importFailed = false;
         NX_LATENCY_POINT("Scene import finished");
     }
     catch (...)
@@ -133,13 +157,6 @@ namespace NX
 
     bool SceneManager::writeToCache(CacheWriteMode mode)
     {
-        if (mode == CacheWriteMode::Automatic && _importFailed)
-        {
-            warnLog(
-                "Scene autosave skipped after an import failure. Reload or explicitly save to "
-                "recover.");
-            return false;
-        }
         NX_LATENCY_POINT("Scene library save started");
         bool saved = true;
         for (const auto& scene : _scenes)
@@ -147,10 +164,6 @@ namespace NX
             saved = writeSceneFile(*scene, mode) && saved;
         }
         saved = GetCacheSystem().write(*this, mode) && saved;
-        if (saved)
-        {
-            _importFailed = false;
-        }
         NX_LATENCY_POINT("Scene library save finished");
         return saved;
     }
