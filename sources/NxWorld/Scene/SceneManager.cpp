@@ -87,10 +87,15 @@ namespace NX
         NX_LATENCY_POINT("Restore opened scenes - end");
     }
 
+    Scene* SceneManager::findStartScene() const
+    {
+        return _world && !_world->startScene.isEmpty() ? getScene(_world->startScene) : nullptr;
+    }
+
     void SceneManager::openStartScene()
     {
         const auto startScene = _world ? _world->startScene : Core::StringAtom{};
-        auto* scene = startScene.isEmpty() ? nullptr : getScene(startScene);
+        auto* scene = findStartScene();
         if (!scene)
         {
             scene = _scenes.front().get();

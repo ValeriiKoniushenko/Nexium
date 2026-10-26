@@ -12,6 +12,7 @@
 #include "NxFundamental/ResourceManagement/AtomicFile.h"
 #include "NxWorld/Entities/Camera/Camera.h"
 #include "NxWorld/Framework/GameInstance.h"
+#include "NxWorld/Framework/World.h"
 #include "NxWorld/Scene/Scene.h"
 #include "Runtime/SceneFilesGuard.h"
 
@@ -348,6 +349,63 @@ TEST_F(ScenePersistenceTest, MissingSceneReferencesDoNotDiscardLoadedScenes)
     EXPECT_EQ(manager.getCurrentScene(), initial);
     ASSERT_EQ(manager.getOpenScenes().size(), 1u);
     EXPECT_EQ(manager.getOpenScenes().front(), initial);
+}
+
+TEST_F(ScenePersistenceTest, RestoringTabsSelectsTheStartSceneEvenWhenAllTabsAreOpen)
+{
+    NX::World world;
+    NX::SceneManager manager{ &world };
+    auto* first = manager.getCurrentScene();
+    auto& start = manager.createNewScene();
+    auto& last = manager.createNewScene();
+    world.startScene = start.getSceneName();
+    const auto tabs = nlohmann::json{ { "formatVersion", 1 },
+                                      { "open",
+                                        { first->getSceneName().c_str(),
+                                          start.getSceneName().c_str(),
+                                          last.getSceneName().c_str() } },
+                                      { "current", last.getSceneName().c_str() } };
+
+    NX::SceneTabsCache(manager).deserialize(tabs);
+
+    EXPECT_EQ(manager.getCurrentScene(), &start);
+    EXPECT_EQ(manager.getOpenScenes(), (std::vector<NX::Scene*>{ first, &start, &last }));
+}
+
+TEST_F(ScenePersistenceTest, RestoringTabsOpensTheStartSceneWhenItWasClosed)
+{
+    NX::World world;
+    NX::SceneManager manager{ &world };
+    auto* first = manager.getCurrentScene();
+    auto& start = manager.createNewScene();
+    world.startScene = start.getSceneName();
+    const auto tabs = nlohmann::json{ { "formatVersion", 1 },
+                                      { "open", { first->getSceneName().c_str() } },
+                                      { "current", first->getSceneName().c_str() } };
+
+    NX::SceneTabsCache(manager).deserialize(tabs);
+
+    EXPECT_EQ(manager.getCurrentScene(), &start);
+    EXPECT_TRUE(manager.isSceneOpen(first));
+    EXPECT_TRUE(manager.isSceneOpen(&start));
+}
+
+TEST_F(ScenePersistenceTest, RestoringTabsKeepsRememberedSelectionWithoutStartScene)
+{
+    NX::World world;
+    NX::SceneManager manager{ &world };
+    auto* first = manager.getCurrentScene();
+    auto& last = manager.createNewScene();
+    world.startScene = "missing"_atom;
+    const auto tabs = nlohmann::json{
+        { "formatVersion", 1 },
+        { "open", { first->getSceneName().c_str(), last.getSceneName().c_str() } },
+        { "current", last.getSceneName().c_str() }
+    };
+
+    NX::SceneTabsCache(manager).deserialize(tabs);
+
+    EXPECT_EQ(manager.getCurrentScene(), &last);
 }
 
 TEST_F(ScenePersistenceTest, MalformedTabsPreserveCurrentSession)

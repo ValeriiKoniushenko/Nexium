@@ -63,6 +63,9 @@ namespace NX
         // Makes `opened` the open scenes and `current` (one of them) the current scene; scenes
         // that are no longer open are deinitialized.
         void restoreOpenedScenes(std::vector<Scene*> opened, Scene* current);
+        // The scene named by the world's start scene; null when it is unset, unknown or there is
+        // no world.
+        [[nodiscard]] Scene* findStartScene() const;
         // Opens only the world's start scene, or the first scene when it is unset or unknown.
         void openStartScene();
         // Loads every valid scene file. Broken files and duplicate names are logged, skipped

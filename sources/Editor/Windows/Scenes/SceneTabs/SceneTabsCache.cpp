@@ -44,7 +44,13 @@ namespace NX
         SceneTabsState state;
         const auto stream = RResourceStream<RJsonResourceStream>(data);
         R<SceneTabsState>::Deserialize(stream, state);
-        auto* selected = _scenes.getScene(state.current);
+        // The start scene wins over the remembered tab, so the editor opens on the scene the game
+        // starts with even when every scene tab is open.
+        auto* selected = _scenes.findStartScene();
+        if (!selected)
+        {
+            selected = _scenes.getScene(state.current);
+        }
         std::vector<Scene*> opened;
         for (const auto& name : state.open)
         {

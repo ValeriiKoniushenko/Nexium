@@ -19,7 +19,8 @@ namespace NX
     class SceneManager;
 
     // Editor-only state: which scenes are open as tabs and which one is selected. The game itself
-    // starts from World::startScene and never reads this.
+    // starts from World::startScene and never reads this. When restoring, the start scene is the
+    // selected tab if there is one; the remembered selection is used otherwise.
     class SceneTabsCache final : public Foundation::BaseLog, public Foundation::IDataIO
     {
     public:
