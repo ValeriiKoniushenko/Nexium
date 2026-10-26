@@ -133,8 +133,9 @@ namespace NX
             world->startScene = isStartScene ? _scene->getSceneName() : StringAtom{};
         }
         ImGui::EndDisabled();
-        ImGui::SetItemTooltip("The game starts with this scene. Unset: the first scene by file "
-                              "name.");
+        ImGui::SetItemTooltip(
+            "The game starts with this scene. Unset: the first scene by file "
+            "name.");
     }
 
     void SceneTreeWindowEWC::drawSceneNameInput()

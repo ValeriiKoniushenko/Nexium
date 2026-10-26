@@ -57,9 +57,9 @@ namespace NX
                 {
                     throw std::runtime_error("Empty scene name.");
                 }
-                const auto duplicate = std::ranges::find_if(
-                    replacement,
-                    [&name](const auto& existing) { return existing->getSceneName() == name; });
+                const auto duplicate
+                    = std::ranges::find_if(replacement, [&name](const auto& existing)
+                                           { return existing->getSceneName() == name; });
                 if (duplicate == replacement.end())
                 {
                     replacement.push_back(std::move(scene));

@@ -538,8 +538,8 @@ namespace NX
     {
         if (camera && !containsComponent(camera))
         {
-            errorLog("Camera '{}' does not belong to the scene '{}'."_f << camera->getComponentName()
-                                                                       << _sceneName);
+            errorLog("Camera '{}' does not belong to the scene '{}'."_f
+                     << camera->getComponentName() << _sceneName);
             return;
         }
         _mainCamera = static_cast<BaseComponent*>(camera);

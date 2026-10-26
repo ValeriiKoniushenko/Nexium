@@ -69,7 +69,8 @@ namespace NX
         void readFromCache();
         bool writeToCache(CacheWriteMode mode = CacheWriteMode::Automatic);
         [[nodiscard]] bool hasImportError() const noexcept { return _importFailed; }
-        [[nodiscard]] const std::vector<std::filesystem::path>& getSkippedSceneFiles() const noexcept
+        [[nodiscard]] const std::vector<std::filesystem::path>& getSkippedSceneFiles()
+            const noexcept
         {
             return _skippedSceneFiles;
         }
@@ -109,8 +110,7 @@ namespace NX
 
         [[nodiscard]] bool rejectWhileTicking(const char* operation) const;
         bool applyPendingChange(const PendingChange& change);
-        [[nodiscard]] bool isSceneFileTaken(const Scene& scene,
-                                            const Core::StringAtom& name) const;
+        [[nodiscard]] bool isSceneFileTaken(const Scene& scene, const Core::StringAtom& name) const;
         bool writeSceneFile(const Scene& scene, CacheWriteMode mode = CacheWriteMode::Automatic);
         void clearSceneFile(const Scene& scene);
 

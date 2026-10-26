@@ -26,6 +26,8 @@ public:
 
     SceneFilesGuard(const SceneFilesGuard&) = delete;
     SceneFilesGuard& operator=(const SceneFilesGuard&) = delete;
+    SceneFilesGuard(SceneFilesGuard&&) = delete;
+    SceneFilesGuard& operator=(SceneFilesGuard&&) = delete;
 
     ~SceneFilesGuard()
     {
@@ -44,8 +46,8 @@ private:
     {
         std::set<std::filesystem::path> files;
         std::error_code error;
-        for (const auto& entry : std::filesystem::directory_iterator(
-                 Foundation::Config::Path::data / "scenes", error))
+        for (const auto& entry :
+             std::filesystem::directory_iterator(Foundation::Config::Path::data / "scenes", error))
         {
             files.insert(entry.path());
         }

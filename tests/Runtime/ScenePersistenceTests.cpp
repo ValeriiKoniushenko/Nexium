@@ -7,11 +7,11 @@
 //
 //     http://www.apache.org/licenses/LICENSE-2.0
 
+#include "Editor/Windows/Scenes/SceneTabs/SceneTabsCache.h"
 #include "Foundation/Configs.h"
 #include "NxFundamental/ResourceManagement/AtomicFile.h"
 #include "NxWorld/Entities/Camera/Camera.h"
 #include "NxWorld/Framework/GameInstance.h"
-#include "Editor/Windows/Scenes/SceneTabs/SceneTabsCache.h"
 #include "NxWorld/Scene/Scene.h"
 #include "Runtime/SceneFilesGuard.h"
 
