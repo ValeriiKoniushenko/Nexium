@@ -11,6 +11,8 @@
 
 #include "Editor/Windows/BaseWindow.h"
 
+#include <string>
+
 namespace NX
 {
     class SceneObject;
@@ -47,6 +49,7 @@ namespace NX
     private:
         void drawTreeNode(NX::BaseComponent* n, int32_t id, bool isInSelectedSubtree = false);
         void processAddNewComponentButton();
+        void drawSceneNameInput();
 
     protected:
         DelegateSubscriberPoolGuard _subscriptionPool;
@@ -57,6 +60,10 @@ namespace NX
 
     private:
         const NX::SceneObject* _highlightTracerObject = nullptr;
+        std::string _sceneNameBuffer;
+        // Identifies the edited scene by name, so a scene removed meanwhile is not renamed.
+        StringAtom _sceneBeingRenamed;
+        bool _isEditingSceneName = false;
     };
 
 } // namespace NX

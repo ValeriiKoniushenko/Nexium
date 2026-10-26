@@ -24,6 +24,7 @@
 namespace NX
 {
     class Actor;
+    class BaseCamera;
 
     CLASS();
     class Scene :
@@ -56,6 +57,10 @@ namespace NX
         void activate();
         void deactivate();
         [[nodiscard]] bool isInitialized() const noexcept { return _isInitialized; }
+
+        // Remembers the camera this scene renders with; it is restored whenever the scene
+        // becomes current again. The camera must belong to one of the scene's objects.
+        void setMainCamera(BaseCamera* camera);
 
         void tick(float timeDelta);
 
@@ -104,8 +109,12 @@ namespace NX
     private:
         void internal_addObjectToScene(SceneObject* object);
         void selectCameraFrom(SceneObject& object);
+        [[nodiscard]] bool containsComponent(const BaseComponent* component) const;
 
     private:
+        // Holds a BaseCamera; the base type keeps Camera.h out of this header.
+        Core::WeakPtr<BaseComponent> _mainCamera;
+
         // TODO: get rid of it, deprecated
         std::vector<Actor*> _postDrawBuffer;
 

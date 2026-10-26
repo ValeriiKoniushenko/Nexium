@@ -18,6 +18,7 @@
 #include "NxWorld/Framework/GameInstance.h"
 #include "NxWorld/PrivateModuleInfo.h"
 
+#include <algorithm>
 #include <stdexcept>
 
 namespace
@@ -500,6 +501,13 @@ namespace NX
             return;
         }
         gGameInstance->resetCamera();
+        auto* world = GetWorld();
+        if (auto camera = _mainCamera.tryLoad(); world && camera && containsComponent(camera.get()))
+        {
+            world->currentCamera = static_cast<BaseCamera*>(camera.get());
+            return;
+        }
+        _mainCamera.reset();
         for (auto& object : _sceneObjects)
         {
             selectCameraFrom(*object);
@@ -515,8 +523,35 @@ namespace NX
         _isActive = false;
         if (GetGameScene() == this)
         {
+            // Keeps the camera chosen while this scene was current, however it was chosen.
+            if (const auto* world = GetWorld(); world && world->currentCamera)
+            {
+                _mainCamera = static_cast<BaseComponent*>(world->currentCamera);
+            }
             gGameInstance->resetCamera();
         }
+    }
+
+    void Scene::setMainCamera(BaseCamera* camera)
+    {
+        if (camera && !containsComponent(camera))
+        {
+            errorLog("Camera '{}' does not belong to the scene '{}'."_f << camera->getComponentName()
+                                                                       << _sceneName);
+            return;
+        }
+        _mainCamera = static_cast<BaseComponent*>(camera);
+        auto* world = GetWorld();
+        if (_isActive && GetGameScene() == this && world)
+        {
+            world->currentCamera = camera;
+        }
+    }
+
+    bool Scene::containsComponent(const BaseComponent* component) const
+    {
+        return std::ranges::any_of(_sceneObjects, [component](const auto& object)
+                                   { return component->IsSelfOrDescendantOf(object.get()); });
     }
 
     void Scene::selectCameraFrom(SceneObject& object)

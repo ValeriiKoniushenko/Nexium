@@ -99,16 +99,28 @@ namespace NX
                 const auto duplicate = std::ranges::find_if(
                     replacement,
                     [&name](const auto& existing) { return existing->getSceneName() == name; });
-                if (duplicate != replacement.end())
+                if (duplicate == replacement.end())
                 {
-                    const auto& firstSource = sources[static_cast<std::size_t>(
-                        std::distance(replacement.begin(), duplicate))];
+                    replacement.push_back(std::move(scene));
+                    sources.push_back(path);
+                    continue;
+                }
+                auto& loadedSource = sources[static_cast<std::size_t>(
+                    std::distance(replacement.begin(), duplicate))];
+                // A copied file can sort first; the file named after the scene still wins.
+                if (path.filename() != GetCacheSystem().getPath(*scene).filename())
+                {
                     throw std::runtime_error("Duplicate scene name '" + name.toStdString()
                                              + "', already loaded from: "
-                                             + firstSource.generic_string());
+                                             + loadedSource.generic_string());
                 }
-                replacement.push_back(std::move(scene));
-                sources.push_back(path);
+                _importFailed = true;
+                _skippedSceneFiles.push_back(loadedSource);
+                errorLog(
+                    "Skipped scene file {}: Duplicate scene name '{}', loaded from {} instead."_f
+                    << loadedSource.generic_string() << name << path.generic_string());
+                *duplicate = std::move(scene);
+                loadedSource = path;
             }
             catch (const std::exception& error)
             {

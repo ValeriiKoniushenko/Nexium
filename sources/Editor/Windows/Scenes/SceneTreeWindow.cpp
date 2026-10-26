@@ -91,14 +91,6 @@ namespace NX
 
     void SceneTreeWindowEWC::onDraw()
     {
-        std::string sceneName;
-        int extraFlag = ImGuiInputTextFlags_ReadOnly;
-        if (_scene)
-        {
-            sceneName = _scene->getSceneName();
-            extraFlag = 0;
-        }
-
         processAddNewComponentButton();
 
         ImGui::SameLine();
@@ -106,9 +98,7 @@ namespace NX
         ImGui::SameLine();
         ImGui::TextUnformatted("Name: ");
         ImGui::SameLine();
-        ImGui::PushItemWidth(-FLT_MIN); // Makes the next widget take full width
-        ImGui::InputText("##sceneName", &sceneName, extraFlag);
-        ImGui::PopItemWidth();
+        drawSceneNameInput();
 
         if (!_scene)
         {
@@ -129,10 +119,37 @@ namespace NX
         }
 
         _lastSelectedObject = selectedObject;
+    }
 
-        if (!sceneName.empty() && sceneName != _scene->getSceneName())
+    void SceneTreeWindowEWC::drawSceneNameInput()
+    {
+        // The typed text lives across frames; it follows the scene only while not being edited.
+        if (!_isEditingSceneName)
         {
-            GetSceneManager()->renameScene(_scene, sceneName.c_str());
+            _sceneNameBuffer = _scene ? _scene->getSceneName().toStdString() : std::string{};
+        }
+        ImGui::PushItemWidth(-FLT_MIN); // Makes the next widget take full width
+        ImGui::InputText("##sceneName", &_sceneNameBuffer,
+                         _scene ? ImGuiInputTextFlags_None : ImGuiInputTextFlags_ReadOnly);
+        ImGui::PopItemWidth();
+        if (ImGui::IsItemActivated() && _scene)
+        {
+            _sceneBeingRenamed = _scene->getSceneName();
+        }
+        _isEditingSceneName = ImGui::IsItemActive();
+
+        // Rename once editing finishes, so intermediate names never reach the disk.
+        if (ImGui::IsItemDeactivatedAfterEdit() && !_sceneNameBuffer.empty())
+        {
+            auto* scenes = GetSceneManager();
+            if (auto* scene = scenes->getScene(_sceneBeingRenamed))
+            {
+                scenes->renameScene(scene, StringAtom::Intern(_sceneNameBuffer));
+            }
+        }
+        if (!_isEditingSceneName)
+        {
+            _sceneBeingRenamed = StringAtom{};
         }
     }
 
@@ -263,7 +280,7 @@ namespace NX
             {
                 if (ImGui::MenuItem("Set as a main camera"))
                 {
-                    GetWorld()->currentCamera = camera;
+                    _scene->setMainCamera(camera);
                 }
             }
 

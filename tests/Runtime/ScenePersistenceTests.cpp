@@ -81,19 +81,19 @@ namespace
             savedFiles.emplace_back(path, std::move(contents));
         }
 
-        static std::string readFile(const std::filesystem::path& path)
+        [[nodiscard]] static std::string readFile(const std::filesystem::path& path)
         {
             std::ifstream file(path, std::ios::binary);
             return { std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>() };
         }
 
-        std::filesystem::path sceneFile(const std::string& name) const
+        [[nodiscard]] static std::filesystem::path sceneFile(const std::string& name)
         {
             return Foundation::Config::Path::data / "scenes" / (name + ".json");
         }
 
         // Unique per test run, so it never matches a real scene file.
-        std::string uniqueName(const std::string& suffix) const
+        [[nodiscard]] std::string uniqueName(const std::string& suffix) const
         {
             return root.filename().generic_string() + "_" + suffix;
         }
@@ -440,6 +440,77 @@ TEST_F(ScenePersistenceTest, ReloadingCurrentSceneSelectsReplacementCamera)
     auto empty = RResourceStream<RJsonResourceStream>(NX::Scene{}.serialize());
     scene->deserialize(empty);
     EXPECT_EQ(gGameInstance->world.currentCamera, nullptr);
+}
+
+TEST_F(ScenePersistenceTest, DuplicateImportNamesPreferTheFileNamedAfterTheScene)
+{
+    NX::Scene original;
+    original.setSceneName("Duplicated"_atom);
+    NX::Scene copy;
+    copy.setSceneName("Duplicated"_atom);
+    copy.addObjectToScene(NX::SceneObject::Create());
+    // The copy sorts before the original file.
+    std::ofstream(root / "Duplicated copy.json") << copy.serialize().dump();
+    std::ofstream(root / "Duplicated.json") << original.serialize().dump();
+    NX::SceneManager manager;
+    ASSERT_NO_THROW(manager.importScenes(root));
+    EXPECT_TRUE(manager.hasImportError());
+    EXPECT_EQ(manager.getSkippedSceneFiles(), std::vector{ root / "Duplicated copy.json" });
+    ASSERT_EQ(manager.getScenes().size(), 1);
+    EXPECT_TRUE(manager.getScene("Duplicated"_atom)->getObjects().empty());
+}
+
+TEST_F(ScenePersistenceTest, SceneRestoresItsMainCameraAfterSwitchingScenes)
+{
+    auto& manager = gGameInstance->scenes;
+    auto& world = gGameInstance->world;
+    auto* initial = manager.getCurrentScene();
+    auto first = NX::SceneObject::Create();
+    auto* firstCamera = first->addChildComponent<NX::OrthographicCamera>("FirstCamera"_atom);
+    auto second = NX::SceneObject::Create();
+    auto* secondCamera = second->addChildComponent<NX::OrthographicCamera>("SecondCamera"_atom);
+    initial->addObjectToScene(first);
+    initial->addObjectToScene(second);
+    ASSERT_EQ(world.currentCamera, firstCamera);
+
+    initial->setMainCamera(secondCamera);
+    EXPECT_EQ(world.currentCamera, secondCamera);
+    auto& next = manager.createNewScene();
+    ASSERT_TRUE(manager.setCurrentScene(&next));
+    EXPECT_EQ(world.currentCamera, nullptr);
+    ASSERT_TRUE(manager.setCurrentScene(initial));
+    EXPECT_EQ(world.currentCamera, secondCamera);
+
+    // A camera chosen directly through the world is remembered too.
+    world.currentCamera = firstCamera;
+    ASSERT_TRUE(manager.setCurrentScene(&next));
+    ASSERT_TRUE(manager.setCurrentScene(initial));
+    EXPECT_EQ(world.currentCamera, firstCamera);
+}
+
+TEST_F(ScenePersistenceTest, MainCameraFallsBackWhenRemovedAndRejectsForeignCameras)
+{
+    auto& manager = gGameInstance->scenes;
+    auto& world = gGameInstance->world;
+    auto* initial = manager.getCurrentScene();
+    auto first = NX::SceneObject::Create();
+    auto* firstCamera = first->addChildComponent<NX::OrthographicCamera>("FirstCamera"_atom);
+    auto second = NX::SceneObject::Create();
+    auto* secondCamera = second->addChildComponent<NX::OrthographicCamera>("SecondCamera"_atom);
+    initial->addObjectToScene(first);
+    initial->addObjectToScene(second);
+    auto foreign = NX::SceneObject::Create();
+    auto* foreignCamera = foreign->addChildComponent<NX::OrthographicCamera>("Foreign"_atom);
+
+    initial->setMainCamera(foreignCamera);
+    EXPECT_EQ(world.currentCamera, firstCamera);
+
+    initial->setMainCamera(secondCamera);
+    ASSERT_TRUE(initial->deleteFromScene(second.get()));
+    auto& next = manager.createNewScene();
+    ASSERT_TRUE(manager.setCurrentScene(&next));
+    ASSERT_TRUE(manager.setCurrentScene(initial));
+    EXPECT_EQ(world.currentCamera, firstCamera);
 }
 
 TEST_F(ScenePersistenceTest, DuplicateImportNamesSkipTheLaterFileAndCanRecover)
