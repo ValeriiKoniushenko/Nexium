@@ -359,12 +359,12 @@ TEST_F(ScenePersistenceTest, RestoringTabsSelectsTheStartSceneEvenWhenAllTabsAre
     auto& start = manager.createNewScene();
     auto& last = manager.createNewScene();
     world.startScene = start.getSceneName();
-    const auto tabs = nlohmann::json{ { "formatVersion", 1 },
-                                      { "open",
-                                        { first->getSceneName().c_str(),
-                                          start.getSceneName().c_str(),
-                                          last.getSceneName().c_str() } },
-                                      { "current", last.getSceneName().c_str() } };
+    const auto tabs
+        = nlohmann::json{ { "formatVersion", 1 },
+                          { "open",
+                            { first->getSceneName().c_str(), start.getSceneName().c_str(),
+                              last.getSceneName().c_str() } },
+                          { "current", last.getSceneName().c_str() } };
 
     NX::SceneTabsCache(manager).deserialize(tabs);
 
@@ -397,11 +397,11 @@ TEST_F(ScenePersistenceTest, RestoringTabsKeepsRememberedSelectionWithoutStartSc
     auto* first = manager.getCurrentScene();
     auto& last = manager.createNewScene();
     world.startScene = "missing"_atom;
-    const auto tabs = nlohmann::json{
-        { "formatVersion", 1 },
-        { "open", { first->getSceneName().c_str(), last.getSceneName().c_str() } },
-        { "current", last.getSceneName().c_str() }
-    };
+    const auto tabs
+        = nlohmann::json{ { "formatVersion", 1 },
+                          { "open",
+                            { first->getSceneName().c_str(), last.getSceneName().c_str() } },
+                          { "current", last.getSceneName().c_str() } };
 
     NX::SceneTabsCache(manager).deserialize(tabs);
 
