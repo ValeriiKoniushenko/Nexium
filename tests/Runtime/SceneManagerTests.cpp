@@ -7,6 +7,9 @@
 //
 //     http://www.apache.org/licenses/LICENSE-2.0
 
+#include "NxWorld/Entities/Camera/Camera.h"
+#include "NxWorld/Framework/GameInstance.h"
+#include "NxWorld/Framework/World.h"
 #include "NxWorld/Scene/SceneManager.h"
 #include "Runtime/SceneFilesGuard.h"
 #include "Runtime/TickActionComponent.h"
@@ -315,4 +318,71 @@ TEST_F(SceneManagerTests, RequestsForScenesRemovedMeanwhileAreIgnored)
     manager.applyPendingChanges();
     EXPECT_FALSE(manager.hasPendingChanges());
     EXPECT_EQ(manager.getCurrentScene(), initial);
+}
+
+TEST_F(SceneManagerTests, ActivationDrivesTheGivenWorldWithoutAGameInstance)
+{
+    ASSERT_EQ(gGameInstance, nullptr);
+    NX::World world;
+    NX::SceneManager manager{ &world };
+    auto* first = manager.getCurrentScene();
+    auto object = NX::SceneObject::Create();
+    auto* camera = object->addChildComponent<NX::OrthographicCamera>("Camera"_atom);
+    first->addObjectToScene(object);
+    EXPECT_TRUE(first->isActive());
+    EXPECT_EQ(world.currentCamera, camera);
+
+    auto* second = &manager.createNewScene();
+    auto other = NX::SceneObject::Create();
+    auto* otherCamera = other->addChildComponent<NX::OrthographicCamera>("Other"_atom);
+    second->addObjectToScene(other);
+    EXPECT_FALSE(second->isActive());
+    EXPECT_EQ(world.currentCamera, camera);
+
+    ASSERT_TRUE(manager.setCurrentScene(second));
+    EXPECT_FALSE(first->isActive());
+    EXPECT_EQ(world.currentCamera, otherCamera);
+    ASSERT_TRUE(manager.setCurrentScene(first));
+    EXPECT_EQ(world.currentCamera, camera);
+}
+
+TEST_F(SceneManagerTests, OpensOnlyTheWorldStartSceneAndFallsBackToTheFirstScene)
+{
+    NX::World world;
+    NX::SceneManager manager{ &world };
+    auto* first = manager.getCurrentScene();
+    auto* start = &manager.createNewScene();
+    ASSERT_TRUE(manager.setCurrentScene(start));
+    ASSERT_TRUE(manager.setCurrentScene(first));
+
+    world.startScene = start->getSceneName();
+    manager.openStartScene();
+    EXPECT_EQ(manager.getCurrentScene(), start);
+    EXPECT_EQ(manager.getOpenScenes(), std::vector<NX::Scene*>{ start });
+    EXPECT_FALSE(first->isInitialized());
+
+    world.startScene = "missing"_atom;
+    manager.openStartScene();
+    EXPECT_EQ(manager.getCurrentScene(), first);
+    EXPECT_EQ(world.startScene, "missing"_atom);
+
+    world.startScene = Core::StringAtom{};
+    ASSERT_TRUE(manager.setCurrentScene(start));
+    manager.openStartScene();
+    EXPECT_EQ(manager.getCurrentScene(), first);
+}
+
+TEST_F(SceneManagerTests, StartSceneFollowsRenameAndIsClearedOnRemoval)
+{
+    NX::World world;
+    NX::SceneManager manager{ &world };
+    auto* start = &manager.createNewScene();
+    world.startScene = start->getSceneName();
+
+    const auto renamed = Core::StringAtom::Intern(start->getSceneName().toStdString() + "_Renamed");
+    ASSERT_TRUE(manager.renameScene(start, renamed));
+    EXPECT_EQ(world.startScene, renamed);
+
+    ASSERT_TRUE(manager.removeScene(start));
+    EXPECT_TRUE(world.startScene.isEmpty());
 }

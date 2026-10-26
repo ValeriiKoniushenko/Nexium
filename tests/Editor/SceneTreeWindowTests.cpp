@@ -131,4 +131,22 @@ namespace
         drawFrame();
         EXPECT_EQ(scene->getSceneName(), oldName);
     }
+
+    TEST_F(SceneTreeRenameTests, StartSceneCheckboxSetsAndClearsTheWorldStartScene)
+    {
+        auto* scene = gGameInstance->scenes.getCurrentScene();
+        auto& world = gGameInstance->world;
+        tree.setScene(scene);
+        const auto clickStartScene = [] { ImGui::ActivateItemByID(ImGui::GetID("Start scene")); };
+
+        drawFrame(clickStartScene);
+        drawFrame();
+        drawFrame();
+        EXPECT_EQ(world.startScene, scene->getSceneName());
+
+        drawFrame(clickStartScene);
+        drawFrame();
+        drawFrame();
+        EXPECT_TRUE(world.startScene.isEmpty());
+    }
 } // namespace

@@ -11,6 +11,7 @@
 
 #include "Foundation/Debug/Latency.h"
 #include "NxFundamental/ResourceManagement/DataStream.h"
+#include "NxWorld/Framework/World.h"
 #include "NxWorld/PrivateModuleInfo.h"
 
 #include <algorithm>
@@ -41,7 +42,8 @@ namespace
 
 namespace NX
 {
-    SceneManager::SceneManager()
+    SceneManager::SceneManager(World* world)
+        : _world(world)
     {
         resetScenes();
     }
@@ -57,6 +59,10 @@ namespace NX
 
     void SceneManager::restoreOpenedScenes(std::vector<Scene*> opened, Scene* current)
     {
+        if (rejectWhileTicking("restore opened scenes"))
+        {
+            return;
+        }
         NX_LATENCY_POINT("Restore opened scenes - start");
         for (auto* scene : opened)
         {
@@ -69,7 +75,7 @@ namespace NX
             _currentScene->deactivate();
         }
         _currentScene = current;
-        _currentScene->activate();
+        _currentScene->activate(_world);
         onCurrentSceneChanged->trigger(_currentScene);
         for (auto* scene : previouslyOpened)
         {
@@ -79,6 +85,22 @@ namespace NX
             }
         }
         NX_LATENCY_POINT("Restore opened scenes - end");
+    }
+
+    void SceneManager::openStartScene()
+    {
+        const auto startScene = _world ? _world->startScene : Core::StringAtom{};
+        auto* scene = startScene.isEmpty() ? nullptr : getScene(startScene);
+        if (!scene)
+        {
+            scene = _scenes.front().get();
+            if (!startScene.isEmpty())
+            {
+                warnLog("Start scene '{}' was not found; starting with '{}'."_f
+                        << startScene << scene->getSceneName());
+            }
+        }
+        restoreOpenedScenes({ scene }, scene);
     }
 
     Scene& SceneManager::createNewScene()
@@ -119,6 +141,10 @@ namespace NX
         clearSceneFile(*scene);
         scene->setSceneName(newName);
         writeSceneFile(*scene);
+        if (_world && _world->startScene == oldName)
+        {
+            _world->startScene = newName;
+        }
         return true;
     }
 
@@ -188,7 +214,7 @@ namespace NX
             {
                 _currentScene->deactivate();
                 _currentScene = scene;
-                _currentScene->activate();
+                _currentScene->activate(_world);
                 onCurrentSceneChanged->trigger(_currentScene);
             }
             return true;
@@ -251,6 +277,10 @@ namespace NX
             return false;
         }
         clearSceneFile(*scene);
+        if (_world && _world->startScene == scene->getSceneName())
+        {
+            _world->startScene = Core::StringAtom{};
+        }
         auto* replacement = _currentScene;
         const auto opened = std::ranges::find(_openScenes, scene);
         if (opened != _openScenes.end())

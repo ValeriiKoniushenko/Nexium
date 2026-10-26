@@ -11,6 +11,7 @@
 #include "NxFundamental/ResourceManagement/AtomicFile.h"
 #include "NxWorld/Entities/Camera/Camera.h"
 #include "NxWorld/Framework/GameInstance.h"
+#include "Editor/Windows/Scenes/SceneTabs/SceneTabsCache.h"
 #include "NxWorld/Scene/Scene.h"
 #include "Runtime/SceneFilesGuard.h"
 
@@ -276,7 +277,7 @@ TEST_F(ScenePersistenceTest, SceneFilesPreserveObjectsInClosedScenes)
     auto& added = manager.createNewScene();
     manager.setCurrentScene(&added);
     ASSERT_TRUE(manager.closeScene(initial));
-    const auto tabs = manager.serialize();
+    const auto tabs = NX::SceneTabsCache(manager).serialize();
     EXPECT_FALSE(tabs.contains("scenes"));
     EXPECT_EQ(tabs.at("current"), added.getSceneName().c_str());
     for (const auto& scene : manager.getScenes())
@@ -286,7 +287,7 @@ TEST_F(ScenePersistenceTest, SceneFilesPreserveObjectsInClosedScenes)
     }
     NX::SceneManager restored;
     restored.importScenes(root);
-    restored.deserialize(tabs);
+    NX::SceneTabsCache(restored).deserialize(tabs);
     auto* closed = restored.getScene("Default"_atom);
     ASSERT_NE(closed, nullptr);
     EXPECT_FALSE(restored.isSceneOpen(closed));
@@ -343,7 +344,7 @@ TEST_F(ScenePersistenceTest, MissingSceneReferencesDoNotDiscardLoadedScenes)
     const nlohmann::json tabs = { { "formatVersion", 1 },
                                   { "open", { "DeletedScene", "Default" } },
                                   { "current", "DeletedScene" } };
-    manager.deserialize(tabs);
+    NX::SceneTabsCache(manager).deserialize(tabs);
     EXPECT_EQ(manager.getCurrentScene(), initial);
     ASSERT_EQ(manager.getOpenScenes().size(), 1u);
     EXPECT_EQ(manager.getOpenScenes().front(), initial);
@@ -355,7 +356,7 @@ TEST_F(ScenePersistenceTest, MalformedTabsPreserveCurrentSession)
     auto* initial = manager.getCurrentScene();
     const nlohmann::json tabs
         = { { "formatVersion", 1 }, { "open", { "Default", 42 } }, { "current", "Default" } };
-    EXPECT_THROW(manager.deserialize(tabs), std::exception);
+    EXPECT_THROW(NX::SceneTabsCache(manager).deserialize(tabs), std::exception);
     EXPECT_EQ(manager.getCurrentScene(), initial);
     EXPECT_EQ(manager.getOpenScenes().size(), 1u);
 }
@@ -371,7 +372,7 @@ TEST_F(ScenePersistenceTest, RestoringTabsClosesAndReopensSceneComponents)
     const auto tabs = nlohmann::json{ { "formatVersion", 1 },
                                       { "open", { added.getSceneName().c_str() } },
                                       { "current", added.getSceneName().c_str() } };
-    manager.deserialize(tabs);
+    NX::SceneTabsCache(manager).deserialize(tabs);
     EXPECT_FALSE(initial->isInitialized());
     EXPECT_FALSE(object->isInitialized());
     EXPECT_TRUE(added.isInitialized());
@@ -391,11 +392,11 @@ TEST_F(ScenePersistenceTest, StreamAndJsonRestoreTheSameTabs)
     const nlohmann::json tabs = { { "formatVersion", 1 },
                                   { "open", { jsonScene.getSceneName().c_str() } },
                                   { "current", jsonScene.getSceneName().c_str() } };
-    fromJson.deserialize(tabs);
+    NX::SceneTabsCache(fromJson).deserialize(tabs);
     auto stream = RResourceStream<RJsonResourceStream>(tabs);
-    fromStream.deserialize(stream);
-    EXPECT_EQ(fromJson.serialize(), tabs);
-    EXPECT_EQ(fromStream.serialize(), fromJson.serialize());
+    NX::SceneTabsCache(fromStream).deserialize(stream);
+    EXPECT_EQ(NX::SceneTabsCache(fromJson).serialize(), tabs);
+    EXPECT_EQ(NX::SceneTabsCache(fromStream).serialize(), NX::SceneTabsCache(fromJson).serialize());
     EXPECT_FALSE(fromJson.getScene("Default"_atom)->isInitialized());
     EXPECT_FALSE(fromStream.getScene("Default"_atom)->isInitialized());
     EXPECT_TRUE(jsonScene.isInitialized());
@@ -535,29 +536,29 @@ TEST_F(ScenePersistenceTest, InvalidReflectedTabFieldsPreserveCurrentSession)
 {
     NX::SceneManager manager;
     auto* initial = manager.getCurrentScene();
-    const auto valid = manager.serialize();
+    const auto valid = NX::SceneTabsCache(manager).serialize();
     for (const auto* field : { "formatVersion", "open", "current" })
     {
         auto missing = valid;
         missing.erase(field);
-        EXPECT_THROW(manager.deserialize(missing), std::exception);
+        EXPECT_THROW(NX::SceneTabsCache(manager).deserialize(missing), std::exception);
         EXPECT_EQ(manager.getCurrentScene(), initial);
-        EXPECT_EQ(manager.serialize(), valid);
+        EXPECT_EQ(NX::SceneTabsCache(manager).serialize(), valid);
     }
     for (const auto& invalid :
          { nlohmann::json(1.5), nlohmann::json("1"), nlohmann::json(4'294'967'297ULL) })
     {
         auto tabs = valid;
         tabs["formatVersion"] = invalid;
-        EXPECT_THROW(manager.deserialize(tabs), std::exception);
-        EXPECT_EQ(manager.serialize(), valid);
+        EXPECT_THROW(NX::SceneTabsCache(manager).deserialize(tabs), std::exception);
+        EXPECT_EQ(NX::SceneTabsCache(manager).serialize(), valid);
     }
     for (const auto* field : { "open", "current" })
     {
         auto tabs = valid;
         tabs[field] = 42;
-        EXPECT_THROW(manager.deserialize(tabs), std::exception);
-        EXPECT_EQ(manager.serialize(), valid);
+        EXPECT_THROW(NX::SceneTabsCache(manager).deserialize(tabs), std::exception);
+        EXPECT_EQ(NX::SceneTabsCache(manager).serialize(), valid);
     }
 }
 

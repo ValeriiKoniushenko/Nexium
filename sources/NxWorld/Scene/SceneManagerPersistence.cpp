@@ -10,7 +10,6 @@
 #include "Foundation/Configs.h"
 #include "Foundation/Debug/Latency.h"
 #include "SceneManager.h"
-#include "SceneTabsState.h"
 
 #include <algorithm>
 #include <fstream>
@@ -19,52 +18,6 @@
 
 namespace NX
 {
-    nlohmann::json SceneManager::serialize() const
-    {
-        SceneTabsState state;
-        state.current = _currentScene->getSceneName();
-        for (const auto* scene : _openScenes)
-        {
-            state.open.push_back(scene->getSceneName());
-        }
-        return R<SceneTabsState>::Serialize(state).getData();
-    }
-
-    void SceneManager::deserialize(const nlohmann::json& data)
-    {
-        if (rejectWhileTicking("restore scene tabs"))
-        {
-            return;
-        }
-        if (!data.at("formatVersion").is_number_integer() || data.at("formatVersion") != 1
-            || !data.at("open").is_array())
-        {
-            throw std::runtime_error("Invalid scene tabs format.");
-        }
-        SceneTabsState state;
-        const auto stream = RResourceStream<RJsonResourceStream>(data);
-        R<SceneTabsState>::Deserialize(stream, state);
-        auto* selected = getScene(state.current);
-        std::vector<Scene*> opened;
-        for (const auto& name : state.open)
-        {
-            auto* scene = getScene(name);
-            if (scene && std::ranges::find(opened, scene) == opened.end())
-            {
-                opened.push_back(scene);
-            }
-        }
-        if (!selected)
-        {
-            selected = opened.empty() ? _scenes.front().get() : opened.front();
-        }
-        if (std::ranges::find(opened, selected) == opened.end())
-        {
-            opened.push_back(selected);
-        }
-        restoreOpenedScenes(std::move(opened), selected);
-    }
-
     void SceneManager::importScenes(const std::filesystem::path& directory)
     try
     {
@@ -167,7 +120,6 @@ namespace NX
         try
         {
             importScenes(Foundation::Config::Path::data / "scenes");
-            GetCacheSystem().tryRead(*this);
         }
         catch (const std::exception& error)
         {
@@ -183,7 +135,6 @@ namespace NX
         {
             saved = writeSceneFile(*scene, mode) && saved;
         }
-        saved = GetCacheSystem().write(*this, mode) && saved;
         NX_LATENCY_POINT("Scene library save finished");
         return saved;
     }

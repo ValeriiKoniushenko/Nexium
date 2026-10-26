@@ -23,7 +23,8 @@ namespace
 namespace NX
 {
     EditorIntegration::EditorIntegration(NX::Runtime& instance)
-        : _runtime(instance)
+        : _runtime(instance),
+          _sceneTabs(instance.getGameInstance().scenes)
     {
         Assert(!gEditorIntegration, "Only one editor integration can be active.");
         gEditorIntegration = this;
@@ -55,6 +56,7 @@ namespace NX
     void EditorIntegration::readFromCache()
     {
         _editor.readFromCache();
+        GetCacheSystem().tryRead(_sceneTabs);
         ImGui::LoadIniSettingsFromDisk(
             Foundation::Config::Path::imGuiWindowsIni.generic_string().c_str());
     }
@@ -62,6 +64,7 @@ namespace NX
     void EditorIntegration::writeToCache()
     {
         _editor.writeToCache();
+        GetCacheSystem().write(_sceneTabs);
         ImGui::SaveIniSettingsToDisk(
             Foundation::Config::Path::imGuiWindowsIni.generic_string().c_str());
     }

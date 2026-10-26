@@ -67,7 +67,7 @@ namespace NX
 
     public:
         World world;
-        SceneManager scenes;
+        SceneManager scenes{ &world };
         AssetsManager assets;
         UserInterface userInterface;
 

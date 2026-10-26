@@ -58,6 +58,9 @@ namespace NX
 
         constexpr int clearBits = GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT;
 
+        // Whether the editor's scene canvas still shows the last rendered frame.
+        bool sceneCanvasHasFrame = false;
+
         NX_LATENCY_POINT("while loop - pre-start");
         while (!_gameInstance.window->shouldClose())
         {
@@ -111,6 +114,13 @@ namespace NX
                         GetShaderManager().getShaderProgram("grid"_atom));
                     _gameInstance.tick(_gameInstance.world.getTimeDelta());
                     integration->afterSceneDraw();
+                    sceneCanvasHasFrame = true;
+                }
+                else if (sceneCanvasHasFrame)
+                {
+                    // The scene lost its camera; don't keep showing its last frame.
+                    integration->clearSceneRenderTarget();
+                    sceneCanvasHasFrame = false;
                 }
             }
 

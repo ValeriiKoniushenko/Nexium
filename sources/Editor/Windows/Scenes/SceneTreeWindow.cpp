@@ -94,6 +94,8 @@ namespace NX
         processAddNewComponentButton();
 
         ImGui::SameLine();
+        drawStartSceneToggle();
+        ImGui::SameLine();
         ImGui::Dummy({});
         ImGui::SameLine();
         ImGui::TextUnformatted("Name: ");
@@ -119,6 +121,20 @@ namespace NX
         }
 
         _lastSelectedObject = selectedObject;
+    }
+
+    void SceneTreeWindowEWC::drawStartSceneToggle()
+    {
+        auto* world = GetWorld();
+        bool isStartScene = _scene && world && world->startScene == _scene->getSceneName();
+        ImGui::BeginDisabled(!_scene || !world);
+        if (ImGui::Checkbox("Start scene", &isStartScene) && _scene && world)
+        {
+            world->startScene = isStartScene ? _scene->getSceneName() : StringAtom{};
+        }
+        ImGui::EndDisabled();
+        ImGui::SetItemTooltip("The game starts with this scene. Unset: the first scene by file "
+                              "name.");
     }
 
     void SceneTreeWindowEWC::drawSceneNameInput()

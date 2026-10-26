@@ -109,7 +109,7 @@ namespace NX
 
     void Scene::directDraw(NX::ShaderProgram* skyboxShader, NX::ShaderProgram* gridShader)
     {
-        auto* world = GetWorld();
+        auto* world = _world;
         if (!world || !world->currentCamera)
         {
             return;
@@ -440,6 +440,7 @@ namespace NX
         }
 
         const bool wasActive = _isActive;
+        auto* world = _world;
         deactivate();
         for (auto&& object : _sceneObjects)
         {
@@ -468,7 +469,7 @@ namespace NX
         }
         if (wasActive)
         {
-            activate();
+            activate(world);
         }
         NX_LATENCY_POINT("Scene deserialization finished");
     }
@@ -493,18 +494,18 @@ namespace NX
         deinitialize();
     }
 
-    void Scene::activate()
+    void Scene::activate(World* world)
     {
         _isActive = true;
-        if (GetGameScene() != this)
+        _world = world;
+        if (!_world)
         {
             return;
         }
-        gGameInstance->resetCamera();
-        auto* world = GetWorld();
-        if (auto camera = _mainCamera.tryLoad(); world && camera && containsComponent(camera.get()))
+        _world->currentCamera = nullptr;
+        if (auto camera = _mainCamera.tryLoad(); camera && containsComponent(camera.get()))
         {
-            world->currentCamera = static_cast<BaseCamera*>(camera.get());
+            _world->currentCamera = static_cast<BaseCamera*>(camera.get());
             return;
         }
         _mainCamera.reset();
@@ -520,16 +521,17 @@ namespace NX
         {
             return;
         }
-        _isActive = false;
-        if (GetGameScene() == this)
+        if (_world)
         {
             // Keeps the camera chosen while this scene was current, however it was chosen.
-            if (const auto* world = GetWorld(); world && world->currentCamera)
+            if (_world->currentCamera)
             {
-                _mainCamera = static_cast<BaseComponent*>(world->currentCamera);
+                _mainCamera = static_cast<BaseComponent*>(_world->currentCamera);
             }
-            gGameInstance->resetCamera();
+            _world->currentCamera = nullptr;
         }
+        _isActive = false;
+        _world = nullptr;
     }
 
     void Scene::setMainCamera(BaseCamera* camera)
@@ -541,10 +543,9 @@ namespace NX
             return;
         }
         _mainCamera = static_cast<BaseComponent*>(camera);
-        auto* world = GetWorld();
-        if (_isActive && GetGameScene() == this && world)
+        if (_world)
         {
-            world->currentCamera = camera;
+            _world->currentCamera = camera;
         }
     }
 
@@ -556,8 +557,8 @@ namespace NX
 
     void Scene::selectCameraFrom(SceneObject& object)
     {
-        auto* world = GetWorld();
-        if (GetGameScene() != this || !world || world->currentCamera)
+        auto* world = _world;
+        if (!world || world->currentCamera)
         {
             return;
         }

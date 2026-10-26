@@ -49,6 +49,7 @@ namespace NX
     private:
         void drawTreeNode(NX::BaseComponent* n, int32_t id, bool isInSelectedSubtree = false);
         void processAddNewComponentButton();
+        void drawStartSceneToggle();
         void drawSceneNameInput();
 
     protected:

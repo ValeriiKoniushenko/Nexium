@@ -15,6 +15,7 @@
 #include "NxWorld/Framework/ApplicationIntegration.h"
 #include "ObjectPicker.h"
 #include "ObjectSelectorManager.h"
+#include "Windows/Scenes/SceneTabs/SceneTabsCache.h"
 
 namespace NX
 {
@@ -55,6 +56,7 @@ namespace NX
         GameEditor _editor;
         ObjectSelectorManager _objectSelectorManager;
         ObjectPickerAggregator _objectPicker;
+        SceneTabsCache _sceneTabs;
         Core::DelegateSubscriberPoolGuard _subscriptions;
     };
 

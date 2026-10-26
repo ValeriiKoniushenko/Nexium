@@ -25,6 +25,8 @@ namespace NX
 {
     class Actor;
     class BaseCamera;
+    class SceneManager;
+    class World;
 
     CLASS();
     class Scene :
@@ -33,6 +35,8 @@ namespace NX
         public Core::IntrusiveRefCounter<Scene>
     {
         R_FRIEND(Scene);
+        // Only the manager decides which scene is current, so only it activates scenes.
+        friend class SceneManager;
 
     public:
         using ObjectContainerT = std::vector<SceneObject::Ptr>;
@@ -54,9 +58,8 @@ namespace NX
 
         void initialize();
         void deinitialize();
-        void activate();
-        void deactivate();
         [[nodiscard]] bool isInitialized() const noexcept { return _isInitialized; }
+        [[nodiscard]] bool isActive() const noexcept { return _isActive; }
 
         // Remembers the camera this scene renders with; it is restored whenever the scene
         // becomes current again. The camera must belong to one of the scene's objects.
@@ -107,6 +110,10 @@ namespace NX
         Core::StringAtom _sceneName = "Default";
 
     private:
+        // Makes this the scene rendered by `world` (may be null, e.g. in tests) and restores its
+        // main camera there. Deactivation stores the camera in use and clears it from the world.
+        void activate(World* world);
+        void deactivate();
         void internal_addObjectToScene(SceneObject* object);
         void selectCameraFrom(SceneObject& object);
         [[nodiscard]] bool containsComponent(const BaseComponent* component) const;
@@ -123,6 +130,8 @@ namespace NX
         uint32_t _uniqueCounterName = 0;
         bool _isInitialized = false;
         bool _isActive = false;
+        // The world this scene renders into while it is active.
+        World* _world = nullptr;
     };
 
     template<IsComponent T>

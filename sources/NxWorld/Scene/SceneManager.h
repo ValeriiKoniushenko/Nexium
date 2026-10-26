@@ -20,10 +20,11 @@
 
 namespace NX
 {
-    class SceneManager final : public Foundation::BaseLog, public Foundation::IDataIO
+    class SceneManager final : public Foundation::BaseLog
     {
     public:
-        SceneManager();
+        // `world` receives the current scene's camera; it may be null when nothing renders.
+        explicit SceneManager(World* world = nullptr);
         SceneManager(const SceneManager&) = delete;
         SceneManager(SceneManager&&) = delete;
         SceneManager& operator=(const SceneManager&) = delete;
@@ -57,12 +58,11 @@ namespace NX
             return _openScenes;
         }
 
-        [[nodiscard]] nlohmann::json serialize() const;
-        void deserialize(const nlohmann::json& data);
-        void deserialize(RResourceStream<RJsonResourceStream>& stream)
-        {
-            deserialize(stream.getData());
-        }
+        // Makes `opened` the open scenes and `current` (one of them) the current scene; scenes
+        // that are no longer open are deinitialized.
+        void restoreOpenedScenes(std::vector<Scene*> opened, Scene* current);
+        // Opens only the world's start scene, or the first scene when it is unset or unknown.
+        void openStartScene();
         // Loads every valid scene file. Broken files and duplicate names are logged, skipped
         // and left untouched on disk.
         void importScenes(const std::filesystem::path& directory);
@@ -73,9 +73,6 @@ namespace NX
         {
             return _skippedSceneFiles;
         }
-
-        [[nodiscard]] std::filesystem::path getCacheDir() const override { return "cache"; }
-        [[nodiscard]] StringAtom getCacheHash() const override { return "SceneTabs"_atom; }
 
         void resetScenes();
         bool removeScene(const StringAtom& sceneName);
@@ -112,7 +109,6 @@ namespace NX
 
         [[nodiscard]] bool rejectWhileTicking(const char* operation) const;
         bool applyPendingChange(const PendingChange& change);
-        void restoreOpenedScenes(std::vector<Scene*> opened, Scene* current);
         [[nodiscard]] bool isSceneFileTaken(const Scene& scene,
                                             const Core::StringAtom& name) const;
         bool writeSceneFile(const Scene& scene, CacheWriteMode mode = CacheWriteMode::Automatic);
@@ -124,6 +120,7 @@ namespace NX
         std::unordered_set<const Scene*> _scenesOwningFile{};
         std::vector<std::filesystem::path> _skippedSceneFiles{};
         std::vector<Scene*> _openScenes{};
+        World* _world = nullptr;
         Scene* _currentScene = nullptr;
         std::vector<PendingChange> _pendingChanges{};
         bool _importFailed = false;

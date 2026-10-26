@@ -199,13 +199,16 @@ namespace NX
 
     void GameInstance::startUpReadCache()
     {
+        GetCacheSystem().tryRead(Platform::GetWindow());
+        // The world holds the start scene, so it is read before the scenes are opened.
+        GetCacheSystem().tryRead(*GetWorld());
+        scenes.readFromCache();
+        scenes.openStartScene();
+        // Integrations restore their own state (e.g. editor tabs) on top of the loaded scenes.
         if (_applicationIntegration)
         {
             _applicationIntegration->readFromCache();
         }
-        GetCacheSystem().tryRead(Platform::GetWindow());
-        scenes.readFromCache();
-        GetCacheSystem().tryRead(*GetWorld());
         onInitializeReadCache();
     }
 
