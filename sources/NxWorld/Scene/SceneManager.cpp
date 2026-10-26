@@ -16,6 +16,7 @@
 #include <algorithm>
 #include <iterator>
 #include <string>
+#include <utility>
 
 namespace
 {
@@ -172,6 +173,10 @@ namespace NX
 
     bool SceneManager::setCurrentScene(Scene* scene)
     {
+        if (rejectWhileTicking("change the current scene"))
+        {
+            return false;
+        }
         if (hasScene(scene))
         {
             if (!isSceneOpen(scene))
@@ -205,6 +210,10 @@ namespace NX
 
     bool SceneManager::closeScene(Scene* scene)
     {
+        if (rejectWhileTicking("close a scene"))
+        {
+            return false;
+        }
         const auto it = std::ranges::find(_openScenes, scene);
         if (it == _openScenes.end() || _openScenes.size() == 1)
         {
@@ -226,6 +235,10 @@ namespace NX
 
     bool SceneManager::removeScene(Scene* scene)
     {
+        if (rejectWhileTicking("remove a scene"))
+        {
+            return false;
+        }
         if (_scenes.size() == 1)
         {
             // At least one scene must always exist.
@@ -262,8 +275,101 @@ namespace NX
         return true;
     }
 
+    void SceneManager::requestCurrentScene(const Core::StringAtom& sceneName)
+    {
+        _pendingChanges.push_back({ PendingChange::Kind::SetCurrent, nullptr, sceneName });
+    }
+
+    void SceneManager::requestCurrentScene(Scene* scene)
+    {
+        _pendingChanges.push_back({ PendingChange::Kind::SetCurrent, scene, {} });
+    }
+
+    void SceneManager::requestCloseScene(Scene* scene)
+    {
+        _pendingChanges.push_back({ PendingChange::Kind::Close, scene, {} });
+    }
+
+    void SceneManager::requestRemoveScene(Scene* scene)
+    {
+        _pendingChanges.push_back({ PendingChange::Kind::Remove, scene, {} });
+    }
+
+    void SceneManager::applyPendingChanges()
+    {
+        if (_pendingChanges.empty() || rejectWhileTicking("apply scene changes"))
+        {
+            return;
+        }
+        // Changes requested while applying (e.g. from onCurrentSceneChanged) wait for the next
+        // call.
+        const auto changes = std::exchange(_pendingChanges, {});
+        for (const auto& change : changes)
+        {
+            if (!applyPendingChange(change))
+            {
+                const auto& name = change.scene ? change.scene->getSceneName() : change.sceneName;
+                warnLog("Requested scene change for '{}' was not applied."_f << name);
+            }
+        }
+    }
+
+    bool SceneManager::applyPendingChange(const PendingChange& change)
+    {
+        auto* scene = change.scene ? change.scene.get() : getScene(change.sceneName);
+        switch (change.kind)
+        {
+            case PendingChange::Kind::SetCurrent:
+                return setCurrentScene(scene);
+            case PendingChange::Kind::Close:
+                return closeScene(scene);
+            case PendingChange::Kind::Remove:
+                return removeScene(scene);
+        }
+        return false;
+    }
+
+    void SceneManager::tickCurrentScene(float timeDelta)
+    {
+        // Resets the flag even if a tick throws.
+        struct TickScope
+        {
+            explicit TickScope(bool& flag)
+                : flag(flag)
+            {
+                flag = true;
+            }
+            TickScope(const TickScope&) = delete;
+            TickScope(TickScope&&) = delete;
+            TickScope& operator=(const TickScope&) = delete;
+            TickScope& operator=(TickScope&&) = delete;
+            ~TickScope() { flag = false; }
+
+            bool& flag;
+        };
+
+        const TickScope scope(_isTickingScene);
+        _currentScene->tick(timeDelta);
+    }
+
+    bool SceneManager::rejectWhileTicking(const char* operation) const
+    {
+        if (!_isTickingScene)
+        {
+            return false;
+        }
+        errorLog("Cannot {} while the current scene is ticking. Use the request*Scene() methods; "
+                 "they apply at the end of the frame."_f
+                 << operation);
+        return true;
+    }
+
     void SceneManager::resetScenes()
     {
+        if (rejectWhileTicking("reset scenes"))
+        {
+            return;
+        }
         std::vector<Core::IntrusivePtr<Scene>> replacement;
         auto scene = Core::IntrusivePtr<Scene>(new Scene());
         replacement.push_back(std::move(scene));

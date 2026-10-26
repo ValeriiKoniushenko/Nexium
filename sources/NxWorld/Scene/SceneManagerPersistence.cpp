@@ -32,6 +32,10 @@ namespace NX
 
     void SceneManager::deserialize(const nlohmann::json& data)
     {
+        if (rejectWhileTicking("restore scene tabs"))
+        {
+            return;
+        }
         if (!data.at("formatVersion").is_number_integer() || data.at("formatVersion") != 1
             || !data.at("open").is_array())
         {
@@ -64,6 +68,10 @@ namespace NX
     void SceneManager::importScenes(const std::filesystem::path& directory)
     try
     {
+        if (rejectWhileTicking("import scenes"))
+        {
+            return;
+        }
         NX_LATENCY_POINT("Scene import started");
         _importFailed = false;
         _skippedSceneFiles.clear();

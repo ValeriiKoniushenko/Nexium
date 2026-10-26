@@ -32,10 +32,24 @@ namespace NX
 
         Scene& createNewScene();
         bool renameScene(Scene* scene, const Core::StringAtom& newName);
+
+        // Immediate changes. They are refused while the current scene is ticking, because they
+        // can deinitialize or destroy the scene that is running; game code uses the requests.
         bool setCurrentScene(const Core::StringAtom& sceneName);
         bool setCurrentScene(Scene* scene);
-
         bool closeScene(Scene* scene);
+
+        // Deferred changes, applied in request order by applyPendingChanges() at the end of
+        // the frame. Safe to call from any object's tick.
+        void requestCurrentScene(const Core::StringAtom& sceneName);
+        void requestCurrentScene(Scene* scene);
+        void requestCloseScene(Scene* scene);
+        void requestRemoveScene(Scene* scene);
+        void applyPendingChanges();
+        [[nodiscard]] bool hasPendingChanges() const noexcept { return !_pendingChanges.empty(); }
+
+        void tickCurrentScene(float timeDelta);
+
         [[nodiscard]] bool hasScene(const Scene* scene) const;
         [[nodiscard]] bool isSceneOpen(const Scene* scene) const;
         [[nodiscard]] const std::vector<Scene*>& getOpenScenes() const noexcept
@@ -81,6 +95,23 @@ namespace NX
         [[nodiscard]] spdlog::logger* getLogger() const override;
 
     private:
+        struct PendingChange
+        {
+            enum class Kind
+            {
+                SetCurrent,
+                Close,
+                Remove
+            };
+
+            Kind kind;
+            // Keeps the scene alive until the change is applied; the name is used when set.
+            Core::IntrusivePtr<Scene> scene;
+            Core::StringAtom sceneName;
+        };
+
+        [[nodiscard]] bool rejectWhileTicking(const char* operation) const;
+        bool applyPendingChange(const PendingChange& change);
         void restoreOpenedScenes(std::vector<Scene*> opened, Scene* current);
         [[nodiscard]] bool isSceneFileTaken(const Scene& scene,
                                             const Core::StringAtom& name) const;
@@ -94,7 +125,9 @@ namespace NX
         std::vector<std::filesystem::path> _skippedSceneFiles{};
         std::vector<Scene*> _openScenes{};
         Scene* _currentScene = nullptr;
+        std::vector<PendingChange> _pendingChanges{};
         bool _importFailed = false;
+        bool _isTickingScene = false;
     };
 
 } // namespace NX

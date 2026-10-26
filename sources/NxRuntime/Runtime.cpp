@@ -71,7 +71,7 @@ namespace NX
 
             if (!_gameInstance.isEditorMode())
             {
-                _gameInstance.scenes.getCurrentScene()->tick(_gameInstance.world.getTimeDelta());
+                _gameInstance.scenes.tickCurrentScene(_gameInstance.world.getTimeDelta());
                 _gameInstance.window->updateViewport();
 
                 glClear(clearBits);
@@ -94,8 +94,7 @@ namespace NX
                 auto* integration = _gameInstance.getApplicationIntegration();
                 if (integration->isViewportFocused())
                 {
-                    _gameInstance.scenes.getCurrentScene()->tick(
-                        _gameInstance.world.getTimeDelta());
+                    _gameInstance.scenes.tickCurrentScene(_gameInstance.world.getTimeDelta());
                 }
 
                 glClear(clearBits);
@@ -114,6 +113,9 @@ namespace NX
                     integration->afterSceneDraw();
                 }
             }
+
+            // Scene switches requested during the frame run once nothing is iterating scenes.
+            _gameInstance.scenes.applyPendingChanges();
 
             if (_gameInstance.window->isIconified() || !_gameInstance.window->isFocused())
             {

@@ -9,6 +9,7 @@
 
 #include "NxWorld/Scene/SceneManager.h"
 #include "Runtime/SceneFilesGuard.h"
+#include "Runtime/TickActionComponent.h"
 
 #include "gtest/gtest.h"
 
@@ -240,4 +241,78 @@ TEST_F(SceneManagerTests, HasSceneOnlyForOwnedScenes)
     EXPECT_TRUE(manager.hasScene(added));
     ASSERT_TRUE(manager.removeScene(added));
     EXPECT_FALSE(manager.hasScene(added));
+}
+
+namespace
+{
+    TickActionComponent* addTickAction(NX::Scene& scene)
+    {
+        auto object = NX::SceneObject::Create();
+        auto* action = object->addChildComponent<TickActionComponent>("Action"_atom);
+        scene.addObjectToScene(object);
+        return action;
+    }
+} // namespace
+
+TEST_F(SceneManagerTests, TickingSceneIsRemovedOnlyAfterItsTickFinishes)
+{
+    NX::SceneManager manager;
+    auto* ticking = manager.getCurrentScene();
+    auto* next = &manager.createNewScene();
+    bool immediateResult = true;
+    addTickAction(*ticking)->action = [&]
+    {
+        immediateResult = manager.removeScene(ticking);
+        manager.requestRemoveScene(ticking);
+    };
+
+    manager.tickCurrentScene(0.f);
+    EXPECT_FALSE(immediateResult);
+    EXPECT_TRUE(manager.hasScene(ticking));
+    EXPECT_EQ(manager.getCurrentScene(), ticking);
+    EXPECT_TRUE(manager.hasPendingChanges());
+
+    manager.applyPendingChanges();
+    EXPECT_FALSE(manager.hasPendingChanges());
+    EXPECT_FALSE(manager.hasScene(ticking));
+    EXPECT_EQ(manager.getCurrentScene(), next);
+}
+
+TEST_F(SceneManagerTests, RequestsFromTickApplyInOrderAtTheEndOfTheFrame)
+{
+    NX::SceneManager manager;
+    auto* menu = manager.getCurrentScene();
+    auto* game = &manager.createNewScene();
+    bool immediateResult = true;
+    addTickAction(*menu)->action = [&]
+    {
+        immediateResult = manager.setCurrentScene(game) || manager.closeScene(menu);
+        manager.requestCurrentScene(game->getSceneName());
+        manager.requestCloseScene(menu);
+    };
+
+    manager.tickCurrentScene(0.f);
+    EXPECT_FALSE(immediateResult);
+    EXPECT_EQ(manager.getCurrentScene(), menu);
+    EXPECT_TRUE(menu->isInitialized());
+
+    manager.applyPendingChanges();
+    EXPECT_EQ(manager.getCurrentScene(), game);
+    EXPECT_FALSE(manager.isSceneOpen(menu));
+    EXPECT_FALSE(menu->isInitialized());
+    EXPECT_TRUE(manager.hasScene(menu));
+}
+
+TEST_F(SceneManagerTests, RequestsForScenesRemovedMeanwhileAreIgnored)
+{
+    NX::SceneManager manager;
+    auto* initial = manager.getCurrentScene();
+    auto* removed = &manager.createNewScene();
+    manager.requestCurrentScene(removed);
+    manager.requestCurrentScene("missing"_atom);
+    ASSERT_TRUE(manager.removeScene(removed));
+
+    manager.applyPendingChanges();
+    EXPECT_FALSE(manager.hasPendingChanges());
+    EXPECT_EQ(manager.getCurrentScene(), initial);
 }
