@@ -38,6 +38,17 @@ namespace NX
         Actor::onInitialize();
     }
 
+    void BaseSpectator::onSceneActivated()
+    {
+        _subscriptionPool.clearAndReleaseAll();
+        subscribeToInput();
+    }
+
+    void BaseSpectator::onSceneDeactivated()
+    {
+        _subscriptionPool.clearAndReleaseAll();
+    }
+
     void Spectator3D::onInitialize()
     {
         BaseSpectator::onInitialize();
@@ -50,6 +61,10 @@ namespace NX
         bindMovement("Move left"_atom, Platform::Keyboard::Key::A);
         bindMovement("Move up"_atom, Platform::Keyboard::Key::R);
         bindMovement("Move down"_atom, Platform::Keyboard::Key::F);
+    }
+
+    void Spectator3D::subscribeToInput()
+    {
         _subscriptionPool << Platform::GetWindow().onMouseWheel->subscribeAndGetID(
             [this](glm::vec2 offset)
             {
@@ -90,10 +105,8 @@ namespace NX
         // moveUp(step * (pressed("Move up"_atom) - pressed("Move down"_atom)));
     }
 
-    void Spectator2D::onInitialize()
+    void Spectator2D::subscribeToInput()
     {
-        BaseSpectator::onInitialize();
-
         auto mouseMove = [this](glm::vec2 delta, MouseIA::SpecKeysState state)
         {
             auto mlt

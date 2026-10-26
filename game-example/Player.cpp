@@ -36,7 +36,14 @@ void Player::onTick(float delta)
 
     constexpr float diagonalFactor = 0.70710678f;
     const float movementFactor = horizontal != 0 && vertical != 0 ? diagonalFactor : 1.f;
-    moveRight(static_cast<float>(horizontal) * _movementSpeed * movementFactor * delta);
+
+    const float rightMoveValue
+        = static_cast<float>(horizontal) * _movementSpeed * movementFactor * delta;
+
+    if (rightMoveValue != 0.f)
+    {
+        moveRight(rightMoveValue);
+    }
     moveUp(static_cast<float>(vertical) * _movementSpeed * movementFactor * delta);
 
     StringAtom animation;

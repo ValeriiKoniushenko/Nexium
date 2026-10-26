@@ -1,11 +1,11 @@
 {
     "_children": null,
     "_innerPosition": [
-        811.0,
+        1531.0,
         72.0
     ],
     "_innerSize": {
-        "height": 708.0,
+        "height": 919.0,
         "width": 369.0
     },
     "_isEnabled": true,
@@ -17,15 +17,15 @@
     "_name": "World settings",
     "_noTick": false,
     "_oldSize": {
-        "height": 754.0,
+        "height": 965.0,
         "width": 389.0
     },
     "_position": [
-        801.0,
+        1521.0,
         36.0
     ],
     "_size": {
-        "height": 754.0,
+        "height": 965.0,
         "width": 389.0
     },
     "_type": "NX::WorldSettingsEWC"

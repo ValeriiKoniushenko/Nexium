@@ -216,6 +216,10 @@ namespace NX
         onObjectAdded->trigger(object);
 
         object->onAddedToScene();
+        if (_isActive)
+        {
+            object->onSceneActivated();
+        }
     }
 
     void Scene::addUniqueObjectToScene(SceneObject::Ptr object)
@@ -276,6 +280,10 @@ namespace NX
                 {
                     traceLog("The object is deleted from the scene: {}"_f
                              << obj->getComponentName());
+                    if (_isActive)
+                    {
+                        (*it)->onSceneDeactivated();
+                    }
                     _sceneObjects.erase(it);
                     return true;
                 }
@@ -298,6 +306,10 @@ namespace NX
             if (it->get() == obj)
             {
                 traceLog("The object is deleted from the scene: {}"_f << obj->getComponentName());
+                if (_isActive)
+                {
+                    (*it)->onSceneDeactivated();
+                }
                 _sceneObjects.erase(it);
                 return true;
             }
@@ -506,10 +518,19 @@ namespace NX
     {
         _isActive = true;
         _world = world;
-        if (!_world)
+        if (_world)
         {
-            return;
+            restoreWorldCamera();
         }
+        // Copied: a hook may add or remove objects.
+        for (auto objects = _sceneObjects; auto& object : objects)
+        {
+            object->onSceneActivated();
+        }
+    }
+
+    void Scene::restoreWorldCamera()
+    {
         _world->currentCamera = nullptr;
         if (auto camera = _mainCamera.tryLoad(); camera && containsComponent(camera.get()))
         {
@@ -540,6 +561,10 @@ namespace NX
         }
         _isActive = false;
         _world = nullptr;
+        for (auto objects = _sceneObjects; auto& object : objects)
+        {
+            object->onSceneDeactivated();
+        }
     }
 
     void Scene::setMainCamera(BaseCamera* camera)

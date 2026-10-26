@@ -114,6 +114,7 @@ namespace NX
         // main camera there. Deactivation stores the camera in use and clears it from the world.
         void activate(World* world);
         void deactivate();
+        void restoreWorldCamera();
         void internal_addObjectToScene(SceneObject* object);
         void selectCameraFrom(SceneObject& object);
         [[nodiscard]] bool containsComponent(const BaseComponent* component) const;

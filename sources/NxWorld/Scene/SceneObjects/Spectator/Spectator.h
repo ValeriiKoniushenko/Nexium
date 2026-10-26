@@ -42,6 +42,11 @@ namespace NX
         Core::DelegateSubscriberPoolGuard _subscriptionPool;
 
         void onInitialize() override;
+
+        // Input is listened to only while the owning scene is current.
+        void onSceneActivated() final;
+        void onSceneDeactivated() final;
+        virtual void subscribeToInput() {}
     };
 
     CLASS();
@@ -61,7 +66,7 @@ namespace NX
         float maxZoom = 5.f;
 
     protected:
-        void onInitialize() override;
+        void subscribeToInput() override;
     };
 
     CLASS();
@@ -80,6 +85,7 @@ namespace NX
 
     protected:
         void onInitialize() override;
+        void subscribeToInput() override;
         void onTick(float delta) override;
 
         InputController::Ptr _inputController;

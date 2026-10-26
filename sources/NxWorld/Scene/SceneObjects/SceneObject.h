@@ -85,6 +85,14 @@ namespace NX
 
         virtual void onAddedToScene() {}
 
+        // Bracket the time the owning scene is the current one: called when the scene becomes
+        // current (or the object is added to the current scene) and when it stops being current
+        // (or the object leaves it). Objects that listen to events pushed from outside the tick,
+        // such as raw input, subscribe in the first and unsubscribe in the second, so only the
+        // current scene reacts. Only top-level scene objects receive them.
+        virtual void onSceneActivated() {}
+        virtual void onSceneDeactivated() {}
+
         void draw(BaseCamera& camera) final;
 
         [[nodiscard]] virtual glm::vec3 getGlobalPosition() const;

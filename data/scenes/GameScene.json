@@ -13,9 +13,9 @@
                     0.0
                 ],
                 "_position": [
-                    -317.46246337890625,
-                    -186.69419860839844,
-                    -8.160661309375428e-06
+                    -517.9019775390625,
+                    -209.59568786621094,
+                    -9.161678462987766e-06
                 ],
                 "_rotation": [
                     0.0,
@@ -43,14 +43,14 @@
                     0.0
                 ],
                 "_position": [
-                    0.0,
-                    0.0,
+                    214.00013732910156,
+                    103.00016021728516,
                     0.0
                 ],
                 "_rotation": [
+                    -0.0,
                     0.0,
-                    0.0,
-                    0.0
+                    -0.0
                 ],
                 "_scale": [
                     1.0,
@@ -77,14 +77,47 @@
                     0.0
                 ],
                 "_position": [
+                    -67.55590057373047,
+                    225.2447509765625,
+                    0.0
+                ],
+                "_rotation": [
+                    -0.0,
+                    0.0,
+                    -0.0
+                ],
+                "_scale": [
+                    1.0,
+                    1.0,
+                    1.0
+                ]
+            },
+            "typeSpecificData": {
+                "_atlasName": "default",
+                "_blendingEnabled": true,
+                "_isEnabled": true,
+                "_textureName": "red.png"
+            }
+        },
+        {
+            "assetType": "NX::SceneObj::Rectangle",
+            "name": "BaseRectangle_0",
+            "referenceAsset": "data/assets/BaseRectangle.nx",
+            "trans": {
+                "_origin": [
                     0.0,
                     0.0,
                     0.0
                 ],
-                "_rotation": [
-                    0.0,
-                    0.0,
+                "_position": [
+                    81.66668701171875,
+                    111.33322143554688,
                     0.0
+                ],
+                "_rotation": [
+                    -0.0,
+                    0.0,
+                    -0.0
                 ],
                 "_scale": [
                     1.0,
