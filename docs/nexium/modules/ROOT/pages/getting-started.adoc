@@ -1,7 +1,7 @@
 = Getting Started
 
 Complete xref:installation.adoc[Installation], then run `build/bin/TemplateGame` from the repository root.
-This opens the editor and loads the saved scene and window layout from `data/`.
+This opens the editor and loads the saved scenes, open scene tabs, and window layout from `data/`.
 Keep the checkout available: resource paths are based on the project location recorded at build time.
 
 == Explore the editor
@@ -12,15 +12,30 @@ Keep the checkout available: resource paths are based on the project location re
 . Use the Assets browser to inspect project files and templates; see xref:engine_architecture:resource-system.adoc[Assets].
 . Focus the viewport to allow scene ticks, including camera controls and animation.
 
-Scene drawing requires an active camera. If the viewport is blank, check the scene's camera
-and the Logs window for asset or shader errors.
+== Work with scenes
+
+The toolbar at the top of the *Viewport* manages scenes; see xref:gameplay:scenes.adoc[Scenes].
+
+. Pick a scene from *Scenes* (type to filter) to open it in a tab and make it current.
+. Press *New* to create `Scene_<N>`; it is saved as a file immediately.
+. Click a tab to switch scenes, or its close button to close it. The last tab cannot be closed.
+. Delete a scene with the trash button on its row in *Scenes*, then confirm. This removes its file.
+. Rename the current scene in the *Name* field of the *Scene* window.
+. Tick *Start scene* in the *Scene* window to choose the scene the game starts with. Without one,
+  the game starts with the first scene by file name.
+
+Each scene keeps its own camera. Right-click a camera in the Scene tree and choose
+*Set as a main camera* to choose a different one.
+
+Scene drawing requires an active camera in the current scene. If the viewport is blank, check
+that scene's camera and the Logs window for asset or shader errors.
 
 == Save and switch views
 
 [cols="2,4",options="header"]
 |===
 |Action |Control
-|Save scene, World, and editor/window state |*File → Save all*, or left Ctrl + left Shift + S.
+|Save every scene, World (including the start scene), scene tabs, and editor/window state |*File → Save all*, or left Ctrl + left Shift + S.
 |Switch Editor/GameOnly rendering |F1.
 |Clear selection |Escape.
 |Delete the selected objects |Delete, with no modifiers and the viewport focused.
@@ -28,8 +43,10 @@ and the Logs window for asset or shader errors.
 |===
 
 F1 uses the same mutable scene; it does not start an isolated Play session.
-Normal shutdown also saves state. Scene files under `data/scenes/` are authored content,
-not disposable caches. Check Logs after saving; the current success notification does not verify every write.
+Normal shutdown also saves state, but skips files that failed to load; *Save all* overwrites them.
+A scene file that failed to import is never overwritten — fix or remove it, as the Logs error explains.
+Scene files under `data/scenes/` are authored content, not disposable caches.
+Check Logs after saving; the current success notification does not verify every write.
 
 == Next steps
 

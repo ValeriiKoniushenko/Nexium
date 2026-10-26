@@ -265,9 +265,10 @@ with 3D off, and adds format, tidy, coverage, and Valgrind checks; see
 <h2 id="_object_model_and_ownership"><a class="anchor" href="#_object_model_and_ownership"></a>Object model and ownership</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>GameInstance owns Scene and World as siblings, alongside assets and UI.
+<p>GameInstance owns World and SceneManager as siblings, alongside assets and UI.
 Runtime borrows GameInstance; EditorIntegration borrows Runtime and owns editor tools.
-World carries time, lighting, framework state, and an observed camera.
+World carries time, lighting, framework state, the start-scene name, and an observed camera.
+SceneManager owns every scene, opens and closes them, and activates the current one in World.
 Scene owns root component trees and handles persistence and drawing.</p>
 </div>
 <div class="paragraph">
@@ -290,7 +291,7 @@ The serialized “Blueprint” assets are component templates.</p>
 </div>
 <div class="paragraph">
 <p>Keep scene versioning, reconstruction before root replacement, atomic saves,
-and failed-load autosave protection.
+failed-load autosave protection, and the rule that a scene touches only a file it loaded or wrote.
 Define generic instance overrides, asset moves/references, stable object identity,
 and caller-visible save errors before relying on the editor for larger authored games.</p>
 </div>
@@ -308,7 +309,8 @@ and caller-visible save errors before relying on the editor for larger authored 
 <p>Decouple gameplay ticking from camera presence; define simulation state and time.</p>
 </li>
 <li>
-<p>Give world/scene replacement explicit camera, selection, and subscription invalidation.</p>
+<p>Finish world/scene replacement invalidation: switching scenes already restores each scene&#8217;s
+camera and clears selection, but component subscriptions are not invalidated.</p>
 </li>
 <li>
 <p>Introduce editor commands, undo/redo, dirty documents, and accurate save results.</p>

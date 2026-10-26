@@ -11,24 +11,29 @@ Every clear uses colour + depth + stencil bits.
 [cols="1,3,3",options="header"]
 |===
 |Step |GameOnly |Editor
-|1 |Poll events, route input, tick Scene. |Poll events, route input; tick Scene only when the viewport is focused.
+|1 |Poll events, route input, tick the current scene, set the GL viewport to the window's framebuffer size. |Poll events, route input; tick the current scene only when the viewport is focused.
 |2 |Clear the window; update integration keyboard actions if attached. |Clear the window; update editor windows/input and submit ImGui drawing.
-|3 |Use the active camera to draw Scene into the window. |Process picking, bind and clear the viewport target, then draw Scene.
+|3 |Use the active camera to draw the current scene into the window. |Process picking, bind and clear the viewport target, then draw the current scene.
 |4 |Call GameInstance's tick hook after drawing. |Call that hook while the viewport target is still bound, then bind framebuffer 0.
-|5 |Swap buffers and record elapsed time. |Same.
+|5 |Apply queued scene changes. |Same.
+|6 |Swap buffers and record elapsed time. |Same.
 |===
 
-Steps 3–4 require an active camera. Scene tick and drawing are therefore separate gates.
+Steps 3–4 require an active camera, which is the current scene's. Scene tick and drawing are
+therefore separate gates. When the editor's scene loses its camera, Runtime clears the viewport
+target once so it does not keep showing the last frame. A scene switch queued during the frame
+takes effect at step 5, so the next frame ticks and draws the new scene.
 The editor submits ImGui before refreshing the viewport texture, so the displayed image can contain
 the previous scene render. There is no independent simulation/render clock.
 
 == Scene draw order
 
 Runtime passes the `skybox` and `grid` programs into `Scene::directDraw(skyboxShader, gridShader)`.
-The method returns immediately when there is no World or no active camera, and otherwise:
+The method returns immediately when the scene is not active in a World or that World has no
+camera, and otherwise:
 
-. Draws a hard-coded `"Hello world"` string through the scene's own `NX::Face`. This is a
-  development leftover in the normal draw path, not a feature.
+. Draws a hard-coded `"Hello world"` string through the scene's own `NX::Face`, generating the
+  glyphs on the first draw. This is a development leftover in the normal draw path, not a feature.
 . Draws the grid in Editor mode.
 . Handles enabled root mesh bundles when 3D is compiled in, collecting those marked post-draw.
 . Calls `draw()` on the root objects.

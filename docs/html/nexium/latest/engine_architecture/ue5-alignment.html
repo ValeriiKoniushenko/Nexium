@@ -341,7 +341,7 @@ Names in this table describe responsibilities; they are not prescribed new type 
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Project context</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Content roots, source/import settings, scene selection, game-specific startup configuration.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Content roots, source/import settings, game-specific startup configuration. The start scene currently lives in <code>World::startScene</code>.</p></td>
 </tr>
 </tbody>
 </table>
@@ -376,7 +376,8 @@ Nexium can use a small command history; it does not need UE&#8217;s object trans
 <div class="paragraph">
 <p>Scene replacement and Stop must invalidate/remap selection and cameras.
 Object removal should clear scene membership even when editor references keep the object alive.
-Define whether gameplay can add/remove objects during ticks and, if allowed, apply mutations at a controlled point.</p>
+Scene switches, closes, and removals requested during a tick already apply at the end of the frame
+(see <a href="../gameplay/scenes.html" class="xref page">Scenes</a>); define the same for adding/removing objects during ticks.</p>
 </div>
 </div>
 </div>

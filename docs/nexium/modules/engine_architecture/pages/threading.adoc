@@ -19,5 +19,7 @@ CMake can compile targets in parallel. JRM is a separate build tool.
 This serializes generator writers across build directories, but does not isolate compilers
 from another build's generated-header changes.
 
+Scene switches already use such a point: requests made during a tick are applied by
+`SceneManager::applyPendingChanges()` at the end of the frame.
 Background loading remains future work: CPU decoding could run in workers, with GPU uploads
 and scene/editor changes applied at a defined main-thread point.

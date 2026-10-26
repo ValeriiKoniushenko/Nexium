@@ -227,8 +227,9 @@
 <h1 class="page">Gameplay</h1>
 <div class="paragraph">
 <p>Gameplay lives in C++ component trees under <code>NxWorld</code> and the example game.
-<code>GameInstance</code> owns Scene, World state, assets, and UI; Runtime drives their updates.
-World and Scene are sibling members, so World does not own the scene hierarchy.</p>
+<code>GameInstance</code> owns World state, the SceneManager with every scene, assets, and UI; Runtime drives their updates.
+World and SceneManager are sibling members, so World does not own the scene hierarchy;
+it only observes the current scene&#8217;s camera and names the start scene.</p>
 </div>
 <div class="ulist">
 <ul>
@@ -236,7 +237,7 @@ World and Scene are sibling members, so World does not own the scene hierarchy.<
 <p><a href="components.html" class="xref page">Components</a>: behavior, composition, and animation.</p>
 </li>
 <li>
-<p><a href="scenes.html" class="xref page">Scenes</a>: root ownership and persistence.</p>
+<p><a href="scenes.html" class="xref page">Scenes</a>: multiple scenes, switching, the start scene, root ownership, and persistence.</p>
 </li>
 <li>
 <p><a href="prefabs.html" class="xref page">Blueprint templates</a>: reusable authored objects.</p>

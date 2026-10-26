@@ -283,6 +283,7 @@ TEST_F(SceneManagerTests, TickingSceneIsRemovedOnlyAfterItsTickFinishes)
 
 TEST_F(SceneManagerTests, RequestsFromTickApplyInOrderAtTheEndOfTheFrame)
 {
+    // tag::scene_requests_from_tick[]
     NX::SceneManager manager;
     auto* menu = manager.getCurrentScene();
     auto* game = &manager.createNewScene();
@@ -304,6 +305,7 @@ TEST_F(SceneManagerTests, RequestsFromTickApplyInOrderAtTheEndOfTheFrame)
     EXPECT_FALSE(manager.isSceneOpen(menu));
     EXPECT_FALSE(menu->isInitialized());
     EXPECT_TRUE(manager.hasScene(menu));
+    // end::scene_requests_from_tick[]
 }
 
 TEST_F(SceneManagerTests, RequestsForScenesRemovedMeanwhileAreIgnored)

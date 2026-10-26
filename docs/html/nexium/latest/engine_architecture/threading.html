@@ -254,7 +254,9 @@ This serializes generator writers across build directories, but does not isolate
 from another build&#8217;s generated-header changes.</p>
 </div>
 <div class="paragraph">
-<p>Background loading remains future work: CPU decoding could run in workers, with GPU uploads
+<p>Scene switches already use such a point: requests made during a tick are applied by
+<code>SceneManager::applyPendingChanges()</code> at the end of the frame.
+Background loading remains future work: CPU decoding could run in workers, with GPU uploads
 and scene/editor changes applied at a defined main-thread point.</p>
 </div>
 </div>

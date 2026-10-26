@@ -1,1 +1,1 @@
-../../../../../sources/NxWorld/Scene/Rectangle.cpp
+../../../../../sources/NxWorld/Scene/SceneObjects/Rectangle/Rectangle.cpp

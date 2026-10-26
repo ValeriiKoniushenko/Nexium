@@ -248,8 +248,20 @@
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>gGameInstance</code> is a unique pointer.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">GameInstance → Scene, World, assets, UI</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">GameInstance → World, SceneManager, assets, UI</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Value members.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SceneManager → scenes</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Strong <code>IntrusivePtr</code> references; open/current lists borrow them. Queued scene changes hold strong references until applied.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SceneManager / active Scene → World</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Borrowed pointer, set only while the scene is current.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Scene → main camera</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Weak reference, checked against the scene&#8217;s roots on activation.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Runtime → GameInstance</p></td>
@@ -265,7 +277,7 @@
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">World → active camera</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Borrowed pointer into component data.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Borrowed pointer into the current scene&#8217;s component data.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Selector → selected components</p></td>
@@ -296,9 +308,14 @@ this explicit ownership tree.</p>
 <div class="sectionbody">
 <div class="paragraph">
 <p>Removing a component clears its parent link, but selection or another strong reference can
-keep it alive. Scene replacement does not automatically clear editor selection.
+keep it alive. Changing the current scene clears editor selection through
+<code>SceneManager::onCurrentSceneChanged</code>; removing an object from a scene does not.
 <code>BaseCamera</code> clears World&#8217;s active camera in its destructor; retaining a removed camera
 therefore also delays that cleanup.</p>
+</div>
+<div class="paragraph">
+<p>A removed <code>Scene</code> is likewise only released by the manager: an outside strong reference keeps it
+alive, already deinitialized and no longer known to the manager.</p>
 </div>
 <div class="paragraph">
 <p>Weak asset references observe without loading payloads. While indexed, the last consumer&#8217;s
@@ -311,7 +328,7 @@ for GPU resources and subscriptions; component cloning alone does not establish 
 Names, address keys, and <code>makeHash()</code> are not durable saved identities.</p>
 </div>
 <div class="paragraph">
-<p>Implementation: <code>GameInstance.h</code>, <code>World.h</code>, <code>BaseComponent.{h,cpp}</code>,
+<p>Implementation: <code>GameInstance.h</code>, <code>World.h</code>, <code>SceneManager.h</code>, <code>BaseComponent.{h,cpp}</code>,
 <code>Camera.cpp</code>, and <code>Editor/ObjectSelectorManager.h</code>; see the <a href="module-graph.html" class="xref page">module map</a> for locations.</p>
 </div>
 </div>

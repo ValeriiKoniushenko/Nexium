@@ -259,18 +259,19 @@
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Viewport framebuffer</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">GameEditor&#8217;s RenderTargetToTexture</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">GameEditor&#8217;s <code>sceneRenderTarget</code> (RenderTargetToTexture)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">EditorIntegration binds it around scene drawing.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Camera</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Component tree; World holds a borrowed pointer</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Component tree; each Scene weakly remembers its main camera, and World borrows the current scene&#8217;s</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Scene drawing and picking.</p></td>
 </tr>
 </tbody>
 </table>
 <div class="paragraph">
-<p><code>GameInstance</code> owns Scene and AssetsManager, and references the shared ShaderManager.
+<p><code>GameInstance</code> owns SceneManager (and so every Scene) and AssetsManager; ShaderManager is a shared
+singleton reached through <code>GetShaderManager()</code>.
 <code>Runtime</code> orders their use. <code>ApplicationIntegration</code> supplies editor hooks without requiring
 Runtime to include Editor implementation headers.</p>
 </div>
@@ -281,7 +282,10 @@ Runtime to include Editor implementation headers.</p>
 <div class="sectionbody">
 <div class="paragraph">
 <p>The editor target has an RGBA color texture and a depth/stencil renderbuffer using <code>GL_DEPTH24_STENCIL8</code>.
-<code>setRenderSize()</code> destroys and recreates its attachments. Viewport updates also invalidate
+<code>setRenderSize()</code> destroys and recreates its attachments. The target follows the game viewport&#8217;s
+canvas (the area below the scene tabs), not the ImGui window, and is resized when the canvas size changes.
+In GameOnly mode the GL viewport follows the window&#8217;s framebuffer size, which can differ from its
+window size, and framebuffer resize events trigger a viewport update. Viewport updates also invalidate
 camera matrices so projection uses the current output dimensions.
 <code>callMePreDraw()</code> binds the target; <code>callMeAfterDraw()</code> binds framebuffer 0.
 These hooks assume the window framebuffer is the destination afterward; they do not form a nested target stack.</p>
@@ -295,7 +299,9 @@ These hooks assume the window framebuffer is the destination afterward; they do 
 <p>Create, upload, and release GPU resources while the GL context is valid.
 Reloading ShaderManager replaces its entries and invalidates borrowed program pointers.
 Removing a camera from the scene does not destroy it if another strong reference retains it;
-World&#8217;s camera pointer and scene membership need separate attention.</p>
+World&#8217;s camera pointer and scene membership need separate attention. Switching scenes is safe:
+the outgoing scene clears World&#8217;s camera, and the incoming scene restores its own only if
+that camera is still in its tree.</p>
 </div>
 <div class="paragraph">
 <p>See <a href="pipeline.html" class="xref page">frame order</a>, <a href="materials/shader-system.html" class="xref page">shader lifetimes</a>, and

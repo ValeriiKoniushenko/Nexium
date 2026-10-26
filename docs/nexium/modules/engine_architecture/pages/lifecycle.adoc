@@ -8,12 +8,16 @@ Runtime borrows the instance; the integration attaches editor hooks through `App
 `Runtime::run()` initializes the instance, runs the frame loop, then saves state.
 `GameInstance::initialize()` performs these steps:
 
-. Create the Platform window, initialize `InputSystem` on it, and subscribe to resize events.
+. Create the Platform window, initialize `InputSystem` on it, and subscribe to framebuffer resize events.
 . Scan assets, load shaders, and configure vertex attributes.
 . Initialize the editor integration and build the component factory's type/tag map.
-. Initialize Scene and subscribe to object additions for camera discovery.
-. Read editor, window, scene, and World state; call `onInitializeReadCache()`.
+. Read Window and World state, import every scene file, and open only `World::startScene`
+  (see xref:gameplay:scenes.adoc[Scenes]). The integration then restores its own state, including
+  editor scene tabs; finally `onInitializeReadCache()` runs.
 . Generate the default and example animation atlases; call `onLoadCoreResources()`.
+
+Before `initialize()`, constructing GameInstance already gave `SceneManager` one empty `Default`
+scene, current and active in World, so a current scene exists throughout startup.
 
 Initialization still uses global accessors. Binding Runtime to an instance does not provide
 independent concurrent game instances.
@@ -27,13 +31,17 @@ Updates use the previous frame's measured delta; the first delta is zero.
 [cols="2,3,3",options="header"]
 |===
 |Operation |GameOnly |Editor
-|Scene tick |Every frame. |Only while the viewport is focused.
+|Scene tick |Current scene, every frame; then the window viewport is reset to the framebuffer size. |Current scene, only while the viewport is focused.
 |Integration update |`updateInput()`, if an integration is attached. |`tick(delta)`: editor windows and keyboard/mouse actions.
-|Drawing |Scene to the window. |`updateSceneInteraction()` (picking/gizmos), `beforeSceneDraw()`, then Scene to the viewport texture.
-|GameInstance tick |After Scene drawing, if a camera exists. |After Scene drawing, if a camera exists.
+|Drawing |Current scene to the window. |`updateSceneInteraction()` (picking/gizmos), `beforeSceneDraw()`, then the current scene to the viewport texture. Without a camera, the texture is cleared once instead of keeping the last frame.
+|GameInstance tick |After scene drawing, if a camera exists. |After scene drawing, if a camera exists.
+|Scene changes |`SceneManager::applyPendingChanges()`. |Same.
 |===
 
 Scene ticking does not require a camera; `GameInstance::onTick` and scene drawing do.
+The camera is the current scene's: switching scenes swaps `World::currentCamera`.
+Scene switches requested during the frame apply only after ticking and drawing, when nothing
+iterates the scenes; immediate switches are refused during the tick.
 After updates, the loop sleeps 50 ms for unfocused/iconified windows, compares world time with
 `--timeout`, swaps buffers, and records elapsed time in World. Rendering, the sleep, and
 throttling all contribute to that time.
@@ -49,11 +57,14 @@ report after `saveAllToCache()`; see xref:diagnostics.adoc[Diagnostics].
 
 Editor mode requires both the Editor render mode and an attached integration: the GameOnly
 branch null-checks the integration pointer, while the Editor branch dereferences it.
-F1 switches rendering paths, which share the same `gameScene`.
+F1 switches rendering paths, which share the same current scene.
 There is no isolated Play/Stop session or paused simulation clock; gameplay edits can be saved at shutdown.
 
-After a normal loop exit, `saveAllToCache()` writes editor state, World, Scene, and Window,
-then calls `onSaveAll()`. Exceptions escaping initialization or the loop bypass this save call.
+After a normal loop exit, `saveAllToCache(CacheWriteMode::Automatic)` writes editor state
+(including scene tabs), World, every loaded scene, and Window, then calls `onSaveAll()`.
+Automatic mode keeps the failed-load protection, so shutdown never overwrites a file that failed
+to load; *Save all* in the editor uses explicit mode (see xref:file-io.adoc[File I/O]).
+Exceptions escaping initialization or the loop bypass this save call.
 
 The example destroys EditorIntegration before Runtime and resets `gGameInstance` last.
 Keep that order because both objects borrow their dependencies.

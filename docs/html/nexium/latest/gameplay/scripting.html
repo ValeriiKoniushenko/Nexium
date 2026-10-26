@@ -239,6 +239,10 @@ See <a href="../engine_architecture/lifecycle.html" class="xref page">Applicatio
 for camera-independent simulation.</p>
 </div>
 <div class="paragraph">
+<p>To change scenes from gameplay code, use <code>GetSceneManager()&#8594;requestCurrentScene()</code> and the other
+<code>request*</code> calls; the immediate calls are refused during a tick. See <a href="scenes.html" class="xref page">Scenes</a>.</p>
+</div>
+<div class="paragraph">
 <p>The hooks are declared in <code>NxWorld/Framework/GameInstance.h</code>.
 <code>game-example/TemplateGameInstance</code> currently inherits their default behavior without overrides,
 so all example behavior lives in components instead.</p>

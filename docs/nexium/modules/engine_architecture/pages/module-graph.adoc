@@ -10,7 +10,7 @@ Dependencies may skip layers; numbering describes their intended direction.
 |Layer |Directory |Responsibility
 |8 |Editor |ImGui windows, property adapters, selection, picking, gizmos, toasts, asset tools, viewport integration.
 |7 |NxRuntime |Frame loop, timing, input-context switching, startup/save orchestration.
-|6 |NxWorld |GameInstance, World state, input routing and controllers, framework managers, Scene, actors, cameras, rectangles, animation, optional meshes.
+|6 |NxWorld |GameInstance, World state, input routing and controllers, framework managers, SceneManager and Scene, actors, cameras, rectangles, animation, optional meshes.
 |5 |NxSubsystems |AssetsManager, shaders/graphics data, text rendering, input actions and types, optional Assimp importer.
 |4 |NxFundamental |Component trees, transforms, tags, serialization, asset abstractions, atlases.
 |3 |RawBackend |CPU images, OpenGL textures/framebuffers, drawable interface, FreeType access.
@@ -48,7 +48,7 @@ Foundation's separate private logging target is disabled.
 |`Nexium::Subsystem::AssimpImporter` |Optional mesh importer |Subsystem Graphics.
 |`Nexium::World::Animation` |BaseAnimation, FrameByFrameAnimation |Foundation, Fundamental ECS and ResourceManagement, Utils::Core, JustReflectMe::Adapter.
 |`Nexium::World::AssimpMisc` |AssimpHelper (3D only) |Foundation is private; Utils::Core, assimp::assimp.
-|`Nexium::World::Base` |World/framework, InputSystem/InputController, framework managers and state, Scene, actors, cameras, rectangles, animator, skybox types |Foundation, Foundation Interfaces, World Animation, Fundamental Assets/Base/ECS/ResourceManagement, Subsystem AssetsManager/Graphics/Input, Platform Input, RawBackend Common, Utils::Core, JustReflectMe::Adapter.
+|`Nexium::World::Base` |World/framework, InputSystem/InputController, framework managers and state, SceneManager, Scene, scene objects (grid, rectangles, spectator), actors, cameras, animator, skybox types |Foundation, Foundation Interfaces, World Animation, Fundamental Assets/Base/ECS/ResourceManagement, Subsystem AssetsManager/Graphics/Input, Platform Input, RawBackend Common, Utils::Core, JustReflectMe::Adapter.
 |`Nexium::Runtime::Base` |Runtime |World through WHOLE_ARCHIVE.
 |`Nexium::Runtime::GameUtils` |FPSCounter |None.
 |`Nexium::Editor::GuiComponents` |Widgets and layouts |Foundation, Fundamental ECS and ResourceManagement, Platform Input, Subsystem AssetsManager, Core::ImGui, Utils::Core, Utils::Utils.
@@ -80,18 +80,19 @@ WHOLE_ARCHIVE retains otherwise unreferenced component registrations in these st
 |===
 |Owner or observer |Current relationship
 |`gGameInstance` |Application-owned unique pointer to GameInstance.
-|GameInstance |Owns gameScene, world, assets, userInterface as members; references the shared ShaderManager and Platform Window.
+|GameInstance |Owns world, scenes (SceneManager), assets, userInterface as members; references the Platform Window. ShaderManager is reached through `GetShaderManager()`.
 |Runtime |Borrows GameInstance by reference.
 |EditorIntegration |Borrows Runtime; owns GameEditor, ObjectSelectorManager, ObjectPickerAggregator.
 |GameInstance integration pointer |Borrows ApplicationIntegration; attachment/detachment is explicit.
-|World |Owns lighting/time and game/player/level state; observes currentCamera. Scene is its sibling, not its child.
+|World |Owns lighting/time, game/player/level state, and the start-scene name; observes currentCamera. SceneManager is its sibling, not its child.
+|SceneManager |Owns every Scene through intrusive pointers; borrows World and activates the current scene in it.
 |`InputSystem` |Singleton; holds non-owning InputController pointers per context. Controllers unregister themselves on destruction.
-|Scene |Owns root SceneObjects through intrusive pointers, plus grid/skybox state.
+|Scene |Owns root SceneObjects through intrusive pointers, plus grid/skybox state; weakly remembers its main camera and borrows World while active.
 |BaseComponent |Owns children through intrusive pointers; observes its parent.
 |ObjectSelectorManager |Holds strong pointers to selected components, keyed by addresses.
 |===
 
-Source anchors: `Framework/{GameInstance,World}.h`, `Scene/Scene.h` in NxWorld,
+Source anchors: `Framework/{GameInstance,World}.h`, `Scene/{Scene,SceneManager}.h` in NxWorld,
 `NxFundamental/ECS/BaseComponent.h`, and `Editor/EditorIntegration.h`.
 
 == Boundary limits
@@ -99,8 +100,8 @@ Source anchors: `Framework/{GameInstance,World}.h`, `Scene/Scene.h` in NxWorld,
 `ApplicationIntegration` lets Runtime and World call editor hooks without including Editor implementation headers.
 
 RawBackend's `IDrawable` still names higher-layer camera/actor/mesh types through forward declarations.
-`Scene::directDraw` receives the skybox and grid programs from Runtime, but still reaches the
-camera through `GetWorld()` and the render mode through the global `gGameInstance`.
+`Scene::directDraw` receives the skybox and grid programs from Runtime and the camera from the
+World it was activated in, but still reads the render mode through the global `gGameInstance`.
 `InputSystem` is a `Core::Singleton`, so input routing is global rather than owned by a session.
 
 Public header sets support compilation checks, but the shared `sources/` include root also exposes private headers.

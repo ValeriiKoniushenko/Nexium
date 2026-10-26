@@ -59,7 +59,7 @@ Some behavior is already available as a component rather than something to write
 |Component |Use
 |`InputController` |Named actions bound to key chords in one input context; bindings are reflected and serialized.
 |`FrameByFrameAnimator` |Drives a `RectangleAnimated` parent through a named animation's frames.
-|`BaseCamera` subclasses |Provide the active camera World observes; removing one clears that pointer.
+|`BaseCamera` subclasses |Provide the current scene's camera, which World observes; destroying one clears that pointer.
 |===
 
 Attach them as children and query them from the owning component's tick, as

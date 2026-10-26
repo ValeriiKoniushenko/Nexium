@@ -229,7 +229,7 @@
 <div class="sectionbody">
 <div class="paragraph">
 <p>Complete <a href="installation.html" class="xref page">Installation</a>, then run <code>build/bin/TemplateGame</code> from the repository root.
-This opens the editor and loads the saved scene and window layout from <code>data/</code>.
+This opens the editor and loads the saved scenes, open scene tabs, and window layout from <code>data/</code>.
 Keep the checkout available: resource paths are based on the project location recorded at build time.</p>
 </div>
 </div>
@@ -256,9 +256,44 @@ Keep the checkout available: resource paths are based on the project location re
 </li>
 </ol>
 </div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_work_with_scenes"><a class="anchor" href="#_work_with_scenes"></a>Work with scenes</h2>
+<div class="sectionbody">
 <div class="paragraph">
-<p>Scene drawing requires an active camera. If the viewport is blank, check the scene&#8217;s camera
-and the Logs window for asset or shader errors.</p>
+<p>The toolbar at the top of the <strong>Viewport</strong> manages scenes; see <a href="gameplay/scenes.html" class="xref page">Scenes</a>.</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Pick a scene from <strong>Scenes</strong> (type to filter) to open it in a tab and make it current.</p>
+</li>
+<li>
+<p>Press <strong>New</strong> to create <code>Scene_&lt;N&gt;</code>; it is saved as a file immediately.</p>
+</li>
+<li>
+<p>Click a tab to switch scenes, or its close button to close it. The last tab cannot be closed.</p>
+</li>
+<li>
+<p>Delete a scene with the trash button on its row in <strong>Scenes</strong>, then confirm. This removes its file.</p>
+</li>
+<li>
+<p>Rename the current scene in the <strong>Name</strong> field of the <strong>Scene</strong> window.</p>
+</li>
+<li>
+<p>Tick <strong>Start scene</strong> in the <strong>Scene</strong> window to choose the scene the game starts with. Without one,
+the game starts with the first scene by file name.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>Each scene keeps its own camera. Right-click a camera in the Scene tree and choose
+<strong>Set as a main camera</strong> to choose a different one.</p>
+</div>
+<div class="paragraph">
+<p>Scene drawing requires an active camera in the current scene. If the viewport is blank, check
+that scene&#8217;s camera and the Logs window for asset or shader errors.</p>
 </div>
 </div>
 </div>
@@ -278,7 +313,7 @@ and the Logs window for asset or shader errors.</p>
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Save scene, World, and editor/window state</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Save every scene, World (including the start scene), scene tabs, and editor/window state</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><strong>File → Save all</strong>, or left Ctrl + left Shift + S.</p></td>
 </tr>
 <tr>
@@ -301,8 +336,10 @@ and the Logs window for asset or shader errors.</p>
 </table>
 <div class="paragraph">
 <p>F1 uses the same mutable scene; it does not start an isolated Play session.
-Normal shutdown also saves state. Scene files under <code>data/scenes/</code> are authored content,
-not disposable caches. Check Logs after saving; the current success notification does not verify every write.</p>
+Normal shutdown also saves state, but skips files that failed to load; <strong>Save all</strong> overwrites them.
+A scene file that failed to import is never overwritten — fix or remove it, as the Logs error explains.
+Scene files under <code>data/scenes/</code> are authored content, not disposable caches.
+Check Logs after saving; the current success notification does not verify every write.</p>
 </div>
 </div>
 </div>

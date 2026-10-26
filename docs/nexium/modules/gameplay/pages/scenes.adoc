@@ -1,25 +1,163 @@
 = Scenes
 
-`NX::Scene` owns root `SceneObject` references; each root owns its component tree.
-Adding a root assigns a usable unique name, initializes it, fires `onObjectAdded`,
-and calls `onAddedToScene()`.
-`GameInstance` listens for additions and searches their descendants for a camera when none is active.
+A project holds several scenes. `NX::SceneManager` (the `GameInstance::scenes` member, also
+reachable through `GetSceneManager()`) owns all of them and decides which ones are open and which
+one is current. `GetGameScene()` returns the current scene.
+
+== Scene, World, and SceneManager
+
+[cols="2,5",options="header"]
+|===
+|Object |Role
+|`Scene` |Owns root `SceneObject` references, grid, and skybox state; ticks and draws its roots; reads/writes one scene file.
+|`SceneManager` |Owns every loaded scene, the list of open scenes, the current scene, and queued scene changes.
+|`World` |Time, lighting, framework state, `startScene`, and `currentCamera` — a borrowed pointer to the current scene's camera.
+|===
+
+World and SceneManager are sibling members of GameInstance; World does not own scenes.
+GameInstance constructs the manager with `&world`, and the manager is the only object that
+connects a scene to that World. A manager built without a World (as in tests) still opens and
+switches scenes, but no scene has a camera to draw with.
+
+The manager always holds at least one scene and one open scene. Its constructor creates a
+`Default` scene and makes it current, so the current scene is never null.
+
+== Open, current, and closed scenes
+
+[cols="2,5",options="header"]
+|===
+|State |What it means
+|Loaded |Owned by the manager and saved with it, but neither initialized nor ticked.
+|Open |Initialized: its roots ran `initialize()`. In the editor, an open scene is a tab.
+|Current |One open scene that is ticked, drawn, and *active* in World.
+|===
+
+Opening a scene initializes it; closing deinitializes it. Roots added to a scene that is not
+open stay uninitialized, and an already initialized root is deinitialized on addition.
+
+Making a scene current deactivates the previous one and activates the new one:
+
+* *Deactivation* remembers World's current camera as that scene's main camera, then clears
+  `World::currentCamera`.
+* *Activation* restores the remembered main camera if it still belongs to one of the scene's
+  roots. Otherwise it picks the first `BaseCamera` found in a depth-first walk of the roots.
+* While a scene is active and World has no camera, adding a root also searches that root's
+  descendants for one.
+
+`Scene::setMainCamera()` chooses the camera explicitly, and the Scene tree's
+*Set as a main camera* context action calls it. It rejects a camera that is not in the scene.
+A scene without any camera leaves `World::currentCamera` null; ticking still runs, but drawing
+and `GameInstance::onTick()` are skipped (see xref:engine_architecture:lifecycle.adoc[Application Lifecycle]).
+
+`onCurrentSceneChanged` fires after the current scene changes, and before a removed previous
+scene is destroyed. The editor uses it to clear selection and reset the Scene tree.
+
+== Managing scenes
+
+[cols="2,5",options="header"]
+|===
+|Call |Behavior
+|`createNewScene()` |Adds `Scene_<N>` with the first free number, skipping loaded names and existing scene files, and writes its file at once. The new scene is not opened.
+|`setCurrentScene(scene or name)` |Opens the scene if needed, then makes it current.
+|`closeScene(scene)` |Deinitializes an open scene. Closing the current one selects the next open scene, or the previous one if it was last. The last open scene cannot be closed.
+|`removeScene(scene or name)` |Deletes the scene and its file. If it was current, the adjacent open scene becomes current, or the next loaded scene when no other is open. The last scene cannot be removed, and a removed start scene clears `World::startScene`.
+|`renameScene(scene, name)` |Rejects empty, duplicate, or file-colliding names; moves the scene file and keeps `World::startScene` pointing at the renamed scene.
+|`restoreOpenedScenes(open, current)` |Replaces the open set at once; scenes no longer open are deinitialized.
+|===
+
+Removing a scene ends its membership in the manager but not necessarily its lifetime:
+another strong reference keeps the object alive until it is released, already deinitialized.
+
+== Changing scenes from gameplay
+
+The immediate calls above can deinitialize or destroy the scene that is currently running.
+While `tickCurrentScene()` is on the stack they are refused: they log an error and return
+`false`. Gameplay code queues the change instead:
+
+* `requestCurrentScene(scene or name)`
+* `requestCloseScene(scene)`
+* `requestRemoveScene(scene)`
+
+Runtime calls `applyPendingChanges()` once per frame, after ticking and drawing. Requests apply
+in order; each holds a strong reference, so the target scene survives until then. A request
+whose scene was removed in the meantime, or whose name is unknown, is skipped with a warning.
+Requests made while the queue is being applied, for example from `onCurrentSceneChanged`,
+wait for the next frame.
+
+[source,cpp]
+----
+include::example$scene-manager-tests.cpp[tag=scene_requests_from_tick,indent=0]
+----
+
+These requests cover scene-level changes only. Adding or removing objects inside a scene
+during a tick still has no deferred path.
+
+== Startup scene and editor tabs
+
+`World::startScene` names the scene the game starts with. It is saved with World in
+`data/world/<world name>.json`. When it is empty or names no loaded scene, the game starts with
+the first scene in file-name order, and a warning names the unknown scene.
+
+At startup, GameInstance reads World, imports every scene file, then calls `openStartScene()`,
+which opens *only* that scene. The game never reads editor state.
+
+The editor then restores its own tabs on top through `SceneTabsCache`, saved as
+`data/cache/SceneTabs.json` (format version 1, the open scene names, and the selected one).
+Unknown names are dropped; when the selected name is unknown, the first restored tab, or else
+the first scene, is selected. A malformed tabs file keeps the session that `openStartScene()`
+produced.
+
+In the editor, the Viewport window carries the scene toolbar and tabs:
+
+* The *Scenes* picker lists every loaded scene with a filter box. Choosing one opens it and makes it current.
+  Each row has a trash button, disabled when only one scene exists, which opens a delete confirmation.
+* *New* creates a scene and makes it current.
+* Clicking a tab makes it current; its close button closes it. The close button is hidden while only one tab is open.
+
+The Scene tree window shows the current scene. Its *Name* field renames the scene when editing
+finishes, and its *Start scene* checkbox sets or clears `World::startScene`.
 
 == Saved data
 
-Scene format version 1 stores each root's name, transform, type, asset reference, and type-specific data.
+Each scene is one file, `data/scenes/<sanitized scene name>.json`. Format version 1 stores the
+scene name (`_sceneName`), `formatVersion`, and a `sceneObjects` array with each root's name,
+transform, type, asset reference, and type-specific data.
 
 * Asset-backed roots are reconstructed from their `.nx` template, then receive the saved instance values.
 * Roots without an asset reference also save a reflected `componentData` tree.
 
 A template instance therefore does not save every edited component field automatically.
 General property overrides are not implemented. Unversioned asset-backed documents remain readable;
-unsupported versions are rejected.
+unsupported versions, a missing `sceneObjects` array, and an empty scene name are rejected.
 
-Loading validates and reconstructs all incoming roots before replacing existing roots.
-An empty valid document clears the scene; malformed records or unresolved references preserve the old roots.
-After replacement, roots initialize and emit addition events. This is not a rollback mechanism for
+`Scene::deserialize()` validates and reconstructs all incoming roots before replacing existing
+roots. An empty valid document clears the scene; malformed records, unresolved references,
+mismatched inline types, and empty or duplicate root names preserve the old roots. After
+replacement, roots initialize if the scene is open and emit addition events; an active scene is
+reactivated, so it selects a camera from the new roots. This is not a rollback mechanism for
 resource loading or initialization side effects.
 
-Scene files live under `data/scenes/`; see xref:engine_architecture:file-io.adoc[File I/O].
-Implementation: `NxWorld/Scene/Scene.cpp`; checks: `tests/Runtime/ScenePersistenceTests.cpp`.
+== Import and save safety
+
+`SceneManager::importScenes()` reads every `.json` file in `data/scenes/`, sorted by path.
+
+* A broken file is logged and skipped; the other scenes still load.
+* When two files declare the same scene name, the file whose name matches the scene's save path wins
+  and the other is skipped.
+* When no file loads, the existing scenes are kept.
+* Afterwards the first scene is opened and current; `openStartScene()` then applies `World::startScene`.
+
+`hasImportError()` and `getSkippedSceneFiles()` report what was skipped. Skipped files are never
+modified: a scene owns only the file it was loaded from or wrote itself. Saving, renaming, or
+creating a scene never overwrites a file it does not own, and removing a scene that does not own
+its file leaves that file on disk. Such a save is refused with an error that names the blocking
+file; fix or remove that file to save the scene.
+
+`writeToCache(mode)` writes every loaded scene, including closed ones, and returns whether all
+writes succeeded. See xref:engine_architecture:file-io.adoc[File I/O] for the automatic/explicit
+write modes and failed-load protection.
+
+Implementation: `NxWorld/Scene/{Scene,SceneManager,SceneManagerPersistence}.cpp`,
+`Editor/Windows/Scenes/`. Checks: `tests/Runtime/SceneManagerTests.cpp`,
+`tests/Runtime/ScenePersistenceTests.cpp`, `tests/Editor/SceneTreeWindowTests.cpp`, and
+`tests/Editor/SceneDeleteConfirmationTests.cpp`.

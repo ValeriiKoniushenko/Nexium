@@ -251,11 +251,11 @@ editor only through the <code>ApplicationIntegration</code> interface.</p>
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>EditorIntegration</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Implements <code>ApplicationIntegration</code>. Borrows Runtime, owns the three objects below, and attaches/detaches itself from GameInstance.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Implements <code>ApplicationIntegration</code>. Borrows Runtime, owns the three objects below plus <code>SceneTabsCache</code>, and attaches/detaches itself from GameInstance.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>GameEditor</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Owns the ImGui setup, the window list, toast notifications, the polled input managers, and the viewport render target.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Owns the ImGui setup, the window list, toast notifications, the polled input managers, and the scene render target (<code>sceneRenderTarget</code>).</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>ObjectSelectorManager</code></p></td>
@@ -276,10 +276,12 @@ without being handed them.</p>
 <p><code>EditorIntegration</code> maps the Runtime hooks onto <code>GameEditor</code>: <code>tick()</code> draws the windows,
 <code>updateInput()</code> updates the polled keyboard manager, <code>updateSceneInteraction()</code> services
 pick requests, <code>isViewportFocused()</code> forwards to the <code>GameViewportEWC</code> window,
-<code>beforeSceneDraw()</code>/<code>afterSceneDraw()</code> bind and unbind the viewport target through
+<code>beforeSceneDraw()</code>/<code>afterSceneDraw()</code> bind and unbind the scene target through
 <code>RenderTargetToTexture::callMePreDraw()</code> / <code>callMeAfterDraw()</code>, and
-<code>readFromCache()</code>/<code>writeToCache()</code> persist editor state alongside the ImGui layout in
-<code>data/cache/windows.ini</code>.</p>
+<code>readFromCache()</code>/<code>writeToCache()</code> persist editor state, the open scene tabs
+(<code>data/cache/SceneTabs.json</code>), and the ImGui layout in <code>data/cache/windows.ini</code>.
+The integration also subscribes to <code>SceneManager::onCurrentSceneChanged</code> and clears the
+selection whenever the current scene changes.</p>
 </div>
 </div>
 </div>
@@ -301,9 +303,54 @@ over the window title: <code>getWindow&lt;T&gt;()</code>, <code>showWindow&lt;T&
 <div class="paragraph">
 <p>Current windows include the root dock, menu bar, scene tree, object properties, assets
 explorer, game viewport, logs, world settings, editor settings, a shader inspector, an image
-viewer, asset/ECS search and blueprint-creation modals, and the asset editors under
+viewer, asset/ECS search, blueprint-creation and scene-delete modals, and the asset editors under
 <code>Windows/Editors</code> (texture, text, input bindings). <code>Windows/ECSAdapters</code> holds the per-component
-property adapters, and <code>GuiComponents</code> holds the reusable ImGui widgets.</p>
+property adapters, and <code>GuiComponents</code> holds the reusable ImGui widgets, including
+<code>SearchableComboBox</code>, a combo with a filter box and optional per-row actions.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_scene_windows"><a class="anchor" href="#_scene_windows"></a>Scene windows</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><code>Windows/Scenes/</code> holds the scene-facing UI; scene behavior itself lives in <code>SceneManager</code>
+(see <a href="../gameplay/scenes.html" class="xref page">Scenes</a>).</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 66.6667%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Piece</th>
+<th class="tableblock halign-left valign-top">Role</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>SceneTabs</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Drawn at the top of the game viewport: a <strong>Scenes</strong> picker over every loaded scene, a per-row delete button, a <strong>New</strong> button, and a tab per open scene.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>SceneTabsCache</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Saves and restores the open tabs and selected tab. Editor-only: the game starts from <code>World::startScene</code> and never reads it.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>SceneDeleteConfirmation</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Modal that asks before <code>removeScene()</code>. It closes itself if the scene disappears meanwhile and disables <strong>Delete</strong> for the last scene.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>SceneTreeWindowEWC</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Shows the current scene&#8217;s tree. It renames the scene on commit, toggles the start scene, and defers delete/duplicate until the tree traversal ends.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>The game viewport separates its window from its <strong>canvas</strong>, the area below the scene tabs.
+<code>getCanvasPosition()</code> and <code>getCanvasSize()</code> describe that area. When it changes size,
+<code>onCanvasSizeChanged</code> resizes <code>sceneRenderTarget</code>, and picking maps the mouse into the canvas.</p>
 </div>
 </div>
 </div>
@@ -325,8 +372,9 @@ the gizmo is not treated as a pick.
 local transform. The gizmo is checked by <code>tests/Editor/SceneGizmoTests.cpp</code>.</p>
 </div>
 <div class="paragraph">
-<p>Selection holds strong references, so a selected object outlives removal from the scene, and
-scene replacement does not clear selection. See <a href="memory.html" class="xref page">Memory and Ownership</a>.</p>
+<p>Selection holds strong references, so a selected object outlives removal from the scene.
+Changing the current scene clears selection; removing an object does not.
+See <a href="memory.html" class="xref page">Memory and Ownership</a>.</p>
 </div>
 </div>
 </div>

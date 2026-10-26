@@ -106,9 +106,9 @@ as the Delete shortcut does with `isApplicationViewportFocused()`.
 |Left Ctrl + Left Shift + S |Save all |`InputController` chord in the `Editor` context.
 |===
 
-Render-mode switching uses the same scene; see xref:lifecycle.adoc[Application Lifecycle].
+Render-mode switching uses the same current scene; see xref:lifecycle.adoc[Application Lifecycle].
 
 Implementation: `NxWorld/Framework/{InputSystem,InputController}.{h,cpp}`,
 `NxSubsystems/Input/{InputAction,InputManager,InputTypes}.{h,cpp}`,
-`Editor/GameEditor.cpp`, and `NxWorld/Scene/Spectator.cpp`.
+`Editor/GameEditor.cpp`, and `NxWorld/Scene/SceneObjects/Spectator/Spectator.cpp`.
 Checks: `tests/ECSTests/InputControllerTests.cpp`.

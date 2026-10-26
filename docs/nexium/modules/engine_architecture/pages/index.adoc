@@ -25,5 +25,5 @@ The eight layers use focused libraries, JRM reflection, and component trees.
 Build dependencies and object ownership are separate graphs; see
 xref:gameplay:index.adoc[Gameplay] and xref:lifecycle.adoc[Application Lifecycle] for their runtime use.
 
-The current application links Editor and shares one scene between editor and game rendering.
+The current application links Editor and shares the current scene between editor and game rendering.
 UE-style class names describe intended roles; they do not establish UE-equivalent behavior.

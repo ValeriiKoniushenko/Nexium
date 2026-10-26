@@ -2,11 +2,12 @@
 :page-role: landing
 
 Gameplay lives in C++ component trees under `NxWorld` and the example game.
-`GameInstance` owns Scene, World state, assets, and UI; Runtime drives their updates.
-World and Scene are sibling members, so World does not own the scene hierarchy.
+`GameInstance` owns World state, the SceneManager with every scene, assets, and UI; Runtime drives their updates.
+World and SceneManager are sibling members, so World does not own the scene hierarchy;
+it only observes the current scene's camera and names the start scene.
 
 * xref:components.adoc[Components]: behavior, composition, and animation.
-* xref:scenes.adoc[Scenes]: root ownership and persistence.
+* xref:scenes.adoc[Scenes]: multiple scenes, switching, the start scene, root ownership, and persistence.
 * xref:prefabs.adoc[Blueprint templates]: reusable authored objects.
 * xref:scripting.adoc[Gameplay hooks]: where C++ behavior runs.
 

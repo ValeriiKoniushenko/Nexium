@@ -7,11 +7,14 @@ Nexium uses C++ ownership and reference counting. Components use `Core::Intrusiv
 |===
 |Relationship |Ownership
 |Application → GameInstance |`gGameInstance` is a unique pointer.
-|GameInstance → Scene, World, assets, UI |Value members.
+|GameInstance → World, SceneManager, assets, UI |Value members.
+|SceneManager → scenes |Strong `IntrusivePtr` references; open/current lists borrow them. Queued scene changes hold strong references until applied.
+|SceneManager / active Scene → World |Borrowed pointer, set only while the scene is current.
+|Scene → main camera |Weak reference, checked against the scene's roots on activation.
 |Runtime → GameInstance |Borrowed reference.
 |EditorIntegration → Runtime |Borrowed reference; integration detaches on destruction.
 |Component → children / parent |Strong child references; borrowed parent pointer.
-|World → active camera |Borrowed pointer into component data.
+|World → active camera |Borrowed pointer into the current scene's component data.
 |Selector → selected components |Strong references keyed by addresses.
 |AssetsManager → indexed assets |Strong ECSAsset references and `AssetRef` entries.
 |InputSystem → controllers |Non-owning pointers; each `InputController` unregisters itself in its destructor.
@@ -24,9 +27,13 @@ this explicit ownership tree.
 == Lifetime is not scene membership
 
 Removing a component clears its parent link, but selection or another strong reference can
-keep it alive. Scene replacement does not automatically clear editor selection.
+keep it alive. Changing the current scene clears editor selection through
+`SceneManager::onCurrentSceneChanged`; removing an object from a scene does not.
 `BaseCamera` clears World's active camera in its destructor; retaining a removed camera
 therefore also delays that cleanup.
+
+A removed `Scene` is likewise only released by the manager: an outside strong reference keeps it
+alive, already deinitialized and no longer known to the manager.
 
 Weak asset references observe without loading payloads. While indexed, the last consumer's
 release unloads the payload while the manager retains the asset object.
@@ -36,5 +43,5 @@ Tree copies clone descendants. Resource-bearing subclasses still need correct co
 for GPU resources and subscriptions; component cloning alone does not establish safe world duplication.
 Names, address keys, and `makeHash()` are not durable saved identities.
 
-Implementation: `GameInstance.h`, `World.h`, `BaseComponent.{h,cpp}`,
+Implementation: `GameInstance.h`, `World.h`, `SceneManager.h`, `BaseComponent.{h,cpp}`,
 `Camera.cpp`, and `Editor/ObjectSelectorManager.h`; see the xref:module-graph.adoc[module map] for locations.

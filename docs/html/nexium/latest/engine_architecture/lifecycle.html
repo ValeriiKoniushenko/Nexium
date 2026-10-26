@@ -243,7 +243,7 @@ Runtime borrows the instance; the integration attaches editor hooks through <cod
 <div class="olist arabic">
 <ol class="arabic">
 <li>
-<p>Create the Platform window, initialize <code>InputSystem</code> on it, and subscribe to resize events.</p>
+<p>Create the Platform window, initialize <code>InputSystem</code> on it, and subscribe to framebuffer resize events.</p>
 </li>
 <li>
 <p>Scan assets, load shaders, and configure vertex attributes.</p>
@@ -252,15 +252,18 @@ Runtime borrows the instance; the integration attaches editor hooks through <cod
 <p>Initialize the editor integration and build the component factory&#8217;s type/tag map.</p>
 </li>
 <li>
-<p>Initialize Scene and subscribe to object additions for camera discovery.</p>
-</li>
-<li>
-<p>Read editor, window, scene, and World state; call <code>onInitializeReadCache()</code>.</p>
+<p>Read Window and World state, import every scene file, and open only <code>World::startScene</code>
+(see <a href="../gameplay/scenes.html" class="xref page">Scenes</a>). The integration then restores its own state, including
+editor scene tabs; finally <code>onInitializeReadCache()</code> runs.</p>
 </li>
 <li>
 <p>Generate the default and example animation atlases; call <code>onLoadCoreResources()</code>.</p>
 </li>
 </ol>
+</div>
+<div class="paragraph">
+<p>Before <code>initialize()</code>, constructing GameInstance already gave <code>SceneManager</code> one empty <code>Default</code>
+scene, current and active in World, so a current scene exists throughout startup.</p>
 </div>
 <div class="paragraph">
 <p>Initialization still uses global accessors. Binding Runtime to an instance does not provide
@@ -292,8 +295,8 @@ Updates use the previous frame&#8217;s measured delta; the first delta is zero.<
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Scene tick</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Every frame.</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Only while the viewport is focused.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Current scene, every frame; then the window viewport is reset to the framebuffer size.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Current scene, only while the viewport is focused.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Integration update</p></td>
@@ -302,18 +305,26 @@ Updates use the previous frame&#8217;s measured delta; the first delta is zero.<
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Drawing</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Scene to the window.</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>updateSceneInteraction()</code> (picking/gizmos), <code>beforeSceneDraw()</code>, then Scene to the viewport texture.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Current scene to the window.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>updateSceneInteraction()</code> (picking/gizmos), <code>beforeSceneDraw()</code>, then the current scene to the viewport texture. Without a camera, the texture is cleared once instead of keeping the last frame.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">GameInstance tick</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">After Scene drawing, if a camera exists.</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">After Scene drawing, if a camera exists.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">After scene drawing, if a camera exists.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">After scene drawing, if a camera exists.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Scene changes</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>SceneManager::applyPendingChanges()</code>.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Same.</p></td>
 </tr>
 </tbody>
 </table>
 <div class="paragraph">
 <p>Scene ticking does not require a camera; <code>GameInstance::onTick</code> and scene drawing do.
+The camera is the current scene&#8217;s: switching scenes swaps <code>World::currentCamera</code>.
+Scene switches requested during the frame apply only after ticking and drawing, when nothing
+iterates the scenes; immediate switches are refused during the tick.
 After updates, the loop sleeps 50 ms for unfocused/iconified windows, compares world time with
 <code>--timeout</code>, swaps buffers, and records elapsed time in World. Rendering, the sleep, and
 throttling all contribute to that time.</p>
@@ -335,12 +346,15 @@ report after <code>saveAllToCache()</code>; see <a href="diagnostics.html" class
 <div class="paragraph">
 <p>Editor mode requires both the Editor render mode and an attached integration: the GameOnly
 branch null-checks the integration pointer, while the Editor branch dereferences it.
-F1 switches rendering paths, which share the same <code>gameScene</code>.
+F1 switches rendering paths, which share the same current scene.
 There is no isolated Play/Stop session or paused simulation clock; gameplay edits can be saved at shutdown.</p>
 </div>
 <div class="paragraph">
-<p>After a normal loop exit, <code>saveAllToCache()</code> writes editor state, World, Scene, and Window,
-then calls <code>onSaveAll()</code>. Exceptions escaping initialization or the loop bypass this save call.</p>
+<p>After a normal loop exit, <code>saveAllToCache(CacheWriteMode::Automatic)</code> writes editor state
+(including scene tabs), World, every loaded scene, and Window, then calls <code>onSaveAll()</code>.
+Automatic mode keeps the failed-load protection, so shutdown never overwrites a file that failed
+to load; <strong>Save all</strong> in the editor uses explicit mode (see <a href="file-io.html" class="xref page">File I/O</a>).
+Exceptions escaping initialization or the loop bypass this save call.</p>
 </div>
 <div class="paragraph">
 <p>The example destroys EditorIntegration before Runtime and resets <code>gGameInstance</code> last.

@@ -10,8 +10,9 @@ Its “cache” includes persistent authored content.
 |===
 |Data |Path relative to the compiled project root
 |Scene |`data/scenes/<sanitized scene name>.json`
-|World |`data/world/<sanitized world name>.json`
+|World, including the start scene |`data/world/<sanitized world name>.json`
 |Window |`data/cache/RootWindow.json`
+|Editor scene tabs |`data/cache/SceneTabs.json`
 |Input managers |`data/Inputs/<manager hash>.json`
 |Editor objects |Object-specific directories beneath `data/`
 |ImGui layout |`data/cache/windows.ini`
@@ -29,13 +30,20 @@ Paths derive from `NEXIUM_PROJECT_DIR` compiled into Foundation.
 Exceptions are logged and mark the path as a failed read.
 `tryRead()` returns whether a file existed and reading was attempted, not whether it succeeded.
 
-A failed read blocks CacheSystem writes to that path until a successful read or `clearCache()`.
+A failed read blocks *automatic* CacheSystem writes to that path until a successful read,
+a successful explicit write, or `clearCache()`.
+`CacheWriteMode::Automatic` is the default and is used for shutdown saves.
+`CacheWriteMode::Explicit` is used by *Save all* (menu and shortcut). It writes anyway and
+clears the failed-read mark, which is how a user recovers a file they have fixed in the editor.
 This guard is specific to CacheSystem; the asset readers use separate error handling.
 Optional reflected-field errors can be logged without rejecting the document.
 
 Scene validates and reconstructs incoming roots before replacing existing ones.
 Malformed records preserve the old roots, but resource/initialization side effects are not rolled back.
-See xref:gameplay:scenes.adoc[Scene persistence] for the saved format.
+`SceneManager` adds a stricter rule on top of CacheSystem: a scene writes, moves, or deletes only
+the file it loaded or wrote itself. A scene file that failed to import is skipped and never touched,
+even by an explicit save.
+See xref:gameplay:scenes.adoc[Scenes] for the saved format and import rules.
 
 == Writes
 
@@ -44,13 +52,15 @@ temporary file, write/flush/close, then replace the destination.
 A failed replacement preserves the old destination and removes the owned temporary file.
 There is no multi-document transaction or cross-platform durable-sync guarantee.
 
-CacheSystem write calls return no success value. Filesystem replacement errors are logged;
-serialization errors can escape before replacement. Editor save notifications therefore do not prove success.
+`CacheSystem::write()` returns `false` when a write is blocked, its directory cannot be created,
+or replacement fails; each case is logged. Serialization errors can still escape before replacement.
+`SceneManager::writeToCache()` reports whether every scene was saved, but
+`GameInstance::saveAllToCache()` ignores these results, so editor save notifications still do not prove success.
 
 `BaseAsset` updates existing JSON through `ioFieldsUpdate()`.
 The generic `DataStream::field()` output assignment is disabled; use the implemented serializers,
 not that helper, when persisting new data.
 
 Implementation: `ResourceManagement/{DataStream,AtomicFile}.{h,cpp}` in NxFundamental.
-`AtomicFileTests.cpp` covers replacement and failed-load protection; `ScenePersistenceTests.cpp`
-covers scene reconstruction and rejected documents.
+`AtomicFileTests.cpp` covers replacement, failed-load protection, and explicit-save recovery;
+`ScenePersistenceTests.cpp` covers scene reconstruction, rejected documents, skipped files, and file ownership.

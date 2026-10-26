@@ -254,12 +254,16 @@ Its “cache” includes persistent authored content.</p>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>data/scenes/&lt;sanitized scene name&gt;.json</code></p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">World</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">World, including the start scene</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>data/world/&lt;sanitized world name&gt;.json</code></p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Window</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>data/cache/RootWindow.json</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Editor scene tabs</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data/cache/SceneTabs.json</code></p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Input managers</p></td>
@@ -296,14 +300,21 @@ Exceptions are logged and mark the path as a failed read.
 <code>tryRead()</code> returns whether a file existed and reading was attempted, not whether it succeeded.</p>
 </div>
 <div class="paragraph">
-<p>A failed read blocks CacheSystem writes to that path until a successful read or <code>clearCache()</code>.
+<p>A failed read blocks <strong>automatic</strong> CacheSystem writes to that path until a successful read,
+a successful explicit write, or <code>clearCache()</code>.
+<code>CacheWriteMode::Automatic</code> is the default and is used for shutdown saves.
+<code>CacheWriteMode::Explicit</code> is used by <strong>Save all</strong> (menu and shortcut). It writes anyway and
+clears the failed-read mark, which is how a user recovers a file they have fixed in the editor.
 This guard is specific to CacheSystem; the asset readers use separate error handling.
 Optional reflected-field errors can be logged without rejecting the document.</p>
 </div>
 <div class="paragraph">
 <p>Scene validates and reconstructs incoming roots before replacing existing ones.
 Malformed records preserve the old roots, but resource/initialization side effects are not rolled back.
-See <a href="../gameplay/scenes.html" class="xref page">Scene persistence</a> for the saved format.</p>
+<code>SceneManager</code> adds a stricter rule on top of CacheSystem: a scene writes, moves, or deletes only
+the file it loaded or wrote itself. A scene file that failed to import is skipped and never touched,
+even by an explicit save.
+See <a href="../gameplay/scenes.html" class="xref page">Scenes</a> for the saved format and import rules.</p>
 </div>
 </div>
 </div>
@@ -317,8 +328,10 @@ A failed replacement preserves the old destination and removes the owned tempora
 There is no multi-document transaction or cross-platform durable-sync guarantee.</p>
 </div>
 <div class="paragraph">
-<p>CacheSystem write calls return no success value. Filesystem replacement errors are logged;
-serialization errors can escape before replacement. Editor save notifications therefore do not prove success.</p>
+<p><code>CacheSystem::write()</code> returns <code>false</code> when a write is blocked, its directory cannot be created,
+or replacement fails; each case is logged. Serialization errors can still escape before replacement.
+<code>SceneManager::writeToCache()</code> reports whether every scene was saved, but
+<code>GameInstance::saveAllToCache()</code> ignores these results, so editor save notifications still do not prove success.</p>
 </div>
 <div class="paragraph">
 <p><code>BaseAsset</code> updates existing JSON through <code>ioFieldsUpdate()</code>.
@@ -327,8 +340,8 @@ not that helper, when persisting new data.</p>
 </div>
 <div class="paragraph">
 <p>Implementation: <code>ResourceManagement/{DataStream,AtomicFile}.{h,cpp}</code> in NxFundamental.
-<code>AtomicFileTests.cpp</code> covers replacement and failed-load protection; <code>ScenePersistenceTests.cpp</code>
-covers scene reconstruction and rejected documents.</p>
+<code>AtomicFileTests.cpp</code> covers replacement, failed-load protection, and explicit-save recovery;
+<code>ScenePersistenceTests.cpp</code> covers scene reconstruction, rejected documents, skipped files, and file ownership.</p>
 </div>
 </div>
 </div>

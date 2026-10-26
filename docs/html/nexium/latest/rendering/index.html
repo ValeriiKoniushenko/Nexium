@@ -276,11 +276,11 @@ and a region of a texture atlas. Animation changes that region rather than rebui
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Editor viewport</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Scene rendered into a color texture displayed by ImGui.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The current scene rendered into a color texture displayed by ImGui.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">GameOnly view</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The same Scene rendered into the window&#8217;s framebuffer.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The same current scene rendered into the window&#8217;s framebuffer.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Text</p></td>
@@ -301,7 +301,7 @@ through component fields, textures, shader uniforms, and draw settings.</p>
 <h2 id="_diagnose_a_blank_view"><a class="anchor" href="#_diagnose_a_blank_view"></a>Diagnose a blank view</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Check the active camera first, then shader errors in Logs, then the object&#8217;s atlas/texture selection.
+<p>Check the current scene&#8217;s camera first, then shader errors in Logs, then the object&#8217;s atlas/texture selection.
 An unfocused editor viewport stops scene ticks but can still render.
 A missing shader, invalid vertex layout, and failed image load are separate failures;
 <a href="materials/shader-system.html#shader-troubleshooting" class="xref page">Shader diagnostics</a> narrows the first two.</p>

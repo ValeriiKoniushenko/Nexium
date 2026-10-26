@@ -26,9 +26,10 @@ xref:build:ci-cd.adoc[CI coverage]. No Release, 3D, or benchmark job is configur
 
 == Object model and ownership
 
-GameInstance owns Scene and World as siblings, alongside assets and UI.
+GameInstance owns World and SceneManager as siblings, alongside assets and UI.
 Runtime borrows GameInstance; EditorIntegration borrows Runtime and owns editor tools.
-World carries time, lighting, framework state, and an observed camera.
+World carries time, lighting, framework state, the start-scene name, and an observed camera.
+SceneManager owns every scene, opens and closes them, and activates the current one in World.
 Scene owns root component trees and handles persistence and drawing.
 
 The model is suitable for a small authoring engine.
@@ -45,7 +46,7 @@ Component macros perform self-registration through static initializers.
 The serialized “Blueprint” assets are component templates.
 
 Keep scene versioning, reconstruction before root replacement, atomic saves,
-and failed-load autosave protection.
+failed-load autosave protection, and the rule that a scene touches only a file it loaded or wrote.
 Define generic instance overrides, asset moves/references, stable object identity,
 and caller-visible save errors before relying on the editor for larger authored games.
 
@@ -54,7 +55,8 @@ and caller-visible save errors before relying on the editor for larger authored 
 Prioritize these behaviors within the existing modules:
 
 . Decouple gameplay ticking from camera presence; define simulation state and time.
-. Give world/scene replacement explicit camera, selection, and subscription invalidation.
+. Finish world/scene replacement invalidation: switching scenes already restores each scene's
+  camera and clears selection, but component subscriptions are not invalidated.
 . Introduce editor commands, undo/redo, dirty documents, and accurate save results.
 . Create a disposable Play-session copy from authored state and destroy it on Stop.
 . Add an asset-reference/move policy and portable content identifiers.

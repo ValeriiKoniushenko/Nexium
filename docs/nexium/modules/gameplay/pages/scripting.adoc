@@ -9,6 +9,9 @@ and saving. `GameInstance::onTick()` runs after drawing and requires an active c
 See xref:engine_architecture:lifecycle.adoc[Application Lifecycle] before choosing that hook
 for camera-independent simulation.
 
+To change scenes from gameplay code, use `GetSceneManager()->requestCurrentScene()` and the other
+`request*` calls; the immediate calls are refused during a tick. See xref:scenes.adoc[Scenes].
+
 The hooks are declared in `NxWorld/Framework/GameInstance.h`.
 `game-example/TemplateGameInstance` currently inherits their default behavior without overrides,
 so all example behavior lives in components instead.

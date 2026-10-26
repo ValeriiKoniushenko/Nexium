@@ -322,9 +322,10 @@ the colour is exposed as a parameter.</p>
 <h2 id="_current_usage"><a class="anchor" href="#_current_usage"></a>Current usage</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p><code>Scene</code> owns a single <code>NX::Face</code> member. <code>Scene::initialize()</code> points it at
-<code>data/internal/fonts/Inter/Inter_18pt-Black.ttf</code>, generates face 0 at 48 px, and passes the
-<code>text</code> program. <code>Scene::directDraw()</code> then draws a fixed <code>"Hello world"</code> at the origin every
+<p>Each <code>Scene</code> owns a single <code>NX::Face</code> member. On that scene&#8217;s first <code>Scene::directDraw()</code>
+it points the face at <code>data/internal/fonts/Inter/Inter_18pt-Black.ttf</code>, generates face 0 at
+48 px, and passes the <code>text</code> program. Deferring this to the first draw avoids depending on
+shaders during scene initialization. The draw then renders a fixed <code>"Hello world"</code> at the origin every
 frame. There is no text component, no scene-authored text, and no editor property for it;
 treat this as scaffolding rather than a supported feature.</p>
 </div>

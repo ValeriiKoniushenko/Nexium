@@ -11,13 +11,14 @@ image::main-preview.png[Engine editor,width=100%]
 * OpenGL rendering, orthographic/perspective cameras, grids, textures, and optional meshes.
 * Reflected component trees through JustReflectMe.
 * Event-routed input with contexts, key chords, and serialized bindings.
-* ImGui docking, scene tree, property adapters, asset browser, viewport picking, and gizmos.
+* Multiple scenes with a start scene, per-scene cameras, and deferred scene switching from gameplay.
+* ImGui docking, scene tabs, scene tree, property adapters, asset browser, viewport picking, and gizmos.
 * FreeType glyph rendering, currently scaffolding rather than an authoring feature.
 * CMake libraries organized into Foundation, Platform, RawBackend, Fundamental, Subsystems, World, Runtime, and Editor.
 
 The example application is editor-enabled.
 Game-only building/delivery remains later work.
-Render-mode switching currently shares the authored scene; it is not an isolated Play/Stop workflow.
+Render-mode switching currently shares the authored current scene; it is not an isolated Play/Stop workflow.
 
 == Documentation
 

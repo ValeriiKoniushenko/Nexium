@@ -9,8 +9,8 @@ editor only through the `ApplicationIntegration` interface.
 [cols="2,4",options="header"]
 |===
 |Object |Role
-|`EditorIntegration` |Implements `ApplicationIntegration`. Borrows Runtime, owns the three objects below, and attaches/detaches itself from GameInstance.
-|`GameEditor` |Owns the ImGui setup, the window list, toast notifications, the polled input managers, and the viewport render target.
+|`EditorIntegration` |Implements `ApplicationIntegration`. Borrows Runtime, owns the three objects below plus `SceneTabsCache`, and attaches/detaches itself from GameInstance.
+|`GameEditor` |Owns the ImGui setup, the window list, toast notifications, the polled input managers, and the scene render target (`sceneRenderTarget`).
 |`ObjectSelectorManager` |Holds strong references to selected components, keyed by address.
 |`ObjectPickerAggregator` |Chooses a picking strategy and dispatches pick requests.
 |===
@@ -22,10 +22,12 @@ without being handed them.
 `EditorIntegration` maps the Runtime hooks onto `GameEditor`: `tick()` draws the windows,
 `updateInput()` updates the polled keyboard manager, `updateSceneInteraction()` services
 pick requests, `isViewportFocused()` forwards to the `GameViewportEWC` window,
-`beforeSceneDraw()`/`afterSceneDraw()` bind and unbind the viewport target through
+`beforeSceneDraw()`/`afterSceneDraw()` bind and unbind the scene target through
 `RenderTargetToTexture::callMePreDraw()` / `callMeAfterDraw()`, and
-`readFromCache()`/`writeToCache()` persist editor state alongside the ImGui layout in
-`data/cache/windows.ini`.
+`readFromCache()`/`writeToCache()` persist editor state, the open scene tabs
+(`data/cache/SceneTabs.json`), and the ImGui layout in `data/cache/windows.ini`.
+The integration also subscribes to `SceneManager::onCurrentSceneChanged` and clears the
+selection whenever the current scene changes.
 
 == Windows are discovered, not listed
 
@@ -41,9 +43,28 @@ over the window title: `getWindow<T>()`, `showWindow<T>()`, `tryToOpenWindow<T>(
 
 Current windows include the root dock, menu bar, scene tree, object properties, assets
 explorer, game viewport, logs, world settings, editor settings, a shader inspector, an image
-viewer, asset/ECS search and blueprint-creation modals, and the asset editors under
+viewer, asset/ECS search, blueprint-creation and scene-delete modals, and the asset editors under
 `Windows/Editors` (texture, text, input bindings). `Windows/ECSAdapters` holds the per-component
-property adapters, and `GuiComponents` holds the reusable ImGui widgets.
+property adapters, and `GuiComponents` holds the reusable ImGui widgets, including
+`SearchableComboBox`, a combo with a filter box and optional per-row actions.
+
+== Scene windows
+
+`Windows/Scenes/` holds the scene-facing UI; scene behavior itself lives in `SceneManager`
+(see xref:gameplay:scenes.adoc[Scenes]).
+
+[cols="2,4",options="header"]
+|===
+|Piece |Role
+|`SceneTabs` |Drawn at the top of the game viewport: a *Scenes* picker over every loaded scene, a per-row delete button, a *New* button, and a tab per open scene.
+|`SceneTabsCache` |Saves and restores the open tabs and selected tab. Editor-only: the game starts from `World::startScene` and never reads it.
+|`SceneDeleteConfirmation` |Modal that asks before `removeScene()`. It closes itself if the scene disappears meanwhile and disables *Delete* for the last scene.
+|`SceneTreeWindowEWC` |Shows the current scene's tree. It renames the scene on commit, toggles the start scene, and defers delete/duplicate until the tree traversal ends.
+|===
+
+The game viewport separates its window from its *canvas*, the area below the scene tabs.
+`getCanvasPosition()` and `getCanvasSize()` describe that area. When it changes size,
+`onCanvasSizeChanged` resizes `sceneRenderTarget`, and picking maps the mouse into the canvas.
 
 == Selection, picking, and gizmos
 
@@ -59,8 +80,9 @@ the gizmo is not treated as a pick.
 `SceneGizmo::ApplyTransform()` converts the manipulated world matrix back into the object's
 local transform. The gizmo is checked by `tests/Editor/SceneGizmoTests.cpp`.
 
-Selection holds strong references, so a selected object outlives removal from the scene, and
-scene replacement does not clear selection. See xref:memory.adoc[Memory and Ownership].
+Selection holds strong references, so a selected object outlives removal from the scene.
+Changing the current scene clears selection; removing an object does not.
+See xref:memory.adoc[Memory and Ownership].
 
 == Known gaps
 

@@ -252,8 +252,8 @@ Every clear uses colour + depth + stencil bits.</p>
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Poll events, route input, tick Scene.</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Poll events, route input; tick Scene only when the viewport is focused.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Poll events, route input, tick the current scene, set the GL viewport to the window&#8217;s framebuffer size.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Poll events, route input; tick the current scene only when the viewport is focused.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">2</p></td>
@@ -262,8 +262,8 @@ Every clear uses colour + depth + stencil bits.</p>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">3</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Use the active camera to draw Scene into the window.</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Process picking, bind and clear the viewport target, then draw Scene.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Use the active camera to draw the current scene into the window.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Process picking, bind and clear the viewport target, then draw the current scene.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">4</p></td>
@@ -272,13 +272,21 @@ Every clear uses colour + depth + stencil bits.</p>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">5</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Apply queued scene changes.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Same.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">6</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Swap buffers and record elapsed time.</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Same.</p></td>
 </tr>
 </tbody>
 </table>
 <div class="paragraph">
-<p>Steps 3–4 require an active camera. Scene tick and drawing are therefore separate gates.
+<p>Steps 3–4 require an active camera, which is the current scene&#8217;s. Scene tick and drawing are
+therefore separate gates. When the editor&#8217;s scene loses its camera, Runtime clears the viewport
+target once so it does not keep showing the last frame. A scene switch queued during the frame
+takes effect at step 5, so the next frame ticks and draws the new scene.
 The editor submits ImGui before refreshing the viewport texture, so the displayed image can contain
 the previous scene render. There is no independent simulation/render clock.</p>
 </div>
@@ -289,13 +297,14 @@ the previous scene render. There is no independent simulation/render clock.</p>
 <div class="sectionbody">
 <div class="paragraph">
 <p>Runtime passes the <code>skybox</code> and <code>grid</code> programs into <code>Scene::directDraw(skyboxShader, gridShader)</code>.
-The method returns immediately when there is no World or no active camera, and otherwise:</p>
+The method returns immediately when the scene is not active in a World or that World has no
+camera, and otherwise:</p>
 </div>
 <div class="olist arabic">
 <ol class="arabic">
 <li>
-<p>Draws a hard-coded <code>"Hello world"</code> string through the scene&#8217;s own <code>NX::Face</code>. This is a
-development leftover in the normal draw path, not a feature.</p>
+<p>Draws a hard-coded <code>"Hello world"</code> string through the scene&#8217;s own <code>NX::Face</code>, generating the
+glyphs on the first draw. This is a development leftover in the normal draw path, not a feature.</p>
 </li>
 <li>
 <p>Draws the grid in Editor mode.</p>

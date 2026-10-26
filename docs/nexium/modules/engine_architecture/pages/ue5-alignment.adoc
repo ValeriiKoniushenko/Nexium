@@ -40,7 +40,7 @@ Names in this table describe responsibilities; they are not prescribed new type 
 |Game session |GameInstance, game-specific persistent state, an optional active gameplay world.
 |World |Scene object trees, simulation time/state, active game camera and scene services.
 |Play session |A runtime world reconstructed/cloned from the authored document, with reset transient state.
-|Project context |Content roots, source/import settings, scene selection, game-specific startup configuration.
+|Project context |Content roots, source/import settings, game-specific startup configuration. The start scene currently lives in `World::startScene`.
 |===
 
 Application-wide resources can be shared.
@@ -66,7 +66,8 @@ Nexium can use a small command history; it does not need UE's object transaction
 
 Scene replacement and Stop must invalidate/remap selection and cameras.
 Object removal should clear scene membership even when editor references keep the object alive.
-Define whether gameplay can add/remove objects during ticks and, if allowed, apply mutations at a controlled point.
+Scene switches, closes, and removals requested during a tick already apply at the end of the frame
+(see xref:gameplay:scenes.adoc[Scenes]); define the same for adding/removing objects during ticks.
 
 == Acceptance criteria
 

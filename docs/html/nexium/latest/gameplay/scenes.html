@@ -228,10 +228,262 @@
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p><code>NX::Scene</code> owns root <code>SceneObject</code> references; each root owns its component tree.
-Adding a root assigns a usable unique name, initializes it, fires <code>onObjectAdded</code>,
-and calls <code>onAddedToScene()</code>.
-<code>GameInstance</code> listens for additions and searches their descendants for a camera when none is active.</p>
+<p>A project holds several scenes. <code>NX::SceneManager</code> (the <code>GameInstance::scenes</code> member, also
+reachable through <code>GetSceneManager()</code>) owns all of them and decides which ones are open and which
+one is current. <code>GetGameScene()</code> returns the current scene.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_scene_world_and_scenemanager"><a class="anchor" href="#_scene_world_and_scenemanager"></a>Scene, World, and SceneManager</h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 28.5714%;">
+<col style="width: 71.4286%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Object</th>
+<th class="tableblock halign-left valign-top">Role</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Scene</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Owns root <code>SceneObject</code> references, grid, and skybox state; ticks and draws its roots; reads/writes one scene file.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>SceneManager</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Owns every loaded scene, the list of open scenes, the current scene, and queued scene changes.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>World</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Time, lighting, framework state, <code>startScene</code>, and <code>currentCamera</code> — a borrowed pointer to the current scene&#8217;s camera.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>World and SceneManager are sibling members of GameInstance; World does not own scenes.
+GameInstance constructs the manager with <code>&amp;world</code>, and the manager is the only object that
+connects a scene to that World. A manager built without a World (as in tests) still opens and
+switches scenes, but no scene has a camera to draw with.</p>
+</div>
+<div class="paragraph">
+<p>The manager always holds at least one scene and one open scene. Its constructor creates a
+<code>Default</code> scene and makes it current, so the current scene is never null.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_open_current_and_closed_scenes"><a class="anchor" href="#_open_current_and_closed_scenes"></a>Open, current, and closed scenes</h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 28.5714%;">
+<col style="width: 71.4286%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">State</th>
+<th class="tableblock halign-left valign-top">What it means</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Loaded</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Owned by the manager and saved with it, but neither initialized nor ticked.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Open</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Initialized: its roots ran <code>initialize()</code>. In the editor, an open scene is a tab.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Current</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">One open scene that is ticked, drawn, and <strong>active</strong> in World.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>Opening a scene initializes it; closing deinitializes it. Roots added to a scene that is not
+open stay uninitialized, and an already initialized root is deinitialized on addition.</p>
+</div>
+<div class="paragraph">
+<p>Making a scene current deactivates the previous one and activates the new one:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Deactivation</strong> remembers World&#8217;s current camera as that scene&#8217;s main camera, then clears
+<code>World::currentCamera</code>.</p>
+</li>
+<li>
+<p><strong>Activation</strong> restores the remembered main camera if it still belongs to one of the scene&#8217;s
+roots. Otherwise it picks the first <code>BaseCamera</code> found in a depth-first walk of the roots.</p>
+</li>
+<li>
+<p>While a scene is active and World has no camera, adding a root also searches that root&#8217;s
+descendants for one.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><code>Scene::setMainCamera()</code> chooses the camera explicitly, and the Scene tree&#8217;s
+<strong>Set as a main camera</strong> context action calls it. It rejects a camera that is not in the scene.
+A scene without any camera leaves <code>World::currentCamera</code> null; ticking still runs, but drawing
+and <code>GameInstance::onTick()</code> are skipped (see <a href="../engine_architecture/lifecycle.html" class="xref page">Application Lifecycle</a>).</p>
+</div>
+<div class="paragraph">
+<p><code>onCurrentSceneChanged</code> fires after the current scene changes, and before a removed previous
+scene is destroyed. The editor uses it to clear selection and reset the Scene tree.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_managing_scenes"><a class="anchor" href="#_managing_scenes"></a>Managing scenes</h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 28.5714%;">
+<col style="width: 71.4286%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Call</th>
+<th class="tableblock halign-left valign-top">Behavior</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>createNewScene()</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Adds <code>Scene_&lt;N&gt;</code> with the first free number, skipping loaded names and existing scene files, and writes its file at once. The new scene is not opened.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>setCurrentScene(scene or name)</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Opens the scene if needed, then makes it current.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>closeScene(scene)</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Deinitializes an open scene. Closing the current one selects the next open scene, or the previous one if it was last. The last open scene cannot be closed.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>removeScene(scene or name)</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Deletes the scene and its file. If it was current, the adjacent open scene becomes current, or the next loaded scene when no other is open. The last scene cannot be removed, and a removed start scene clears <code>World::startScene</code>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>renameScene(scene, name)</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Rejects empty, duplicate, or file-colliding names; moves the scene file and keeps <code>World::startScene</code> pointing at the renamed scene.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>restoreOpenedScenes(open, current)</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Replaces the open set at once; scenes no longer open are deinitialized.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>Removing a scene ends its membership in the manager but not necessarily its lifetime:
+another strong reference keeps the object alive until it is released, already deinitialized.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_changing_scenes_from_gameplay"><a class="anchor" href="#_changing_scenes_from_gameplay"></a>Changing scenes from gameplay</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The immediate calls above can deinitialize or destroy the scene that is currently running.
+While <code>tickCurrentScene()</code> is on the stack they are refused: they log an error and return
+<code>false</code>. Gameplay code queues the change instead:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>requestCurrentScene(scene or name)</code></p>
+</li>
+<li>
+<p><code>requestCloseScene(scene)</code></p>
+</li>
+<li>
+<p><code>requestRemoveScene(scene)</code></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Runtime calls <code>applyPendingChanges()</code> once per frame, after ticking and drawing. Requests apply
+in order; each holds a strong reference, so the target scene survives until then. A request
+whose scene was removed in the meantime, or whose name is unknown, is skipped with a warning.
+Requests made while the queue is being applied, for example from <code>onCurrentSceneChanged</code>,
+wait for the next frame.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">NX::SceneManager manager;
+auto* menu = manager.getCurrentScene();
+auto* game = &amp;manager.createNewScene();
+bool immediateResult = true;
+addTickAction(*menu)-&gt;action = [&amp;]
+{
+    immediateResult = manager.setCurrentScene(game) || manager.closeScene(menu);
+    manager.requestCurrentScene(game-&gt;getSceneName());
+    manager.requestCloseScene(menu);
+};
+
+manager.tickCurrentScene(0.f);
+EXPECT_FALSE(immediateResult);
+EXPECT_EQ(manager.getCurrentScene(), menu);
+EXPECT_TRUE(menu-&gt;isInitialized());
+
+manager.applyPendingChanges();
+EXPECT_EQ(manager.getCurrentScene(), game);
+EXPECT_FALSE(manager.isSceneOpen(menu));
+EXPECT_FALSE(menu-&gt;isInitialized());
+EXPECT_TRUE(manager.hasScene(menu));</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>These requests cover scene-level changes only. Adding or removing objects inside a scene
+during a tick still has no deferred path.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_startup_scene_and_editor_tabs"><a class="anchor" href="#_startup_scene_and_editor_tabs"></a>Startup scene and editor tabs</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><code>World::startScene</code> names the scene the game starts with. It is saved with World in
+<code>data/world/&lt;world name&gt;.json</code>. When it is empty or names no loaded scene, the game starts with
+the first scene in file-name order, and a warning names the unknown scene.</p>
+</div>
+<div class="paragraph">
+<p>At startup, GameInstance reads World, imports every scene file, then calls <code>openStartScene()</code>,
+which opens <strong>only</strong> that scene. The game never reads editor state.</p>
+</div>
+<div class="paragraph">
+<p>The editor then restores its own tabs on top through <code>SceneTabsCache</code>, saved as
+<code>data/cache/SceneTabs.json</code> (format version 1, the open scene names, and the selected one).
+Unknown names are dropped; when the selected name is unknown, the first restored tab, or else
+the first scene, is selected. A malformed tabs file keeps the session that <code>openStartScene()</code>
+produced.</p>
+</div>
+<div class="paragraph">
+<p>In the editor, the Viewport window carries the scene toolbar and tabs:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The <strong>Scenes</strong> picker lists every loaded scene with a filter box. Choosing one opens it and makes it current.
+Each row has a trash button, disabled when only one scene exists, which opens a delete confirmation.</p>
+</li>
+<li>
+<p><strong>New</strong> creates a scene and makes it current.</p>
+</li>
+<li>
+<p>Clicking a tab makes it current; its close button closes it. The close button is hidden while only one tab is open.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The Scene tree window shows the current scene. Its <strong>Name</strong> field renames the scene when editing
+finishes, and its <strong>Start scene</strong> checkbox sets or clears <code>World::startScene</code>.</p>
 </div>
 </div>
 </div>
@@ -239,7 +491,9 @@ and calls <code>onAddedToScene()</code>.
 <h2 id="_saved_data"><a class="anchor" href="#_saved_data"></a>Saved data</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Scene format version 1 stores each root&#8217;s name, transform, type, asset reference, and type-specific data.</p>
+<p>Each scene is one file, <code>data/scenes/&lt;sanitized scene name&gt;.json</code>. Format version 1 stores the
+scene name (<code>_sceneName</code>), <code>formatVersion</code>, and a <code>sceneObjects</code> array with each root&#8217;s name,
+transform, type, asset reference, and type-specific data.</p>
 </div>
 <div class="ulist">
 <ul>
@@ -254,17 +508,58 @@ and calls <code>onAddedToScene()</code>.
 <div class="paragraph">
 <p>A template instance therefore does not save every edited component field automatically.
 General property overrides are not implemented. Unversioned asset-backed documents remain readable;
-unsupported versions are rejected.</p>
+unsupported versions, a missing <code>sceneObjects</code> array, and an empty scene name are rejected.</p>
 </div>
 <div class="paragraph">
-<p>Loading validates and reconstructs all incoming roots before replacing existing roots.
-An empty valid document clears the scene; malformed records or unresolved references preserve the old roots.
-After replacement, roots initialize and emit addition events. This is not a rollback mechanism for
+<p><code>Scene::deserialize()</code> validates and reconstructs all incoming roots before replacing existing
+roots. An empty valid document clears the scene; malformed records, unresolved references,
+mismatched inline types, and empty or duplicate root names preserve the old roots. After
+replacement, roots initialize if the scene is open and emit addition events; an active scene is
+reactivated, so it selects a camera from the new roots. This is not a rollback mechanism for
 resource loading or initialization side effects.</p>
 </div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_import_and_save_safety"><a class="anchor" href="#_import_and_save_safety"></a>Import and save safety</h2>
+<div class="sectionbody">
 <div class="paragraph">
-<p>Scene files live under <code>data/scenes/</code>; see <a href="../engine_architecture/file-io.html" class="xref page">File I/O</a>.
-Implementation: <code>NxWorld/Scene/Scene.cpp</code>; checks: <code>tests/Runtime/ScenePersistenceTests.cpp</code>.</p>
+<p><code>SceneManager::importScenes()</code> reads every <code>.json</code> file in <code>data/scenes/</code>, sorted by path.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>A broken file is logged and skipped; the other scenes still load.</p>
+</li>
+<li>
+<p>When two files declare the same scene name, the file whose name matches the scene&#8217;s save path wins
+and the other is skipped.</p>
+</li>
+<li>
+<p>When no file loads, the existing scenes are kept.</p>
+</li>
+<li>
+<p>Afterwards the first scene is opened and current; <code>openStartScene()</code> then applies <code>World::startScene</code>.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><code>hasImportError()</code> and <code>getSkippedSceneFiles()</code> report what was skipped. Skipped files are never
+modified: a scene owns only the file it was loaded from or wrote itself. Saving, renaming, or
+creating a scene never overwrites a file it does not own, and removing a scene that does not own
+its file leaves that file on disk. Such a save is refused with an error that names the blocking
+file; fix or remove that file to save the scene.</p>
+</div>
+<div class="paragraph">
+<p><code>writeToCache(mode)</code> writes every loaded scene, including closed ones, and returns whether all
+writes succeeded. See <a href="../engine_architecture/file-io.html" class="xref page">File I/O</a> for the automatic/explicit
+write modes and failed-load protection.</p>
+</div>
+<div class="paragraph">
+<p>Implementation: <code>NxWorld/Scene/{Scene,SceneManager,SceneManagerPersistence}.cpp</code>,
+<code>Editor/Windows/Scenes/</code>. Checks: <code>tests/Runtime/SceneManagerTests.cpp</code>,
+<code>tests/Runtime/ScenePersistenceTests.cpp</code>, <code>tests/Editor/SceneTreeWindowTests.cpp</code>, and
+<code>tests/Editor/SceneDeleteConfirmationTests.cpp</code>.</p>
 </div>
 </div>
 </div>

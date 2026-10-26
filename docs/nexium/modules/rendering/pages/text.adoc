@@ -54,9 +54,10 @@ the colour is exposed as a parameter.
 
 == Current usage
 
-`Scene` owns a single `NX::Face` member. `Scene::initialize()` points it at
-`data/internal/fonts/Inter/Inter_18pt-Black.ttf`, generates face 0 at 48 px, and passes the
-`text` program. `Scene::directDraw()` then draws a fixed `"Hello world"` at the origin every
+Each `Scene` owns a single `NX::Face` member. On that scene's first `Scene::directDraw()`
+it points the face at `data/internal/fonts/Inter/Inter_18pt-Black.ttf`, generates face 0 at
+48 px, and passes the `text` program. Deferring this to the first draw avoids depending on
+shaders during scene initialization. The draw then renders a fixed `"Hello world"` at the origin every
 frame. There is no text component, no scene-authored text, and no editor property for it;
 treat this as scaffolding rather than a supported feature.
 
