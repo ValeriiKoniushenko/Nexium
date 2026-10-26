@@ -13,7 +13,7 @@
 #include "Editor/GuiComponents/HorizontalLayout.h"
 #include "Editor/GuiComponents/Label.h"
 #include "Editor/Windows/BaseWindow.h"
-#include "NxWorld/Scene/Scene/Scene.h"
+#include "NxWorld/Scene/Scene.h"
 
 namespace NX
 {

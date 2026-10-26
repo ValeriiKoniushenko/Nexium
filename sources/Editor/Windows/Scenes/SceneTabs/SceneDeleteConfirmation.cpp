@@ -10,7 +10,7 @@
 #include "SceneDeleteConfirmation.h"
 
 #include "NxWorld/Framework/GameInstanceAccess.h"
-#include "NxWorld/Scene/Scene/SceneManager.h"
+#include "NxWorld/Scene/SceneManager.h"
 
 #include <algorithm>
 
@@ -98,9 +98,7 @@ namespace NX
         BaseModalPopUp::onDraw();
         auto& scenes = *GetSceneManager();
         auto pendingScene = _pendingScene.tryLoad();
-        if (!pendingScene
-            || !std::ranges::any_of(scenes.getScenes(), [&pendingScene](const auto& scene)
-                                    { return scene.get() == pendingScene.get(); }))
+        if (!scenes.hasScene(pendingScene.get()))
         {
             closeConfirmation();
             return;

@@ -40,11 +40,11 @@ target_sources(Nexium_World_Base PRIVATE
     Scene/SceneObjects/Grid/Grid.cpp
     Scene/SceneObjects/Rectangle/Rectangle.cpp
     Scene/SceneObjects/Rectangle/RectangleAnimated.cpp
-    Scene/Scene/Scene.cpp
+    Scene/Scene.cpp
     Scene/SceneObjects/SceneObject.cpp
     Scene/SceneObjects/Spectator/Spectator.cpp
-    Scene/Scene/SceneManager.cpp
-    Scene/Scene/SceneManagerPersistence.cpp
+    Scene/SceneManager.cpp
+    Scene/SceneManagerPersistence.cpp
 )
 nexium_add_public_headers(Nexium_World_Base
     NxWorld/Animations/FrameByFrame/FrameByFrameAnimator.h
@@ -77,14 +77,14 @@ nexium_add_public_headers(Nexium_World_Base
     NxWorld/Scene/SceneObjects/Rectangle/Rectangle.generated.h
     NxWorld/Scene/SceneObjects/Rectangle/RectangleAnimated.h
     NxWorld/Scene/SceneObjects/Rectangle/RectangleAnimated.generated.h
-    NxWorld/Scene/Scene/Scene.h
-    NxWorld/Scene/Scene/Scene.generated.h
+    NxWorld/Scene/Scene.h
+    NxWorld/Scene/Scene.generated.h
     NxWorld/Scene/SceneObjects/SceneObject.h
     NxWorld/Scene/SceneObjects/SceneObject.generated.h
     NxWorld/Scene/SceneObjects/Spectator/Spectator.h
-    NxWorld/Scene/Scene/SceneManager.h
-    NxWorld/Scene/Scene/SceneTabsState.h
-    NxWorld/Scene/Scene/SceneTabsState.generated.h
+    NxWorld/Scene/SceneManager.h
+    NxWorld/Scene/SceneTabsState.h
+    NxWorld/Scene/SceneTabsState.generated.h
     NxWorld/Scene/SceneObjects/Spectator/Spectator.generated.h
 )
 target_link_libraries(Nexium_World_Base

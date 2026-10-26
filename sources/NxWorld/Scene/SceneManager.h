@@ -36,6 +36,7 @@ namespace NX
         bool setCurrentScene(Scene* scene);
 
         bool closeScene(Scene* scene);
+        [[nodiscard]] bool hasScene(const Scene* scene) const;
         [[nodiscard]] bool isSceneOpen(const Scene* scene) const;
         [[nodiscard]] const std::vector<Scene*>& getOpenScenes() const noexcept
         {

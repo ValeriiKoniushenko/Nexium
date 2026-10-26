@@ -17,7 +17,7 @@
 #include "Editor/IconsFontAwesome.h"
 #include "Foundation/Debug/Latency.h"
 #include "ImGui/imgui_internal.h"
-#include "NxWorld/Scene/Scene/SceneManager.h"
+#include "NxWorld/Scene/SceneManager.h"
 #include "SceneDeleteConfirmation.h"
 
 #include <algorithm>

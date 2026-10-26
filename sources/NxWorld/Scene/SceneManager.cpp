@@ -101,9 +101,7 @@ namespace NX
         {
             return false;
         }
-        if (std::ranges::find_if(_scenes,
-                                 [scene](const auto& owned) { return owned.get() == scene; })
-            == _scenes.end())
+        if (!hasScene(scene))
         {
             return false;
         }
@@ -174,9 +172,7 @@ namespace NX
 
     bool SceneManager::setCurrentScene(Scene* scene)
     {
-        if (scene
-            && std::ranges::any_of(_scenes,
-                                   [scene](const auto& owned) { return owned.get() == scene; }))
+        if (hasScene(scene))
         {
             if (!isSceneOpen(scene))
             {
@@ -193,6 +189,13 @@ namespace NX
             return true;
         }
         return false;
+    }
+
+    bool SceneManager::hasScene(const Scene* scene) const
+    {
+        return scene
+               && std::ranges::any_of(_scenes,
+                                      [scene](const auto& owned) { return owned.get() == scene; });
     }
 
     bool SceneManager::isSceneOpen(const Scene* scene) const

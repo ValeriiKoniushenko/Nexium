@@ -20,7 +20,7 @@
 #include "NxFundamental/Utils/Stringifier.h"
 #include "NxWorld/Framework/GameInstanceAccess.h"
 #include "NxWorld/Framework/World.h"
-#include "NxWorld/Scene/Scene/Scene.h"
+#include "NxWorld/Scene/Scene.h"
 #include "NxWorld/Scene/SceneObjects/Spectator/Spectator.h"
 
 using namespace NX::Gui;

@@ -19,7 +19,7 @@
 #include "NxWorld/Entities/Actor.h"
 #include "NxWorld/Entities/Camera/Camera.h"
 #include "NxWorld/Framework/GameInstance.h"
-#include "NxWorld/Scene/Scene/Scene.h"
+#include "NxWorld/Scene/Scene.h"
 
 using namespace NX;
 

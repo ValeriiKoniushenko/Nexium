@@ -7,7 +7,7 @@
 //
 //     http://www.apache.org/licenses/LICENSE-2.0
 
-#include "NxWorld/Scene/Scene/SceneManager.h"
+#include "NxWorld/Scene/SceneManager.h"
 #include "Runtime/SceneFilesGuard.h"
 
 #include "gtest/gtest.h"
@@ -226,4 +226,18 @@ TEST_F(SceneManagerTests, ShutdownDeinitializesScenesRetainedElsewhere)
     EXPECT_FALSE(scene->isInitialized());
     EXPECT_FALSE(object->isInitialized());
     EXPECT_EQ(object->deinitializationCount, 1);
+}
+
+TEST_F(SceneManagerTests, HasSceneOnlyForOwnedScenes)
+{
+    NX::SceneManager manager;
+    auto* initial = manager.getCurrentScene();
+    const NX::Scene foreign;
+    EXPECT_TRUE(manager.hasScene(initial));
+    EXPECT_FALSE(manager.hasScene(nullptr));
+    EXPECT_FALSE(manager.hasScene(&foreign));
+    auto* added = &manager.createNewScene();
+    EXPECT_TRUE(manager.hasScene(added));
+    ASSERT_TRUE(manager.removeScene(added));
+    EXPECT_FALSE(manager.hasScene(added));
 }

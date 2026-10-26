@@ -11,7 +11,7 @@
 #include "NxFundamental/ResourceManagement/AtomicFile.h"
 #include "NxWorld/Entities/Camera/Camera.h"
 #include "NxWorld/Framework/GameInstance.h"
-#include "NxWorld/Scene/Scene/Scene.h"
+#include "NxWorld/Scene/Scene.h"
 #include "Runtime/SceneFilesGuard.h"
 
 #include "gtest/gtest.h"
