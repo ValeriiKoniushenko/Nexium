@@ -12,9 +12,11 @@
 #pragma once
 
 #include <memory>
+#include <string>
 
 namespace NX
 {
+    class Scene;
     class SceneManager;
 
     class SceneTabs final
@@ -25,6 +27,10 @@ namespace NX
 
         void initialize(SceneManager& scenes);
         void draw(SceneManager& scenes);
+
+        // The text shown on a scene's tab, shortened to fit. The start scene is marked with a
+        // prefix. It is display-only: saved tabs and scene files use the plain scene name.
+        [[nodiscard]] static std::string MakeTabName(const Scene& scene, bool isStartScene);
 
     private:
         void drawScenePicker(SceneManager& scenes);

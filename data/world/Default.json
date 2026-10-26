@@ -1,4 +1,4 @@
 {
-    "startScene": "MenuScene",
+    "startScene": "GameScene",
     "worldName": "Default"
 }

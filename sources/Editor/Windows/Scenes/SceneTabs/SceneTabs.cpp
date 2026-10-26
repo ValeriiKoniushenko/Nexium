@@ -35,18 +35,11 @@ namespace NX
 
     namespace
     {
-        StringAtom makeTabLabel(const Scene& scene)
+        StringAtom makeTabLabel(const Scene& scene, bool isStartScene)
         {
             constexpr float tabWidth = 150.f;
-            constexpr std::size_t maxNameLength = 22;
 
-            auto name = scene.getSceneName().toStdString();
-            if (name.size() > maxNameLength)
-            {
-                name.resize(maxNameLength - 3);
-                name += "...";
-            }
-
+            auto name = SceneTabs::MakeTabName(scene, isStartScene);
             while (ImGui::CalcTextSize(name.c_str()).x < tabWidth)
             {
                 name += ' ';
@@ -61,6 +54,19 @@ namespace NX
     }
 
     SceneTabs::~SceneTabs() = default;
+
+    std::string SceneTabs::MakeTabName(const Scene& scene, bool isStartScene)
+    {
+        constexpr std::size_t maxNameLength = 22;
+
+        auto name = scene.getSceneName().toStdString();
+        if (name.size() > maxNameLength)
+        {
+            name.resize(maxNameLength - 3);
+            name += "...";
+        }
+        return isStartScene ? ICON_FA_FLAG "  " + name : name;
+    }
 
     void SceneTabs::initialize(SceneManager& scenes)
     {
@@ -161,12 +167,13 @@ namespace NX
         }
         Scene* requestedScene = nullptr;
         Scene* sceneToClose = nullptr;
+        const auto* startScene = scenes.findStartScene();
         for (auto* scene : scenes.getOpenScenes())
         {
             ImGui::PushID(scene);
             const auto flags = scene == scenes.getCurrentScene() ? ImGuiTabItemFlags_SetSelected
                                                                  : ImGuiTabItemFlags_None;
-            const auto label = makeTabLabel(*scene);
+            const auto label = makeTabLabel(*scene, scene == startScene);
             bool keepOpen = true;
             const bool open = ImGui::BeginTabItem(
                 label.c_str(), scenes.getOpenScenes().size() > 1 ? &keepOpen : nullptr, flags);
