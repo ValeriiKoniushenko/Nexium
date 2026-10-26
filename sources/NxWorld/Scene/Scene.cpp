@@ -166,7 +166,7 @@ namespace NX
             mesh->draw(camera);
         }
 
-        if (world->currentCamera->getType() == CameraType::Perspective && skyboxShader)
+        if (skybox && world->currentCamera->getType() == CameraType::Perspective && skyboxShader)
         {
             skybox->draw(camera, *skyboxShader);
         }
