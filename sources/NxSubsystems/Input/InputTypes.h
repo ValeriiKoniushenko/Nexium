@@ -37,18 +37,18 @@ namespace NX
     {
     public:
         InputButton() = default;
-        constexpr InputButton(std::uint32_t index)
+        constexpr InputButton(std::uint16_t index)
             : _index(index)
         {
         }
 
         void reset() { _index = 0; }
 
-        [[nodiscard]] constexpr std::uint32_t getIndex() const { return _index; }
+        [[nodiscard]] constexpr std::uint16_t getIndex() const { return _index; }
         [[nodiscard]] constexpr bool operator==(const InputButton&) const = default;
 
     private:
-        std::uint32_t _index;
+        std::uint16_t _index;
     };
 
     ENUM_CLASS();
@@ -85,53 +85,36 @@ namespace NX
     struct KeyChord
     {
         /// Key that completes the chord and triggers its action (for example S in Ctrl+Shift+S).
-        Platform::Keyboard::Key triggerKey = Platform::Keyboard::Key::None;
+        NX::InputButton triggerKey;
         /// Keys that must already be held when triggerKey is pressed (for example Ctrl and Shift).
-        std::vector<Platform::Keyboard::Key> requiredKeys;
+        std::vector<NX::InputButton> requiredKeys;
 
-        [[nodiscard]] static KeyChord Exact(Platform::Keyboard::Key key);
+        [[nodiscard]] static KeyChord Exact(NX::InputButton key);
 
-        [[nodiscard]] bool matches(Platform::Keyboard::Key eventKey,
-                                   const std::vector<Platform::Keyboard::Key>& pressedKeys) const;
+        [[nodiscard]] bool matches(NX::InputButton eventKey,
+                                   const std::vector<NX::InputButton>& pressedKeys) const;
 
-        [[nodiscard]] bool contains(Platform::Keyboard::Key key) const;
-    };
-
-    ENUM_CLASS();
-    enum class InputActionTrigger : std::uint8_t
-    {
-        WhileHeld,
-        OnPress,
-        OnRelease
-    };
-
-    struct KeyInputEvent
-    {
-        Platform::Keyboard::KeyState state = Platform::Keyboard::KeyState::None;
-        Platform::Keyboard::Key key = Platform::Keyboard::Key::None;
-        InputModifier modifiers = InputModifier::None;
-        int scancode = 0;
-        std::vector<Platform::Keyboard::Key> pressedKeys;
+        [[nodiscard]] bool contains(NX::InputButton key) const;
     };
 
     struct InputActionEvent
     {
         Core::StringAtom action;
-        Platform::Keyboard::KeyState state = Platform::Keyboard::KeyState::None;
+        InputState state = InputState::None;
 
         [[nodiscard]] constexpr bool isPressed() const noexcept
         {
-            return state == Platform::Keyboard::KeyState::Pressed;
+            return state == InputState::Pressed;
         }
 
         [[nodiscard]] constexpr bool isReleased() const noexcept
         {
-            return state == Platform::Keyboard::KeyState::Released;
+            return state == InputState::Released;
         }
 
         [[nodiscard]] constexpr bool isRepeated() const noexcept
         {
-            return state == Platform::Keyboard::KeyState::Repeated;
+            return state == InputState::Repeated;
         }
     };
 } // namespace NX

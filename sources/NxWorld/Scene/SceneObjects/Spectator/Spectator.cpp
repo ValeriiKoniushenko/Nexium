@@ -55,7 +55,7 @@ namespace NX
         BaseSpectator::onInitialize();
         _inputController = InputController::Create("Spectator input"_atom, InputContext::Gameplay);
         const auto bindMovement = [this](const Core::StringAtom& name, Platform::Keyboard::Key key)
-        { _inputController->bind(name, KeyChord::Exact(key), InputActionTrigger::WhileHeld); };
+        { _inputController->bind(name, KeyChord::Exact(InputButton(static_cast<std::uint16_t>(key))), InputState::Pressed); };
         bindMovement("Move forward"_atom, Platform::Keyboard::Key::W);
         bindMovement("Move backward"_atom, Platform::Keyboard::Key::S);
         bindMovement("Move right"_atom, Platform::Keyboard::Key::D);

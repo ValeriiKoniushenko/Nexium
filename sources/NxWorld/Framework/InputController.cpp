@@ -43,16 +43,15 @@ namespace NX
         json = nlohmann::json{
             { "action", binding.action },
             { "triggerKey",
-              std::string{ R<Platform::Keyboard::Key>::ToString(binding.chord.triggerKey) } },
-            { "trigger",
-              binding.trigger == InputActionTrigger::WhileHeld
-                  ? "WhileHeld"
-                  : (binding.trigger == InputActionTrigger::OnRelease ? "OnRelease" : "OnPress") }
+              std::string{ R<Platform::Keyboard::Key>::ToString(static_cast<Platform::Keyboard::Key>(binding.chord.triggerKey.getIndex())) } },
+            { "trigger", binding.trigger == InputState::Repeated
+                             ? "WhileHeld"
+                             : (binding.trigger == InputState::Released ? "OnRelease" : "OnPress") }
         };
         auto& keys = json["requiredKeys"] = nlohmann::json::array();
         for (const auto key : binding.chord.requiredKeys)
         {
-            keys.push_back(std::string{ R<Platform::Keyboard::Key>::ToString(key) });
+            keys.push_back(std::string{ R<Platform::Keyboard::Key>::ToString(static_cast<Platform::Keyboard::Key>(key.getIndex())) });
         }
     }
 
@@ -69,37 +68,33 @@ namespace NX
         {
             if (json.at(keyField).is_string())
             {
-                const auto key
-                    = R<Platform::Keyboard::Key>::FromString(json.at(keyField).get<std::string>());
-                binding.chord.triggerKey = key.value_or(Platform::Keyboard::Key::None);
+                const auto key = R<Platform::Keyboard::Key>::FromString(json.at(keyField).get<std::string>());
+                binding.chord.triggerKey = InputButton(static_cast<std::uint16_t>(key.value_or(Platform::Keyboard::Key::None)));
             }
             else if (json.at(keyField).is_number_integer())
             {
-                binding.chord.triggerKey
-                    = static_cast<Platform::Keyboard::Key>(json.at(keyField).get<int>());
+                binding.chord.triggerKey = static_cast<InputButton>(json.at(keyField).get<int>());
             }
         }
         for (const auto& value : json.value("requiredKeys", nlohmann::json::array()))
         {
             if (value.is_string())
             {
-                if (const auto key
-                    = R<Platform::Keyboard::Key>::FromString(value.get<std::string>()))
+                if (const auto key = R<Platform::Keyboard::Key>::FromString(value.get<std::string>()))
                 {
-                    binding.chord.requiredKeys.push_back(*key);
+                    binding.chord.requiredKeys.push_back(InputButton(static_cast<std::uint16_t>(*key)));
                 }
             }
             else if (value.is_number_integer())
             {
-                binding.chord.requiredKeys.push_back(
-                    static_cast<Platform::Keyboard::Key>(value.get<int>()));
+                binding.chord.requiredKeys.push_back(static_cast<InputButton>(value.get<int>()));
             }
         }
 
         // Compatibility with assets saved before modifiers became regular chord keys.
         const auto oldModifiers = json.value("requiredModifiers", std::uint8_t{});
         const auto appendOldModifier
-            = [&binding, oldModifiers](InputModifier modifier, Platform::Keyboard::Key key)
+            = [&binding, oldModifiers](InputModifier modifier, InputButton key)
         {
             if ((oldModifiers & static_cast<std::uint8_t>(modifier)) != 0
                 && std::ranges::find(binding.chord.requiredKeys, key)
@@ -108,29 +103,34 @@ namespace NX
                 binding.chord.requiredKeys.push_back(key);
             }
         };
-        appendOldModifier(InputModifier::Control, Platform::Keyboard::Key::Left_Control);
-        appendOldModifier(InputModifier::Shift, Platform::Keyboard::Key::Left_Shift);
-        appendOldModifier(InputModifier::Alt, Platform::Keyboard::Key::Left_Alt);
-        appendOldModifier(InputModifier::Super, Platform::Keyboard::Key::Left_Super);
+        appendOldModifier(InputModifier::Control,
+                          static_cast<int>(Platform::Keyboard::Key::Left_Control));
+        appendOldModifier(InputModifier::Shift,
+                          static_cast<int>(Platform::Keyboard::Key::Left_Shift));
+        appendOldModifier(InputModifier::Alt, static_cast<int>(Platform::Keyboard::Key::Left_Alt));
+
+        appendOldModifier(InputModifier::Super,
+                          static_cast<int>(Platform::Keyboard::Key::Left_Super));
+
         const auto trigger = json.value("trigger", std::string{ "OnPress" });
         if (trigger == "WhileHeld")
         {
-            binding.trigger = InputActionTrigger::WhileHeld;
+            binding.trigger = InputState::Repeated;
         }
         else if (trigger == "OnRelease")
         {
-            binding.trigger = InputActionTrigger::OnRelease;
+            binding.trigger = InputState::Released;
         }
         else
         {
-            binding.trigger = InputActionTrigger::OnPress;
+            binding.trigger = InputState::Pressed;
         }
     }
 
     bool InputController::bind(const Core::StringAtom& action, const KeyChord& chord,
-                               InputActionTrigger trigger)
+                               InputState trigger)
     {
-        if (action.isEmpty() || chord.triggerKey == Platform::Keyboard::Key::None)
+        if (action.isEmpty() || chord.triggerKey == NX::InputButton(0))
         {
             return false;
         }
@@ -154,9 +154,9 @@ namespace NX
     }
 
     bool InputController::bind(const Core::StringAtom& action, KeyChord chord,
-                               ActionCallback callback, InputActionTrigger trigger)
+                               ActionCallback callback, InputState trigger)
     {
-        if (action.isEmpty() || chord.triggerKey == Platform::Keyboard::Key::None)
+        if (action.isEmpty() || chord.triggerKey.getIndex() == static_cast<int>(0))
         {
             return false;
         }
@@ -237,9 +237,10 @@ namespace NX
         BaseComponent::onPostDeserialize(obj, logs);
         setBindings(_bindings);
     }
-    void InputController::handleRoutedEvent(const KeyInputEvent& event)
+
+    void InputController::handleRoutedEvent(const InputEvent& event)
     {
-        if (event.state == Platform::Keyboard::KeyState::Released)
+        if (event.state == InputState::Released)
         {
             handleReleasedEvent(event);
             return;
@@ -250,18 +251,18 @@ namespace NX
             return;
         }
 
-        if (event.state == Platform::Keyboard::KeyState::Repeated)
+        if (event.state == InputState::Repeated)
         {
             return;
         }
 
         handlePressedEvent(event);
     }
-    void InputController::handleReleasedEvent(const KeyInputEvent& event)
+    void InputController::handleReleasedEvent(const InputEvent& event)
     {
         for (auto it = _activeChords.begin(); it != _activeChords.end();)
         {
-            if (!it->second.contains(event.key))
+            if (!it->second.contains(event.button))
             {
                 ++it;
                 continue;
@@ -273,7 +274,7 @@ namespace NX
             it = _activeChords.begin();
         }
     }
-    void InputController::handlePressedEvent(const KeyInputEvent& event)
+    void InputController::handlePressedEvent(const InputEvent& event)
     {
         const auto* binding = findBestBinding(event);
         if (!binding)
@@ -283,13 +284,12 @@ namespace NX
 
         activateBinding(*binding, event);
     }
-    const InputController::Binding* InputController::findBestBinding(
-        const KeyInputEvent& event) const
+    const InputController::Binding* InputController::findBestBinding(const InputEvent& event) const
     {
         const Binding* best = nullptr;
         for (const auto& candidate : _bindings)
         {
-            if (!candidate.chord.matches(event.key, event.pressedKeys))
+            if (!candidate.chord.matches(event.button, event.allPressedButtons))
             {
                 continue;
             }
@@ -301,19 +301,19 @@ namespace NX
         }
         return best;
     }
-    void InputController::activateBinding(const Binding& binding, const KeyInputEvent& event)
+    void InputController::activateBinding(const Binding& binding, const InputEvent& event)
     {
         _activeChords.insert_or_assign(binding.action, binding.chord);
-        _actionModifiers.insert_or_assign(binding.action, event.modifiers);
+        _actionModifiers.insert_or_assign(binding.action, event.mods);
 
-        if (binding.trigger == InputActionTrigger::OnRelease)
+        if (binding.trigger == InputState::Released)
         {
             _actionStates.insert_or_assign(binding.action, false);
             return;
         }
 
         _actionStates.insert_or_assign(binding.action, true);
-        if (binding.trigger == InputActionTrigger::OnPress)
+        if (binding.trigger == InputState::Pressed)
         {
             _transientActions.insert(binding.action);
         }
@@ -327,7 +327,7 @@ namespace NX
         }
         onAction->trigger(actionEvent);
     }
-    void InputController::releaseBinding(const Core::StringAtom& action, const KeyInputEvent& event)
+    void InputController::releaseBinding(const Core::StringAtom& action, const InputEvent& event)
     {
         const auto binding = std::ranges::find_if(_bindings, [&action](const Binding& value)
                                                   { return value.action == action; });
@@ -336,14 +336,14 @@ namespace NX
             return;
         }
 
-        if (binding->trigger == InputActionTrigger::WhileHeld)
+        if (binding->trigger == InputState::Pressed)
         {
             _actionStates.insert_or_assign(action, false);
             _actionModifiers.insert_or_assign(action, InputModifier::None);
             return;
         }
 
-        if (binding->trigger == InputActionTrigger::OnRelease)
+        if (binding->trigger == InputState::Released)
         {
             _actionStates.insert_or_assign(action, true);
             _transientActions.insert(action);

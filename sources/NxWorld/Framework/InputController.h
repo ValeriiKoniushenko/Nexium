@@ -50,14 +50,14 @@ namespace NX
         {
             Core::StringAtom action;
             KeyChord chord;
-            InputActionTrigger trigger = InputActionTrigger::OnPress;
+            InputState trigger = InputState::Pressed;
         };
 
         bool bind(const Core::StringAtom& action, const KeyChord& chord,
-                  InputActionTrigger trigger = InputActionTrigger::OnPress);
+                  InputState trigger = InputState::Pressed);
 
         bool bind(const Core::StringAtom& action, KeyChord chord, ActionCallback callback,
-                  InputActionTrigger trigger = InputActionTrigger::OnPress);
+                  InputState trigger = InputState::Pressed);
 
         void clearBindings();
 
@@ -86,14 +86,14 @@ namespace NX
     private:
         friend class InputSystem;
 
-        void handleRoutedEvent(const KeyInputEvent& event);
-        void handleReleasedEvent(const KeyInputEvent& event);
-        void handlePressedEvent(const KeyInputEvent& event);
+        void handleRoutedEvent(const InputEvent& event);
+        void handleReleasedEvent(const InputEvent& event);
+        void handlePressedEvent(const InputEvent& event);
 
-        [[nodiscard]] const Binding* findBestBinding(const KeyInputEvent& event) const;
+        [[nodiscard]] const Binding* findBestBinding(const InputEvent& event) const;
 
-        void activateBinding(const Binding& binding, const KeyInputEvent& event);
-        void releaseBinding(const Core::StringAtom& action, const KeyInputEvent& event);
+        void activateBinding(const Binding& binding, const InputEvent& event);
+        void releaseBinding(const Core::StringAtom& action, const InputEvent& event);
 
         void beginInputFrame();
 

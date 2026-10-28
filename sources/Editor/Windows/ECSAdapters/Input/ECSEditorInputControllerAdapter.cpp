@@ -12,6 +12,7 @@
 #include "Editor/GuiComponents/Misc.h"
 #include "Editor/IconsFontAwesome.h"
 #include "ImGui/imgui.h"
+#include "NxSubsystems/Input/InputTypes.h"
 #include "NxWorld/Framework/InputController.h"
 
 #include <algorithm>
@@ -29,24 +30,24 @@ namespace
         std::memcpy(destination.data(), text.data(), std::min(text.size(), Size - 1));
     }
 
-    Platform::Keyboard::Key NormalizeModifier(Platform::Keyboard::Key key)
+    NX::InputButton NormalizeModifier(NX::InputButton key)
     {
         using Key = Platform::Keyboard::Key;
-        if (key == Key::Right_Shift)
+        if (key == static_cast<int>(Key::Right_Shift))
         {
-            return Key::Left_Shift;
+            return static_cast<int>(Key::Left_Shift);
         }
-        if (key == Key::Right_Control)
+        if (key == static_cast<int>(Key::Right_Control))
         {
-            return Key::Left_Control;
+            return static_cast<int>(Key::Left_Control);
         }
-        if (key == Key::Right_Alt)
+        if (key == static_cast<int>(Key::Right_Alt))
         {
-            return Key::Left_Alt;
+            return static_cast<int>(Key::Left_Alt);
         }
-        if (key == Key::Right_Super)
+        if (key == static_cast<int>(Key::Right_Super))
         {
-            return Key::Left_Super;
+            return static_cast<int>(Key::Left_Super);
         }
         return key;
     }
@@ -58,26 +59,26 @@ namespace
                || key == Key::Left_Super;
     }
 
-    std::string_view KeyText(Platform::Keyboard::Key key)
+    std::string_view KeyText(NX::InputButton key)
     {
         using Key = Platform::Keyboard::Key;
-        if (key == Key::Left_Control)
+        if (key == static_cast<int>(Key::Left_Control))
         {
             return "Ctrl";
         }
-        if (key == Key::Left_Shift)
+        if (key == static_cast<int>(Key::Left_Shift))
         {
             return "Shift";
         }
-        if (key == Key::Left_Alt)
+        if (key == static_cast<int>(Key::Left_Alt))
         {
             return "Alt";
         }
-        if (key == Key::Left_Super)
+        if (key == static_cast<int>(Key::Left_Super))
         {
             return "Super";
         }
-        return R<Key>::ToString(key);
+        return R<Platform::Keyboard::Key>::ToString(static_cast<Platform::Keyboard::Key>(key.getIndex()));
     }
 
     std::string ChordText(const NX::KeyChord& chord)
@@ -95,7 +96,7 @@ namespace
         {
             append(KeyText(key));
         }
-        if (chord.triggerKey != Platform::Keyboard::Key::None)
+        if (chord.triggerKey != static_cast<int>(Platform::Keyboard::Key::None))
         {
             append(KeyText(chord.triggerKey));
         }
@@ -158,26 +159,27 @@ namespace NX
                 const auto& keys = R<Platform::Keyboard::Key>::ToArrayC();
                 for (const auto rawKey : keys)
                 {
-                    const auto key = NormalizeModifier(rawKey);
+                    const auto key = NormalizeModifier(InputButton(static_cast<std::uint16_t>(rawKey)));
                     if (rawKey == Platform::Keyboard::Key::None
                         || rawKey == Platform::Keyboard::Key::Last
                         || !Platform::Keyboard::IsKeyPressed(rawKey)
-                        || std::ranges::find(_recordedKeys, key) != _recordedKeys.end())
+                        || std::ranges::find(_recordedKeys, rawKey) != _recordedKeys.end())
                     {
                         continue;
                     }
-                    _recordedKeys.push_back(key);
-                    if (!IsModifier(key))
+                    _recordedKeys.push_back(rawKey);
+                    if (!IsModifier(rawKey))
                     {
-                        _recordedChord.triggerKey = key;
+                        _recordedChord.triggerKey = InputButton(static_cast<std::uint16_t>(rawKey));
                     }
                 }
                 _recordedChord.requiredKeys.clear();
+                const auto triggerKeyValue = static_cast<Platform::Keyboard::Key>(_recordedChord.triggerKey.getIndex());
                 for (const auto key : _recordedKeys)
                 {
-                    if (key != _recordedChord.triggerKey)
+                    if (key != triggerKeyValue)
                     {
-                        _recordedChord.requiredKeys.push_back(key);
+                        _recordedChord.requiredKeys.push_back(InputButton(static_cast<std::uint16_t>(key)));
                     }
                 }
             }
@@ -195,7 +197,8 @@ namespace NX
             if (recording)
             {
                 ImGui::SameLine();
-                ImGui::BeginDisabled(_recordedChord.triggerKey == Platform::Keyboard::Key::None);
+                ImGui::BeginDisabled(_recordedChord.triggerKey
+                                     == static_cast<int>(Platform::Keyboard::Key::None));
                 if (ImGui::Button("Apply"))
                 {
                     binding.chord = _recordedChord;
@@ -211,27 +214,24 @@ namespace NX
             }
 
             const char* triggerName
-                = binding.trigger == InputActionTrigger::WhileHeld
+                = binding.trigger == InputState::Repeated
                       ? "While held"
-                      : (binding.trigger == InputActionTrigger::OnRelease ? "On release"
-                                                                          : "On press");
+                      : (binding.trigger == InputState::Released ? "On release" : "On press");
             if (ImGui::BeginCombo("Trigger", triggerName))
             {
-                if (ImGui::Selectable("While held",
-                                      binding.trigger == InputActionTrigger::WhileHeld))
+                if (ImGui::Selectable("While held", binding.trigger == InputState::Repeated))
                 {
-                    binding.trigger = InputActionTrigger::WhileHeld;
+                    binding.trigger = InputState::Repeated;
                     changed = true;
                 }
-                if (ImGui::Selectable("On press", binding.trigger == InputActionTrigger::OnPress))
+                if (ImGui::Selectable("On press", binding.trigger == InputState::Pressed))
                 {
-                    binding.trigger = InputActionTrigger::OnPress;
+                    binding.trigger = InputState::Pressed;
                     changed = true;
                 }
-                if (ImGui::Selectable("On release",
-                                      binding.trigger == InputActionTrigger::OnRelease))
+                if (ImGui::Selectable("On release", binding.trigger == InputState::Released))
                 {
-                    binding.trigger = InputActionTrigger::OnRelease;
+                    binding.trigger = InputState::Released;
                     changed = true;
                 }
                 ImGui::EndCombo();
@@ -255,9 +255,10 @@ namespace NX
 
         if (ImGui::Button(ICON_FA_PLUS " Add shortcut"))
         {
-            bindings.push_back({ .action = "New action"_atom,
-                                 .chord = KeyChord::Exact(Platform::Keyboard::Key::None),
-                                 .trigger = InputActionTrigger::OnPress });
+            bindings.push_back(
+                { .action = "New action"_atom,
+                  .chord = KeyChord::Exact(static_cast<uint16_t>(Platform::Keyboard::Key::None)),
+                  .trigger = InputState::Pressed });
             changed = true;
         }
 

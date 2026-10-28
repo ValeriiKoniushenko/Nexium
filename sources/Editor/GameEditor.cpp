@@ -558,8 +558,9 @@ namespace NX
         _inputController = InputController::Create("Editor input"_atom, InputContext::Editor);
         _inputController->bind(
             "Save all"_atom,
-            KeyChord{ .triggerKey = Keyboard::Key::S,
-                      .requiredKeys = { Keyboard::Key::Left_Control, Keyboard::Key::Left_Shift } },
+            KeyChord{ .triggerKey = static_cast<int>(Platform::Keyboard::Key::S),
+                      .requiredKeys = { static_cast<int>(Platform::Keyboard::Key::Left_Control),
+                                        static_cast<int>(Platform::Keyboard::Key::Left_Shift) } },
             [](const InputActionEvent&) { gGameInstance->saveAllToCache(); });
 
         auto deleteObjectFromSceneKey

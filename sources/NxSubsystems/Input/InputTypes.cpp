@@ -14,7 +14,7 @@
 
 namespace NX
 {
-    KeyChord KeyChord::Exact(Platform::Keyboard::Key key)
+    KeyChord KeyChord::Exact(NX::InputButton key)
     {
         return {
             .triggerKey = key,
@@ -22,8 +22,8 @@ namespace NX
         };
     }
 
-    bool KeyChord::matches(Platform::Keyboard::Key eventKey,
-                           const std::vector<Platform::Keyboard::Key>& pressedKeys) const
+    bool KeyChord::matches(NX::InputButton eventKey,
+                           const std::vector<NX::InputButton>& pressedKeys) const
     {
         if (triggerKey != eventKey)
         {
@@ -31,11 +31,11 @@ namespace NX
         }
 
         return std::ranges::all_of(
-            requiredKeys, [&pressedKeys](Platform::Keyboard::Key key)
+            requiredKeys, [&pressedKeys](NX::InputButton key)
             { return std::ranges::find(pressedKeys, key) != pressedKeys.end(); });
     }
 
-    bool KeyChord::contains(Platform::Keyboard::Key key) const
+    bool KeyChord::contains(NX::InputButton key) const
     {
         return triggerKey == key || std::ranges::find(requiredKeys, key) != requiredKeys.end();
     }

@@ -46,9 +46,11 @@ namespace NX
 
         NX::InputModifier ConvertModifiers(int mods);
 
-    private:
+        /// Push a key event directly to the input system (for testing and window integration).
         void pushKeyEvent(NX::InputButton key, NX::InputState state, NX::InputModifier mods,
                           int scancode = 0);
+
+    private:
 
         void dispatch(const InputEvent& event);
 
