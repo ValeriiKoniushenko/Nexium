@@ -9,6 +9,7 @@
 
 #include "Scene.h"
 
+#include "Foundation/Configs.h"
 #include "Foundation/Debug/Latency.h"
 #include "NxWorld/Entities/Actor.h"
 #include "NxWorld/Entities/Camera/Camera.h"
@@ -19,6 +20,7 @@
 #include "NxWorld/PrivateModuleInfo.h"
 
 #include <algorithm>
+#include <filesystem>
 #include <stdexcept>
 
 namespace
@@ -119,7 +121,8 @@ namespace NX
 
         if (!_isFaceGenerated)
         {
-            nxFace.setSourcePath("data/internal/fonts/Inter/Inter_18pt-Black.ttf");
+            nxFace.setSourcePath(Foundation::Config::Path::internalFonts
+                                 / "Inter/Inter_18pt-Black.ttf");
             nxFace.generateFace(0);
             nxFace.setPixelSize(48);
             _isFaceGenerated = nxFace.generateTextureASCIIGlyphs(

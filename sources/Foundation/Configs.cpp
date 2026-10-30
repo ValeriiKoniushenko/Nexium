@@ -23,6 +23,7 @@ namespace Foundation::Config
         const std::filesystem::path data = projectAbsPath / "data";
         const std::filesystem::path assets = data / "assets";
         const std::filesystem::path fonts = assets / "fonts";
+        const std::filesystem::path internalFonts = data / "internal" / "fonts";
         const std::filesystem::path shaders = assets / "shaders";
         const std::filesystem::path images = assets / "images";
         const std::filesystem::path objects3d = assets / "objects-3d";

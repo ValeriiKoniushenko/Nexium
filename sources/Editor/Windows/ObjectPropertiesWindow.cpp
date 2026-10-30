@@ -305,6 +305,7 @@ namespace NX
         _staticMeshLayout.removeAllChildren();
         _transformableLayout.removeAllChildren();
         _rectLayout.removeAllChildren();
+        _baseRectLayout.removeAllChildren();
 
         _objectName = _objectType = _parentName = _graphicsShader = _outlineShader = nullptr;
         _objectIsEnabled = _ignoreMouseSelectBundle = _isInited = _disabledTicks = nullptr;
@@ -328,7 +329,8 @@ namespace NX
         auto* asTransformable = dynamic_cast<Transformable*>(_target);
         auto* asInterleavedGraphicsData = dynamic_cast<InterleavedGraphicsData*>(_target);
         auto* asBaseCamera = dynamic_cast<BaseCamera*>(_target);
-        auto* asRectangleComponent = dynamic_cast<SceneObj::RectangleAnimated*>(_target);
+        auto* asRectangleComponent = dynamic_cast<SceneObj::Rectangle*>(_target);
+        auto* asRectangleAnimatedComponent = dynamic_cast<SceneObj::RectangleAnimated*>(_target);
 
         tryDrawBaseComponent(asBaseComponent);
         tryDrawTransformable(asTransformable, asBaseComponent);
@@ -338,6 +340,7 @@ namespace NX
 #endif
         tryDrawInterleavedGraphicsData(asInterleavedGraphicsData);
         tryDrawBaseCamera(asBaseCamera);
+        tryDrawRectangleComponent(asRectangleAnimatedComponent);
         tryDrawRectangleComponent(asRectangleComponent);
         tryDrawBaseComponentExtra(asBaseComponent);
     }
@@ -508,8 +511,7 @@ namespace NX
 
         // ================= SceneObj::Rectangle ====================
         {
-            auto& out = _rectLayout;
-
+            auto& out = _baseRectLayout;
             out.attachChild(CreateHLayoutAndLabel("Atlas", false, defaultLabelWidth));
             _rectComboAtlas = out.getLastChildAs<HLayout>()->addChildComponent<ComboModelBased>();
             _rectComboAtlas->setFlex(Gui::Flex::FlexWidth);
@@ -521,6 +523,7 @@ namespace NX
                 });
             _rectComboAtlas->setSizeProvider([]()
                                              { return GetAssetsManager()->getAtlasesCount(); });
+
             _subscriptionPool << _rectComboAtlas->onSelect->subscribeAndGetID(
                 [t = WeakPtr(this)](const void*)
                 {
@@ -528,8 +531,7 @@ namespace NX
                     {
                         if (auto obj = t.tryLoad())
                         {
-                            auto* rectangle
-                                = dynamic_cast<SceneObj::RectangleAnimated*>(obj->_target);
+                            auto* rectangle = dynamic_cast<SceneObj::Rectangle*>(obj->_target);
                             if (!rectangle)
                             {
                                 return;
@@ -556,7 +558,7 @@ namespace NX
             _rectComboRect->setDataProvider(
                 [this](std::size_t i, StringAtom& out) -> void*
                 {
-                    const auto* rectangle = dynamic_cast<SceneObj::RectangleAnimated*>(_target);
+                    const auto* rectangle = dynamic_cast<SceneObj::Rectangle*>(_target);
                     if (rectangle)
                     {
                         out = GetAssetsManager()
@@ -569,7 +571,7 @@ namespace NX
             _rectComboRect->setSizeProvider(
                 [this]()
                 {
-                    const auto* rectangle = dynamic_cast<SceneObj::RectangleAnimated*>(_target);
+                    const auto* rectangle = dynamic_cast<SceneObj::Rectangle*>(_target);
                     return rectangle ? GetAssetsManager()
                                            ->getAtlas(rectangle->getAtlasName())
                                            .getRectsCount()
@@ -582,8 +584,7 @@ namespace NX
                     {
                         if (auto obj = t.tryLoad())
                         {
-                            if (auto* rectangle
-                                = dynamic_cast<SceneObj::RectangleAnimated*>(obj->_target))
+                            if (auto* rectangle = dynamic_cast<SceneObj::Rectangle*>(obj->_target))
                             {
                                 rectangle->setTexture(
                                     obj->_rectComboRect->tryGetCurrentDataAsString());
@@ -601,28 +602,17 @@ namespace NX
                 {
                     if (auto obj = t.tryLoad())
                     {
-                        if (auto* rectangle
-                            = dynamic_cast<SceneObj::RectangleAnimated*>(obj->_target))
+                        if (auto* rectangle = dynamic_cast<SceneObj::Rectangle*>(obj->_target))
                         {
                             rectangle->setBlendingEnabled(enabled);
                         }
                     }
                 });
+        }
 
-            out.attachChild(::Create<CheckBox>("Animate", false, defaultLabelWidth));
-            _activateAnimation = out.getLastChildAs<HLayout>()->getLastChildAs<CheckBox>().get();
-            _subscriptionPool << _activateAnimation->onChange->subscribeAndGetID(
-                [t = WeakPtr(this)](bool enabled)
-                {
-                    if (auto obj = t.tryLoad())
-                    {
-                        if (auto* rectangle
-                            = dynamic_cast<SceneObj::RectangleAnimated*>(obj->_target))
-                        {
-                            rectangle->setAnimationEnabled(enabled);
-                        }
-                    }
-                });
+        // ================= SceneObj::RectangleAnimated ====================
+        {
+            auto& out = _rectLayout;
 
             out.attachChild(CreateHLayoutAndLabel("Animation", false, defaultLabelWidth));
             _rectAnimationRow = out.getLastChildAs<HLayout>().get();
@@ -1089,9 +1079,9 @@ namespace NX
     }
 #endif
 
-    void ObjectPropertiesWindowEWC::tryDrawRectangleComponent(SceneObj::RectangleAnimated* comp)
+    void ObjectPropertiesWindowEWC::tryDrawRectangleComponent(NX::SceneObj::Rectangle* comp)
     {
-        if (comp && Gui::CollapsingHeader("Rectangle", ImGuiTreeNodeFlags_DefaultOpen))
+        if (comp && Gui::CollapsingHeader("Texture", ImGuiTreeNodeFlags_DefaultOpen))
         {
             const float dt = GetWorld()->getTimeDelta();
 
@@ -1102,20 +1092,29 @@ namespace NX
                 {
                     _rectComboAtlas->setCurrentIndex(it - atlases.begin());
                 }
-            }
 
-            if (_rectComboRect)
-            {
-                // TODO: super slow, fix it.
-                auto textures
-                    = GetAssetsManager()->getAtlas(comp->getAtlasName()).getRectsAsVector();
-                if (auto it = std::ranges::find(textures, comp->getTextureName());
-                    it != textures.end())
+                if (_rectComboRect)
                 {
-                    const auto ind = it - textures.begin();
-                    _rectComboRect->setCurrentIndex(ind);
+                    // TODO: super slow, fix it.
+                    auto textures
+                        = GetAssetsManager()->getAtlas(comp->getAtlasName()).getRectsAsVector();
+                    if (auto it = std::ranges::find(textures, comp->getTextureName());
+                        it != textures.end())
+                    {
+                        const auto ind = it - textures.begin();
+                        _rectComboRect->setCurrentIndex(ind);
+                    }
                 }
             }
+            _baseRectLayout.tick(dt);
+        }
+    }
+
+    void ObjectPropertiesWindowEWC::tryDrawRectangleComponent(SceneObj::RectangleAnimated* comp)
+    {
+        if (comp && Gui::CollapsingHeader("Rectangle", ImGuiTreeNodeFlags_DefaultOpen))
+        {
+            const float dt = GetWorld()->getTimeDelta();
 
             if (_rectBlending)
             {
@@ -1127,25 +1126,25 @@ namespace NX
             const bool animationEnabled = hasAnimations && comp->isAnimationEnabled();
             if (_activateAnimation)
             {
-                _activateAnimation->disableWidget(!hasAnimations);
+                // _activateAnimation->disableWidget(!hasAnimations);
                 _activateAnimation->setValue(animationEnabled);
             }
             if (_rectComboAtlas)
             {
-                _rectComboAtlas->disableWidget(animationEnabled);
+                //  _rectComboAtlas->disableWidget(animationEnabled);
             }
             if (_rectComboRect)
             {
-                _rectComboRect->disableWidget(animationEnabled);
+                // _rectComboRect->disableWidget(animationEnabled);
             }
             if (_rectComboAnimation)
             {
-                _rectComboAnimation->disableWidget(!animationEnabled);
+                //_rectComboAnimation->disableWidget(!animationEnabled);
             }
             if (_rectAnimationFPS)
             {
-                _rectAnimationFPS->disableWidget(!animationEnabled
-                                                 || !animator->getActiveAnimation());
+                //_rectAnimationFPS->disableWidget(!animationEnabled
+                //                               || !animator->getActiveAnimation());
             }
             if (animationEnabled && _rectComboAnimation && animator->getActiveAnimation())
             {

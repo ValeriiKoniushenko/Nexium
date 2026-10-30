@@ -41,6 +41,7 @@ namespace Foundation::Config
         extern const std::filesystem::path data;
         extern const std::filesystem::path assets;
         extern const std::filesystem::path fonts;
+        extern const std::filesystem::path internalFonts;
         extern const std::filesystem::path shaders;
         extern const std::filesystem::path images;
         extern const std::filesystem::path objects3d;

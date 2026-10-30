@@ -30,7 +30,8 @@ namespace NX
     namespace SceneObj
     {
         class RectangleAnimated;
-    }
+        class Rectangle;
+    } // namespace SceneObj
 
     struct _GraphicsModifiersArray_ArrayCellViewerFunc
     {
@@ -92,6 +93,8 @@ namespace NX
         void tryDrawBaseCamera(NX::BaseCamera* comp);
 
         void tryDrawRectangleComponent(NX::SceneObj::RectangleAnimated* comp);
+
+        void tryDrawRectangleComponent(NX::SceneObj::Rectangle* comp);
 
     private:
         // ============= GUI =============
@@ -159,10 +162,13 @@ namespace NX
         Gui::Float3Input* _transformOrigin = nullptr;
 
         // SceneObj::Rectangle section:
-        Gui::VerticalLayout _rectLayout;
+        Gui::VerticalLayout _baseRectLayout;
+        Gui::CheckBox* _rectBlending = nullptr;
         Gui::ComboModelBased* _rectComboAtlas = nullptr;
         Gui::ComboModelBased* _rectComboRect = nullptr;
-        Gui::CheckBox* _rectBlending = nullptr;
+
+        // SceneObj::RectangleAnimated section:
+        Gui::VerticalLayout _rectLayout;
         Gui::CheckBox* _activateAnimation = nullptr;
         Gui::HorizontalLayout* _rectAnimationRow = nullptr;
         Gui::ComboModelBased* _rectComboAnimation = nullptr;

@@ -50,6 +50,9 @@ namespace NX::SceneObj
         [[nodiscard]] constexpr static float GetDefaultDrawRectSize() noexcept { return 100.f; }
         [[nodiscard]] Core::FSize2 getDrawRectSize() const noexcept;
 
+        [[nodiscard]] Core::StringAtom getAtlasName() const { return _atlasName; }
+        void setAtlas(const Core::StringAtom& value) { _atlasName = value; }
+
     protected:
         void tryDrawOutline(BaseCamera& camera);
         void onDraw(BaseCamera& camera) override;
