@@ -9,7 +9,7 @@
 
 #include "Keyboard.h"
 
-#include "Window.h"
+#include "Platform/Input/Window.h"
 
 namespace Platform
 {

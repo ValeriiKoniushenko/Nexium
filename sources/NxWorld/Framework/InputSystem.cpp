@@ -10,6 +10,7 @@
 
 #include "GLFW/glfw3.h"
 #include "NxWorld/Framework/InputController.h"
+#include "Platform/Input/Events/InputEvent.h"
 #include "Platform/Input/Window.h"
 
 #include <ranges>
@@ -78,6 +79,7 @@ namespace NX
         }
 
         return result;
+        return static_cast<NX::InputModifier>(mods);
     }
 
     void InputSystem::initialize(Platform::Window& window)
@@ -87,17 +89,17 @@ namespace NX
             return;
         }
 
-        _subscriptions << window.onKeyPressed->subscribeAndGetID(
-            [this](NX::InputButton key, int scancode, NX::InputState state, NX::InputModifier mods)
-            { pushKeyEvent(key, state, mods, scancode); });
-        _subscriptions << window.onMouseKeyPressed->subscribeAndGetID(
-            [this](NX::InputButton key, NX::InputState state, NX::InputModifier mods)
-            { pushKeyEvent(key, state, mods); });
+        auto registerEvent
+            = [this](auto&& event) { pushEvent(std::forward<decltype(event)>(event)); };
+
+        _subscriptions << window.onKeyPressed->subscribeAndGetID(registerEvent);
+        _subscriptions << window.onMouseKeyPressed->subscribeAndGetID(registerEvent);
+        _subscriptions << window.onFocusChanged->subscribeAndGetID(registerEvent);
 
         _subscriptions << window.onFocusChanged->subscribeAndGetID(
-            [this](bool focused)
+            [this](const WindowFocusEvent& event)
             {
-                if (!focused)
+                if (!event.isFocused())
                 {
                     resetInput();
                 }
@@ -114,13 +116,6 @@ namespace NX
 
         _activeContext = context;
         refreshRoutedControllers();
-    }
-
-    void InputSystem::pushKeyEvent(NX::InputButton key, NX::InputState state,
-                                   NX::InputModifier mods, int scancode)
-    {
-        _events.emplace_back(
-            InputEvent{ .button = key, .state = state, .mods = mods, .scancode = scancode });
     }
 
     void InputSystem::registerController(InputController* controller)
@@ -166,13 +161,18 @@ namespace NX
 
         while (!_events.empty())
         {
-            const InputEvent event = _events.front();
+            const auto& event = _events.front();
             _events.pop_front();
-            dispatch(event);
+            dispatch(event.get());
         }
     }
-    void InputSystem::dispatch(const InputEvent& event)
+    void InputSystem::dispatch(const InputEvent* event)
     {
+        if (event->getEventType() == NX::EventType::Keyboard
+            || event->getEventType() == NX::EventType::MouseButton)
+        {
+        }
+
         auto routedEvent = event;
         if (event.state == InputState::Pressed
             && std::ranges::find(_pressedKeys, event.button) == _pressedKeys.end())

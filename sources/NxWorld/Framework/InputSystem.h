@@ -14,6 +14,9 @@
 #include "Core/Singleton.h"
 #include "NxSubsystems/Input/InputTypes.h"
 #include "NxWorld/Framework/InputController.h"
+#include "Platform/Input/Events/GamepadEvents.h"
+#include "Platform/Input/Events/KeyboardEvents.h"
+#include "Platform/Input/Events/MouseEvents.h"
 
 #include <deque>
 #include <vector>
@@ -46,13 +49,17 @@ namespace NX
 
         NX::InputModifier ConvertModifiers(int mods);
 
-        /// Push a key event directly to the input system (for testing and window integration).
-        void pushKeyEvent(NX::InputButton key, NX::InputState state, NX::InputModifier mods,
-                          int scancode = 0);
+        /// Queue an input event for processing in the next processEvents() call.
+        /// Takes ownership of the event.
+        template<typename T>
+        void queueEvent(T event)
+        {
+            static_assert(std::is_base_of_v<InputEvent, T>, "T must inherit from InputEvent");
+            _events.emplace_back(std::make_unique<T>(std::move(event)));
+        }
 
     private:
-
-        void dispatch(const InputEvent& event);
+        void dispatch(const InputEvent* event);
 
         [[nodiscard]] std::vector<InputController*> selectControllers();
 
@@ -60,7 +67,15 @@ namespace NX
 
         void refreshRoutedControllers();
 
-        std::deque<InputEvent> _events;
+        std::deque<std::unique_ptr<InputEvent>> _events;
+
+        template<typename T>
+        void pushEvent(T event)
+        {
+            static_assert(std::is_base_of_v<InputEvent, T>, "T must inherit from InputEvent");
+
+            _events.emplace_back(std::make_unique<T>(std::move(event)));
+        }
 
         /// Non-owning pointers. Every controller unregisters itself before destruction.
         /// Controllers registered for shortcuts that are active while editor UI owns input.
