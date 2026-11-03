@@ -14,29 +14,29 @@
 
 namespace NX
 {
-    KeyChord KeyChord::Exact(NX::InputButton key)
-    {
-        return {
-            .triggerKey = key,
-            .requiredKeys = {},
-        };
-    }
+    // KeyChord KeyChord::Exact(NX::InputButton key)
+    // {
+    //     return {
+    //         .triggerKey = key,
+    //         .requiredKeys = {},
+    //     };
+    // }
 
-    bool KeyChord::matches(NX::InputButton eventKey,
-                           const std::vector<NX::InputButton>& pressedKeys) const
-    {
-        if (triggerKey != eventKey)
-        {
-            return false;
-        }
+    // bool KeyChord::matches(NX::InputButton eventKey,
+    //                        const std::vector<NX::InputButton>& pressedKeys) const
+    // {
+    //     if (triggerKey != eventKey)
+    //     {
+    //         return false;
+    //     }
 
-        return std::ranges::all_of(
-            requiredKeys, [&pressedKeys](NX::InputButton key)
-            { return std::ranges::find(pressedKeys, key) != pressedKeys.end(); });
-    }
+    //     return std::ranges::all_of(
+    //         requiredKeys, [&pressedKeys](NX::InputButton key)
+    //         { return std::ranges::find(pressedKeys, key) != pressedKeys.end(); });
+    // }
 
-    bool KeyChord::contains(NX::InputButton key) const
-    {
-        return triggerKey == key || std::ranges::find(requiredKeys, key) != requiredKeys.end();
-    }
+    // bool KeyChord::contains(NX::InputButton key) const
+    // {
+    //     return triggerKey == key || std::ranges::find(requiredKeys, key) != requiredKeys.end();
+    // }
 } // namespace NX

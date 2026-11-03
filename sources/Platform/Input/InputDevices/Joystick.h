@@ -12,9 +12,9 @@
 #pragma once
 
 #include "JustReflectMe/Adapter.h"
-#include "Platform/Input/Glfw.h"
 #include "Platform/Input/Events/GamepadEvents.h"
 #include "Platform/Input/Events/InputEvent.h"
+#include "Platform/Input/Glfw.h"
 
 #include <array>
 #include <cstdint>
@@ -81,5 +81,3 @@ namespace Platform
         };
     };
 } // namespace Platform
-
-#include "Joystick.generated.h" // added by the code generator. Better don't move it.

@@ -9,7 +9,7 @@
 
 #include "Mouse.h"
 
-#include "Window.h"
+#include "Platform/Input/Window.h"
 
 namespace Platform
 {

@@ -88,7 +88,7 @@ namespace NX
         void subscribeToInput() override;
         void onTick(float delta) override;
 
-        InputController::Ptr _inputController;
+        // InputController::Ptr _inputController;
     };
 
 } // namespace NX

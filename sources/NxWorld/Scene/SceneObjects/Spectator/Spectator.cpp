@@ -52,33 +52,35 @@ namespace NX
 
     void Spectator3D::onInitialize()
     {
-        BaseSpectator::onInitialize();
-        _inputController = InputController::Create("Spectator input"_atom, InputContext::Gameplay);
-        const auto bindMovement = [this](const Core::StringAtom& name, Platform::Keyboard::Key key)
-        { _inputController->bind(name, KeyChord::Exact(InputButton(static_cast<std::uint16_t>(key))), InputState::Pressed); };
-        bindMovement("Move forward"_atom, Platform::Keyboard::Key::W);
-        bindMovement("Move backward"_atom, Platform::Keyboard::Key::S);
-        bindMovement("Move right"_atom, Platform::Keyboard::Key::D);
-        bindMovement("Move left"_atom, Platform::Keyboard::Key::A);
-        bindMovement("Move up"_atom, Platform::Keyboard::Key::R);
-        bindMovement("Move down"_atom, Platform::Keyboard::Key::F);
+        // BaseSpectator::onInitialize();
+        // _inputController = InputController::Create("Spectator input"_atom,
+        // InputContext::Gameplay); const auto bindMovement = [this](const Core::StringAtom& name,
+        // Platform::Keyboard::Key key) { _inputController->bind(name,
+        // KeyChord::Exact(InputButton(static_cast<std::uint16_t>(key))), InputState::Pressed); };
+        // bindMovement("Move forward"_atom, Platform::Keyboard::Key::W);
+        // bindMovement("Move backward"_atom, Platform::Keyboard::Key::S);
+        // bindMovement("Move right"_atom, Platform::Keyboard::Key::D);
+        // bindMovement("Move left"_atom, Platform::Keyboard::Key::A);
+        // bindMovement("Move up"_atom, Platform::Keyboard::Key::R);
+        // bindMovement("Move down"_atom, Platform::Keyboard::Key::F);
     }
 
     void Spectator3D::subscribeToInput()
     {
-        _subscriptionPool << Platform::GetWindow().onMouseWheel->subscribeAndGetID(
-            [this](glm::vec2 offset)
-            {
-                if (gGameInstance->isApplicationViewportFocused())
-                {
-                    auto mlt
-                        = speed
-                          / (Platform::Keyboard::IsKeyPressed(Platform::Keyboard::Key::Left_Shift)
-                                 ? 8.f
-                                 : 1.f);
-                    moveForward(-offset.y * mlt * gGameInstance->world.getTimeDelta());
-                }
-            });
+        // _subscriptionPool << Platform::GetWindow().onMouseWheel->subscribeAndGetID(
+        //     [this](glm::vec2 offset)
+        //     {
+        //         if (gGameInstance->isApplicationViewportFocused())
+        //         {
+        //             auto mlt
+        //                 = speed
+        //                   /
+        //                   (Platform::Keyboard::IsKeyPressed(Platform::Keyboard::Key::Left_Shift)
+        //                          ? 8.f
+        //                          : 1.f);
+        //             moveForward(-offset.y * mlt * gGameInstance->world.getTimeDelta());
+        //         }
+        //     });
         _subscriptionPool << mouseInput.getOrCreate("mouseRotation", Platform::Mouse::Key::Right)
                                  ->onDrag->subscribeAndGetID(
                                      [this](glm::vec2 delta, auto)
@@ -88,10 +90,10 @@ namespace NX
     void Spectator3D::onTick(float delta)
     {
         BaseSpectator::onTick(delta);
-        if (!_inputController)
-        {
-            return;
-        }
+        // if (!_inputController)
+        // {
+        //     return;
+        // }
         // const float step
         //     = speed * delta
         //       / (Platform::Keyboard::IsKeyPressed(Platform::Keyboard::Key::Left_Shift)

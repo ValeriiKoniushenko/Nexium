@@ -69,9 +69,9 @@ namespace NX
             clock.start();
             Platform::Window::pollEvent();
             Platform::Joystick::poll();
-            GetInputSystem().setActiveContext(_gameInstance.isApplicationViewportFocused()
-                                                  ? InputContext::Gameplay
-                                                  : InputContext::Editor);
+            // GetInputSystem().setActiveContext(_gameInstance.isApplicationViewportFocused()
+            //                                       ? InputContext::Gameplay
+            //                                       : InputContext::Editor);
             GetInputSystem().processEvents();
 
             if (!_gameInstance.isEditorMode())

@@ -371,53 +371,53 @@ namespace Platform
 
     void Window::registerEvents()
     {
-        _subscriptionPool << onFocusChanged->subscribeAndGetID([this](bool focused)
-                                                               { _isFocused = focused; });
-        _subscriptionPool << onIconifyChanged->subscribeAndGetID([this](bool iconified)
-                                                                 { _isIconified = iconified; });
+        // _subscriptionPool << onFocusChanged->subscribeAndGetID([this](bool focused)
+        //                                                        { _isFocused = focused; });
+        // _subscriptionPool << onIconifyChanged->subscribeAndGetID([this](bool iconified)
+        //                                                          { _isIconified = iconified; });
 
-        _subscriptionPool << onMouseMove->subscribeAndGetID(
-            [](glm::vec2 pos)
-            {
-                static glm::vec2 lastPos = pos;
-                gDragDrop._lastDelta = lastPos - pos;
-                lastPos = pos;
+        // _subscriptionPool << onMouseMove->subscribeAndGetID(
+        //     [](glm::vec2 pos)
+        //     {
+        //         static glm::vec2 lastPos = pos;
+        //         gDragDrop._lastDelta = lastPos - pos;
+        //         lastPos = pos;
 
-                if (gDragDrop._state == DragAndDrop::State::Started)
-                {
-                    if (glm::distance(pos, gDragDrop._startPos) >= DragAndDrop::dragTreshold)
-                    {
-                        gDragDrop._state = DragAndDrop::State::Dragging;
-                    }
-                }
-                if (gDragDrop._state == DragAndDrop::State::Dragging)
-                {
-                    gDragDrop._currentPos = pos;
-                }
-            });
+        //         if (gDragDrop._state == DragAndDrop::State::Started)
+        //         {
+        //             if (glm::distance(pos, gDragDrop._startPos) >= DragAndDrop::dragTreshold)
+        //             {
+        //                 gDragDrop._state = DragAndDrop::State::Dragging;
+        //             }
+        //         }
+        //         if (gDragDrop._state == DragAndDrop::State::Dragging)
+        //         {
+        //             gDragDrop._currentPos = pos;
+        //         }
+        //     });
 
-        _subscriptionPool << onMouseKeyPressed->subscribeAndGetID(
-            [](NX::InputButton key, NX::InputState state, NX::InputModifier mod)
-            {
-                if (state == NX::InputState::Released)
-                {
-                    if (glm::distance(gDragDrop._startPos, Mouse::GetPosition())
-                        >= DragAndDrop::dragTreshold)
-                    {
-                        gDragDrop._state = DragAndDrop::State::Dragging;
-                    }
-                    gDragDrop._state = DragAndDrop::State::Idle;
-                    gDragDrop.payload = {};
-                    gDragDrop._key.reset();
-                }
-                else if (state == NX::InputState::Pressed)
-                {
-                    gDragDrop._state = DragAndDrop::State::Started;
-                    gDragDrop._key.reset();
-                    gDragDrop.payload.type = ""_atom;
-                    gDragDrop._startPos = Mouse::GetPosition();
-                }
-            });
+        // _subscriptionPool << onMouseKeyPressed->subscribeAndGetID(
+        //     [](NX::InputButton key, NX::InputState state, NX::InputModifier mod)
+        //     {
+        //         if (state == NX::InputState::Released)
+        //         {
+        //             if (glm::distance(gDragDrop._startPos, Mouse::GetPosition())
+        //                 >= DragAndDrop::dragTreshold)
+        //             {
+        //                 gDragDrop._state = DragAndDrop::State::Dragging;
+        //             }
+        //             gDragDrop._state = DragAndDrop::State::Idle;
+        //             gDragDrop.payload = {};
+        //             gDragDrop._key.reset();
+        //         }
+        //         else if (state == NX::InputState::Pressed)
+        //         {
+        //             gDragDrop._state = DragAndDrop::State::Started;
+        //             gDragDrop._key.reset();
+        //             gDragDrop.payload.type = ""_atom;
+        //             gDragDrop._startPos = Mouse::GetPosition();
+        //         }
+        //     });
     }
 
     spdlog::logger* Window::getLogger() const

@@ -148,7 +148,7 @@ namespace NX
 #endif
         addUniqueTypeChildComponent<ECSEditorInterleavedGraphicsDataAdapter>();
         addUniqueTypeChildComponent<ECSEditorFrameByFrameAnimationAdapter>();
-        addUniqueTypeChildComponent<ECSEditorInputControllerAdapter>();
+        // addUniqueTypeChildComponent<ECSEditorInputControllerAdapter>();
 
         setEnablePreview(true);
         setEnableTree(true);

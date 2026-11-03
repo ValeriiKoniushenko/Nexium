@@ -19,7 +19,7 @@ namespace NX
 {
 
     ENUM_CLASS();
-    enum class InputState
+    enum class InputState : uint8_t
     {
         None = 0,
         Pressed = GLFW_PRESS,

@@ -87,5 +87,3 @@ namespace NX
     };
 
 } // namespace NX
-
-#include "WindowEvents.generated.h" // added by the code generator. Better don't move it.

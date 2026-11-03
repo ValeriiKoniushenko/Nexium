@@ -11,6 +11,7 @@
 
 #pragma once
 
+#include "Core/Delegate.h"
 #include "Core/Singleton.h"
 #include "NxSubsystems/Input/InputTypes.h"
 #include "NxWorld/Framework/InputController.h"
@@ -40,12 +41,12 @@ namespace NX
 
         void processEvents();
 
-        void setActiveContext(InputContext context);
+        // void setActiveContext(InputContext context);
 
         void resetInput();
 
-        void registerController(InputController* controller);
-        void unregisterController(InputController* controller);
+        // void registerController(InputController* controller);
+        // void unregisterController(InputController* controller);
 
         NX::InputModifier ConvertModifiers(int mods);
 
@@ -61,31 +62,30 @@ namespace NX
     private:
         void dispatch(const InputEvent* event);
 
-        [[nodiscard]] std::vector<InputController*> selectControllers();
+        // [[nodiscard]] std::vector<InputController*> selectControllers();
 
-        [[nodiscard]] std::vector<InputController*>& controllersFor(InputContext context);
+        // [[nodiscard]] std::vector<InputController*>& controllersFor(InputContext context);
 
-        void refreshRoutedControllers();
+        // void refreshRoutedControllers();
 
         std::deque<std::unique_ptr<InputEvent>> _events;
 
         template<typename T>
-        void pushEvent(T event)
+            requires std::is_base_of_v<InputEvent, T>
+        void pushEvent(T&& event)
         {
-            static_assert(std::is_base_of_v<InputEvent, T>, "T must inherit from InputEvent");
-
-            _events.emplace_back(std::make_unique<T>(std::move(event)));
+            _events.emplace_back(std::make_unique<T>(std::forward<T>(event)));
         }
 
-        /// Non-owning pointers. Every controller unregisters itself before destruction.
-        /// Controllers registered for shortcuts that are active while editor UI owns input.
-        std::vector<InputController*> _editorControllers;
-        /// Controllers registered for gameplay actions such as player or spectator movement.
-        std::vector<InputController*> _gameplayControllers;
-        /// Live snapshot of the active context. Context changes rebuild it immediately; events
-        /// are dispatched only to these controllers until the context changes again.
-        std::vector<InputController*> _routedControllers;
-        InputContext _activeContext = InputContext::Editor;
+        // /// Non-owning pointers. Every controller unregisters itself before destruction.
+        // /// Controllers registered for shortcuts that are active while editor UI owns input.
+        // std::vector<InputController*> _editorControllers;
+        // /// Controllers registered for gameplay actions such as player or spectator movement.
+        // std::vector<InputController*> _gameplayControllers;
+        // /// Live snapshot of the active context. Context changes rebuild it immediately; events
+        // /// are dispatched only to these controllers until the context changes again.
+        // std::vector<InputController*> _routedControllers;
+        // InputContext _activeContext = InputContext::Editor;
 
         std::vector<InputButton> _pressedKeys;
 

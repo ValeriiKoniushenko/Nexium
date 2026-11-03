@@ -15,8 +15,8 @@
 #include "Core/IntrusivePtr.h"
 #include "Core/String.h"
 #include "NxSubsystems/Input/InputTypes.h"
-#include "Platform/Input/Keyboard.h"
-#include "Platform/Input/Mouse.h"
+#include "Platform/Input/InputDevices/Keyboard.h"
+#include "Platform/Input/InputDevices/Mouse.h"
 #include "Platform/Input/Window.h"
 #include "glm/glm.hpp"
 
