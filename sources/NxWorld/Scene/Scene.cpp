@@ -467,7 +467,7 @@ namespace NX
         grid.setPlane(glm::vec3(0.0f, 0.0f, -1.f), glm::vec3(0.0f, 0.0f, 1.0f));
 
         nxFace = GetAssetsManager()->getFontFace(
-            "data/assets/fonts/Inter/Inter_18px-Black.nxfont"_atom);
+            "data/assets/fonts/Inter/Inter_18px-Black.nxfface"_atom);
         if (nxFace)
         {
             auto& data = nxFace->getData();
