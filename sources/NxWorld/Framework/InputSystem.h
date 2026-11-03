@@ -11,9 +11,13 @@
 
 #pragma once
 
+#include "Core/Delegate.h"
 #include "Core/Singleton.h"
 #include "NxSubsystems/Input/InputTypes.h"
 #include "NxWorld/Framework/InputController.h"
+#include "Platform/Input/Events/GamepadEvents.h"
+#include "Platform/Input/Events/KeyboardEvents.h"
+#include "Platform/Input/Events/MouseEvents.h"
 
 #include <deque>
 #include <vector>
@@ -37,41 +41,53 @@ namespace NX
 
         void processEvents();
 
-        void setActiveContext(InputContext context);
+        // void setActiveContext(InputContext context);
 
         void resetInput();
 
-        void registerController(InputController* controller);
-        void unregisterController(InputController* controller);
+        // void registerController(InputController* controller);
+        // void unregisterController(InputController* controller);
+
+        NX::InputModifier ConvertModifiers(int mods);
+
+        /// Queue an input event for processing in the next processEvents() call.
+        /// Takes ownership of the event.
+        template<typename T>
+        void queueEvent(T event)
+        {
+            static_assert(std::is_base_of_v<InputEvent, T>, "T must inherit from InputEvent");
+            _events.emplace_back(std::make_unique<T>(std::move(event)));
+        }
 
     private:
-        void pushKeyEvent(Platform::Keyboard::Key key, int scancode,
-                          Platform::Keyboard::KeyState state, int mods);
+        void dispatch(const InputEvent* event);
 
-        void dispatch(const KeyInputEvent& event);
+        // [[nodiscard]] std::vector<InputController*> selectControllers();
 
-        [[nodiscard]] std::vector<InputController*> selectControllers() const;
+        // [[nodiscard]] std::vector<InputController*>& controllersFor(InputContext context);
 
-        [[nodiscard]] std::vector<InputController*>& controllersFor(InputContext context);
+        // void refreshRoutedControllers();
 
-        [[nodiscard]] const std::vector<InputController*>& controllersFor(
-            InputContext context) const;
+        std::deque<std::unique_ptr<InputEvent>> _events;
 
-        void refreshRoutedControllers();
+        template<typename T>
+            requires std::is_base_of_v<InputEvent, T>
+        void pushEvent(T&& event)
+        {
+            _events.emplace_back(std::make_unique<T>(std::forward<T>(event)));
+        }
 
-        std::deque<KeyInputEvent> _events;
+        // /// Non-owning pointers. Every controller unregisters itself before destruction.
+        // /// Controllers registered for shortcuts that are active while editor UI owns input.
+        // std::vector<InputController*> _editorControllers;
+        // /// Controllers registered for gameplay actions such as player or spectator movement.
+        // std::vector<InputController*> _gameplayControllers;
+        // /// Live snapshot of the active context. Context changes rebuild it immediately; events
+        // /// are dispatched only to these controllers until the context changes again.
+        // std::vector<InputController*> _routedControllers;
+        // InputContext _activeContext = InputContext::Editor;
 
-        /// Non-owning pointers. Every controller unregisters itself before destruction.
-        /// Controllers registered for shortcuts that are active while editor UI owns input.
-        std::vector<InputController*> _editorControllers;
-        /// Controllers registered for gameplay actions such as player or spectator movement.
-        std::vector<InputController*> _gameplayControllers;
-        /// Live snapshot of the active context. Context changes rebuild it immediately; events
-        /// are dispatched only to these controllers until the context changes again.
-        std::vector<InputController*> _routedControllers;
-        InputContext _activeContext = InputContext::Editor;
-
-        std::vector<Platform::Keyboard::Key> _pressedKeys;
+        std::vector<InputButton> _pressedKeys;
 
         Core::DelegateSubscriberPoolGuard _subscriptions;
 

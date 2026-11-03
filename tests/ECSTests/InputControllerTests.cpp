@@ -33,7 +33,9 @@ namespace
 
         static void key(Key key, State state, int modifiers = 0)
         {
-            Platform::GetWindow().onKeyPressed->trigger(key, 0, state, modifiers);
+            GetInputSystem().pushKeyEvent(InputButton(static_cast<std::uint16_t>(key)),
+                                          static_cast<InputState>(state),
+                                          static_cast<InputModifier>(modifiers));
         }
 
         static void frame() { GetInputSystem().processEvents(); }
@@ -44,8 +46,8 @@ TEST_F(InputControllerTests, RoutesContextsAndReleasesHeldActions)
 {
     auto game = InputController::Create("Game"_atom, InputContext::Gameplay);
     auto editor = InputController::Create("Editor"_atom, InputContext::Editor);
-    game->bind("Move"_atom, KeyChord::Exact(Key::W), InputActionTrigger::WhileHeld);
-    editor->bind("Move"_atom, KeyChord::Exact(Key::W), InputActionTrigger::WhileHeld);
+    game->bind("Move"_atom, KeyChord::Exact(InputButton(static_cast<std::uint16_t>(Key::W))), InputState::Repeated);
+    editor->bind("Move"_atom, KeyChord::Exact(InputButton(static_cast<std::uint16_t>(Key::W))), InputState::Repeated);
     key(Key::W, State::Pressed);
     frame();
     EXPECT_TRUE(game->isActionPressed("Move"_atom));
@@ -64,10 +66,12 @@ TEST_F(InputControllerTests, MostSpecificChordWinsAndRightModifiersWork)
 {
     auto controller = InputController::Create("Game"_atom, InputContext::Gameplay);
     int saved = 0;
-    controller->bind("Plain"_atom, KeyChord::Exact(Key::S));
+    controller->bind("Plain"_atom, KeyChord::Exact(InputButton(static_cast<std::uint16_t>(Key::S))));
     controller->bind(
         "Save"_atom,
-        { .triggerKey = Key::S, .requiredKeys = { Key::Left_Control, Key::Left_Shift } },
+        KeyChord{ .triggerKey = InputButton(static_cast<std::uint16_t>(Key::S)),
+                  .requiredKeys = { InputButton(static_cast<std::uint16_t>(Key::Left_Control)),
+                                    InputButton(static_cast<std::uint16_t>(Key::Left_Shift)) } },
         [&](const InputActionEvent&) { ++saved; });
     key(Key::Right_Control, State::Pressed);
     key(Key::Right_Shift, State::Pressed);
@@ -85,7 +89,7 @@ TEST_F(InputControllerTests, MostSpecificChordWinsAndRightModifiersWork)
 TEST_F(InputControllerTests, ReleaseTriggerLastsOneFrame)
 {
     auto controller = InputController::Create("Game"_atom, InputContext::Gameplay);
-    controller->bind("Release"_atom, KeyChord::Exact(Key::W), InputActionTrigger::OnRelease);
+    controller->bind("Release"_atom, KeyChord::Exact(InputButton(static_cast<std::uint16_t>(Key::W))), InputState::Released);
     key(Key::W, State::Pressed);
     frame();
     EXPECT_FALSE(controller->isActionPressed("Release"_atom));
@@ -99,7 +103,7 @@ TEST_F(InputControllerTests, ReleaseTriggerLastsOneFrame)
 TEST_F(InputControllerTests, DisableAndReenableDoesNotLeaveStuckKeys)
 {
     auto controller = InputController::Create("Game"_atom, InputContext::Gameplay);
-    controller->bind("Move"_atom, KeyChord::Exact(Key::W), InputActionTrigger::WhileHeld);
+    controller->bind("Move"_atom, KeyChord::Exact(InputButton(static_cast<std::uint16_t>(Key::W))), InputState::Repeated);
     key(Key::W, State::Pressed);
     frame();
     controller->disable();
@@ -117,13 +121,13 @@ TEST_F(InputControllerTests, DisableAndReenableDoesNotLeaveStuckKeys)
 TEST_F(InputControllerTests, BindingSerializationPreservesChordAndTrigger)
 {
     const InputController::Binding binding{ .action = "Save"_atom,
-                                            .chord = { .triggerKey = Key::S,
-                                                       .requiredKeys = { Key::Left_Control } },
-                                            .trigger = InputActionTrigger::OnRelease };
+                                            .chord = KeyChord{ .triggerKey = InputButton(static_cast<std::uint16_t>(Key::S)),
+                                                               .requiredKeys = { InputButton(static_cast<std::uint16_t>(Key::Left_Control)) } },
+                                            .trigger = InputState::Released };
     const nlohmann::json json = binding;
     const auto restored = json.get<InputController::Binding>();
     EXPECT_EQ(restored.action, binding.action);
-    EXPECT_EQ(restored.chord.triggerKey, Key::S);
+    EXPECT_EQ(restored.chord.triggerKey, InputButton(static_cast<std::uint16_t>(Key::S)));
     EXPECT_EQ(restored.chord.requiredKeys, binding.chord.requiredKeys);
     EXPECT_EQ(restored.trigger, binding.trigger);
     auto controller = InputController::Create("Game"_atom, InputContext::Gameplay);
@@ -138,9 +142,9 @@ TEST_F(InputControllerTests, CallbackCanDestroyAnotherRegisteredController)
     auto first = InputController::Create("First"_atom, InputContext::Gameplay);
     auto second = InputController::Create("Second"_atom, InputContext::Gameplay);
     int calls = 0;
-    first->bind("Delete"_atom, KeyChord::Exact(Key::W),
+    first->bind("Delete"_atom, KeyChord::Exact(InputButton(static_cast<std::uint16_t>(Key::W))),
                 [&](const InputActionEvent&) { second = nullptr; });
-    second->bind("Move"_atom, KeyChord::Exact(Key::W), [&](const InputActionEvent&) { ++calls; });
+    second->bind("Move"_atom, KeyChord::Exact(InputButton(static_cast<std::uint16_t>(Key::W))), [&](const InputActionEvent&) { ++calls; });
     key(Key::W, State::Pressed);
     frame();
     EXPECT_EQ(calls, 0);
@@ -151,8 +155,8 @@ TEST_F(InputControllerTests, EditingBindingsPreservesCallbacksAndResetsHeldState
     auto controller = InputController::Create("Game"_atom, InputContext::Gameplay);
     int calls = 0;
     controller->bind(
-        "Move"_atom, KeyChord::Exact(Key::W), [&](const InputActionEvent&) { ++calls; },
-        InputActionTrigger::WhileHeld);
+        "Move"_atom, KeyChord::Exact(InputButton(static_cast<std::uint16_t>(Key::W))), [&](const InputActionEvent&) { ++calls; },
+        InputState::Repeated);
     key(Key::W, State::Pressed);
     frame();
     EXPECT_EQ(calls, 1);
@@ -168,7 +172,7 @@ TEST_F(InputControllerTests, EditingBindingsPreservesCallbacksAndResetsHeldState
 TEST_F(InputControllerTests, CloneHasIndependentRuntimeStateAndRegistersOnInitialize)
 {
     auto original = InputController::Create("Original"_atom, InputContext::Gameplay);
-    original->bind("Move"_atom, KeyChord::Exact(Key::W), InputActionTrigger::WhileHeld);
+    original->bind("Move"_atom, KeyChord::Exact(InputButton(static_cast<std::uint16_t>(Key::W))), InputState::Repeated);
     key(Key::W, State::Pressed);
     frame();
     auto clonedBase = original->clone();
@@ -186,7 +190,7 @@ TEST_F(InputControllerTests, CloneHasIndependentRuntimeStateAndRegistersOnInitia
 TEST_F(InputControllerTests, DeserializedComponentReceivesInput)
 {
     InputController original;
-    original.bind("Move"_atom, KeyChord::Exact(Key::W), InputActionTrigger::WhileHeld);
+    original.bind("Move"_atom, KeyChord::Exact(InputButton(static_cast<std::uint16_t>(Key::W))), InputState::Repeated);
     RResourceStream<RJsonResourceStream> stream(original.serialize());
     auto restored = InputController::Create();
     restored->deserialize(stream);
@@ -200,8 +204,8 @@ TEST_F(InputControllerTests, DeserializedComponentReceivesInput)
 TEST_F(InputControllerTests, FocusLossClearsHeldAndQueuedInputEvenIfFocusReturnsBeforeNextFrame)
 {
     auto controller = InputController::Create("Game"_atom, InputContext::Gameplay);
-    controller->bind("Move"_atom, KeyChord::Exact(Key::W), InputActionTrigger::WhileHeld);
-    controller->bind("Queued"_atom, KeyChord::Exact(Key::S));
+    controller->bind("Move"_atom, KeyChord::Exact(InputButton(static_cast<std::uint16_t>(Key::W))), InputState::Repeated);
+    controller->bind("Queued"_atom, KeyChord::Exact(InputButton(static_cast<std::uint16_t>(Key::S))));
     key(Key::W, State::Pressed);
     frame();
     ASSERT_TRUE(controller->isActionPressed("Move"_atom));
@@ -219,8 +223,9 @@ TEST_F(InputControllerTests, FocusLossClearsHeldAndQueuedInputEvenIfFocusReturns
 TEST_F(InputControllerTests, ReleasingRequiredKeyEndsHeldChord)
 {
     auto controller = InputController::Create("Game"_atom, InputContext::Gameplay);
-    controller->bind("Move"_atom, { .triggerKey = Key::W, .requiredKeys = { Key::Left_Control } },
-                     InputActionTrigger::WhileHeld);
+    controller->bind("Move"_atom, KeyChord{ .triggerKey = InputButton(static_cast<std::uint16_t>(Key::W)),
+                                          .requiredKeys = { InputButton(static_cast<std::uint16_t>(Key::Left_Control)) } },
+                     InputState::Repeated);
     key(Key::Left_Control, State::Pressed);
     key(Key::W, State::Pressed);
     frame();

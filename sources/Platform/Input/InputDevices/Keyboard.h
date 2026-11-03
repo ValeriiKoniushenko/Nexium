@@ -11,8 +11,8 @@
 
 #pragma once
 
-#include "Glfw.h"
 #include "JustReflectMe/Adapter.h"
+#include "Platform/Input/Glfw.h"
 
 namespace Platform
 {
