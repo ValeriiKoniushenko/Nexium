@@ -27,22 +27,15 @@
             "_name": "",
             "_noTick": false,
             "_type": "NX::ECSEditorFrameByFrameAnimationAdapter"
-        },
-        {
-            "_children": null,
-            "_isEnabled": false,
-            "_name": "",
-            "_noTick": false,
-            "_type": "NX::ECSEditorInputControllerAdapter"
         }
     ],
     "_innerPosition": [
-        282.0,
+        20.0,
         98.0
     ],
     "_innerSize": {
-        "height": 589.0,
-        "width": 1215.0
+        "height": 893.0,
+        "width": 1880.0
     },
     "_isEnabled": true,
     "_isFitContent": false,
@@ -53,16 +46,16 @@
     "_name": "Assets editor",
     "_noTick": false,
     "_oldSize": {
-        "height": 661.0,
-        "width": 1247.0
+        "height": 965.0,
+        "width": 1900.0
     },
     "_position": [
-        272.0,
+        10.0,
         36.0
     ],
     "_size": {
-        "height": 661.0,
-        "width": 1247.0
+        "height": 965.0,
+        "width": 1900.0
     },
     "_type": "NX::NxECSBasedEditorEWC"
 }

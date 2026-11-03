@@ -7,11 +7,15 @@
 //
 //     http://www.apache.org/licenses/LICENSE-2.0
 
-#include "NxWorld/Framework/InputController.h"
-#include "NxWorld/Framework/InputSystem.h"
-#include "Platform/Input/Window.h"
+// TODO(input-redesign): InputController, InputContext and KeyChord were removed from the engine
+// (see the commented-out NxWorld/Framework/InputController.h). Re-enable and port these tests to
+// the new input system once it replaces them.
+#if 0
+    #include "NxWorld/Framework/InputController.h"
+    #include "NxWorld/Framework/InputSystem.h"
+    #include "Platform/Input/Window.h"
 
-#include "gtest/gtest.h"
+    #include "gtest/gtest.h"
 
 using namespace NX;
 using Key = Platform::Keyboard::Key;
@@ -234,3 +238,4 @@ TEST_F(InputControllerTests, ReleasingRequiredKeyEndsHeldChord)
     frame();
     EXPECT_FALSE(controller->isActionPressed("Move"_atom));
 }
+#endif

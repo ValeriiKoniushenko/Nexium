@@ -107,6 +107,34 @@ namespace NX
         _initialized = true;
     }
 
+    void InputSystem::resetInput()
+    {
+        _events.clear();
+        _pressedKeys.clear();
+    }
+
+    void InputSystem::processEvents()
+    {
+        while (!_events.empty())
+        {
+            const auto event = std::move(_events.front());
+            _events.pop_front();
+            dispatch(event.get());
+        }
+    }
+
+    void InputSystem::dispatch(const InputEvent* event)
+    {
+        // Controllers were removed during the input redesign; there is no consumer to route
+        // events to yet.
+        (void)event;
+    }
+
+    InputSystem& GetInputSystem()
+    {
+        return InputSystem::Instance();
+    }
+
     // void InputSystem::setActiveContext(InputContext context)
     // {
     //     if (_activeContext == context)

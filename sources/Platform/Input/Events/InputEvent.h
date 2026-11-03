@@ -117,8 +117,8 @@ namespace NX
 
     private:
         EventType _eventType = EventType::None;
-        InputDeviceId _deviceId = InvalidInputDeviceId;
         InputDeviceType _deviceType = InputDeviceType::None;
+        InputDeviceId _deviceId = InvalidInputDeviceId;
     };
 
     class InputButton
