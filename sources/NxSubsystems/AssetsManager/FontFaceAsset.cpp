@@ -23,8 +23,6 @@ namespace NX
 
     void FontFaceAsset::onLoadRequest()
     {
-        _data.release();
-
         if (_path.empty()) [[unlikely]]
         {
             errorLog("Can't load the font face. The path is empty.");
@@ -36,7 +34,12 @@ namespace NX
         {
             errorLog("Can't generate the font face from '{}'"_f << _path.generic_string());
             _data.release();
+            return;
         }
+
+        _data.generateFace(_faceIndex);
+        _data.setPixelSize(_size);
+        _data.generateTextureASCIIGlyphs(NX::GetShaderManager().getShaderProgram("text"_atom));
     }
 
     void FontFaceAsset::onUnloadRequest()

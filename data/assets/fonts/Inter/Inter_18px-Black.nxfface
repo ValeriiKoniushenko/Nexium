@@ -1,5 +1,7 @@
 {
-  "AssetData": {
-    "_path": "data/internal/fonts/Inter/Inter_18pt-Black.ttf"
-  }
+    "AssetData": {
+        "_path": "data/internal/fonts/Inter/Inter_18pt-Black.ttf",
+        "_size": 22,
+        "_faceIndex": 0
+    }
 }

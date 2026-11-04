@@ -468,13 +468,6 @@ namespace NX
 
         nxFace = GetAssetsManager()->getFontFace(
             "data/assets/fonts/Inter/Inter_18px-Black.nxfface"_atom);
-        if (nxFace)
-        {
-            auto& data = nxFace->getData();
-            data.generateFace(0);
-            data.setPixelSize(18);
-            data.generateTextureASCIIGlyphs(NX::GetShaderManager().getShaderProgram("text"_atom));
-        }
     }
 
     void Scene::tick(float timeDelta)

@@ -59,6 +59,12 @@ namespace NX
 
         FIELD();
         std::filesystem::path _path;
+
+        FIELD();
+        std::uint8_t _size = 16;
+
+        FIELD();
+        std::uint8_t _faceIndex = 0;
     };
 
     using NXFFace = AssetRef<FontFaceAsset>;
