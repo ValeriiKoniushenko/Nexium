@@ -178,6 +178,15 @@ namespace Platform
         Core::Delegate<void(NX::GamepadConnectionEvent)>::Ptr onJoystickConnected
             = Core::Delegate<void(NX::GamepadConnectionEvent)>::Create();
 
+        Core::Delegate<void(NX::WindowIconifyEvent)>::Ptr onIconifyChanged
+            = Core::Delegate<void(NX::WindowIconifyEvent)>::Create();
+
+        Core::Delegate<void(NX::GamepadButtonEvent)>::Ptr onJoystickButtonPressed
+            = Core::Delegate<void(NX::GamepadButtonEvent)>::Create();
+
+        Core::Delegate<void(NX::GamepadAxisEvent)>::Ptr onJoystickAxisChanged
+            = Core::Delegate<void(NX::GamepadAxisEvent)>::Create();
+
         /// @param unsigned int is a Scancode
         Core::Delegate<void(NX::TextInputEvent)>::Ptr onTextInput
             = Core::Delegate<void(NX::TextInputEvent)>::Create();
@@ -188,9 +197,6 @@ namespace Platform
 
         Core::Delegate<void(NX::WindowFocusEvent)>::Ptr onFocusChanged
             = Core::Delegate<void(NX::WindowFocusEvent)>::Create();
-
-        Core::Delegate<void(NX::WindowIconifyEvent)>::Ptr onIconifyChanged
-            = Core::Delegate<void(NX::WindowIconifyEvent)>::Create();
 
         /// @param ISize2 new window size
         Core::Delegate<void(Core::ISize2)>::Ptr onResize

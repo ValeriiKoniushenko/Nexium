@@ -10,7 +10,7 @@
 #include "Joystick.h"
 
 #include "GLFW/glfw3.h"
-#include "NxWorld/Framework/InputSystem.h"
+#include "Platform/Input/Window.h"
 
 #include <algorithm>
 
@@ -20,12 +20,14 @@ namespace Platform
     {
         // Static state storage
         std::array<bool, Joystick::MaxJoysticks> s_connected{};
-        std::array<std::array<bool, Joystick::MaxButtons>, Joystick::MaxJoysticks> s_currentButtons{};
-        std::array<std::array<bool, Joystick::MaxButtons>, Joystick::MaxJoysticks> s_previousButtons{};
+        std::array<std::array<bool, Joystick::MaxButtons>, Joystick::MaxJoysticks>
+            s_currentButtons{};
+        std::array<std::array<bool, Joystick::MaxButtons>, Joystick::MaxJoysticks>
+            s_previousButtons{};
         std::array<std::array<float, Joystick::MaxAxes>, Joystick::MaxJoysticks> s_currentAxes{};
         std::array<std::array<float, Joystick::MaxAxes>, Joystick::MaxJoysticks> s_previousAxes{};
         float s_deadzone = Joystick::DefaultDeadzone;
-    }
+    } // namespace
 
     void Joystick::poll()
     {
@@ -44,7 +46,7 @@ namespace Platform
                     const auto deviceId = static_cast<NX::InputDeviceId>(jid + 1);
                     NX::GamepadConnectionEvent event(deviceId);
                     event.setConnected(false);
-                    NX::GetInputSystem().queueEvent(std::move(event));
+                    GetWindow().onJoystickConnected->trigger(event);
                 }
                 continue;
             }
@@ -65,7 +67,7 @@ namespace Platform
                 const auto deviceId = static_cast<NX::InputDeviceId>(jid + 1);
                 NX::GamepadConnectionEvent event(deviceId);
                 event.setConnected(true);
-                NX::GetInputSystem().queueEvent(std::move(event));
+                GetWindow().onJoystickConnected->trigger(event);
             }
 
             GLFWgamepadstate state{};
@@ -88,7 +90,7 @@ namespace Platform
                     NX::GamepadButtonEvent event(deviceId);
                     event.setButton(NX::InputButton(static_cast<uint16_t>(btn)));
                     event.setState(pressed ? NX::InputState::Pressed : NX::InputState::Released);
-                    NX::GetInputSystem().queueEvent(std::move(event));
+                    GetWindow().onJoystickButtonPressed->trigger(event);
                 }
             }
 
@@ -104,7 +106,7 @@ namespace Platform
                     NX::GamepadAxisEvent event(deviceId);
                     event.setAxis(static_cast<uint16_t>(ax));
                     event.setValue(value);
-                    NX::GetInputSystem().queueEvent(std::move(event));
+                    GetWindow().onJoystickAxisChanged->trigger(event);
                 }
             }
 

@@ -95,6 +95,11 @@ namespace NX
         _subscriptions << window.onKeyPressed->subscribeAndGetID(registerEvent);
         _subscriptions << window.onMouseKeyPressed->subscribeAndGetID(registerEvent);
         _subscriptions << window.onFocusChanged->subscribeAndGetID(registerEvent);
+        _subscriptions << window.onMouseMove->subscribeAndGetID(registerEvent);
+        _subscriptions << window.onMouseWheel->subscribeAndGetID(registerEvent);
+        _subscriptions << window.onJoystickConnected->subscribeAndGetID(registerEvent);
+        _subscriptions << window.onJoystickButtonPressed->subscribeAndGetID(registerEvent);
+        _subscriptions << window.onJoystickAxisChanged->subscribeAndGetID(registerEvent);
 
         _subscriptions << window.onFocusChanged->subscribeAndGetID(
             [this](const WindowFocusEvent& event)
