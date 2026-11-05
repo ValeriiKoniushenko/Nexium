@@ -82,10 +82,10 @@ namespace NX
     enum class InputDeviceType : uint8_t
     {
         None,
-        Keyboard,
+        Touch,
         Mouse,
         Gamepad,
-        Touch
+        Keyboard,
     };
 
     using InputDeviceId = uint32_t;
