@@ -10,6 +10,7 @@
 #include "NxWorld/Framework/InputSystem.h"
 #include "Platform/Input/CursorDeltaTracker.h"
 #include "Platform/Input/Glfw.h"
+#include "Platform/Input/InputDevices/Joystick.h"
 #include "Platform/Input/Window.h"
 
 #include "gtest/gtest.h"
@@ -179,4 +180,12 @@ TEST(CursorDeltaTrackerTests, ResetToIgnoresProgrammaticWarp)
     tracker.resetTo({ 400.f, 300.f });
     EXPECT_EQ(tracker.update({ 400.f, 300.f }), glm::vec2(0.f));
     EXPECT_EQ(tracker.update({ 402.f, 299.f }), glm::vec2(2.f, -1.f));
+}
+
+TEST(JoystickTests, TriggersRestAtMinusOneAndSticksAtZero)
+{
+    EXPECT_EQ(Platform::Joystick::getAxisRestValue(GLFW_GAMEPAD_AXIS_LEFT_X), 0.f);
+    EXPECT_EQ(Platform::Joystick::getAxisRestValue(GLFW_GAMEPAD_AXIS_RIGHT_Y), 0.f);
+    EXPECT_EQ(Platform::Joystick::getAxisRestValue(GLFW_GAMEPAD_AXIS_LEFT_TRIGGER), -1.f);
+    EXPECT_EQ(Platform::Joystick::getAxisRestValue(GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER), -1.f);
 }

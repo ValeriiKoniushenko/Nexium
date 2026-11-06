@@ -52,14 +52,6 @@ namespace Platform
             None = ~0
         };
 
-        ENUM_CLASS();
-        enum class State : std::int32_t
-        {
-            None = 0,
-            Press = GLFW_PRESS,
-            Release = GLFW_RELEASE,
-        };
-
     public:
         Mouse() = delete;
 

@@ -36,7 +36,6 @@ namespace Platform
             s_lastReportedAxes{};
 
         // Configuration.
-        float s_deadzone = Joystick::DefaultDeadzone;
         float s_axisChangeThreshold = Joystick::DefaultAxisChangeThreshold;
 
     } // namespace
@@ -170,10 +169,11 @@ namespace Platform
             GetWindow().onJoystickButtonPressed->trigger(event);
         }
 
-        // Reset axes that previously generated non-zero values.
+        // Return axes that are not at rest to their rest values.
         for (int ax = 0; ax < MaxAxes; ++ax)
         {
-            if (s_lastReportedAxes[jid][ax] == 0.f)
+            const float rest = getAxisRestValue(ax);
+            if (s_lastReportedAxes[jid][ax] == rest)
             {
                 continue;
             }
@@ -181,7 +181,7 @@ namespace Platform
             NX::GamepadAxisEvent event(deviceId);
 
             event.setAxis(static_cast<uint16_t>(ax));
-            event.setValue(0.f);
+            event.setValue(rest);
 
             GetWindow().onJoystickAxisChanged->trigger(event);
         }
@@ -207,8 +207,11 @@ namespace Platform
         s_currentButtons[jid].fill(false);
         s_previousButtons[jid].fill(false);
 
-        s_currentAxes[jid].fill(0.f);
-        s_lastReportedAxes[jid].fill(0.f);
+        for (int ax = 0; ax < MaxAxes; ++ax)
+        {
+            s_currentAxes[jid][ax] = getAxisRestValue(ax);
+            s_lastReportedAxes[jid][ax] = getAxisRestValue(ax);
+        }
     }
 
     bool Joystick::isConnected(int jid)
@@ -228,24 +231,17 @@ namespace Platform
 
     float Joystick::getAxis(int jid, int axis)
     {
-        if (!isConnected(jid) || axis < 0 || axis >= MaxAxes)
+        if (axis < 0 || axis >= MaxAxes)
         {
             return 0.f;
         }
 
-        const float value = s_currentAxes[jid][axis];
+        if (!isConnected(jid))
+        {
+            return getAxisRestValue(axis);
+        }
 
-        return std::abs(value) < s_deadzone ? 0.f : value;
-    }
-
-    void Joystick::setDeadzone(float deadzone)
-    {
-        s_deadzone = std::clamp(deadzone, 0.f, 0.99f);
-    }
-
-    float Joystick::getDeadzone()
-    {
-        return s_deadzone;
+        return s_currentAxes[jid][axis];
     }
 
     void Joystick::setAxisChangeThreshold(float threshold)
@@ -256,6 +252,13 @@ namespace Platform
     float Joystick::getAxisChangeThreshold()
     {
         return s_axisChangeThreshold;
+    }
+
+    float Joystick::getAxisRestValue(int axis) noexcept
+    {
+        const bool isTrigger
+            = axis == GLFW_GAMEPAD_AXIS_LEFT_TRIGGER || axis == GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER;
+        return isTrigger ? -1.f : 0.f;
     }
 
 } // namespace Platform

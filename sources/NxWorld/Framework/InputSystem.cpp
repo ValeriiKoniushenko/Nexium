@@ -14,32 +14,6 @@
 
 #include <ranges>
 
-namespace
-{
-
-    Platform::Keyboard::Key NormalizeModifier(Platform::Keyboard::Key key)
-    {
-        using Key = Platform::Keyboard::Key;
-        if (key == Key::Right_Shift)
-        {
-            return Key::Left_Shift;
-        }
-        if (key == Key::Right_Control)
-        {
-            return Key::Left_Control;
-        }
-        if (key == Key::Right_Alt)
-        {
-            return Key::Left_Alt;
-        }
-        if (key == Key::Right_Super)
-        {
-            return Key::Left_Super;
-        }
-        return key;
-    }
-} // namespace
-
 namespace NX
 {
 

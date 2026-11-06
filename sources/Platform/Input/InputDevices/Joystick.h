@@ -28,8 +28,7 @@ namespace Platform
         static constexpr int MaxButtons = GLFW_GAMEPAD_BUTTON_LAST + 1;
         static constexpr int MaxAxes = GLFW_GAMEPAD_AXIS_LAST + 1;
 
-        static constexpr float DefaultDeadzone = 0.15f;
-        static constexpr float DefaultAxisChangeThreshold = 0.001f;
+        static constexpr float DefaultAxisChangeThreshold = 0.01f;
 
         Joystick() = delete;
 
@@ -42,18 +41,15 @@ namespace Platform
         /// Get current button state.
         [[nodiscard]] static bool isButtonPressed(int jid, int button);
 
-        /// Get current axis value with deadzone applied.
+        /// Get current raw axis value.
         [[nodiscard]] static float getAxis(int jid, int axis);
-
-        /// Set deadzone applied to axis values returned by getAxis().
-        static void setDeadzone(float deadzone);
-
-        [[nodiscard]] static float getDeadzone();
 
         /// Set minimum axis value difference required to generate an event.
         static void setAxisChangeThreshold(float threshold);
 
         [[nodiscard]] static float getAxisChangeThreshold();
+
+        [[nodiscard]] static float getAxisRestValue(int axis) noexcept;
 
         // GLFW gamepad button/axis constants for convenience.
         enum class GamepadButton : uint16_t
