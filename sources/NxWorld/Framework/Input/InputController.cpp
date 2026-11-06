@@ -17,20 +17,6 @@
 
 namespace
 {
-    constexpr auto MatchedModifiers = NX::InputModifier::Shift | NX::InputModifier::Control
-                                      | NX::InputModifier::Alt | NX::InputModifier::Super;
-
-    bool IsButtonSource(NX::InputSource source)
-    {
-        return source == NX::InputSource::Key || source == NX::InputSource::MouseButton
-               || source == NX::InputSource::GamepadButton;
-    }
-
-    bool IsPerFrameSource(NX::InputSource source)
-    {
-        return source == NX::InputSource::MouseDelta || source == NX::InputSource::MouseScroll;
-    }
-
     float NormalizeAxis(std::uint16_t axis, float value)
     {
         const float rest = Platform::Joystick::getAxisRestValue(axis);
@@ -40,50 +26,6 @@ namespace
 
 namespace NX
 {
-    InputModifier InputBinding::getModifiers() const noexcept
-    {
-        auto result = InputModifier::None;
-        if (shift)
-        {
-            result = result | InputModifier::Shift;
-        }
-        if (control)
-        {
-            result = result | InputModifier::Control;
-        }
-        if (alt)
-        {
-            result = result | InputModifier::Alt;
-        }
-        if (super)
-        {
-            result = result | InputModifier::Super;
-        }
-        return result;
-    }
-
-    void to_json(nlohmann::json& j, const InputBinding& v)
-    {
-        j = R<InputBinding>::Serialize(v).getData();
-    }
-
-    void from_json(const nlohmann::json& j, InputBinding& v)
-    {
-        const RResourceStream<RJsonResourceStream> data(j);
-        R<InputBinding>::Deserialize(data, v);
-    }
-
-    void to_json(nlohmann::json& j, const InputAction& v)
-    {
-        j = R<InputAction>::Serialize(v).getData();
-    }
-
-    void from_json(const nlohmann::json& j, InputAction& v)
-    {
-        const RResourceStream<RJsonResourceStream> data(j);
-        R<InputAction>::Deserialize(data, v);
-    }
-
     ECS_IMPL(NX::InputController);
 
     InputController::~InputController()
@@ -106,6 +48,8 @@ namespace NX
     void InputController::onDeinitialize()
     {
         GetInputSystem().unregisterController(this);
+        _actionStates.clear();
+        ensureStatesMatchActions();
         BaseComponent::onDeinitialize();
     }
 
@@ -162,8 +106,7 @@ namespace NX
         return state && isEnabled() ? state->value : glm::vec2{ 0.f };
     }
 
-    const InputController::ActionState* InputController::findState(
-        const Core::StringAtom& action) const
+    const ActionState* InputController::findState(const Core::StringAtom& action) const
     {
         const auto it = std::ranges::find(_actions, action, &InputAction::name);
         if (it == _actions.end())
@@ -188,7 +131,7 @@ namespace NX
 
         for (std::size_t i = 0; i < _actions.size(); ++i)
         {
-            if (_actionStates[i].bindings.size() != _actions[i].bindings.size())
+            if (!_actionStates[i].fits(_actions[i]))
             {
                 return false;
             }
@@ -203,10 +146,10 @@ namespace NX
             return;
         }
 
-        _actionStates.assign(_actions.size(), ActionState{});
-        for (std::size_t i = 0; i < _actions.size(); ++i)
+        _actionStates.clear();
+        for (const auto& action : _actions)
         {
-            _actionStates[i].bindings.resize(_actions[i].bindings.size());
+            _actionStates.emplace_back(action);
         }
     }
 
@@ -225,20 +168,10 @@ namespace NX
 
     void InputController::beginInputFrame()
     {
-        forEachBinding(
-            [](const InputBinding& binding, BindingState& state)
-            {
-                state.wasPressedThisFrame = false;
-                state.firedThisFrame = false;
-                if (IsPerFrameSource(binding.source))
-                {
-                    state.value = glm::vec2{ 0.f };
-                }
-            });
-
-        for (auto& action : _actionStates)
+        ensureStatesMatchActions();
+        for (std::size_t i = 0; i < _actions.size(); ++i)
         {
-            action.wasTriggered = false;
+            _actionStates[i].beginFrame(_actions[i]);
         }
     }
 
@@ -248,22 +181,9 @@ namespace NX
         forEachBinding(
             [&](const InputBinding& binding, BindingState& bindingState)
             {
-                if (binding.source != source || binding.code != code)
+                if (binding.matches(source, code))
                 {
-                    return;
-                }
-
-                const bool modifiersMatch = (mods & MatchedModifiers) == binding.getModifiers();
-                if (state == InputState::Pressed && modifiersMatch)
-                {
-                    bindingState.isHeld = true;
-                    bindingState.wasPressedThisFrame = true;
-                    bindingState.firedThisFrame |= binding.trigger == InputTrigger::Pressed;
-                }
-                else if (state == InputState::Released && bindingState.isHeld)
-                {
-                    bindingState.isHeld = false;
-                    bindingState.firedThisFrame |= binding.trigger == InputTrigger::Released;
+                    bindingState.onButton(binding, state, mods);
                 }
             });
     }
@@ -271,11 +191,11 @@ namespace NX
     void InputController::onVector(InputSource source, glm::vec2 value)
     {
         forEachBinding(
-            [&](const InputBinding& binding, BindingState& state)
+            [&](const InputBinding& binding, BindingState& bindingState)
             {
-                if (binding.source == source)
+                if (binding.matches(source, 0))
                 {
-                    state.value += value;
+                    bindingState.addVector(value);
                 }
             });
     }
@@ -284,11 +204,11 @@ namespace NX
     {
         const float normalized = NormalizeAxis(axis, value);
         forEachBinding(
-            [&](const InputBinding& binding, BindingState& state)
+            [&](const InputBinding& binding, BindingState& bindingState)
             {
-                if (binding.source == InputSource::GamepadAxis && binding.code == axis)
+                if (binding.matches(InputSource::GamepadAxis, axis))
                 {
-                    state.value = glm::vec2{ normalized, 0.f };
+                    bindingState.setAxis(normalized);
                 }
             });
     }
@@ -298,44 +218,7 @@ namespace NX
         ensureStatesMatchActions();
         for (std::size_t i = 0; i < _actions.size(); ++i)
         {
-            const auto& action = _actions[i];
-            auto& actionState = _actionStates[i];
-
-            glm::vec2 sum{ 0.f };
-            bool firedThisFrame = false;
-            bool pressedThisFrame = false;
-
-            for (std::size_t j = 0; j < action.bindings.size(); ++j)
-            {
-                const auto& binding = action.bindings[j];
-                const auto& state = actionState.bindings[j];
-
-                glm::vec2 contribution = state.value;
-                if (IsButtonSource(binding.source))
-                {
-                    const bool isDownTrigger = binding.trigger == InputTrigger::Down;
-                    const bool isOn = isDownTrigger ? state.isHeld : state.firedThisFrame;
-                    contribution = glm::vec2{ isOn ? 1.f : 0.f, 0.f };
-                    firedThisFrame |= state.firedThisFrame;
-                    pressedThisFrame |= isDownTrigger && state.wasPressedThisFrame;
-                }
-
-                if (binding.negate)
-                {
-                    contribution = -contribution;
-                }
-                if (binding.swizzleYX)
-                {
-                    contribution = glm::vec2{ contribution.y, contribution.x };
-                }
-                sum += contribution;
-            }
-
-            const bool wasActive = actionState.isActive;
-            actionState.value = sum;
-            actionState.isActive = sum.x != 0.f || sum.y != 0.f;
-            actionState.wasTriggered
-                = firedThisFrame || ((actionState.isActive || pressedThisFrame) && !wasActive);
+            _actionStates[i].endFrame(_actions[i]);
         }
     }
 } // namespace NX

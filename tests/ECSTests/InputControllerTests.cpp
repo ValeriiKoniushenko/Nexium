@@ -359,3 +359,31 @@ TEST_F(InputControllerRuntimeTests, DisabledControllerKeepsTrackingReleases)
     controller->enable();
     EXPECT_FALSE(controller->isActive("Fire"_atom));
 }
+
+TEST_F(InputControllerRuntimeTests, BindingWithoutModifiersIgnoresHeldModifiers)
+{
+    addAction("Fire", { KeyBinding(Key::Space, NX::InputTrigger::Down) });
+    controller->initialize();
+
+    key(Key::Space, NX::InputState::Pressed, NX::InputModifier::Shift);
+    frame();
+    EXPECT_TRUE(controller->isActive("Fire"_atom));
+}
+
+TEST_F(InputControllerRuntimeTests, DeinitializeClearsActionStates)
+{
+    NX::InputBinding scroll;
+    scroll.source = NX::InputSource::MouseScroll;
+    addAction("Scroll", { scroll });
+    controller->initialize();
+
+    NX::MouseScrollEvent event;
+    event.setOffset({ 0.f, 1.f });
+    NX::GetInputSystem().queueEvent(event);
+    frame();
+    ASSERT_TRUE(controller->isActive("Scroll"_atom));
+
+    controller->deinitialize();
+    EXPECT_FALSE(controller->isActive("Scroll"_atom));
+    EXPECT_FALSE(NX::GetInputSystem().isRegistered(controller.get()));
+}
