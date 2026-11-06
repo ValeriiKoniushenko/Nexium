@@ -150,9 +150,9 @@ namespace Platform
         enum class KeyState : std::uint8_t
         {
             None = 0,
-            Pressed = GLFW_PRESS,
-            Released = GLFW_RELEASE,
-            Repeated = GLFW_REPEAT
+            Pressed,
+            Released,
+            Repeated
         };
 
         Keyboard() = delete;

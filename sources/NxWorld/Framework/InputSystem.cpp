@@ -79,7 +79,6 @@ namespace NX
         }
 
         return result;
-        return static_cast<NX::InputModifier>(mods);
     }
 
     void InputSystem::initialize(Platform::Window& window)
@@ -101,14 +100,6 @@ namespace NX
         _subscriptions << window.onJoystickAxisChanged->subscribeAndGetID(registerEvent);
         _subscriptions << window.onJoystickButtonPressed->subscribeAndGetID(registerEvent);
 
-        _subscriptions << window.onFocusChanged->subscribeAndGetID(
-            [this](const WindowFocusEvent& event)
-            {
-                if (!event.isFocused())
-                {
-                    resetInput();
-                }
-            });
         _initialized = true;
     }
 

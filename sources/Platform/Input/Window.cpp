@@ -63,30 +63,9 @@ namespace
         NX::MouseButtonEvent event;
 
         event.setButton(NX::InputButton(static_cast<uint16_t>(button)));
-        event.setState(static_cast<NX::InputState>(action));
+        event.setState(ToInputState(action));
         event.setMods(NX::GetInputSystem().ConvertModifiers(mods));
         GetWindow().onMouseKeyPressed->trigger(event);
-    }
-
-    void JoystickConnectionHandler(int jid, int event)
-    {
-        const auto deviceId = static_cast<NX::InputDeviceId>(jid + 1);
-
-        NX::GamepadConnectionEvent connectionEvent(deviceId);
-        if (event == GLFW_CONNECTED)
-        {
-            // GLFW callback is triggered for all joysticks.
-            if (glfwJoystickIsGamepad(jid) != GLFW_TRUE)
-            {
-                return;
-            }
-            connectionEvent.setConnected(true);
-        }
-        else if (event == GLFW_DISCONNECTED)
-        {
-            connectionEvent.setConnected(false);
-        }
-        GetWindow().onJoystickConnected->trigger(connectionEvent);
     }
 
     void KeyPressHandler(GLFWwindow*, int key, int scancode, int action, int mods)
@@ -95,7 +74,7 @@ namespace
 
         event.setKey(NX::InputButton(static_cast<uint16_t>(key)));
         event.setScancode(scancode);
-        event.setState(static_cast<NX::InputState>(action));
+        event.setState(ToInputState(action));
         event.setMods(NX::GetInputSystem().ConvertModifiers(mods));
 
         GetWindow().onKeyPressed->trigger(event);
@@ -231,7 +210,6 @@ namespace Platform
             },
             nullptr);
 #endif
-        glfwSetJoystickCallback(JoystickConnectionHandler);
         glfwSetMouseButtonCallback(_window, MouseKeyPressHandler);
         glfwSetCursorPosCallback(_window, MouseMoveHandler);
         glfwSetKeyCallback(_window, KeyPressHandler);
@@ -371,53 +349,49 @@ namespace Platform
 
     void Window::registerEvents()
     {
-        // _subscriptionPool << onFocusChanged->subscribeAndGetID([this](bool focused)
-        //                                                        { _isFocused = focused; });
-        // _subscriptionPool << onIconifyChanged->subscribeAndGetID([this](bool iconified)
-        //                                                          { _isIconified = iconified; });
+        _subscriptionPool << onFocusChanged->subscribeAndGetID(
+            [this](const NX::WindowFocusEvent& event) { _isFocused = event.isFocused(); });
+        _subscriptionPool << onIconifyChanged->subscribeAndGetID(
+            [this](const NX::WindowIconifyEvent& event) { _isIconified = event.isIconified(); });
 
-        // _subscriptionPool << onMouseMove->subscribeAndGetID(
-        //     [](glm::vec2 pos)
-        //     {
-        //         static glm::vec2 lastPos = pos;
-        //         gDragDrop._lastDelta = lastPos - pos;
-        //         lastPos = pos;
+        _subscriptionPool << onMouseMove->subscribeAndGetID(
+            [](const NX::MouseMoveEvent& event)
+            {
+                const glm::vec2 pos = event.getPosition();
+                static glm::vec2 lastPos = pos;
+                gDragDrop._lastDelta = lastPos - pos;
+                lastPos = pos;
 
-        //         if (gDragDrop._state == DragAndDrop::State::Started)
-        //         {
-        //             if (glm::distance(pos, gDragDrop._startPos) >= DragAndDrop::dragTreshold)
-        //             {
-        //                 gDragDrop._state = DragAndDrop::State::Dragging;
-        //             }
-        //         }
-        //         if (gDragDrop._state == DragAndDrop::State::Dragging)
-        //         {
-        //             gDragDrop._currentPos = pos;
-        //         }
-        //     });
+                if (gDragDrop._state == DragAndDrop::State::Started)
+                {
+                    if (glm::distance(pos, gDragDrop._startPos) >= DragAndDrop::dragTreshold)
+                    {
+                        gDragDrop._state = DragAndDrop::State::Dragging;
+                    }
+                }
+                if (gDragDrop._state == DragAndDrop::State::Dragging)
+                {
+                    gDragDrop._currentPos = pos;
+                }
+            });
 
-        // _subscriptionPool << onMouseKeyPressed->subscribeAndGetID(
-        //     [](NX::InputButton key, NX::InputState state, NX::InputModifier mod)
-        //     {
-        //         if (state == NX::InputState::Released)
-        //         {
-        //             if (glm::distance(gDragDrop._startPos, Mouse::GetPosition())
-        //                 >= DragAndDrop::dragTreshold)
-        //             {
-        //                 gDragDrop._state = DragAndDrop::State::Dragging;
-        //             }
-        //             gDragDrop._state = DragAndDrop::State::Idle;
-        //             gDragDrop.payload = {};
-        //             gDragDrop._key.reset();
-        //         }
-        //         else if (state == NX::InputState::Pressed)
-        //         {
-        //             gDragDrop._state = DragAndDrop::State::Started;
-        //             gDragDrop._key.reset();
-        //             gDragDrop.payload.type = ""_atom;
-        //             gDragDrop._startPos = Mouse::GetPosition();
-        //         }
-        //     });
+        _subscriptionPool << onMouseKeyPressed->subscribeAndGetID(
+            [](const NX::MouseButtonEvent& event)
+            {
+                if (event.getState() == NX::InputState::Released)
+                {
+                    gDragDrop._state = DragAndDrop::State::Idle;
+                    gDragDrop.payload = {};
+                    gDragDrop._key.reset();
+                }
+                else if (event.getState() == NX::InputState::Pressed)
+                {
+                    gDragDrop._state = DragAndDrop::State::Started;
+                    gDragDrop._key = event.getButton();
+                    gDragDrop.payload.type = ""_atom;
+                    gDragDrop._startPos = Mouse::GetPosition();
+                }
+            });
     }
 
     spdlog::logger* Window::getLogger() const

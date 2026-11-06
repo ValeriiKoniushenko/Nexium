@@ -41,6 +41,9 @@ namespace NX
 
         void processEvents();
 
+        /// Number of events queued since the last processEvents() call.
+        [[nodiscard]] std::size_t getPendingEventCount() const noexcept { return _events.size(); }
+
         // void setActiveContext(InputContext context);
 
         void resetInput();

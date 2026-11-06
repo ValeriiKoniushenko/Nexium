@@ -12,19 +12,20 @@
 #pragma once
 
 #include "Core/String.h"
-#include "GLFW/glfw3.h"
 #include "JustReflectMe/Adapter.h"
 
 namespace NX
 {
 
+    /// Platform-independent button state. Backends convert their native values explicitly
+    /// (see Platform::ToInputState for GLFW); never cast native constants to this enum.
     ENUM_CLASS();
     enum class InputState : uint8_t
     {
         None = 0,
-        Pressed = GLFW_PRESS,
-        Released = GLFW_RELEASE,
-        Repeated = GLFW_REPEAT
+        Pressed,
+        Released,
+        Repeated
     };
 
     ENUM_CLASS();

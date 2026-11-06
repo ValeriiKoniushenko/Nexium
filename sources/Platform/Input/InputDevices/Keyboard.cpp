@@ -15,7 +15,17 @@ namespace Platform
 {
     Keyboard::KeyState Keyboard::getKeyState(Key key)
     {
-        return static_cast<KeyState>(glfwGetKey(GetWindow().getRawWindow(), static_cast<int>(key)));
+        switch (glfwGetKey(GetWindow().getRawWindow(), static_cast<int>(key)))
+        {
+            case GLFW_PRESS:
+                return KeyState::Pressed;
+            case GLFW_RELEASE:
+                return KeyState::Released;
+            case GLFW_REPEAT:
+                return KeyState::Repeated;
+            default:
+                return KeyState::None;
+        }
     }
 
     bool Keyboard::IsKeyPressed(Key key)

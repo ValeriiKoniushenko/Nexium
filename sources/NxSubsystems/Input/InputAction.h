@@ -63,13 +63,13 @@ namespace NX
                 // FOR REVIEWERS how can i use here
                 // Platform::Keyboard::getKeyState(Platform::Keyboard::Key::Left_Control)
                 return {
-                    .leftShift = static_cast<NX::InputState>(
+                    .leftShift = Platform::ToInputState(
                         glfwGetKey(Platform::GetWindow().getRawWindow(),
                                    static_cast<int>(Platform::Keyboard::Key::Left_Shift))),
-                    .leftAlt = static_cast<NX::InputState>(
+                    .leftAlt = Platform::ToInputState(
                         glfwGetKey(Platform::GetWindow().getRawWindow(),
                                    static_cast<int>(Platform::Keyboard::Key::Left_Alt))),
-                    .leftCtrl = static_cast<NX::InputState>(
+                    .leftCtrl = Platform::ToInputState(
                         glfwGetKey(Platform::GetWindow().getRawWindow(),
                                    static_cast<int>(Platform::Keyboard::Key::Left_Control))),
                 };
@@ -77,8 +77,8 @@ namespace NX
 
             [[nodiscard]] bool isNothingPressed() const noexcept
             {
-                return leftAlt == NX::InputState::None && leftShift == NX::InputState::None
-                       && leftCtrl == NX::InputState::None;
+                return leftAlt != NX::InputState::Pressed && leftShift != NX::InputState::Pressed
+                       && leftCtrl != NX::InputState::Pressed;
             }
         };
 
