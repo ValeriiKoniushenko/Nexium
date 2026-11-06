@@ -58,13 +58,18 @@ namespace
         GetWindow().onMouseMove->trigger(event);
     }
 
-    void MouseKeyPressHandler(GLFWwindow*, int button, int action, int mods)
+    void MouseKeyPressHandler(GLFWwindow* window, int button, int action, int mods)
     {
         NX::MouseButtonEvent event;
+
+        double x = 0.0;
+        double y = 0.0;
+        glfwGetCursorPos(window, &x, &y);
 
         event.setButton(NX::InputButton(static_cast<uint16_t>(button)));
         event.setState(ToInputState(action));
         event.setMods(NX::GetInputSystem().ConvertModifiers(mods));
+        event.setPosition({ static_cast<float>(x), static_cast<float>(y) });
         GetWindow().onMouseKeyPressed->trigger(event);
     }
 
@@ -389,7 +394,7 @@ namespace Platform
                     gDragDrop._state = DragAndDrop::State::Started;
                     gDragDrop._key = event.getButton();
                     gDragDrop.payload.type = ""_atom;
-                    gDragDrop._startPos = Mouse::GetPosition();
+                    gDragDrop._startPos = event.getPosition();
                 }
             });
     }

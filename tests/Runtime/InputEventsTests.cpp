@@ -124,3 +124,20 @@ TEST_F(InputSystemQueueTests, QueueEventStoresACopy)
     input.processEvents();
     EXPECT_TRUE(input.getPendingEvents().empty());
 }
+
+TEST_F(InputSystemQueueTests, MouseButtonEventKeepsClickPosition)
+{
+    NX::MouseButtonEvent click;
+    click.setState(NX::InputState::Pressed);
+    click.setPosition({ 10.f, 20.f });
+    Platform::GetWindow().onMouseKeyPressed->trigger(click);
+
+    NX::MouseMoveEvent move;
+    move.setPosition({ 25.f, 20.f });
+    Platform::GetWindow().onMouseMove->trigger(move);
+
+    const auto& events = NX::GetInputSystem().getPendingEvents();
+    ASSERT_EQ(events.size(), 2U);
+    ASSERT_TRUE(std::holds_alternative<NX::MouseButtonEvent>(events[0]));
+    EXPECT_EQ(std::get<NX::MouseButtonEvent>(events[0]).getPosition(), glm::vec2(10.f, 20.f));
+}
