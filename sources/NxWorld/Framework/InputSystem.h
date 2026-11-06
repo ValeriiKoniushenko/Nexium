@@ -25,6 +25,7 @@ namespace Platform
 
 namespace NX
 {
+    class InputController;
 
     class InputSystem final : public Core::Singleton<InputSystem>
     {
@@ -44,6 +45,10 @@ namespace NX
         }
 
         void resetInput();
+
+        void registerController(InputController* controller);
+        void unregisterController(InputController* controller);
+        [[nodiscard]] bool isRegistered(const InputController* controller) const;
 
         template<InputEventType T>
         void queueEvent(T&& event)
@@ -90,6 +95,8 @@ namespace NX
         // InputContext _activeContext = InputContext::Editor;
 
         std::vector<InputButton> _pressedKeys;
+
+        std::vector<InputController*> _controllers;
 
         Core::DelegateSubscriberPoolGuard _subscriptions;
 

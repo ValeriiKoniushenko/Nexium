@@ -14,12 +14,17 @@
 #include "NxFundamental/ECS/BaseComponent.h"
 #include "NxFundamental/ResourceManagement/JsonAdapter.h"
 #include "Platform/Input/Events/InputEvent.h"
+#include "glm/vec2.hpp"
 
+#include <concepts>
 #include <cstdint>
+#include <unordered_set>
 #include <vector>
 
 namespace NX
 {
+    class InputSystem;
+
     ENUM_CLASS();
     enum class InputSource : std::uint8_t
     {
@@ -29,14 +34,6 @@ namespace NX
         MouseScroll,
         GamepadButton,
         GamepadAxis
-    };
-
-    ENUM_CLASS();
-    enum class ActionValueType : std::uint8_t
-    {
-        Bool,
-        Axis1D,
-        Axis2D
     };
 
     ENUM_CLASS();
@@ -85,8 +82,6 @@ namespace NX
         FIELD();
         Core::StringAtom name;
         FIELD();
-        NX::ActionValueType type = NX::ActionValueType::Bool;
-        FIELD();
         std::vector<NX::InputBinding> bindings;
     };
 
@@ -99,6 +94,8 @@ namespace NX
         ECS_DECL(InputController, NX::BaseComponent);
 
     public:
+        ~InputController() override;
+
         bool addAction(InputAction action);
         bool removeAction(const Core::StringAtom& name);
 
@@ -110,9 +107,72 @@ namespace NX
             return _actions;
         }
 
+        [[nodiscard]] bool isActive(const Core::StringAtom& action) const;
+        [[nodiscard]] bool wasTriggered(const Core::StringAtom& action) const;
+
+        template<typename T>
+            requires std::same_as<T, bool> || std::same_as<T, float> || std::same_as<T, glm::vec2>
+        [[nodiscard]] T getValue(const Core::StringAtom& action) const
+        {
+            const glm::vec2 value = getVectorValue(action);
+            if constexpr (std::same_as<T, bool>)
+            {
+                return value.x != 0.f || value.y != 0.f;
+            }
+            else if constexpr (std::same_as<T, float>)
+            {
+                return value.x;
+            }
+            else
+            {
+                return value;
+            }
+        }
+
+        [[nodiscard]] spdlog::logger* getLogger() const override;
+
+    protected:
+        void onInitialize() override;
+        void onDeinitialize() override;
+
     private:
+        friend class NX::InputSystem;
+
+        struct BindingState
+        {
+            bool isHeld = false;
+            bool wasPressedThisFrame = false;
+            bool firedThisFrame = false;
+            glm::vec2 value{ 0.f };
+        };
+
+        struct ActionState
+        {
+            std::vector<BindingState> bindings;
+            glm::vec2 value{ 0.f };
+            bool isActive = false;
+            bool wasTriggered = false;
+        };
+
+        void beginInputFrame();
+        void onButton(InputSource source, std::uint16_t code, InputState state, InputModifier mods);
+        void onVector(InputSource source, glm::vec2 value);
+        void onAxis(std::uint16_t axis, float value);
+        void endInputFrame();
+
+        template<typename Function>
+        void forEachBinding(const Function& function);
+
+        [[nodiscard]] bool statesMatchActions() const;
+        void ensureStatesMatchActions();
+        [[nodiscard]] const ActionState* findState(const Core::StringAtom& action) const;
+        [[nodiscard]] glm::vec2 getVectorValue(const Core::StringAtom& action) const;
+
         FIELD();
         std::vector<NX::InputAction> _actions;
+
+        std::vector<ActionState> _actionStates;
+        mutable std::unordered_set<Core::StringAtom> _reportedMissingActions;
     };
 } // namespace NX
 
