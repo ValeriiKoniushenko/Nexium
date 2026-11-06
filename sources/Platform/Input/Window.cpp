@@ -33,30 +33,6 @@ namespace
         gGlobalLog.errorLog("GLFW Error [{}]: {}"_f << error << description);
     }
 
-    void MouseMoveHandler(GLFWwindow* window, double x, double y)
-    {
-        static glm::vec2 previousMousePosition{ 0.f };
-        static bool hasPreviousMousePosition = false;
-
-        const glm::vec2 currentPosition{ static_cast<float>(x), static_cast<float>(y) };
-
-        glm::vec2 delta{ 0.f };
-
-        if (hasPreviousMousePosition)
-        {
-            delta = currentPosition - previousMousePosition;
-        }
-
-        previousMousePosition = currentPosition;
-        hasPreviousMousePosition = true;
-
-        NX::MouseMoveEvent event;
-        event.setPosition(currentPosition);
-        event.setDelta(delta);
-
-        GetWindow().onMouseMove->trigger(event);
-    }
-
     void MouseKeyPressHandler(GLFWwindow* window, int button, int action, int mods)
     {
         NX::MouseButtonEvent event;
@@ -215,7 +191,7 @@ namespace Platform
             nullptr);
 #endif
         glfwSetMouseButtonCallback(_window, MouseKeyPressHandler);
-        glfwSetCursorPosCallback(_window, MouseMoveHandler);
+        glfwSetCursorPosCallback(_window, CursorPositionCallback);
         glfwSetKeyCallback(_window, KeyPressHandler);
         glfwSetCharCallback(_window, TextInputHandler);
         glfwSetCursorEnterCallback(_window, CursorEnterHandler);
@@ -313,6 +289,7 @@ namespace Platform
     void Window::setCursorPosition(float x, float y)
     {
         glfwSetCursorPos(_window, x, y);
+        _cursorDelta.resetTo({ x, y });
     }
 
     void Window::setCursorPosition(glm::vec2 position)
@@ -322,7 +299,9 @@ namespace Platform
 
     void Window::setCursorMode(CursorMode mode)
     {
-        glfwSetInputMode(GetWindow().getRawWindow(), GLFW_CURSOR, static_cast<int>(mode));
+        auto& window = GetWindow();
+        glfwSetInputMode(window.getRawWindow(), GLFW_CURSOR, static_cast<int>(mode));
+        window._cursorDelta.reset();
     }
 
     Window::CursorMode Window::getCursorMode()
@@ -335,6 +314,18 @@ namespace Platform
     {
         setCursorMode(getCursorMode() == CursorMode::Normal ? CursorMode::Disabled
                                                             : CursorMode::Normal);
+    }
+
+    void Window::CursorPositionCallback(GLFWwindow*, double x, double y)
+    {
+        auto& window = GetWindow();
+        const glm::vec2 position{ static_cast<float>(x), static_cast<float>(y) };
+
+        NX::MouseMoveEvent event;
+        event.setPosition(position);
+        event.setDelta(window._cursorDelta.update(position));
+
+        window.onMouseMove->trigger(event);
     }
 
     void Window::WindowSizeCallback(GLFWwindow*, int width, int height)
@@ -354,7 +345,13 @@ namespace Platform
     void Window::registerEvents()
     {
         _subscriptionPool << onFocusChanged->subscribeAndGetID(
-            [this](const NX::WindowFocusEvent& event) { _isFocused = event.isFocused(); });
+            [this](const NX::WindowFocusEvent& event)
+            {
+                _isFocused = event.isFocused();
+                _cursorDelta.reset();
+            });
+        _subscriptionPool << onCursorEntered->subscribeAndGetID([this](const NX::MouseEnterEvent&)
+                                                                { _cursorDelta.reset(); });
         _subscriptionPool << onIconifyChanged->subscribeAndGetID(
             [this](const NX::WindowIconifyEvent& event) { _isIconified = event.isIconified(); });
 

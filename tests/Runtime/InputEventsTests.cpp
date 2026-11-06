@@ -8,6 +8,7 @@
 //     http://www.apache.org/licenses/LICENSE-2.0
 
 #include "NxWorld/Framework/InputSystem.h"
+#include "Platform/Input/CursorDeltaTracker.h"
 #include "Platform/Input/Glfw.h"
 #include "Platform/Input/Window.h"
 
@@ -153,4 +154,29 @@ TEST(InputEventsTests, ConvertsGlfwModifiersToInputModifiers)
     EXPECT_EQ(Platform::ToInputModifiers(GLFW_MOD_SHIFT | GLFW_MOD_CONTROL | GLFW_MOD_ALT
                                          | GLFW_MOD_SUPER | GLFW_MOD_CAPS_LOCK | GLFW_MOD_NUM_LOCK),
               NX::InputModifier::All);
+}
+
+TEST(CursorDeltaTrackerTests, FirstPositionHasNoDelta)
+{
+    Platform::CursorDeltaTracker tracker;
+    EXPECT_EQ(tracker.update({ 100.f, 50.f }), glm::vec2(0.f));
+    EXPECT_EQ(tracker.update({ 103.f, 45.f }), glm::vec2(3.f, -5.f));
+}
+
+TEST(CursorDeltaTrackerTests, ResetDropsTheJumpAfterCursorModeChange)
+{
+    Platform::CursorDeltaTracker tracker;
+    (void)tracker.update({ 10.f, 10.f });
+    tracker.reset();
+    EXPECT_EQ(tracker.update({ 900.f, 600.f }), glm::vec2(0.f));
+    EXPECT_EQ(tracker.update({ 901.f, 600.f }), glm::vec2(1.f, 0.f));
+}
+
+TEST(CursorDeltaTrackerTests, ResetToIgnoresProgrammaticWarp)
+{
+    Platform::CursorDeltaTracker tracker;
+    (void)tracker.update({ 10.f, 10.f });
+    tracker.resetTo({ 400.f, 300.f });
+    EXPECT_EQ(tracker.update({ 400.f, 300.f }), glm::vec2(0.f));
+    EXPECT_EQ(tracker.update({ 402.f, 299.f }), glm::vec2(2.f, -1.f));
 }

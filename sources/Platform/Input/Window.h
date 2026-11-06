@@ -18,6 +18,7 @@
 #include "Foundation/Interfaces/DataStream.h"
 #include "Glfw.h"
 #include "NxSubsystems/Input/InputTypes.h"
+#include "Platform/Input/CursorDeltaTracker.h"
 #include "Platform/Input/Events/GamepadEvents.h"
 #include "Platform/Input/Events/InputEvent.h"
 #include "Platform/Input/Events/KeyboardEvents.h"
@@ -223,10 +224,12 @@ namespace Platform
         bool _swapInterval = true;
 
     private:
+        static void CursorPositionCallback(GLFWwindow*, double x, double y);
         static void WindowSizeCallback(GLFWwindow*, int width, int height);
         static void FramebufferSizeCallback(GLFWwindow*, int width, int height);
         void registerEvents();
         Core::ISize2 _framebufferSize{};
+        CursorDeltaTracker _cursorDelta;
         bool _isFocused = false;
         bool _isIconified = false;
     };
