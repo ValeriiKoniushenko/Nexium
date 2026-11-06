@@ -11,7 +11,6 @@
 
 #include "Foundation/Configs.h"
 #include "NxSubsystems/Input/InputTypes.h"
-#include "NxWorld/Framework/InputSystem.h"
 #include "Platform/Graphics/Graphics.h"
 #include "Platform/PrivateModuleInfo.h"
 #include "Stb/Image.h"
@@ -68,7 +67,7 @@ namespace
 
         event.setButton(NX::InputButton(static_cast<uint16_t>(button)));
         event.setState(ToInputState(action));
-        event.setMods(NX::GetInputSystem().ConvertModifiers(mods));
+        event.setMods(ToInputModifiers(mods));
         event.setPosition({ static_cast<float>(x), static_cast<float>(y) });
         GetWindow().onMouseKeyPressed->trigger(event);
     }
@@ -80,7 +79,7 @@ namespace
         event.setKey(NX::InputButton(static_cast<uint16_t>(key)));
         event.setScancode(scancode);
         event.setState(ToInputState(action));
-        event.setMods(NX::GetInputSystem().ConvertModifiers(mods));
+        event.setMods(ToInputModifiers(mods));
 
         GetWindow().onKeyPressed->trigger(event);
     }

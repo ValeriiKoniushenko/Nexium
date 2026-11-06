@@ -46,8 +46,6 @@ namespace NX
 
         void resetInput();
 
-        NX::InputModifier ConvertModifiers(int mods);
-
         template<InputEventType T>
         void queueEvent(T&& event)
         {

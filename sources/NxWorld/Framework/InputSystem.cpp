@@ -8,7 +8,6 @@
 //     http://www.apache.org/licenses/LICENSE-2.0
 #include "InputSystem.h"
 
-#include "GLFW/glfw3.h"
 #include "NxWorld/Framework/InputController.h"
 #include "Platform/Input/Events/InputEvent.h"
 #include "Platform/Input/Window.h"
@@ -43,43 +42,6 @@ namespace
 
 namespace NX
 {
-
-    NX::InputModifier InputSystem::ConvertModifiers(int mods)
-    {
-        auto result = NX::InputModifier::None;
-
-        if (mods & GLFW_MOD_SHIFT)
-        {
-            result = result | NX::InputModifier::Shift;
-        }
-
-        if (mods & GLFW_MOD_CONTROL)
-        {
-            result = result | NX::InputModifier::Control;
-        }
-
-        if (mods & GLFW_MOD_ALT)
-        {
-            result = result | NX::InputModifier::Alt;
-        }
-
-        if (mods & GLFW_MOD_SUPER)
-        {
-            result = result | NX::InputModifier::Super;
-        }
-
-        if (mods & GLFW_MOD_CAPS_LOCK)
-        {
-            result = result | NX::InputModifier::CapsLock;
-        }
-
-        if (mods & GLFW_MOD_NUM_LOCK)
-        {
-            result = result | NX::InputModifier::NumLock;
-        }
-
-        return result;
-    }
 
     void InputSystem::initialize(Platform::Window& window)
     {

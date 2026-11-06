@@ -42,4 +42,41 @@ namespace Platform
                 return NX::InputState::None;
         }
     }
+
+    [[nodiscard]] constexpr NX::InputModifier ToInputModifiers(int glfwMods) noexcept
+    {
+        auto result = NX::InputModifier::None;
+
+        if (glfwMods & GLFW_MOD_SHIFT)
+        {
+            result = result | NX::InputModifier::Shift;
+        }
+
+        if (glfwMods & GLFW_MOD_CONTROL)
+        {
+            result = result | NX::InputModifier::Control;
+        }
+
+        if (glfwMods & GLFW_MOD_ALT)
+        {
+            result = result | NX::InputModifier::Alt;
+        }
+
+        if (glfwMods & GLFW_MOD_SUPER)
+        {
+            result = result | NX::InputModifier::Super;
+        }
+
+        if (glfwMods & GLFW_MOD_CAPS_LOCK)
+        {
+            result = result | NX::InputModifier::CapsLock;
+        }
+
+        if (glfwMods & GLFW_MOD_NUM_LOCK)
+        {
+            result = result | NX::InputModifier::NumLock;
+        }
+
+        return result;
+    }
 } // namespace Platform

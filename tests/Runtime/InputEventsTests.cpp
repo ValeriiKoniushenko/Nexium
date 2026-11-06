@@ -141,3 +141,16 @@ TEST_F(InputSystemQueueTests, MouseButtonEventKeepsClickPosition)
     ASSERT_TRUE(std::holds_alternative<NX::MouseButtonEvent>(events[0]));
     EXPECT_EQ(std::get<NX::MouseButtonEvent>(events[0]).getPosition(), glm::vec2(10.f, 20.f));
 }
+
+TEST(InputEventsTests, ConvertsGlfwModifiersToInputModifiers)
+{
+    static_assert(Platform::ToInputModifiers(0) == NX::InputModifier::None);
+    EXPECT_EQ(Platform::ToInputModifiers(GLFW_MOD_SHIFT), NX::InputModifier::Shift);
+    EXPECT_EQ(Platform::ToInputModifiers(GLFW_MOD_CONTROL | GLFW_MOD_ALT),
+              NX::InputModifier::Control | NX::InputModifier::Alt);
+    EXPECT_EQ(Platform::ToInputModifiers(GLFW_MOD_SUPER | GLFW_MOD_CAPS_LOCK | GLFW_MOD_NUM_LOCK),
+              NX::InputModifier::Super | NX::InputModifier::CapsLock | NX::InputModifier::NumLock);
+    EXPECT_EQ(Platform::ToInputModifiers(GLFW_MOD_SHIFT | GLFW_MOD_CONTROL | GLFW_MOD_ALT
+                                         | GLFW_MOD_SUPER | GLFW_MOD_CAPS_LOCK | GLFW_MOD_NUM_LOCK),
+              NX::InputModifier::All);
+}
