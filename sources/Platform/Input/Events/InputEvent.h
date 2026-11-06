@@ -92,15 +92,12 @@ namespace NX
     using InputDeviceId = uint32_t;
     constexpr InputDeviceId InvalidInputDeviceId = 0;
 
+    /// Common data of every input event. Events are small value types stored by value (see
+    /// AnyInputEvent), so this base is intentionally non-polymorphic: there is no virtual
+    /// destructor, and copying/destruction through a base reference is not allowed.
     class InputEvent
     {
     public:
-        virtual ~InputEvent() = default;
-        InputEvent(const InputEvent&) = default;
-        InputEvent(InputEvent&&) = default;
-        InputEvent& operator=(const InputEvent&) = default;
-        InputEvent& operator=(InputEvent&&) = default;
-
         [[nodiscard]] EventType getEventType() const { return _eventType; }
 
         [[nodiscard]] InputDeviceType getDeviceType() const { return _deviceType; }
@@ -108,6 +105,12 @@ namespace NX
         [[nodiscard]] InputDeviceId getDeviceId() const { return _deviceId; }
 
     protected:
+        ~InputEvent() = default;
+        InputEvent(const InputEvent&) = default;
+        InputEvent(InputEvent&&) = default;
+        InputEvent& operator=(const InputEvent&) = default;
+        InputEvent& operator=(InputEvent&&) = default;
+
         explicit InputEvent(EventType eventType, InputDeviceType deviceType,
                             InputDeviceId deviceId = InvalidInputDeviceId)
             : _eventType(eventType),

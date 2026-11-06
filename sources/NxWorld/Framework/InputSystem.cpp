@@ -89,7 +89,7 @@ namespace NX
         }
 
         auto registerEvent
-            = [this](auto&& event) { pushEvent(std::forward<decltype(event)>(event)); };
+            = [this](auto&& event) { queueEvent(std::forward<decltype(event)>(event)); };
 
         _subscriptions << window.onMouseMove->subscribeAndGetID(registerEvent);
         _subscriptions << window.onKeyPressed->subscribeAndGetID(registerEvent);
@@ -111,19 +111,58 @@ namespace NX
 
     void InputSystem::processEvents()
     {
-        while (!_events.empty())
+        // Handlers may queue new events; they go to _events and are processed next frame.
+        _processing.clear();
+        std::swap(_events, _processing);
+
+        for (const auto& event : _processing)
         {
-            const auto event = std::move(_events.front());
-            _events.pop_front();
-            dispatch(event.get());
+            std::visit([this](const auto& concreteEvent) { handle(concreteEvent); }, event);
         }
+
+        _processing.clear();
     }
 
-    void InputSystem::dispatch(const InputEvent* event)
+    // Controllers were removed during the input redesign, so there is no consumer to route
+    // events to yet. These handlers are the single entry point for each event type.
+    void InputSystem::handle(const KeyboardEvent&)
     {
-        // Controllers were removed during the input redesign; there is no consumer to route
-        // events to yet.
-        (void)event;
+    }
+    void InputSystem::handle(const TextInputEvent&)
+    {
+    }
+    void InputSystem::handle(const MouseMoveEvent&)
+    {
+    }
+    void InputSystem::handle(const MouseButtonEvent&)
+    {
+    }
+    void InputSystem::handle(const MouseScrollEvent&)
+    {
+    }
+    void InputSystem::handle(const MouseEnterEvent&)
+    {
+    }
+    void InputSystem::handle(const GamepadButtonEvent&)
+    {
+    }
+    void InputSystem::handle(const GamepadAxisEvent&)
+    {
+    }
+    void InputSystem::handle(const GamepadConnectionEvent&)
+    {
+    }
+    void InputSystem::handle(const WindowResizeEvent&)
+    {
+    }
+    void InputSystem::handle(const WindowFocusEvent&)
+    {
+    }
+    void InputSystem::handle(const WindowIconifyEvent&)
+    {
+    }
+    void InputSystem::handle(const WindowCloseEvent&)
+    {
     }
 
     InputSystem& GetInputSystem()

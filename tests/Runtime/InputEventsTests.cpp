@@ -12,6 +12,8 @@
 #include "Platform/Input/Window.h"
 
 #include "gtest/gtest.h"
+#include <type_traits>
+#include <variant>
 
 namespace
 {
@@ -67,4 +69,58 @@ TEST_F(InputSystemQueueTests, FocusLossKeepsQueuedEvents)
 
     input.processEvents();
     EXPECT_EQ(input.getPendingEventCount(), 0U);
+}
+
+TEST(InputEventsTests, EventsAreNonPolymorphicValueTypes)
+{
+    static_assert(!std::is_polymorphic_v<NX::InputEvent>);
+    static_assert(!std::is_destructible_v<NX::InputEvent>, "base must not be destroyed directly");
+    static_assert(std::is_trivially_copyable_v<NX::KeyboardEvent>);
+    static_assert(std::is_trivially_copyable_v<NX::MouseMoveEvent>);
+    static_assert(NX::InputEventType<NX::GamepadAxisEvent>);
+    static_assert(NX::InputEventType<const NX::KeyboardEvent&>);
+    SUCCEED();
+}
+
+TEST_F(InputSystemQueueTests, QueuedEventsKeepArrivalOrder)
+{
+    auto& window = Platform::GetWindow();
+
+    NX::KeyboardEvent key;
+    key.setState(NX::InputState::Pressed);
+    window.onKeyPressed->trigger(key);
+
+    NX::MouseMoveEvent move;
+    move.setDelta({ 1.f, 2.f });
+    window.onMouseMove->trigger(move);
+
+    NX::GamepadButtonEvent gamepadButton(1);
+    gamepadButton.setState(NX::InputState::Released);
+    window.onJoystickButtonPressed->trigger(gamepadButton);
+
+    const auto& events = NX::GetInputSystem().getPendingEvents();
+    ASSERT_EQ(events.size(), 3U);
+    EXPECT_TRUE(std::holds_alternative<NX::KeyboardEvent>(events[0]));
+    EXPECT_TRUE(std::holds_alternative<NX::MouseMoveEvent>(events[1]));
+    ASSERT_TRUE(std::holds_alternative<NX::GamepadButtonEvent>(events[2]));
+    EXPECT_EQ(std::get<NX::GamepadButtonEvent>(events[2]).getDeviceId(), 1U);
+    EXPECT_EQ(std::get<NX::MouseMoveEvent>(events[1]).getDelta(), glm::vec2(1.f, 2.f));
+}
+
+TEST_F(InputSystemQueueTests, QueueEventStoresACopy)
+{
+    auto& input = NX::GetInputSystem();
+
+    NX::MouseScrollEvent scroll;
+    scroll.setOffset({ 0.f, 1.f });
+    input.queueEvent(scroll);
+    scroll.setOffset({ 0.f, 5.f });
+
+    const auto& events = input.getPendingEvents();
+    ASSERT_EQ(events.size(), 1U);
+    ASSERT_TRUE(std::holds_alternative<NX::MouseScrollEvent>(events[0]));
+    EXPECT_EQ(std::get<NX::MouseScrollEvent>(events[0]).getOffset(), glm::vec2(0.f, 1.f));
+
+    input.processEvents();
+    EXPECT_TRUE(input.getPendingEvents().empty());
 }

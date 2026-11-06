@@ -15,11 +15,8 @@
 #include "Core/Singleton.h"
 #include "NxSubsystems/Input/InputTypes.h"
 #include "NxWorld/Framework/InputController.h"
-#include "Platform/Input/Events/GamepadEvents.h"
-#include "Platform/Input/Events/KeyboardEvents.h"
-#include "Platform/Input/Events/MouseEvents.h"
+#include "Platform/Input/Events/AnyInputEvent.h"
 
-#include <deque>
 #include <vector>
 
 namespace Platform
@@ -41,29 +38,37 @@ namespace NX
 
         void processEvents();
 
-        /// Number of events queued since the last processEvents() call.
         [[nodiscard]] std::size_t getPendingEventCount() const noexcept { return _events.size(); }
-
-        // void setActiveContext(InputContext context);
+        [[nodiscard]] const std::vector<AnyInputEvent>& getPendingEvents() const noexcept
+        {
+            return _events;
+        }
 
         void resetInput();
 
-        // void registerController(InputController* controller);
-        // void unregisterController(InputController* controller);
-
         NX::InputModifier ConvertModifiers(int mods);
 
-        /// Queue an input event for processing in the next processEvents() call.
-        /// Takes ownership of the event.
-        template<typename T>
-        void queueEvent(T event)
+        template<InputEventType T>
+        void queueEvent(T&& event)
         {
-            static_assert(std::is_base_of_v<InputEvent, T>, "T must inherit from InputEvent");
-            _events.emplace_back(std::make_unique<T>(std::move(event)));
+            _events.emplace_back(std::in_place_type<std::remove_cvref_t<T>>,
+                                 std::forward<T>(event));
         }
 
     private:
-        void dispatch(const InputEvent* event);
+        void handle(const KeyboardEvent& event);
+        void handle(const TextInputEvent& event);
+        void handle(const MouseMoveEvent& event);
+        void handle(const MouseButtonEvent& event);
+        void handle(const MouseScrollEvent& event);
+        void handle(const MouseEnterEvent& event);
+        void handle(const GamepadButtonEvent& event);
+        void handle(const GamepadAxisEvent& event);
+        void handle(const GamepadConnectionEvent& event);
+        void handle(const WindowResizeEvent& event);
+        void handle(const WindowFocusEvent& event);
+        void handle(const WindowIconifyEvent& event);
+        void handle(const WindowCloseEvent& event);
 
         // [[nodiscard]] std::vector<InputController*> selectControllers();
 
@@ -71,14 +76,11 @@ namespace NX
 
         // void refreshRoutedControllers();
 
-        std::deque<std::unique_ptr<InputEvent>> _events;
-
-        template<typename T>
-            requires std::is_base_of_v<InputEvent, T>
-        void pushEvent(T&& event)
-        {
-            _events.emplace_back(std::make_unique<T>(std::forward<T>(event)));
-        }
+        /// Events queued for the next processEvents() call.
+        std::vector<AnyInputEvent> _events;
+        /// Events being handled by the current processEvents() call. Swapped with _events so
+        /// both buffers keep their capacity and steady-state frames do not allocate.
+        std::vector<AnyInputEvent> _processing;
 
         // /// Non-owning pointers. Every controller unregisters itself before destruction.
         // /// Controllers registered for shortcuts that are active while editor UI owns input.
