@@ -15,7 +15,6 @@
 #include "Core/IntrusivePtr.h"
 #include "Foundation/BaseLog.h"
 #include "NxSubsystems/Input/InputManager.h"
-#include "NxWorld/Framework/InputController.h"
 #include "ObjectPicker.h"
 #include "ToastNotifications.h"
 #include "Windows/BaseWindow.h"

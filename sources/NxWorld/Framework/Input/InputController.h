@@ -7,39 +7,19 @@
 //
 //     http://www.apache.org/licenses/LICENSE-2.0
 
+// Module: Nexium::World
+
 #pragma once
 
 #include "NxFundamental/ECS/BaseComponent.h"
-#include "Platform/Input/Events/InputEvent.h"
 
-namespace NxWorld::Framework::Input
+namespace NX
 {
-
-    struct InputDevice
-    {
-        NX::InputDeviceType type;
-        NX::InputDeviceId id;
-    };
-
-    struct KeyChord
-    {
-        NX::InputButton triggerKey;
-        std::vector<NX::InputButton> keys;
-    };
-
-    struct Binding
-    {
-        NX::StringAtom action;
-        KeyChord chord;
-        NX::InputState trigger;
-    };
-
+    CLASS();
     class InputController : public NX::BaseComponent
     {
-    public:
-        InputController();
-
-    private:
+        ECS_DECL(InputController, NX::BaseComponent);
     };
+} // namespace NX
 
-} // namespace NxWorld::Framework::Input
+#include "InputController.generated.h" // added by the code generator. Better don't move it.

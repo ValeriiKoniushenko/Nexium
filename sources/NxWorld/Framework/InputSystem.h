@@ -14,7 +14,6 @@
 #include "Core/Delegate.h"
 #include "Core/Singleton.h"
 #include "NxSubsystems/Input/InputTypes.h"
-#include "NxWorld/Framework/InputController.h"
 #include "Platform/Input/Events/AnyInputEvent.h"
 
 #include <vector>

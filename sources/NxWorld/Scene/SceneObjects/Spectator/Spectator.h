@@ -13,7 +13,6 @@
 
 #include "NxSubsystems/Input/InputManager.h"
 #include "NxWorld/Entities/Actor.h"
-#include "NxWorld/Framework/InputController.h"
 
 namespace NX
 {

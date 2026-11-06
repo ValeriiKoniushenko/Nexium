@@ -8,7 +8,6 @@
 //     http://www.apache.org/licenses/LICENSE-2.0
 #include "InputSystem.h"
 
-#include "NxWorld/Framework/InputController.h"
 #include "Platform/Input/Events/InputEvent.h"
 #include "Platform/Input/Window.h"
 

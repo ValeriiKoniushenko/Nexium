@@ -28,7 +28,7 @@ target_sources(Nexium_World_Base PRIVATE
     Framework/CameraManager.cpp
     Framework/ControllerManager.cpp
     Framework/GameInstance.cpp
-    Framework/InputController.cpp
+    Framework/Input/InputController.cpp
     Framework/InputSystem.cpp
     Framework/GameInstanceSubsystem.cpp
     Framework/GameState.cpp
@@ -60,8 +60,8 @@ nexium_add_public_headers(Nexium_World_Base
     NxWorld/Framework/CameraManager.h
     NxWorld/Framework/ControllerManager.h
     NxWorld/Framework/GameInstance.h
-    NxWorld/Framework/InputController.h
-    NxWorld/Framework/InputController.generated.h
+    NxWorld/Framework/Input/InputController.h
+    NxWorld/Framework/Input/InputController.generated.h
     NxWorld/Framework/InputSystem.h
     NxWorld/Framework/GameInstance.generated.h
     NxWorld/Framework/GameInstanceSubsystem.h
