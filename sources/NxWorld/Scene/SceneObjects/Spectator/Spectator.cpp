@@ -12,7 +12,17 @@
 #include "Core/Math.h"
 #include "NxWorld/Entities/Camera/Camera.h"
 #include "NxWorld/Framework/GameInstance.h"
-#include "Platform/Input/Window.h"
+#include "Platform/Input/InputDevices/Joystick.h"
+#include "Platform/Input/InputDevices/Keyboard.h"
+#include "Platform/Input/InputDevices/Mouse.h"
+
+namespace
+{
+    glm::vec2 RadialDeadzone(glm::vec2 value, float deadzone)
+    {
+        return glm::length(value) < deadzone ? glm::vec2{ 0.f } : value;
+    }
+} // namespace
 
 namespace NX
 {
@@ -37,149 +47,203 @@ namespace NX
     void BaseSpectator::onInitialize()
     {
         Actor::onInitialize();
+
+        _input = findFirstChildOf<InputController>();
+        if (!_input)
+        {
+            _input = addChildComponent<InputController>("Input"_atom);
+        }
+        if (_input)
+        {
+            setupInputActions(*_input);
+        }
+        updateInputControllerState();
     }
 
     void BaseSpectator::onSceneActivated()
     {
         _subscriptionPool.clearAndReleaseAll();
         subscribeToInput();
+        _isSceneActive = true;
+        updateInputControllerState();
     }
 
     void BaseSpectator::onSceneDeactivated()
     {
         _subscriptionPool.clearAndReleaseAll();
+        _isSceneActive = false;
+        updateInputControllerState();
     }
 
-    void Spectator3D::onInitialize()
+    void BaseSpectator::updateInputControllerState()
     {
-        // BaseSpectator::onInitialize();
-        // _inputController = InputController::Create("Spectator input"_atom,
-        // InputContext::Gameplay); const auto bindMovement = [this](const Core::StringAtom& name,
-        // Platform::Keyboard::Key key) { _inputController->bind(name,
-        // KeyChord::Exact(InputButton(static_cast<std::uint16_t>(key))), InputState::Pressed); };
-        // bindMovement("Move forward"_atom, Platform::Keyboard::Key::W);
-        // bindMovement("Move backward"_atom, Platform::Keyboard::Key::S);
-        // bindMovement("Move right"_atom, Platform::Keyboard::Key::D);
-        // bindMovement("Move left"_atom, Platform::Keyboard::Key::A);
-        // bindMovement("Move up"_atom, Platform::Keyboard::Key::R);
-        // bindMovement("Move down"_atom, Platform::Keyboard::Key::F);
+        if (_input)
+        {
+            _input->setEnabled(_isSceneActive);
+        }
     }
 
-    void Spectator3D::subscribeToInput()
+    void Spectator2D::setupInputActions(InputController& input)
     {
-        // _subscriptionPool << Platform::GetWindow().onMouseWheel->subscribeAndGetID(
-        //     [this](glm::vec2 offset)
-        //     {
-        //         if (gGameInstance->isApplicationViewportFocused())
-        //         {
-        //             auto mlt
-        //                 = speed
-        //                   /
-        //                   (Platform::Keyboard::IsKeyPressed(Platform::Keyboard::Key::Left_Shift)
-        //                          ? 8.f
-        //                          : 1.f);
-        //             moveForward(-offset.y * mlt * gGameInstance->world.getTimeDelta());
-        //         }
-        //     });
-        _subscriptionPool << mouseInput.getOrCreate("mouseRotation", Platform::Mouse::Key::Right)
-                                 ->onDrag->subscribeAndGetID(
-                                     [this](glm::vec2 delta, auto)
-                                     { yawAndPitch(delta * mouseSensitivity); });
+        using Axis = Platform::Joystick::GamepadAxis;
+        using Key = Platform::Keyboard::Key;
+
+        input.addAction("Pan"_atom,{ InputBinding::MouseButton(Platform::Mouse::Key::Middle) });
+        input.addAction("PointerDelta"_atom, { InputBinding::MouseDelta() });
+        input.addAction("Scroll"_atom, { InputBinding::MouseScroll() });
+        input.addAction("Boost"_atom, { InputBinding::Key(Key::Left_Shift),
+                                        InputBinding::GamepadButton(
+                                            Platform::Joystick::GamepadButton::LeftBumper) });
+        input.addAction("Zoom"_atom, { InputBinding::Key(Key::Left_Control) });
+        input.addAction("Move"_atom,
+                        { InputBinding::GamepadAxis(Axis::LeftX),
+                          InputBinding::GamepadAxis(Axis::LeftY).negated().swizzled() });
+        input.addAction("GamepadZoom"_atom,
+                        { InputBinding::GamepadAxis(Axis::RightTrigger),
+                          InputBinding::GamepadAxis(Axis::LeftTrigger).negated() });
+    }
+
+    void Spectator2D::onTick(float delta)
+    {
+        BaseSpectator::onTick(delta);
+
+        auto* input = getInputController();
+        if (!input)
+        {
+            return;
+        }
+
+        const bool boost = input->isActive("Boost"_atom);
+        if (input->isActive("Pan"_atom))
+        {
+            const auto drag = input->getValue<glm::vec2>("PointerDelta"_atom);
+            const auto mlt = (speed * (boost ? 5.f : 1.f)) * gGameInstance->world.getTimeDelta();
+
+            moveRight(-drag.x * mlt);
+            moveUp(drag.y * mlt);
+        }
+
+        if (!gGameInstance->isApplicationViewportFocused())
+        {
+            return;
+        }
+
+        const auto scroll = input->getValue<glm::vec2>("Scroll"_atom);
+        if (scroll != glm::vec2{ 0.f })
+        {
+            applyScroll(scroll, boost, input->isActive("Zoom"_atom));
+        }
+
+        applyGamepad(*input, boost);
+    }
+
+    void Spectator2D::applyGamepad(const InputController& input, bool boost)
+    {
+        const auto move = RadialDeadzone(input.getValue<glm::vec2>("Move"_atom), gamepadDeadzone);
+        if (move != glm::vec2{ 0.f })
+        {
+            const auto step = speed * (boost ? 5.f : 1.f) * gGameInstance->world.getTimeDelta();
+            moveRight(move.x * step);
+            moveUp(move.y * step);
+        }
+
+        const auto zoom = input.getValue<float>("GamepadZoom"_atom);
+        if (std::abs(zoom) >= gamepadDeadzone)
+        {
+            applyZoom(zoom * gamepadZoomSpeed * gGameInstance->world.getTimeDelta());
+        }
+    }
+
+    bool Spectator2D::applyZoom(float scrollStep)
+    {
+        auto* camera = findFirstChildOf<OrthographicCamera>();
+        if (!camera)
+        {
+            return false;
+        }
+
+        const auto zoomStep = (maxZoom - minZoom) / 100.f;
+        const auto z = camera->getZoom();
+        const auto finalStep = zoomStep * scrollStep * std::max(1.f, sqrtf(z));
+        const auto expectedZoom = z + finalStep;
+
+        if (expectedZoom < minZoom)
+        {
+            camera->setZoom(minZoom);
+        }
+        else if (expectedZoom > maxZoom)
+        {
+            camera->setZoom(maxZoom);
+        }
+        else
+        {
+            camera->adjustZoom(finalStep);
+        }
+        return true;
+    }
+
+    void Spectator2D::applyScroll(glm::vec2 offset, bool boost, bool zoom)
+    {
+        offset *= boost ? leftShiftMlt : baseMlt;
+
+        if (zoom && applyZoom(std::clamp(offset.y, -1.f, 1.f)))
+        {
+            return;
+        }
+
+        // 20 it's just a fake value to make touchpad moving closer to the Mouse
+        // feelings.
+        const float adjustedSpeed = speed * 10.f;
+        const float panSpeed = adjustedSpeed * gGameInstance->world.getTimeDelta();
+
+        moveRight(-offset.x * panSpeed);
+        moveUp(offset.y * panSpeed);
+    }
+
+    void Spectator3D::setupInputActions(InputController& input)
+    {
+        using Axis = Platform::Joystick::GamepadAxis;
+
+        input.addAction("Rotate"_atom, { InputBinding::MouseButton(Platform::Mouse::Key::Right) });
+        input.addAction("PointerDelta"_atom, { InputBinding::MouseDelta() });
+        input.addAction("Move"_atom, { InputBinding::GamepadAxis(Axis::LeftX),
+                                       InputBinding::GamepadAxis(Axis::LeftY).swizzled() });
+        input.addAction("Look"_atom, { InputBinding::GamepadAxis(Axis::RightX),
+                                       InputBinding::GamepadAxis(Axis::RightY).swizzled() });
     }
 
     void Spectator3D::onTick(float delta)
     {
         BaseSpectator::onTick(delta);
-        // if (!_inputController)
-        // {
-        //     return;
-        // }
-        // const float step
-        //     = speed * delta
-        //       / (Platform::Keyboard::IsKeyPressed(Platform::Keyboard::Key::Left_Shift)
-        //                  ||
-        //                  Platform::Keyboard::IsKeyPressed(Platform::Keyboard::Key::Right_Shift)
-        //              ? 8.f
-        //              : 1.f);
-        // const auto pressed = [this](const Core::StringAtom& action)
-        // { return static_cast<float>(_inputController->isActionPressed(action)); };
-        // moveForward(step * (pressed("Move backward"_atom) - pressed("Move forward"_atom)));
-        // moveRight(step * (pressed("Move right"_atom) - pressed("Move left"_atom)));
-        // moveUp(step * (pressed("Move up"_atom) - pressed("Move down"_atom)));
-    }
 
-    void Spectator2D::subscribeToInput()
-    {
-        auto mouseMove = [this](glm::vec2 delta, MouseIA::SpecKeysState state)
+        auto* input = getInputController();
+        if (!input)
         {
-            auto mlt = (speed * (state.leftShift == InputState::Pressed ? 5.f : 1.f))
-                       * gGameInstance->world.getTimeDelta();
+            return;
+        }
 
-            moveRight(-delta.x * mlt);
-            moveUp(delta.y * mlt);
-        };
-        _subscriptionPool << mouseInput
-                                 .getOrCreate("spectatorMovement", Platform::Mouse::Key::Middle)
-                                 ->onDrag->subscribeAndGetID(mouseMove);
+        if (input->isActive("Rotate"_atom))
+        {
+            yawAndPitch(input->getValue<glm::vec2>("PointerDelta"_atom) * mouseSensitivity);
+        }
 
-        _subscriptionPool << mouseInput.onWheel->subscribeAndGetID(
-            [this](glm::vec2 offset)
-            {
-                if (gGameInstance->isApplicationViewportFocused())
-                {
-                    float mlt = baseMlt;
+        if (!gGameInstance->isApplicationViewportFocused())
+        {
+            return;
+        }
 
-                    const auto isLeftShiftPressed
-                        = glfwGetKey(Platform::GetWindow().getRawWindow(),
-                                     static_cast<int>(Platform::Keyboard::Key::Left_Shift))
-                          == GLFW_PRESS;
+        const float timeDelta = gGameInstance->world.getTimeDelta();
+        const auto move = RadialDeadzone(input->getValue<glm::vec2>("Move"_atom), gamepadDeadzone);
+        if (move != glm::vec2{ 0.f })
+        {
+            moveForward(move.y * speed * timeDelta);
+            moveRight(move.x * speed * timeDelta);
+        }
 
-                    if (isLeftShiftPressed)
-                    {
-                        mlt = leftShiftMlt;
-                    }
-                    offset *= mlt;
-
-                    const auto isLeftControlPressed
-                        = glfwGetKey(Platform::GetWindow().getRawWindow(),
-                                     static_cast<int>(Platform::Keyboard::Key::Left_Control))
-                          == GLFW_PRESS;
-
-                    if (isLeftControlPressed)
-                    {
-                        if (auto* camera = findFirstChildOf<OrthographicCamera>())
-                        {
-                            const auto zoomStep = (maxZoom - minZoom) / 100.f;
-                            const auto scrollStep = std::clamp(offset.y, -1.f, 1.f);
-                            auto z = camera->getZoom();
-
-                            auto finalStep = zoomStep * scrollStep * std::max(1.f, sqrtf(z));
-                            const auto expectedZoom = z + finalStep;
-
-                            if (expectedZoom < minZoom)
-                            {
-                                camera->setZoom(minZoom);
-                                return;
-                            }
-                            if (expectedZoom > maxZoom)
-                            {
-                                camera->setZoom(maxZoom);
-                                return;
-                            }
-
-                            camera->adjustZoom(finalStep);
-                            return;
-                        }
-                    }
-
-                    // 20 it's just a fake value to make touchpad moving closer to the Mouse
-                    // feelings.
-                    const float adjustedSpeed = speed * 10.f;
-                    const float panSpeed = adjustedSpeed * gGameInstance->world.getTimeDelta();
-
-                    moveRight(-offset.x * panSpeed);
-                    moveUp(offset.y * panSpeed);
-                }
-            });
+        const auto look = RadialDeadzone(input->getValue<glm::vec2>("Look"_atom), gamepadDeadzone);
+        if (look != glm::vec2{ 0.f })
+        {
+            yawAndPitch(look * gamepadLookSpeed * timeDelta);
+        }
     }
 } // namespace NX

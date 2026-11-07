@@ -13,6 +13,7 @@
 
 #include "NxSubsystems/Input/InputManager.h"
 #include "NxWorld/Entities/Actor.h"
+#include "NxWorld/Framework/Input/InputController.h"
 
 namespace NX
 {
@@ -30,6 +31,9 @@ namespace NX
         FIELD();
         float mouseSensitivity = 0.5f;
 
+        FIELD();
+        float gamepadDeadzone = 0.15f;
+
         KeyboardInputManger keyboardInput;
         MouseInputManger mouseInput;
 
@@ -46,6 +50,15 @@ namespace NX
         void onSceneActivated() final;
         void onSceneDeactivated() final;
         virtual void subscribeToInput() {}
+        virtual void setupInputActions(InputController& input) {}
+
+        [[nodiscard]] InputController* getInputController() const noexcept { return _input; }
+
+    private:
+        void updateInputControllerState();
+
+        InputController* _input = nullptr;
+        bool _isSceneActive = false;
     };
 
     CLASS();
@@ -63,9 +76,17 @@ namespace NX
         float minZoom = 0.15f;
         FIELD();
         float maxZoom = 5.f;
+        FIELD();
+        float gamepadZoomSpeed = 30.f;
 
     protected:
-        void subscribeToInput() override;
+        void setupInputActions(InputController& input) override;
+        void onTick(float delta) override;
+
+    private:
+        void applyScroll(glm::vec2 offset, bool boost, bool zoom);
+        void applyGamepad(const InputController& input, bool boost);
+        bool applyZoom(float scrollStep);
     };
 
     CLASS();
@@ -81,13 +102,12 @@ namespace NX
         float leftShiftMlt = 8.f;
         FIELD();
         float leftCtrlMlt = 0.4f;
+        FIELD();
+        float gamepadLookSpeed = 300.f;
 
     protected:
-        void onInitialize() override;
-        void subscribeToInput() override;
+        void setupInputActions(InputController& input) override;
         void onTick(float delta) override;
-
-        // InputController::Ptr _inputController;
     };
 
 } // namespace NX

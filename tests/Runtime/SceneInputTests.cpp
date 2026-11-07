@@ -7,10 +7,13 @@
 //
 //     http://www.apache.org/licenses/LICENSE-2.0
 
+#include "NxWorld/Entities/Camera/Camera.h"
 #include "NxWorld/Framework/GameInstance.h"
+#include "NxWorld/Framework/InputSystem.h"
 #include "NxWorld/Framework/World.h"
 #include "NxWorld/Scene/SceneManager.h"
 #include "NxWorld/Scene/SceneObjects/Spectator/Spectator.h"
+#include "Platform/Input/InputDevices/Joystick.h"
 #include "Platform/Input/Window.h"
 #include "Runtime/SceneFilesGuard.h"
 
@@ -44,6 +47,7 @@ namespace
     protected:
         void SetUp() override
         {
+            NX::GetInputSystem().resetInput();
             auto executableName = std::to_array("Nexium_Tests");
             std::array<char*, 1> arguments{ executableName.data() };
             gGameInstance = std::make_unique<NX::GameInstance>(1, arguments.data());
@@ -61,11 +65,28 @@ namespace
             return spectator;
         }
 
-        static void scroll()
+        static void scroll(std::initializer_list<NX::Spectator2D*> spectators)
         {
             NX::MouseScrollEvent event;
             event.setOffset(glm::vec2(1.f, 0.f));
-            Platform::GetWindow().onMouseWheel->trigger(event);
+            NX::GetInputSystem().queueEvent(event);
+            NX::GetInputSystem().processEvents();
+
+            for (auto* spectator : spectators)
+            {
+                spectator->tick(1.f);
+            }
+        }
+
+        static void gamepadAxis(Platform::Joystick::GamepadAxis axis, float value,
+                                NX::Spectator2D& spectator)
+        {
+            NX::GamepadAxisEvent event(1);
+            event.setAxis(static_cast<std::uint16_t>(axis));
+            event.setValue(value);
+            NX::GetInputSystem().queueEvent(event);
+            NX::GetInputSystem().processEvents();
+            spectator.tick(1.f);
         }
 
         SceneFilesGuard sceneFiles;
@@ -83,13 +104,13 @@ TEST_F(SceneInputTests, WheelReachesOnlySpectatorOfCurrentScene)
     const auto firstStart = firstSpectator->getPosition();
     const auto secondStart = secondSpectator->getPosition();
 
-    scroll();
+    scroll({ firstSpectator.get(), secondSpectator.get() });
     EXPECT_NE(firstSpectator->getPosition(), firstStart);
     EXPECT_EQ(secondSpectator->getPosition(), secondStart);
 
     ASSERT_TRUE(manager.setCurrentScene(&second));
     const auto firstAfterSwitch = firstSpectator->getPosition();
-    scroll();
+    scroll({ firstSpectator.get(), secondSpectator.get() });
     EXPECT_EQ(firstSpectator->getPosition(), firstAfterSwitch);
     EXPECT_NE(secondSpectator->getPosition(), secondStart);
 }
@@ -100,7 +121,7 @@ TEST_F(SceneInputTests, SpectatorAddedToCurrentSceneListensImmediately)
     const auto spectator = addSpectator(*manager.getCurrentScene());
     const auto start = spectator->getPosition();
 
-    scroll();
+    scroll({ spectator.get() });
 
     EXPECT_NE(spectator->getPosition(), start);
 }
@@ -112,7 +133,7 @@ TEST_F(SceneInputTests, SpectatorAddedToBackgroundSceneStaysSilent)
     const auto spectator = addSpectator(background);
     const auto start = spectator->getPosition();
 
-    scroll();
+    scroll({ spectator.get() });
 
     EXPECT_EQ(spectator->getPosition(), start);
 }
@@ -125,7 +146,46 @@ TEST_F(SceneInputTests, SpectatorRemovedFromSceneStopsListening)
     ASSERT_TRUE(scene.deleteFromScene(spectator.get()));
     const auto start = spectator->getPosition();
 
-    scroll();
+    scroll({ spectator.get() });
 
     EXPECT_EQ(spectator->getPosition(), start);
+}
+
+TEST_F(SceneInputTests, GamepadStickPansSpectator)
+{
+    NX::SceneManager manager(&gGameInstance->world);
+    auto spectator = addSpectator(*manager.getCurrentScene());
+    const auto start = spectator->getPosition();
+
+    gamepadAxis(Platform::Joystick::GamepadAxis::LeftX, 1.f, *spectator);
+
+    EXPECT_NE(spectator->getPosition(), start);
+}
+
+TEST_F(SceneInputTests, GamepadStickDriftInsideDeadzoneIsIgnored)
+{
+    NX::SceneManager manager(&gGameInstance->world);
+    auto spectator = addSpectator(*manager.getCurrentScene());
+    const auto start = spectator->getPosition();
+
+    gamepadAxis(Platform::Joystick::GamepadAxis::LeftX, 0.05f, *spectator);
+
+    EXPECT_EQ(spectator->getPosition(), start);
+}
+
+TEST_F(SceneInputTests, GamepadTriggersZoomCamera)
+{
+    NX::SceneManager manager(&gGameInstance->world);
+    auto spectator = addSpectator(*manager.getCurrentScene());
+    auto* camera = spectator->addChildComponent<NX::OrthographicCamera>("Camera"_atom);
+    ASSERT_NE(camera, nullptr);
+    const auto startZoom = camera->getZoom();
+
+    gamepadAxis(Platform::Joystick::GamepadAxis::RightTrigger, 1.f, *spectator);
+    EXPECT_GT(camera->getZoom(), startZoom);
+
+    const auto zoomedIn = camera->getZoom();
+    gamepadAxis(Platform::Joystick::GamepadAxis::RightTrigger, -1.f, *spectator);
+    gamepadAxis(Platform::Joystick::GamepadAxis::LeftTrigger, 1.f, *spectator);
+    EXPECT_LT(camera->getZoom(), zoomedIn);
 }
