@@ -72,27 +72,11 @@ namespace NX
         void handle(const WindowIconifyEvent& event);
         void handle(const WindowCloseEvent& event);
 
-        // [[nodiscard]] std::vector<InputController*> selectControllers();
-
-        // [[nodiscard]] std::vector<InputController*>& controllersFor(InputContext context);
-
-        // void refreshRoutedControllers();
-
         /// Events queued for the next processEvents() call.
         std::vector<AnyInputEvent> _events;
         /// Events being handled by the current processEvents() call. Swapped with _events so
         /// both buffers keep their capacity and steady-state frames do not allocate.
         std::vector<AnyInputEvent> _processing;
-
-        // /// Non-owning pointers. Every controller unregisters itself before destruction.
-        // /// Controllers registered for shortcuts that are active while editor UI owns input.
-        // std::vector<InputController*> _editorControllers;
-        // /// Controllers registered for gameplay actions such as player or spectator movement.
-        // std::vector<InputController*> _gameplayControllers;
-        // /// Live snapshot of the active context. Context changes rebuild it immediately; events
-        // /// are dispatched only to these controllers until the context changes again.
-        // std::vector<InputController*> _routedControllers;
-        // InputContext _activeContext = InputContext::Editor;
 
         std::vector<InputButton> _pressedKeys;
 

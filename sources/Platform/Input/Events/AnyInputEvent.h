@@ -21,9 +21,8 @@
 
 namespace NX
 {
+
     // tag::input_any_event[]
-    /// Any input event, stored by value. Adding a new event type here makes every
-    /// InputSystem::handle overload set fail to compile until the new type is handled.
     using AnyInputEvent
         = std::variant<KeyboardEvent, TextInputEvent, MouseMoveEvent, MouseButtonEvent,
                        MouseScrollEvent, MouseEnterEvent, GamepadButtonEvent, GamepadAxisEvent,
