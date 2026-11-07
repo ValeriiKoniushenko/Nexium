@@ -18,6 +18,8 @@
 
 #include <concepts>
 #include <cstdint>
+#include <functional>
+#include <unordered_map>
 #include <unordered_set>
 #include <vector>
 
@@ -33,7 +35,15 @@ namespace NX
     public:
         ~InputController() override;
 
+        using ActionCallback = std::function<void()>;
+
         bool addAction(InputAction action);
+        bool addAction(const Core::StringAtom& name, std::vector<InputBinding> bindings);
+        bool addAction(const Core::StringAtom& name, std::vector<InputBinding> bindings,
+                       ActionCallback onTriggered);
+
+        void onTriggered(const Core::StringAtom& action, ActionCallback callback);
+        void clearCallbacks(const Core::StringAtom& action);
         bool removeAction(const Core::StringAtom& name);
 
         [[nodiscard]] const InputAction* findAction(const Core::StringAtom& name) const;
@@ -80,6 +90,7 @@ namespace NX
         void onVector(InputSource source, glm::vec2 value);
         void onAxis(std::uint16_t axis, float value);
         void endInputFrame();
+        void dispatchTriggeredCallbacks();
 
         template<typename Function>
         void forEachBinding(const Function& function);
@@ -94,6 +105,7 @@ namespace NX
 
         std::vector<ActionState> _actionStates;
         mutable std::unordered_set<Core::StringAtom> _reportedMissingActions;
+        std::unordered_map<Core::StringAtom, std::vector<ActionCallback>> _triggeredCallbacks;
     };
 } // namespace NX
 

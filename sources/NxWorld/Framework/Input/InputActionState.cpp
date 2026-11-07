@@ -95,6 +95,6 @@ namespace NX
         const bool wasActive = isActive;
         value = sum;
         isActive = sum.x != 0.f || sum.y != 0.f;
-        wasTriggered = fired || ((isActive || pressed) && !wasActive);
+        wasTriggered = fired || pressed || (isActive && !wasActive);
     }
 } // namespace NX

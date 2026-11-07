@@ -84,6 +84,13 @@ namespace NX
             controller->endInputFrame();
         }
 
+        // A callback may add or destroy controllers, so iterate by index over the live list.
+        // NOLINTNEXTLINE(modernize-loop-convert): a range-for would be invalidated by erase.
+        for (std::size_t i = 0; i < _controllers.size(); ++i)
+        {
+            _controllers[i]->dispatchTriggeredCallbacks();
+        }
+
         _processing.clear();
     }
     // end::input_process_events[]

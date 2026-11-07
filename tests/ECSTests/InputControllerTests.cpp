@@ -387,3 +387,88 @@ TEST_F(InputControllerRuntimeTests, DeinitializeClearsActionStates)
     EXPECT_FALSE(controller->isActive("Scroll"_atom));
     EXPECT_FALSE(NX::GetInputSystem().isRegistered(controller.get()));
 }
+
+TEST_F(InputControllerRuntimeTests, AddActionFromNameAndBindings)
+{
+    using Key = Platform::Keyboard::Key;
+    ASSERT_TRUE(controller->addAction("Save"_atom,
+                                      { NX::InputBinding::Key(Key::S).withControl().onPressed() }));
+    EXPECT_FALSE(controller->addAction("Save"_atom, { NX::InputBinding::Key(Key::S) }));
+    controller->initialize();
+
+    key(Key::S, NX::InputState::Pressed, NX::InputModifier::Control);
+    frame();
+    EXPECT_TRUE(controller->wasTriggered("Save"_atom));
+}
+
+TEST_F(InputControllerRuntimeTests, TriggeredCallbackRunsOncePerPress)
+{
+    int calls = 0;
+    ASSERT_TRUE(controller->addAction("Fire"_atom, { NX::InputBinding::Key(Key::Space) },
+                                      [&] { ++calls; }));
+    controller->initialize();
+
+    key(Key::Space, NX::InputState::Pressed);
+    frame();
+    EXPECT_EQ(calls, 1);
+
+    frame();
+    EXPECT_EQ(calls, 1);
+
+    key(Key::Space, NX::InputState::Released);
+    key(Key::Space, NX::InputState::Pressed);
+    frame();
+    EXPECT_EQ(calls, 2);
+}
+
+TEST_F(InputControllerRuntimeTests, CallbacksCanBeAttachedBeforeActionExists)
+{
+    int calls = 0;
+    controller->onTriggered("Save"_atom, [&] { ++calls; });
+    controller->onTriggered("Save"_atom, [&] { calls += 10; });
+    ASSERT_TRUE(controller->addAction("Save"_atom,
+                                      { NX::InputBinding::Key(Key::S).withControl().onPressed() }));
+    controller->initialize();
+
+    key(Key::S, NX::InputState::Pressed, NX::InputModifier::Control);
+    frame();
+    EXPECT_EQ(calls, 11);
+
+    controller->clearCallbacks("Save"_atom);
+    key(Key::S, NX::InputState::Released);
+    key(Key::S, NX::InputState::Pressed, NX::InputModifier::Control);
+    frame();
+    EXPECT_EQ(calls, 11);
+}
+
+TEST_F(InputControllerRuntimeTests, DisabledControllerDoesNotRunCallbacks)
+{
+    int calls = 0;
+    ASSERT_TRUE(controller->addAction("Fire"_atom, { NX::InputBinding::Key(Key::Space) },
+                                      [&] { ++calls; }));
+    controller->initialize();
+    controller->disable();
+
+    key(Key::Space, NX::InputState::Pressed);
+    frame();
+    EXPECT_EQ(calls, 0);
+}
+
+TEST_F(InputControllerRuntimeTests, CallbackMayDestroyItsController)
+{
+    int calls = 0;
+    ASSERT_TRUE(controller->addAction("Close"_atom, { NX::InputBinding::Key(Key::Escape) },
+                                      [&]
+                                      {
+                                          ++calls;
+                                          controller = nullptr;
+                                      }));
+    controller->initialize();
+
+    key(Key::Escape, NX::InputState::Pressed);
+    frame();
+    EXPECT_EQ(calls, 1);
+    EXPECT_EQ(controller.get(), nullptr);
+
+    frame();
+}

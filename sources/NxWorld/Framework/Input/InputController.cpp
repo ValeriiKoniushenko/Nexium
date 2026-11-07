@@ -64,6 +64,36 @@ namespace NX
         return true;
     }
 
+    bool InputController::addAction(const Core::StringAtom& name,
+                                    std::vector<InputBinding> bindings)
+    {
+        return addAction(InputAction{ .name = name, .bindings = std::move(bindings) });
+    }
+
+    bool InputController::addAction(const Core::StringAtom& name,
+                                    std::vector<InputBinding> bindings, ActionCallback onTriggered)
+    {
+        if (!addAction(name, std::move(bindings)))
+        {
+            return false;
+        }
+        this->onTriggered(name, std::move(onTriggered));
+        return true;
+    }
+
+    void InputController::onTriggered(const Core::StringAtom& action, ActionCallback callback)
+    {
+        if (callback)
+        {
+            _triggeredCallbacks[action].push_back(std::move(callback));
+        }
+    }
+
+    void InputController::clearCallbacks(const Core::StringAtom& action)
+    {
+        _triggeredCallbacks.erase(action);
+    }
+
     bool InputController::removeAction(const Core::StringAtom& name)
     {
         const auto it = std::ranges::find(_actions, name, &InputAction::name);
@@ -219,6 +249,36 @@ namespace NX
         for (std::size_t i = 0; i < _actions.size(); ++i)
         {
             _actionStates[i].endFrame(_actions[i]);
+        }
+    }
+
+    void InputController::dispatchTriggeredCallbacks()
+    {
+        if (!isEnabled() || _triggeredCallbacks.empty())
+        {
+            return;
+        }
+
+        std::vector<ActionCallback> callbacks;
+        for (std::size_t i = 0; i < _actions.size() && i < _actionStates.size(); ++i)
+        {
+            if (!_actionStates[i].wasTriggered)
+            {
+                continue;
+            }
+
+            const auto it = _triggeredCallbacks.find(_actions[i].name);
+            if (it != _triggeredCallbacks.end())
+            {
+                callbacks.insert(callbacks.end(), it->second.begin(), it->second.end());
+            }
+        }
+
+        // A callback may remove actions or destroy this controller, so the callbacks are
+        // copied first and members are not touched after the first call.
+        for (const auto& callback : callbacks)
+        {
+            callback();
         }
     }
 } // namespace NX
