@@ -20,6 +20,10 @@
 #include "ImGuizmoIntegration.h"
 #include "NxFundamental/ECS/BaseComponent.h"
 #include "NxFundamental/ITagHolder.h"
+#include "NxWorld/Framework/Input/InputActionTypes.h"
+#include "NxWorld/Framework/Input/InputController.h"
+#include "NxWorld/Framework/InputSystem.h"
+#include "Platform/Input/InputDevices/Keyboard.h"
 #ifdef NEXIUM_ENABLE_3D_MODULE
     #include "NxWorld/Entities/Mesh/StaticMeshBundle.h"
 #endif
@@ -555,14 +559,45 @@ namespace NX
     {
         _subscriptionPool << keyboardInput.getOrCreate("Close editor", Keyboard::Key::F12)
                                  ->onPress->subscribeAndGetID([&](auto) { GetWindow().close(); });
-        // _inputController = InputController::Create("Editor input"_atom, InputContext::Editor);
-        // _inputController->bind(
-        //     "Save all"_atom,
-        //     KeyChord{ .triggerKey = static_cast<int>(Platform::Keyboard::Key::S),
-        //               .requiredKeys = { static_cast<int>(Platform::Keyboard::Key::Left_Control),
-        //                                 static_cast<int>(Platform::Keyboard::Key::Left_Shift) }
-        //                                 },
-        //     [](const InputActionEvent&) { gGameInstance->saveAllToCache(); });
+
+        using Key = Platform::Keyboard::Key;
+        _inputController = InputController::Create();
+        _inputController->initialize();
+
+        _inputController->addAction(
+            "Save all"_atom, { InputBinding::Key(Key::S).withControl().withShift().onPressed() },
+            [] { gGameInstance->saveAllToCache(); });
+
+        _inputController->addAction("Toggle render mode"_atom,
+                                    { InputBinding::Key(Platform::Keyboard::Key::F1) },
+                                    [] { gGameInstance->toggleRenderMode(); });
+
+        _inputController->addAction("Cancel action"_atom,
+                                    { InputBinding::Key(Platform::Keyboard::Key::Escape) },
+                                    [] { GetObjectSelectorManager()->deselectAllAndClear(); });
+
+        _inputController->addAction(
+            "Cancel action"_atom,
+            { InputBinding::MouseDelta(), InputBinding::MouseButton(Platform::Mouse::Key::Right) },
+            [] {});
+
+        // _inputController->addAction(
+        //     "Del object from scene", { InputBinding::Key(Platform::Keyboard::Key::Delete) },
+        //     [this](const KeyboardIA::SpecKeysState& spec)
+        //     {
+        //         if (spec.isNothingPressed() && gGameInstance->isApplicationViewportFocused())
+        //         {
+        //             for (auto&& obj :
+        //                  GetObjectSelectorManager()->getSelectedObjects() | std::views::values)
+        //             {
+        //                 if (auto* comp = dynamic_cast<BaseComponent*>(obj.get()))
+        //                 {
+        //                     gGameInstance->scenes.getCurrentScene()->deleteFromSceneOrFromObject(
+        //                         comp);
+        //                 }
+        //             }
+        //         }
+        //     });
 
         auto deleteObjectFromSceneKey
             = keyboardInput.getOrCreate("Del object from scene", Keyboard::Key::Delete);
@@ -583,16 +618,6 @@ namespace NX
                     }
                 }
             });
-
-        auto toggleRenderMode = keyboardInput.getOrCreate("Toggle render mode", Keyboard::Key::F1);
-        toggleRenderMode->setIsRepeatable(false);
-        _subscriptionPool << toggleRenderMode->onPress->subscribeAndGetID(
-            [](auto) { gGameInstance->toggleRenderMode(); });
-
-        _subscriptionPool << keyboardInput.getOrCreate("Cancel action", Keyboard::Key::Escape)
-                                 ->onPress->subscribeAndGetID(
-                                     [&](auto)
-                                     { GetObjectSelectorManager()->deselectAllAndClear(); });
 
         auto mouseMove = mouseInput.getOrCreate("mouseMove", Mouse::Key::Right);
         _subscriptionPool << mouseMove->onDrag->subscribeAndGetID(

@@ -15,6 +15,7 @@
 #include "Core/IntrusivePtr.h"
 #include "Foundation/BaseLog.h"
 #include "NxSubsystems/Input/InputManager.h"
+#include "NxWorld/Framework/Input/InputController.h"
 #include "ObjectPicker.h"
 #include "ToastNotifications.h"
 #include "Windows/BaseWindow.h"
@@ -154,7 +155,7 @@ namespace NX
         void responseOnPick(NX::Transformable* object);
 
     protected:
-        // InputController::Ptr _inputController;
+        InputController::Ptr _inputController;
         DelegateSubscriberPoolGuard _subscriptionPool;
         std::vector<BaseEWC::Ptr> _windows;
         std::set<StringAtom> _windowTypes;
