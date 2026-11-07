@@ -86,6 +86,7 @@ nexium_add_public_headers(Nexium_World
     NxWorld/Framework/World.h
     NxWorld/Framework/World.generated.h
     NxWorld/Framework/WorldObjectManager.h
+    NxWorld/Scene/Bounds.h
     NxWorld/Scene/Grid.h
     NxWorld/Scene/Rectangle.h
     NxWorld/Scene/Rectangle.generated.h

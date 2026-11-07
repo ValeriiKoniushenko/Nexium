@@ -50,6 +50,8 @@ namespace NX::SceneObj
         [[nodiscard]] constexpr static float GetDefaultDrawRectSize() noexcept { return 100.f; }
         [[nodiscard]] Core::FSize2 getDrawRectSize() const noexcept;
 
+        [[nodiscard]] Core::FRect getBounds() const override;
+
     protected:
         void tryDrawOutline(BaseCamera& camera);
         void onDraw(BaseCamera& camera) override;

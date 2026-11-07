@@ -80,6 +80,12 @@ namespace NX::SceneObj
         return FSize2(GetDefaultDrawRectSize() * glm::vec2(_scale));
     }
 
+    Core::FRect Rectangle::getBounds() const
+    {
+        auto s = GetDefaultDrawRectSize() * glm::vec2(_scale);
+        return { 0.f, 0.f, s.x, s.y };
+    }
+
     void Rectangle::tryDrawOutline(BaseCamera& camera)
     {
         if (!shouldDrawOutline())

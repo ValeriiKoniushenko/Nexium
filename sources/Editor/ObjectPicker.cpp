@@ -247,13 +247,10 @@ namespace NX
                 continue;
             }
             const glm::vec3 localHit = rayOrigin + rayDirection * t;
-            constexpr float size = SceneObj::Rectangle::GetDefaultDrawRectSize();
+            const auto bounds = object->getBounds();
 
-            auto rectPos = rectangle->getPosition();
-            auto rectSize = rectangle->getDrawRectSize();
-            rectPos -= camera->getGlobalPosition();
-
-            if (localHit.x >= 0.f && localHit.x <= size && localHit.y >= 0.f && localHit.y <= size)
+            if (localHit.x >= 0.f && localHit.x <= bounds.getWidth() && localHit.y >= 0.f
+                && localHit.y <= bounds.getHeight())
             {
                 pickedRect = rectangle;
                 break;

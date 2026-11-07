@@ -11,6 +11,8 @@
 
 #pragma once
 
+#include "Bounds.h"
+#include "Core/Rect.h"
 #include "Foundation/Interfaces/DataStream.h"
 #include "Foundation/Interfaces/IOutliner.h"
 #include "NxFundamental/ECS/BaseComponent.h"
@@ -39,7 +41,8 @@ namespace NX
         public Foundation::IOutliner,
         public Transformable,
         public RawBackend::IDrawable,
-        public Foundation::IDataIO
+        public Foundation::IDataIO,
+        public Bounds
     {
         ECS_DECL(SceneObject, NX::BaseComponent, NX::Transformable, Foundation::IOutliner,
                  RawBackend::IDrawable);
@@ -91,6 +94,8 @@ namespace NX
         [[nodiscard]] virtual glm::vec3 getGlobalRotation() const;
 
         [[nodiscard]] Core::StringAtom getCacheHash() const override { return "IDrawable"_atom; }
+
+        [[nodiscard]] Core::FRect getBounds() const override { return {}; }
 
     protected:
         virtual void onDraw(BaseCamera& camera) {}
