@@ -7,7 +7,7 @@
 //
 //     http://www.apache.org/licenses/LICENSE-2.0
 
-#include "NxWorld/Framework/Input/InputActionState.h"
+#include "NxWorld/Framework/Input/InputActionTypes.h"
 
 #include "gtest/gtest.h"
 
@@ -27,7 +27,7 @@ namespace
 
     NX::InputAction ActionWith(NX::InputBinding binding)
     {
-        return NX::InputAction{ .name = "Action"_atom, .bindings = { binding } };
+        return NX::InputAction{ "Action"_atom, { binding } };
     }
 } // namespace
 
@@ -74,103 +74,106 @@ TEST(InputBindingTests, AppliesNegateAndSwizzle)
     EXPECT_EQ(binding.applyValueModifiers({ 1.f, 0.f }), glm::vec2(0.f, -1.f));
 }
 
-TEST(BindingStateTests, DownBindingIsOnWhileHeld)
+TEST(InputBindingRuntimeTests, DownBindingIsOnWhileHeld)
 {
-    const auto binding = Button();
-    NX::BindingState state;
+    auto binding = Button();
 
-    state.onButton(binding, NX::InputState::Pressed, NX::InputModifier::None);
-    EXPECT_TRUE(state.isHeld);
-    EXPECT_EQ(state.contribution(binding), glm::vec2(1.f, 0.f));
+    binding.handleButton(NX::InputState::Pressed, NX::InputModifier::None);
+    EXPECT_TRUE(binding.runtime.isHeld);
+    EXPECT_EQ(binding.getContribution(), glm::vec2(1.f, 0.f));
 
-    state.onButton(binding, NX::InputState::Released, NX::InputModifier::None);
-    EXPECT_FALSE(state.isHeld);
-    EXPECT_EQ(state.contribution(binding), glm::vec2(0.f));
+    binding.handleButton(NX::InputState::Released, NX::InputModifier::None);
+    EXPECT_FALSE(binding.runtime.isHeld);
+    EXPECT_EQ(binding.getContribution(), glm::vec2(0.f));
 }
 
-TEST(BindingStateTests, PressWithWrongModifiersIsIgnored)
+TEST(InputBindingRuntimeTests, PressWithWrongModifiersIsIgnored)
 {
     auto binding = Button();
     binding.control = true;
-    NX::BindingState state;
 
-    state.onButton(binding, NX::InputState::Pressed, NX::InputModifier::Shift);
-    EXPECT_FALSE(state.isHeld);
+    binding.handleButton(NX::InputState::Pressed, NX::InputModifier::Shift);
+    EXPECT_FALSE(binding.runtime.isHeld);
 
-    state.onButton(binding, NX::InputState::Released, NX::InputModifier::None);
-    EXPECT_FALSE(state.firedThisFrame);
+    binding.handleButton(NX::InputState::Released, NX::InputModifier::None);
+    EXPECT_FALSE(binding.runtime.firedThisFrame);
 }
 
-TEST(BindingStateTests, BeginFrameClearsEdgesAndPerFrameValues)
+TEST(InputBindingRuntimeTests, BeginFrameClearsEdgesAndPerFrameValues)
 {
-    const auto button = Button(NX::InputTrigger::Pressed);
-    NX::BindingState buttonState;
-    buttonState.onButton(button, NX::InputState::Pressed, NX::InputModifier::None);
-    ASSERT_TRUE(buttonState.firedThisFrame);
-    buttonState.beginFrame(button);
-    EXPECT_FALSE(buttonState.firedThisFrame);
-    EXPECT_FALSE(buttonState.wasPressedThisFrame);
-    EXPECT_TRUE(buttonState.isHeld);
+    auto button = Button(NX::InputTrigger::Pressed);
+    button.handleButton(NX::InputState::Pressed, NX::InputModifier::None);
+    ASSERT_TRUE(button.runtime.firedThisFrame);
+    button.beginFrame();
+    EXPECT_FALSE(button.runtime.firedThisFrame);
+    EXPECT_FALSE(button.runtime.wasPressedThisFrame);
+    EXPECT_TRUE(button.runtime.isHeld);
 
-    NX::InputBinding delta;
-    delta.source = NX::InputSource::MouseDelta;
-    NX::BindingState deltaState;
-    deltaState.addVector({ 1.f, 2.f });
-    deltaState.addVector({ 3.f, 4.f });
-    EXPECT_EQ(deltaState.contribution(delta), glm::vec2(4.f, 6.f));
-    deltaState.beginFrame(delta);
-    EXPECT_EQ(deltaState.contribution(delta), glm::vec2(0.f));
+    auto delta = NX::InputBinding::MouseDelta();
+    delta.handleVector({ 1.f, 2.f });
+    delta.handleVector({ 3.f, 4.f });
+    EXPECT_EQ(delta.getContribution(), glm::vec2(4.f, 6.f));
+    delta.beginFrame();
+    EXPECT_EQ(delta.getContribution(), glm::vec2(0.f));
 
-    NX::InputBinding axis;
-    axis.source = NX::InputSource::GamepadAxis;
-    NX::BindingState axisState;
-    axisState.setAxis(0.5f);
-    axisState.beginFrame(axis);
-    EXPECT_EQ(axisState.contribution(axis), glm::vec2(0.5f, 0.f));
+    auto axis = NX::InputBinding::GamepadAxis(Platform::Joystick::GamepadAxis::LeftX);
+    axis.handleAxis(0.5f);
+    axis.beginFrame();
+    EXPECT_EQ(axis.getContribution(), glm::vec2(0.5f, 0.f));
 }
 
-TEST(ActionStateTests, QuickTapWithinOneFrameTriggers)
-{
-    const auto action = ActionWith(Button());
-    NX::ActionState state(action);
-
-    state.beginFrame(action);
-    state.bindings[0].onButton(action.bindings[0], NX::InputState::Pressed,
-                               NX::InputModifier::None);
-    state.bindings[0].onButton(action.bindings[0], NX::InputState::Released,
-                               NX::InputModifier::None);
-    state.endFrame(action);
-
-    EXPECT_TRUE(state.wasTriggered);
-    EXPECT_FALSE(state.isActive);
-}
-
-TEST(ActionStateTests, ReleasedTriggerDoesNotFireOnPress)
-{
-    const auto action = ActionWith(Button(NX::InputTrigger::Released));
-    NX::ActionState state(action);
-
-    state.beginFrame(action);
-    state.bindings[0].onButton(action.bindings[0], NX::InputState::Pressed,
-                               NX::InputModifier::None);
-    state.endFrame(action);
-    EXPECT_FALSE(state.wasTriggered);
-
-    state.beginFrame(action);
-    state.bindings[0].onButton(action.bindings[0], NX::InputState::Released,
-                               NX::InputModifier::None);
-    state.endFrame(action);
-    EXPECT_TRUE(state.wasTriggered);
-}
-
-TEST(ActionStateTests, FitsOnlyMatchingBindingCount)
+TEST(InputActionRuntimeTests, QuickTapWithinOneFrameTriggers)
 {
     auto action = ActionWith(Button());
-    const NX::ActionState state(action);
-    EXPECT_TRUE(state.fits(action));
 
-    action.bindings.push_back(Button());
-    EXPECT_FALSE(state.fits(action));
+    action.beginFrame();
+    action.bindings[0].handleButton(NX::InputState::Pressed, NX::InputModifier::None);
+    action.bindings[0].handleButton(NX::InputState::Released, NX::InputModifier::None);
+    action.endFrame();
+
+    EXPECT_TRUE(action.runtime.wasTriggered);
+    EXPECT_FALSE(action.runtime.isActive);
+}
+
+TEST(InputActionRuntimeTests, ReleasedTriggerDoesNotFireOnPress)
+{
+    auto action = ActionWith(Button(NX::InputTrigger::Released));
+
+    action.beginFrame();
+    action.bindings[0].handleButton(NX::InputState::Pressed, NX::InputModifier::None);
+    action.endFrame();
+    EXPECT_FALSE(action.runtime.wasTriggered);
+
+    action.beginFrame();
+    action.bindings[0].handleButton(NX::InputState::Released, NX::InputModifier::None);
+    action.endFrame();
+    EXPECT_TRUE(action.runtime.wasTriggered);
+}
+
+TEST(InputActionRuntimeTests, ResetRuntimeForgetsHeldButtons)
+{
+    auto action = ActionWith(Button());
+    action.bindings[0].handleButton(NX::InputState::Pressed, NX::InputModifier::None);
+    action.endFrame();
+    ASSERT_TRUE(action.runtime.isActive);
+
+    action.resetRuntime();
+    EXPECT_FALSE(action.runtime.isActive);
+    EXPECT_FALSE(action.bindings[0].runtime.isHeld);
+}
+
+TEST(InputActionRuntimeTests, RuntimeIsNotSerialized)
+{
+    auto action = ActionWith(Button());
+    action.bindings[0].handleButton(NX::InputState::Pressed, NX::InputModifier::None);
+    action.endFrame();
+
+    const nlohmann::json json = action;
+    const auto restored = json.get<NX::InputAction>();
+
+    EXPECT_EQ(json.dump().find("runtime"), std::string::npos);
+    EXPECT_FALSE(restored.runtime.isActive);
+    EXPECT_FALSE(restored.bindings[0].runtime.isHeld);
 }
 
 TEST(InputBindingTests, FactoriesSetSourceAndCode)

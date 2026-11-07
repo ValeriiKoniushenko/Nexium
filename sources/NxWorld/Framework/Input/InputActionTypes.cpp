@@ -174,6 +174,95 @@ namespace NX
         return value;
     }
 
+    void InputBinding::beginFrame() noexcept
+    {
+        runtime.wasPressedThisFrame = false;
+        runtime.firedThisFrame = false;
+        if (isPerFrame())
+        {
+            runtime.value = glm::vec2{ 0.f };
+        }
+    }
+
+    void InputBinding::handleButton(InputState state, InputModifier mods) noexcept
+    {
+        if (state == InputState::Pressed && acceptsModifiers(mods))
+        {
+            runtime.isHeld = true;
+            runtime.wasPressedThisFrame = true;
+            runtime.firedThisFrame |= trigger == InputTrigger::Pressed;
+        }
+        else if (state == InputState::Released && runtime.isHeld)
+        {
+            runtime.isHeld = false;
+            runtime.firedThisFrame |= trigger == InputTrigger::Released;
+        }
+    }
+
+    void InputBinding::handleVector(glm::vec2 delta) noexcept
+    {
+        runtime.value += delta;
+    }
+
+    void InputBinding::handleAxis(float normalizedValue) noexcept
+    {
+        runtime.value = glm::vec2{ normalizedValue, 0.f };
+    }
+
+    glm::vec2 InputBinding::getContribution() const noexcept
+    {
+        if (!isButton())
+        {
+            return applyValueModifiers(runtime.value);
+        }
+
+        const bool isOn = trigger == InputTrigger::Down ? runtime.isHeld : runtime.firedThisFrame;
+        return applyValueModifiers(glm::vec2{ isOn ? 1.f : 0.f, 0.f });
+    }
+
+    InputAction::InputAction(Core::StringAtom name, std::vector<InputBinding> bindings)
+        : name(std::move(name)),
+          bindings(std::move(bindings))
+    {
+    }
+
+    void InputAction::beginFrame() noexcept
+    {
+        runtime.wasTriggered = false;
+        for (auto& binding : bindings)
+        {
+            binding.beginFrame();
+        }
+    }
+
+    void InputAction::endFrame() noexcept
+    {
+        glm::vec2 sum{ 0.f };
+        bool fired = false;
+        bool pressed = false;
+
+        for (const auto& binding : bindings)
+        {
+            sum += binding.getContribution();
+            fired |= binding.runtime.firedThisFrame;
+            pressed |= binding.trigger == InputTrigger::Down && binding.runtime.wasPressedThisFrame;
+        }
+
+        const bool wasActive = runtime.isActive;
+        runtime.value = sum;
+        runtime.isActive = sum.x != 0.f || sum.y != 0.f;
+        runtime.wasTriggered = fired || pressed || (runtime.isActive && !wasActive);
+    }
+
+    void InputAction::resetRuntime() noexcept
+    {
+        runtime = {};
+        for (auto& binding : bindings)
+        {
+            binding.runtime = {};
+        }
+    }
+
     void to_json(nlohmann::json& j, const InputBinding& v)
     {
         j = R<InputBinding>::Serialize(v).getData();

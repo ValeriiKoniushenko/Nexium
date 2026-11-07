@@ -103,7 +103,7 @@ TEST(InputControllerTests, ActionsSurviveSerializationRoundTrip)
     save.control = true;
     save.shift = true;
     save.trigger = NX::InputTrigger::Pressed;
-    ASSERT_TRUE(original->addAction(NX::InputAction{ .name = "Save"_atom, .bindings = { save } }));
+    ASSERT_TRUE(original->addAction(NX::InputAction{ "Save"_atom, { save } }));
 
     RResourceStream<RJsonResourceStream> stream(original->serialize());
     auto restored = NX::InputController::Create();
@@ -143,8 +143,8 @@ namespace
 
         void addAction(const char* name, std::vector<NX::InputBinding> bindings)
         {
-            ASSERT_TRUE(controller->addAction(NX::InputAction{ .name = Core::StringAtom(name),
-                                                               .bindings = std::move(bindings) }));
+            ASSERT_TRUE(controller->addAction(
+                NX::InputAction{ Core::StringAtom(name), std::move(bindings) }));
         }
 
         static void key(Key key, NX::InputState state,
@@ -386,6 +386,22 @@ TEST_F(InputControllerRuntimeTests, DeinitializeClearsActionStates)
     controller->deinitialize();
     EXPECT_FALSE(controller->isActive("Scroll"_atom));
     EXPECT_FALSE(NX::GetInputSystem().isRegistered(controller.get()));
+}
+
+TEST_F(InputControllerRuntimeTests, RemovingActionKeepsOtherActionsHeld)
+{
+    addAction("Fire", { KeyBinding(Key::Space, NX::InputTrigger::Down) });
+    addAction("Jump", { KeyBinding(Key::W, NX::InputTrigger::Down) });
+    controller->initialize();
+
+    key(Key::Space, NX::InputState::Pressed);
+    frame();
+    ASSERT_TRUE(controller->isActive("Fire"_atom));
+
+    ASSERT_TRUE(controller->removeAction("Jump"_atom));
+    addAction("Crouch", { KeyBinding(Key::C, NX::InputTrigger::Down) });
+    frame();
+    EXPECT_TRUE(controller->isActive("Fire"_atom));
 }
 
 TEST_F(InputControllerRuntimeTests, AddActionFromNameAndBindings)

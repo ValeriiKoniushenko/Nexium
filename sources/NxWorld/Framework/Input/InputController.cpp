@@ -41,15 +41,16 @@ namespace NX
     void InputController::onInitialize()
     {
         BaseComponent::onInitialize();
-        ensureStatesMatchActions();
         GetInputSystem().registerController(this);
     }
 
     void InputController::onDeinitialize()
     {
         GetInputSystem().unregisterController(this);
-        _actionStates.clear();
-        ensureStatesMatchActions();
+        for (auto& action : _actions)
+        {
+            action.resetRuntime();
+        }
         BaseComponent::onDeinitialize();
     }
 
@@ -59,15 +60,16 @@ namespace NX
         {
             return false;
         }
+        // The action may be a copy of another controller's live action.
+        action.resetRuntime();
         _actions.emplace_back(std::move(action));
-        ensureStatesMatchActions();
         return true;
     }
 
     bool InputController::addAction(const Core::StringAtom& name,
                                     std::vector<InputBinding> bindings)
     {
-        return addAction(InputAction{ .name = name, .bindings = std::move(bindings) });
+        return addAction(InputAction{ name, std::move(bindings) });
     }
 
     bool InputController::addAction(const Core::StringAtom& name,
@@ -102,7 +104,6 @@ namespace NX
             return false;
         }
         _actions.erase(it);
-        ensureStatesMatchActions();
         return true;
     }
 
@@ -120,135 +121,89 @@ namespace NX
 
     bool InputController::isActive(const Core::StringAtom& action) const
     {
-        const auto* state = findState(action);
-        return state && isEnabled() && state->isActive;
+        const auto* found = findActionOrWarn(action);
+        return found && isEnabled() && found->runtime.isActive;
     }
 
     bool InputController::wasTriggered(const Core::StringAtom& action) const
     {
-        const auto* state = findState(action);
-        return state && isEnabled() && state->wasTriggered;
+        const auto* found = findActionOrWarn(action);
+        return found && isEnabled() && found->runtime.wasTriggered;
     }
 
     glm::vec2 InputController::getVectorValue(const Core::StringAtom& action) const
     {
-        const auto* state = findState(action);
-        return state && isEnabled() ? state->value : glm::vec2{ 0.f };
+        const auto* found = findActionOrWarn(action);
+        return found && isEnabled() ? found->runtime.value : glm::vec2{ 0.f };
     }
 
-    const ActionState* InputController::findState(const Core::StringAtom& action) const
+    const InputAction* InputController::findActionOrWarn(const Core::StringAtom& name) const
     {
-        const auto it = std::ranges::find(_actions, action, &InputAction::name);
-        if (it == _actions.end())
+        const auto* action = findAction(name);
+        if (!action && _reportedMissingActions.insert(name).second)
         {
-            if (_reportedMissingActions.insert(action).second)
-            {
-                warnLog("Unknown input action '{}'"_f << action);
-            }
-            return nullptr;
+            warnLog("Unknown input action '{}'"_f << name);
         }
-
-        const auto index = static_cast<std::size_t>(std::distance(_actions.begin(), it));
-        return index < _actionStates.size() ? &_actionStates[index] : nullptr;
-    }
-
-    bool InputController::statesMatchActions() const
-    {
-        if (_actionStates.size() != _actions.size())
-        {
-            return false;
-        }
-
-        for (std::size_t i = 0; i < _actions.size(); ++i)
-        {
-            if (!_actionStates[i].fits(_actions[i]))
-            {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    void InputController::ensureStatesMatchActions()
-    {
-        if (statesMatchActions())
-        {
-            return;
-        }
-
-        _actionStates.clear();
-        for (const auto& action : _actions)
-        {
-            _actionStates.emplace_back(action);
-        }
-    }
-
-    template<typename Function>
-    void InputController::forEachBinding(const Function& function)
-    {
-        ensureStatesMatchActions();
-        for (std::size_t i = 0; i < _actions.size(); ++i)
-        {
-            for (std::size_t j = 0; j < _actions[i].bindings.size(); ++j)
-            {
-                function(_actions[i].bindings[j], _actionStates[i].bindings[j]);
-            }
-        }
+        return action;
     }
 
     void InputController::beginInputFrame()
     {
-        ensureStatesMatchActions();
-        for (std::size_t i = 0; i < _actions.size(); ++i)
+        for (auto& action : _actions)
         {
-            _actionStates[i].beginFrame(_actions[i]);
+            action.beginFrame();
         }
     }
 
     void InputController::onButton(InputSource source, std::uint16_t code, InputState state,
                                    InputModifier mods)
     {
-        forEachBinding(
-            [&](const InputBinding& binding, BindingState& bindingState)
+        for (auto& action : _actions)
+        {
+            for (auto& binding : action.bindings)
             {
                 if (binding.matches(source, code))
                 {
-                    bindingState.onButton(binding, state, mods);
+                    binding.handleButton(state, mods);
                 }
-            });
+            }
+        }
     }
 
     void InputController::onVector(InputSource source, glm::vec2 value)
     {
-        forEachBinding(
-            [&](const InputBinding& binding, BindingState& bindingState)
+        for (auto& action : _actions)
+        {
+            for (auto& binding : action.bindings)
             {
                 if (binding.matches(source, 0))
                 {
-                    bindingState.addVector(value);
+                    binding.handleVector(value);
                 }
-            });
+            }
+        }
     }
 
     void InputController::onAxis(std::uint16_t axis, float value)
     {
         const float normalized = NormalizeAxis(axis, value);
-        forEachBinding(
-            [&](const InputBinding& binding, BindingState& bindingState)
+        for (auto& action : _actions)
+        {
+            for (auto& binding : action.bindings)
             {
                 if (binding.matches(InputSource::GamepadAxis, axis))
                 {
-                    bindingState.setAxis(normalized);
+                    binding.handleAxis(normalized);
                 }
-            });
+            }
+        }
     }
 
     void InputController::endInputFrame()
     {
-        ensureStatesMatchActions();
-        for (std::size_t i = 0; i < _actions.size(); ++i)
+        for (auto& action : _actions)
         {
-            _actionStates[i].endFrame(_actions[i]);
+            action.endFrame();
         }
     }
 
@@ -260,14 +215,14 @@ namespace NX
         }
 
         std::vector<ActionCallback> callbacks;
-        for (std::size_t i = 0; i < _actions.size() && i < _actionStates.size(); ++i)
+        for (const auto& action : _actions)
         {
-            if (!_actionStates[i].wasTriggered)
+            if (!action.runtime.wasTriggered)
             {
                 continue;
             }
 
-            const auto it = _triggeredCallbacks.find(_actions[i].name);
+            const auto it = _triggeredCallbacks.find(action.name);
             if (it != _triggeredCallbacks.end())
             {
                 callbacks.insert(callbacks.end(), it->second.begin(), it->second.end());

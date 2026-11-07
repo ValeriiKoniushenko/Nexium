@@ -12,7 +12,6 @@
 #pragma once
 
 #include "NxFundamental/ECS/BaseComponent.h"
-#include "NxWorld/Framework/Input/InputActionState.h"
 #include "NxWorld/Framework/Input/InputActionTypes.h"
 #include "glm/vec2.hpp"
 
@@ -92,18 +91,13 @@ namespace NX
         void endInputFrame();
         void dispatchTriggeredCallbacks();
 
-        template<typename Function>
-        void forEachBinding(const Function& function);
-
-        [[nodiscard]] bool statesMatchActions() const;
-        void ensureStatesMatchActions();
-        [[nodiscard]] const ActionState* findState(const Core::StringAtom& action) const;
+        /// Like findAction(), but logs a warning (once per name) when the action is missing.
+        [[nodiscard]] const InputAction* findActionOrWarn(const Core::StringAtom& name) const;
         [[nodiscard]] glm::vec2 getVectorValue(const Core::StringAtom& action) const;
 
         FIELD();
         std::vector<NX::InputAction> _actions;
 
-        std::vector<ActionState> _actionStates;
         mutable std::unordered_set<Core::StringAtom> _reportedMissingActions;
         std::unordered_map<Core::StringAtom, std::vector<ActionCallback>> _triggeredCallbacks;
     };

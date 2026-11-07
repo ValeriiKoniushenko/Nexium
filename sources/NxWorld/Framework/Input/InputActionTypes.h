@@ -44,6 +44,27 @@ namespace NX
         Released
     };
 
+    /// What is happening with one binding right now. Not reflected, so it is never saved.
+    struct InputBindingRuntime
+    {
+        /// The button is down right now.
+        bool isHeld = false;
+        /// A press arrived this frame, even if the button was released again in the same frame.
+        bool wasPressedThisFrame = false;
+        /// The binding's Pressed/Released trigger fired this frame.
+        bool firedThisFrame = false;
+        /// Mouse delta/scroll summed over this frame, or the last normalized axis value.
+        glm::vec2 value{ 0.f };
+    };
+
+    /// The combined result of all bindings of one action. Not reflected, so it is never saved.
+    struct InputActionRuntime
+    {
+        glm::vec2 value{ 0.f };
+        bool isActive = false;
+        bool wasTriggered = false;
+    };
+
     CLASS();
     struct InputBinding
     {
@@ -92,6 +113,16 @@ namespace NX
         [[nodiscard]] bool matches(InputSource eventSource, std::uint16_t eventCode) const noexcept;
         [[nodiscard]] bool acceptsModifiers(InputModifier mods) const noexcept;
         [[nodiscard]] glm::vec2 applyValueModifiers(glm::vec2 value) const noexcept;
+
+        // Runtime, driven by InputController once per frame.
+        void beginFrame() noexcept;
+        void handleButton(InputState state, InputModifier mods) noexcept;
+        void handleVector(glm::vec2 delta) noexcept;
+        void handleAxis(float normalizedValue) noexcept;
+        /// This binding's share of the action value for the current frame.
+        [[nodiscard]] glm::vec2 getContribution() const noexcept;
+
+        NX::InputBindingRuntime runtime;
     };
 
     void to_json(nlohmann::json& j, const InputBinding& v);
@@ -102,10 +133,22 @@ namespace NX
     {
         R_FRIEND(InputAction);
 
+        InputAction() = default;
+        InputAction(Core::StringAtom name, std::vector<InputBinding> bindings);
+
         FIELD();
         Core::StringAtom name;
         FIELD();
         std::vector<NX::InputBinding> bindings;
+
+        // Runtime, driven by InputController once per frame.
+        void beginFrame() noexcept;
+        /// Combines the bindings' contributions into `runtime`.
+        void endFrame() noexcept;
+        /// Forgets held buttons and values of the action and all its bindings.
+        void resetRuntime() noexcept;
+
+        NX::InputActionRuntime runtime;
     };
 
     void to_json(nlohmann::json& j, const InputAction& v);
