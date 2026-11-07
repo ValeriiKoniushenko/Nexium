@@ -116,6 +116,7 @@ namespace NX
 
         auto& camera = *world->currentCamera;
 
+        auto ss = nxFace->getData().getTextDrawSize("Hello world");
         nxFace->getData().drawText("Hello world", glm::vec2(0.f), camera);
 
         if (gGameInstance->isEditorMode())

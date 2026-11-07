@@ -68,6 +68,25 @@ namespace NX
         return _face->getFacesNumber();
     }
 
+    Core::UISize2 Face::getTextDrawSize(std::string_view text) const
+    {
+        if (_glyphs.empty()) [[unlikely]]
+        {
+            errorLogAndAssert("Can't get the text draw size. The glyphs are empty.");
+            return {};
+        }
+
+        Core::UISize2 size;
+        for (const char c : text)
+        {
+            const auto& ch = _glyphs[c].glyph;
+            size.width += ch.advance >> 6;
+            size.height = std::max(size.height, ch.size.height);
+        }
+
+        return size;
+    }
+
     bool Face::generateFace(std::size_t faceIndex)
     {
         return _face->generateFace(static_cast<FT_Long>(faceIndex));

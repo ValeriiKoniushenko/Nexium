@@ -78,6 +78,8 @@ namespace NX
         /// Before call of this function the source path must be set.
         [[nodiscard]] std::size_t getFacesNumber();
 
+        [[nodiscard]] Core::UISize2 getTextDrawSize(std::string_view text) const;
+
         /// Before call of this function the source path must be set.
         bool generateFace(std::size_t faceIndex);
         bool setPixelSize(Core::UISize2 size);
