@@ -15,8 +15,105 @@ namespace
                                       | NX::InputModifier::Alt | NX::InputModifier::Super;
 } // namespace
 
+namespace
+{
+    NX::InputBinding MakeBinding(NX::InputSource source, std::uint16_t code = 0) noexcept
+    {
+        NX::InputBinding binding;
+        binding.source = source;
+        binding.code = code;
+        return binding;
+    }
+} // namespace
+
 namespace NX
 {
+    InputBinding InputBinding::Key(Platform::Keyboard::Key key) noexcept
+    {
+        return MakeBinding(InputSource::Key, static_cast<std::uint16_t>(key));
+    }
+
+    InputBinding InputBinding::MouseButton(Platform::Mouse::Key button) noexcept
+    {
+        return MakeBinding(InputSource::MouseButton, static_cast<std::uint16_t>(button));
+    }
+
+    InputBinding InputBinding::MouseDelta() noexcept
+    {
+        return MakeBinding(InputSource::MouseDelta);
+    }
+
+    InputBinding InputBinding::MouseScroll() noexcept
+    {
+        return MakeBinding(InputSource::MouseScroll);
+    }
+
+    InputBinding InputBinding::GamepadButton(Platform::Joystick::GamepadButton button) noexcept
+    {
+        return MakeBinding(InputSource::GamepadButton, static_cast<std::uint16_t>(button));
+    }
+
+    InputBinding InputBinding::GamepadAxis(Platform::Joystick::GamepadAxis axis) noexcept
+    {
+        return MakeBinding(InputSource::GamepadAxis, static_cast<std::uint16_t>(axis));
+    }
+
+    InputBinding InputBinding::withShift() const noexcept
+    {
+        auto copy = *this;
+        copy.shift = true;
+        return copy;
+    }
+
+    InputBinding InputBinding::withControl() const noexcept
+    {
+        auto copy = *this;
+        copy.control = true;
+        return copy;
+    }
+
+    InputBinding InputBinding::withAlt() const noexcept
+    {
+        auto copy = *this;
+        copy.alt = true;
+        return copy;
+    }
+
+    InputBinding InputBinding::withSuper() const noexcept
+    {
+        auto copy = *this;
+        copy.super = true;
+        return copy;
+    }
+
+    InputBinding InputBinding::onPressed() const noexcept
+    {
+        auto copy = *this;
+        copy.trigger = InputTrigger::Pressed;
+        return copy;
+    }
+
+    InputBinding InputBinding::onReleased() const noexcept
+    {
+        auto copy = *this;
+        copy.trigger = InputTrigger::Released;
+        return copy;
+    }
+
+    InputBinding InputBinding::negated() const noexcept
+    {
+        auto copy = *this;
+        copy.negate = true;
+        return copy;
+    }
+
+    InputBinding InputBinding::swizzled() const noexcept
+    {
+        auto copy = *this;
+        copy.swizzleYX = true;
+        return copy;
+    }
+
     InputModifier InputBinding::getModifiers() const noexcept
     {
         auto result = InputModifier::None;

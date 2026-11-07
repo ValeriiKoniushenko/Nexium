@@ -172,3 +172,43 @@ TEST(ActionStateTests, FitsOnlyMatchingBindingCount)
     action.bindings.push_back(Button());
     EXPECT_FALSE(state.fits(action));
 }
+
+TEST(InputBindingTests, FactoriesSetSourceAndCode)
+{
+    const auto key = NX::InputBinding::Key(Platform::Keyboard::Key::S);
+    EXPECT_EQ(key.source, NX::InputSource::Key);
+    EXPECT_EQ(key.code, static_cast<std::uint16_t>(Platform::Keyboard::Key::S));
+    EXPECT_EQ(key.trigger, NX::InputTrigger::Down);
+
+    const auto button = NX::InputBinding::MouseButton(Platform::Mouse::Key::Middle);
+    EXPECT_EQ(button.source, NX::InputSource::MouseButton);
+    EXPECT_EQ(button.code, static_cast<std::uint16_t>(Platform::Mouse::Key::Middle));
+
+    EXPECT_EQ(NX::InputBinding::MouseDelta().source, NX::InputSource::MouseDelta);
+    EXPECT_EQ(NX::InputBinding::MouseScroll().source, NX::InputSource::MouseScroll);
+
+    const auto pad = NX::InputBinding::GamepadButton(Platform::Joystick::GamepadButton::A);
+    EXPECT_EQ(pad.source, NX::InputSource::GamepadButton);
+    EXPECT_EQ(pad.code, static_cast<std::uint16_t>(Platform::Joystick::GamepadButton::A));
+
+    const auto axis = NX::InputBinding::GamepadAxis(Platform::Joystick::GamepadAxis::LeftY);
+    EXPECT_EQ(axis.source, NX::InputSource::GamepadAxis);
+    EXPECT_EQ(axis.code, static_cast<std::uint16_t>(Platform::Joystick::GamepadAxis::LeftY));
+}
+
+TEST(InputBindingTests, ChainedModifiersReturnConfiguredCopy)
+{
+    const auto base = NX::InputBinding::Key(Platform::Keyboard::Key::S);
+    const auto save = base.withControl().withShift().onPressed();
+
+    EXPECT_EQ(save.getModifiers(), NX::InputModifier::Control | NX::InputModifier::Shift);
+    EXPECT_EQ(save.trigger, NX::InputTrigger::Pressed);
+    EXPECT_EQ(base.getModifiers(), NX::InputModifier::None);
+    EXPECT_EQ(base.trigger, NX::InputTrigger::Down);
+
+    const auto other = base.withAlt().withSuper().onReleased().negated().swizzled();
+    EXPECT_EQ(other.getModifiers(), NX::InputModifier::Alt | NX::InputModifier::Super);
+    EXPECT_EQ(other.trigger, NX::InputTrigger::Released);
+    EXPECT_TRUE(other.negate);
+    EXPECT_TRUE(other.swizzleYX);
+}

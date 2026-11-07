@@ -15,6 +15,9 @@
 #include "JustReflectMe/Adapter.h"
 #include "NxFundamental/ResourceManagement/JsonAdapter.h"
 #include "Platform/Input/Events/InputEvent.h"
+#include "Platform/Input/InputDevices/Joystick.h"
+#include "Platform/Input/InputDevices/Keyboard.h"
+#include "Platform/Input/InputDevices/Mouse.h"
 #include "glm/vec2.hpp"
 
 #include <cstdint>
@@ -64,6 +67,24 @@ namespace NX
         bool negate = false;
         FIELD();
         bool swizzleYX = false;
+
+        [[nodiscard]] static InputBinding Key(Platform::Keyboard::Key key) noexcept;
+        [[nodiscard]] static InputBinding MouseButton(Platform::Mouse::Key button) noexcept;
+        [[nodiscard]] static InputBinding MouseDelta() noexcept;
+        [[nodiscard]] static InputBinding MouseScroll() noexcept;
+        [[nodiscard]] static InputBinding GamepadButton(
+            Platform::Joystick::GamepadButton button) noexcept;
+        [[nodiscard]] static InputBinding GamepadAxis(
+            Platform::Joystick::GamepadAxis axis) noexcept;
+
+        [[nodiscard]] InputBinding withShift() const noexcept;
+        [[nodiscard]] InputBinding withControl() const noexcept;
+        [[nodiscard]] InputBinding withAlt() const noexcept;
+        [[nodiscard]] InputBinding withSuper() const noexcept;
+        [[nodiscard]] InputBinding onPressed() const noexcept;
+        [[nodiscard]] InputBinding onReleased() const noexcept;
+        [[nodiscard]] InputBinding negated() const noexcept;
+        [[nodiscard]] InputBinding swizzled() const noexcept;
 
         [[nodiscard]] InputModifier getModifiers() const noexcept;
         [[nodiscard]] bool isButton() const noexcept;
