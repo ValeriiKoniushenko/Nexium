@@ -31,7 +31,7 @@ namespace NX
     ///
     /// @tparam KeyTParam Type representing a key (e.g., int, enum, etc.).
     template<class KeyTParam>
-    class InputAction : public Core::IntrusiveRefCounter<InputAction<KeyTParam>>
+    class LegacyInputAction : public Core::IntrusiveRefCounter<LegacyInputAction<KeyTParam>>
     {
     private:
         enum class State
@@ -41,7 +41,7 @@ namespace NX
         };
 
     public:
-        using Self = InputAction;
+        using Self = LegacyInputAction;
         using Ptr = Core::IntrusivePtr<Self>;
         using CPtr = Core::IntrusivePtr<const Self>;
         template<bool isConst>
@@ -83,25 +83,25 @@ namespace NX
         };
 
     public:
-        InputAction() = default;
+        LegacyInputAction() = default;
 
-        explicit InputAction(Core::StringAtom name)
+        explicit LegacyInputAction(Core::StringAtom name)
             : _name(std::move(name))
         {
         }
 
-        InputAction(Core::StringAtom name, KeyT key)
+        LegacyInputAction(Core::StringAtom name, KeyT key)
             : _name(std::move(name)),
               _key(key)
         {
         }
 
-        InputAction(const InputAction&) = delete;
-        InputAction(InputAction&&) noexcept = delete;
-        InputAction& operator=(const InputAction&) = delete;
-        InputAction& operator=(InputAction&&) noexcept = delete;
+        LegacyInputAction(const LegacyInputAction&) = delete;
+        LegacyInputAction(LegacyInputAction&&) noexcept = delete;
+        LegacyInputAction& operator=(const LegacyInputAction&) = delete;
+        LegacyInputAction& operator=(LegacyInputAction&&) noexcept = delete;
 
-        virtual ~InputAction() = default;
+        virtual ~LegacyInputAction() = default;
 
         [[nodiscard]] const Core::StringAtom& getName() const { return _name; }
 
@@ -179,12 +179,12 @@ namespace NX
     /// Handles input actions specifically from the keyboard.
     /// Also, can be called as KeyboardIA.
     /// Better to create it using KeyboardInputManger. I.e.:
-    class KeyboardInputAction : public InputAction<Platform::Keyboard::Key>
+    class KeyboardInputAction : public LegacyInputAction<Platform::Keyboard::Key>
     {
         INTRUSIVE_PTR_ADAPTERS(KeyboardInputAction);
 
     public:
-        using Parent = InputAction;
+        using Parent = LegacyInputAction;
         using Self = KeyboardInputAction;
         using KeyT = KeyT;
 
@@ -201,10 +201,10 @@ namespace NX
     /// Handles input actions specifically from the mouse.
     /// Also, can be called as MousedIA
     /// Better to create it using MouseInputManger. I.e.:
-    class MouseInputAction : public InputAction<Platform::Mouse::Key>
+    class MouseInputAction : public LegacyInputAction<Platform::Mouse::Key>
     {
     public:
-        using Parent = InputAction;
+        using Parent = LegacyInputAction;
         using Self = MouseInputAction;
         using Ptr = Core::IntrusivePtr<Self>;
         using CPtr = Core::IntrusivePtr<const Self>;
@@ -244,13 +244,13 @@ namespace NX
     /// Alias for MouseInputAction.
     using MouseIA = MouseInputAction;
 
-    /// Concept for compile-time checking of InputAction types.
+    /// Concept for compile-time checking of LegacyInputAction types.
     template<class T>
     concept IsInputAction = requires(T) {
         typename T::KeyT;
         typename T::Ptr;
         typename T::CPtr;
         typename T::Parent;
-        requires std::derived_from<std::remove_reference_t<T>, InputAction<typename T::KeyT>>;
+        requires std::derived_from<std::remove_reference_t<T>, LegacyInputAction<typename T::KeyT>>;
     };
 } // namespace NX

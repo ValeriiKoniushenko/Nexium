@@ -17,7 +17,7 @@ using namespace Platform;
 namespace NX
 {
     KeyboardInputAction::KeyboardInputAction(const Core::StringAtom& name, KeyT key)
-        : InputAction(name, key)
+        : LegacyInputAction(name, key)
     {
     }
 
@@ -36,13 +36,13 @@ namespace NX
     }
 
     MouseInputAction::MouseInputAction(const Core::StringAtom& name, KeyT key)
-        : InputAction(name, key)
+        : LegacyInputAction(name, key)
     {
         init();
     }
 
     MouseInputAction::MouseInputAction(const Core::StringAtom& name)
-        : InputAction(name)
+        : LegacyInputAction(name)
     {
         init();
     }
@@ -58,7 +58,7 @@ namespace NX
 
     void MouseInputAction::update()
     {
-        InputAction::update();
+        LegacyInputAction::update();
 
         const auto pos = Mouse::GetPosition();
         if (!_lastMousePosition)
