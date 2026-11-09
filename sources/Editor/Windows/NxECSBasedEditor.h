@@ -15,12 +15,11 @@
 #include "Editor/GuiComponents/VerticalLayout.h"
 #include "Editors/NxEditorBaseEditor.h"
 #include "NxFundamental/Assets/ECSAsset.h"
-#include "NxSubsystems/Input/InputManager.h"
+#include "NxWorld/Framework/Input/InputController.h"
 
 namespace NX
 {
     using NX::BaseComponent;
-    using NX::KeyboardInputManger;
     using NX::NXECSAsset;
 
     CLASS();
@@ -89,7 +88,8 @@ namespace NX
         void removeCurrentComponent(BaseComponent* component);
 
     protected:
-        KeyboardInputManger _keyboardManager;
+        /// Shortcuts of this window; enabled only while the window is focused.
+        InputController::Ptr _inputController;
 
         Gui::VerticalLayout _headerLayout;
         Gui::LabelRow<Gui::TextInput>* _logicalPath = nullptr;
