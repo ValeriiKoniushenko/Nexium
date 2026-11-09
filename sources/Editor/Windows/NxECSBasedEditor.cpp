@@ -13,7 +13,6 @@
 #include "ECSAdapters/BaseComponentAdapter.h"
 #include "ECSAdapters/EditorActorAdapter.h"
 #include "ECSAdapters/EditorInterleavedGraphicsDataAdapter.h"
-#include "ECSAdapters/Input/ECSEditorInputControllerAdapter.h"
 #ifdef NEXIUM_ENABLE_3D_MODULE
     #include "ECSAdapters/EditorStaticMeshBundleAdapter.h"
 #endif
@@ -148,7 +147,6 @@ namespace NX
 #endif
         addUniqueTypeChildComponent<ECSEditorInterleavedGraphicsDataAdapter>();
         addUniqueTypeChildComponent<ECSEditorFrameByFrameAnimationAdapter>();
-        // addUniqueTypeChildComponent<ECSEditorInputControllerAdapter>();
 
         setEnablePreview(true);
         setEnableTree(true);
