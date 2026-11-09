@@ -260,11 +260,9 @@ TEST_F(InputControllerRuntimeTests, KeysComposeMoveVector)
     EXPECT_EQ(controller->getValue<glm::vec2>("Move"_atom), glm::vec2(0.f, -1.f));
 }
 
-TEST_F(InputControllerRuntimeTests, ModifiersMustMatchExactlyIgnoringLocks)
+TEST_F(InputControllerRuntimeTests, ExactModifiersMustMatchIgnoringLocks)
 {
-    auto save = KeyBinding(Key::S, NX::InputTrigger::Pressed);
-    save.control = true;
-    addAction("Save", { save });
+    addAction("Save", { NX::InputBinding::Shortcut(Key::S, NX::InputModifier::Control) });
     controller->initialize();
 
     key(Key::S, NX::InputState::Pressed, NX::InputModifier::Control | NX::InputModifier::Shift);

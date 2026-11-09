@@ -24,6 +24,7 @@ namespace
         binding.code = code;
         return binding;
     }
+
 } // namespace
 
 namespace NX
@@ -31,6 +32,19 @@ namespace NX
     InputBinding InputBinding::Key(Platform::Keyboard::Key key) noexcept
     {
         return MakeBinding(InputSource::Key, static_cast<std::uint16_t>(key));
+    }
+
+    InputBinding InputBinding::Shortcut(Platform::Keyboard::Key key,
+                                        InputModifier modifiers) noexcept
+    {
+        auto binding = Key(key);
+        binding.shift = (modifiers & InputModifier::Shift) != InputModifier::None;
+        binding.control = (modifiers & InputModifier::Control) != InputModifier::None;
+        binding.alt = (modifiers & InputModifier::Alt) != InputModifier::None;
+        binding.super = (modifiers & InputModifier::Super) != InputModifier::None;
+        binding.trigger = InputTrigger::Pressed;
+        binding.modifierMatch = ModifierMatch::Exact;
+        return binding;
     }
 
     InputBinding InputBinding::MouseButton(Platform::Mouse::Key button) noexcept
@@ -86,10 +100,24 @@ namespace NX
         return copy;
     }
 
+    InputBinding InputBinding::withExactModifiers() const noexcept
+    {
+        auto copy = *this;
+        copy.modifierMatch = ModifierMatch::Exact;
+        return copy;
+    }
+
     InputBinding InputBinding::onPressed() const noexcept
     {
         auto copy = *this;
         copy.trigger = InputTrigger::Pressed;
+        return copy;
+    }
+
+    InputBinding InputBinding::onDown() const noexcept
+    {
+        auto copy = *this;
+        copy.trigger = InputTrigger::Down;
         return copy;
     }
 
@@ -155,10 +183,13 @@ namespace NX
 
     bool InputBinding::acceptsModifiers(InputModifier mods) const noexcept
     {
-        // A binding without modifiers works with any held modifiers (e.g. Shift + W while
-        // sprinting); a binding with modifiers needs an exact match, ignoring Caps/Num Lock.
         const auto required = getModifiers();
-        return required == InputModifier::None || (mods & MatchedModifiers) == required;
+        const auto held = mods & MatchedModifiers;
+        if (modifierMatch == ModifierMatch::Exact)
+        {
+            return held == required;
+        }
+        return (held & required) == required;
     }
 
     glm::vec2 InputBinding::applyValueModifiers(glm::vec2 value) const noexcept

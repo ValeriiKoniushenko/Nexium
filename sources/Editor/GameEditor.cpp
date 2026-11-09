@@ -565,7 +565,8 @@ namespace NX
         _inputController->initialize();
 
         _inputController->addAction(
-            "Save all"_atom, { InputBinding::Key(Key::S).withControl().withShift().onPressed() },
+            "Save all"_atom,
+            { InputBinding::Shortcut(Key::S, InputModifier::Control | InputModifier::Shift) },
             [] { gGameInstance->saveAllToCache(); });
 
         _inputController->addAction("Toggle render mode"_atom,

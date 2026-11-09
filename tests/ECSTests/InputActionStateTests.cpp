@@ -48,18 +48,38 @@ TEST(InputBindingTests, PerFrameSourcesIgnoreCode)
     EXPECT_FALSE(delta.matches(NX::InputSource::MouseScroll, 0));
 }
 
-TEST(InputBindingTests, ModifierRules)
+TEST(InputBindingTests, AtLeastAllowsExtraModifiers)
 {
+    using Mod = NX::InputModifier;
     auto plain = Button();
-    EXPECT_TRUE(plain.acceptsModifiers(NX::InputModifier::None));
-    EXPECT_TRUE(plain.acceptsModifiers(NX::InputModifier::Shift | NX::InputModifier::Control));
+    EXPECT_EQ(plain.modifierMatch, NX::ModifierMatch::AtLeast);
+    EXPECT_TRUE(plain.acceptsModifiers(Mod::None));
+    EXPECT_TRUE(plain.acceptsModifiers(Mod::Shift | Mod::Control));
+
+    auto sprintJump = Button();
+    sprintJump.shift = true;
+    EXPECT_TRUE(sprintJump.acceptsModifiers(Mod::Shift));
+    EXPECT_TRUE(sprintJump.acceptsModifiers(Mod::Shift | Mod::Control));
+    EXPECT_FALSE(sprintJump.acceptsModifiers(Mod::Control));
+    EXPECT_FALSE(sprintJump.acceptsModifiers(Mod::None));
+}
+
+TEST(InputBindingTests, ExactRejectsExtraModifiersIgnoringLocks)
+{
+    using Mod = NX::InputModifier;
+    auto del = Button();
+    del.modifierMatch = NX::ModifierMatch::Exact;
+    EXPECT_TRUE(del.acceptsModifiers(Mod::None));
+    EXPECT_TRUE(del.acceptsModifiers(Mod::CapsLock | Mod::NumLock));
+    EXPECT_FALSE(del.acceptsModifiers(Mod::Shift));
 
     auto save = Button();
     save.control = true;
-    EXPECT_TRUE(save.acceptsModifiers(NX::InputModifier::Control));
-    EXPECT_TRUE(save.acceptsModifiers(NX::InputModifier::Control | NX::InputModifier::CapsLock));
-    EXPECT_FALSE(save.acceptsModifiers(NX::InputModifier::Control | NX::InputModifier::Shift));
-    EXPECT_FALSE(save.acceptsModifiers(NX::InputModifier::None));
+    save.modifierMatch = NX::ModifierMatch::Exact;
+    EXPECT_TRUE(save.acceptsModifiers(Mod::Control));
+    EXPECT_TRUE(save.acceptsModifiers(Mod::Control | Mod::CapsLock));
+    EXPECT_FALSE(save.acceptsModifiers(Mod::Control | Mod::Shift));
+    EXPECT_FALSE(save.acceptsModifiers(Mod::None));
 }
 
 TEST(InputBindingTests, AppliesNegateAndSwizzle)
@@ -214,4 +234,53 @@ TEST(InputBindingTests, ChainedModifiersReturnConfiguredCopy)
     EXPECT_EQ(other.trigger, NX::InputTrigger::Released);
     EXPECT_TRUE(other.negate);
     EXPECT_TRUE(other.swizzleYX);
+}
+
+TEST(InputBindingTests, OnDownOverridesShortcutTriggerAndKeepsExactModifiers)
+{
+    auto binding
+        = NX::InputBinding::Shortcut(Platform::Keyboard::Key::S, NX::InputModifier::Control);
+    ASSERT_EQ(binding.trigger, NX::InputTrigger::Pressed);
+
+    binding = binding.onDown();
+    EXPECT_EQ(binding.trigger, NX::InputTrigger::Down);
+    EXPECT_EQ(binding.modifierMatch, NX::ModifierMatch::Exact);
+
+    binding.handleButton(NX::InputState::Pressed, NX::InputModifier::Control);
+    binding.beginFrame();
+    EXPECT_EQ(binding.getContribution(), glm::vec2(1.f, 0.f));
+
+    binding.handleButton(NX::InputState::Released, NX::InputModifier::Control);
+    EXPECT_EQ(binding.getContribution(), glm::vec2(0.f));
+}
+
+TEST(InputBindingTests, ShortcutIsExactAndFiresOnPress)
+{
+    using Mod = NX::InputModifier;
+    const auto save
+        = NX::InputBinding::Shortcut(Platform::Keyboard::Key::S, Mod::Control | Mod::Shift);
+    EXPECT_EQ(save.source, NX::InputSource::Key);
+    EXPECT_EQ(save.code, static_cast<std::uint16_t>(Platform::Keyboard::Key::S));
+    EXPECT_EQ(save.trigger, NX::InputTrigger::Pressed);
+    EXPECT_EQ(save.modifierMatch, NX::ModifierMatch::Exact);
+    EXPECT_EQ(save.getModifiers(), Mod::Control | Mod::Shift);
+
+    const auto del = NX::InputBinding::Shortcut(Platform::Keyboard::Key::Delete);
+    EXPECT_EQ(del.getModifiers(), Mod::None);
+    EXPECT_TRUE(del.acceptsModifiers(Mod::None));
+    EXPECT_FALSE(del.acceptsModifiers(Mod::Shift));
+}
+
+TEST(InputBindingTests, WithExactModifiersSwitchesMatch)
+{
+    const auto key = NX::InputBinding::Key(Platform::Keyboard::Key::Delete);
+    EXPECT_EQ(key.modifierMatch, NX::ModifierMatch::AtLeast);
+    EXPECT_EQ(key.withExactModifiers().modifierMatch, NX::ModifierMatch::Exact);
+}
+
+TEST(InputBindingTests, ModifierMatchSurvivesSerialization)
+{
+    const auto del = NX::InputBinding::Shortcut(Platform::Keyboard::Key::Delete);
+    const nlohmann::json json = del;
+    EXPECT_EQ(json.get<NX::InputBinding>().modifierMatch, NX::ModifierMatch::Exact);
 }

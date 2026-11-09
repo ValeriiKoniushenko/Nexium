@@ -44,6 +44,19 @@ namespace NX
         Released
     };
 
+    /// How the held modifiers (Shift/Ctrl/Alt/Super) are compared with the binding's ones.
+    /// Caps Lock and Num Lock are never taken into account.
+    ENUM_CLASS();
+    enum class ModifierMatch : std::uint8_t
+    {
+        /// The binding's modifiers must be held; extra ones are fine.
+        /// Gameplay: W keeps moving forward while Shift is held for sprint.
+        AtLeast,
+        /// Exactly the binding's modifiers must be held.
+        /// Shortcuts: Ctrl+S does not fire on Ctrl+Shift+S, Delete not on Shift+Delete.
+        Exact
+    };
+
     /// What is happening with one binding right now. Not reflected, so it is never saved.
     struct InputBindingRuntime
     {
@@ -85,11 +98,17 @@ namespace NX
         FIELD();
         bool super = false;
         FIELD();
+        NX::ModifierMatch modifierMatch = NX::ModifierMatch::AtLeast;
+        FIELD();
         bool negate = false;
         FIELD();
         bool swizzleYX = false;
 
         [[nodiscard]] static InputBinding Key(Platform::Keyboard::Key key) noexcept;
+        /// Editor-style shortcut: exact modifiers, fires once on press.
+        [[nodiscard]] static InputBinding Shortcut(Platform::Keyboard::Key key,
+                                                   InputModifier modifiers
+                                                   = InputModifier::None) noexcept;
         [[nodiscard]] static InputBinding MouseButton(Platform::Mouse::Key button) noexcept;
         [[nodiscard]] static InputBinding MouseDelta() noexcept;
         [[nodiscard]] static InputBinding MouseScroll() noexcept;
@@ -102,6 +121,8 @@ namespace NX
         [[nodiscard]] InputBinding withControl() const noexcept;
         [[nodiscard]] InputBinding withAlt() const noexcept;
         [[nodiscard]] InputBinding withSuper() const noexcept;
+        [[nodiscard]] InputBinding withExactModifiers() const noexcept;
+        [[nodiscard]] InputBinding onDown() const noexcept;
         [[nodiscard]] InputBinding onPressed() const noexcept;
         [[nodiscard]] InputBinding onReleased() const noexcept;
         [[nodiscard]] InputBinding negated() const noexcept;
