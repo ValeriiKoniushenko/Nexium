@@ -284,3 +284,23 @@ TEST(InputBindingTests, ModifierMatchSurvivesSerialization)
     const nlohmann::json json = del;
     EXPECT_EQ(json.get<NX::InputBinding>().modifierMatch, NX::ModifierMatch::Exact);
 }
+
+TEST(InputBindingTests, ToStringDescribesBinding)
+{
+    using Key = Platform::Keyboard::Key;
+    using NX::InputBinding;
+
+    EXPECT_EQ(InputBinding::Key(Key::F1).toString(), "F1");
+    EXPECT_EQ(InputBinding::Key(Key::S).withShift().withControl().toString(), "Ctrl+Shift+S");
+    EXPECT_EQ(InputBinding::Key(Key::Q).withAlt().withSuper().toString(), "Alt+Super+Q");
+    EXPECT_EQ(InputBinding::MouseButton(Platform::Mouse::Key::Left).toString(), "Mouse Left");
+    EXPECT_EQ(InputBinding::MouseButton(Platform::Mouse::Key::Middle).toString(), "Mouse Middle");
+    EXPECT_EQ(InputBinding::MouseButton(Platform::Mouse::Key::_5).toString(), "Mouse 5");
+    EXPECT_EQ(InputBinding::MouseDelta().toString(), "Mouse Move");
+    EXPECT_EQ(InputBinding::MouseScroll().toString(), "Mouse Wheel");
+    EXPECT_EQ(InputBinding::GamepadButton(Platform::Joystick::GamepadButton::LeftBumper).toString(),
+              "Gamepad LeftBumper");
+    EXPECT_EQ(InputBinding::GamepadAxis(Platform::Joystick::GamepadAxis::RightTrigger).toString(),
+              "Gamepad RightTrigger");
+    EXPECT_EQ(InputBinding::Key(Key::Space).onReleased().toString(), "Space (release)");
+}

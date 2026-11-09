@@ -21,6 +21,7 @@
 #include "glm/vec2.hpp"
 
 #include <cstdint>
+#include <string>
 #include <vector>
 
 namespace NX
@@ -134,6 +135,8 @@ namespace NX
         [[nodiscard]] bool matches(InputSource eventSource, std::uint16_t eventCode) const noexcept;
         [[nodiscard]] bool acceptsModifiers(InputModifier mods) const noexcept;
         [[nodiscard]] glm::vec2 applyValueModifiers(glm::vec2 value) const noexcept;
+        /// Human-readable form for UI, e.g. "Ctrl+Shift+S", "Mouse Left", "Gamepad LeftX".
+        [[nodiscard]] std::string toString() const;
 
         // Runtime, driven by InputController once per frame.
         void beginFrame() noexcept;
