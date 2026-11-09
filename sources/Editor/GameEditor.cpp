@@ -568,8 +568,7 @@ namespace NX
         _inputController = InputController::Create();
         _inputController->initialize();
 
-        _inputController->addAction("Close editor"_atom,
-                                    { InputBinding::Key(Key::F12).onPressed() },
+        _inputController->addAction("Close editor"_atom, { InputBinding::Shortcut(Key::F12) },
                                     [] { GetWindow().close(); });
 
         _inputController->addAction(
@@ -577,12 +576,10 @@ namespace NX
             { InputBinding::Shortcut(Key::S, InputModifier::Control | InputModifier::Shift) },
             [] { gGameInstance->saveAllToCache(); });
 
-        _inputController->addAction("Toggle render mode"_atom,
-                                    { InputBinding::Key(Platform::Keyboard::Key::F1) },
+        _inputController->addAction("Toggle render mode"_atom, { InputBinding::Shortcut(Key::F1) },
                                     [] { gGameInstance->toggleRenderMode(); });
 
-        _inputController->addAction("Cancel action"_atom,
-                                    { InputBinding::Key(Platform::Keyboard::Key::Escape) },
+        _inputController->addAction("Cancel action"_atom, { InputBinding::Shortcut(Key::Escape) },
                                     [] { GetObjectSelectorManager()->deselectAllAndClear(); });
 
         _inputController->addAction(
