@@ -169,8 +169,15 @@ namespace NX
             ImGui::Render();
             ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
+            // Editor shortcuts must not fire while the user is typing into an ImGui text field.
+            // WantCaptureKeyboard is not used: with keyboard navigation enabled it is true for
+            // any focused ImGui window, including the game viewport.
+            if (_inputController)
+            {
+                _inputController->setEnabled(!ImGui::GetIO().WantTextInput);
+            }
+
             keyboardInput.update();
-            mouseInput.update();
         }
     }
 
@@ -557,12 +564,13 @@ namespace NX
 
     void GameEditor::setupShortcuts()
     {
-        _subscriptionPool << keyboardInput.getOrCreate("Close editor", Keyboard::Key::F12)
-                                 ->onPress->subscribeAndGetID([&](auto) { GetWindow().close(); });
-
         using Key = Platform::Keyboard::Key;
         _inputController = InputController::Create();
         _inputController->initialize();
+
+        _inputController->addAction("Close editor"_atom,
+                                    { InputBinding::Key(Key::F12).onPressed() },
+                                    [] { GetWindow().close(); });
 
         _inputController->addAction(
             "Save all"_atom,
@@ -578,59 +586,29 @@ namespace NX
                                     [] { GetObjectSelectorManager()->deselectAllAndClear(); });
 
         _inputController->addAction(
-            "Cancel action"_atom,
-            { InputBinding::MouseDelta(), InputBinding::MouseButton(Platform::Mouse::Key::Right) },
-            [] {});
-
-        // _inputController->addAction(
-        //     "Del object from scene", { InputBinding::Key(Platform::Keyboard::Key::Delete) },
-        //     [this](const KeyboardIA::SpecKeysState& spec)
-        //     {
-        //         if (spec.isNothingPressed() && gGameInstance->isApplicationViewportFocused())
-        //         {
-        //             for (auto&& obj :
-        //                  GetObjectSelectorManager()->getSelectedObjects() | std::views::values)
-        //             {
-        //                 if (auto* comp = dynamic_cast<BaseComponent*>(obj.get()))
-        //                 {
-        //                     gGameInstance->scenes.getCurrentScene()->deleteFromSceneOrFromObject(
-        //                         comp);
-        //                 }
-        //             }
-        //         }
-        //     });
-
-        auto deleteObjectFromSceneKey
-            = keyboardInput.getOrCreate("Del object from scene", Keyboard::Key::Delete);
-        deleteObjectFromSceneKey->setIsRepeatable(false);
-        _subscriptionPool << deleteObjectFromSceneKey->onPress->subscribeAndGetID(
-            [&](const KeyboardIA::SpecKeysState& spec)
+            "Delete selected objects"_atom, { InputBinding::Shortcut(Key::Delete) },
+            []
             {
-                if (spec.isNothingPressed() && gGameInstance->isApplicationViewportFocused())
+                if (!gGameInstance->isApplicationViewportFocused())
                 {
-                    for (auto&& obj :
-                         GetObjectSelectorManager()->getSelectedObjects() | std::views::values)
+                    return;
+                }
+                for (auto&& obj :
+                     GetObjectSelectorManager()->getSelectedObjects() | std::views::values)
+                {
+                    if (auto* comp = dynamic_cast<BaseComponent*>(obj.get()))
                     {
-                        if (auto* comp = dynamic_cast<BaseComponent*>(obj.get()))
-                        {
-                            gGameInstance->scenes.getCurrentScene()->deleteFromSceneOrFromObject(
-                                comp);
-                        }
+                        gGameInstance->scenes.getCurrentScene()->deleteFromSceneOrFromObject(comp);
                     }
                 }
             });
 
-        auto mouseMove = mouseInput.getOrCreate("mouseMove", Mouse::Key::Right);
-        _subscriptionPool << mouseMove->onDrag->subscribeAndGetID(
-            [this](auto delta, auto spec) { handleMouseDrag(delta, spec); });
-
-        auto selectObject = mouseInput.getOrCreate("selectObject", Mouse::Key::Left);
-        selectObject->setIsRepeatable(false);
-        _subscriptionPool << selectObject->onMouseClick->subscribeAndGetID(
-            [this](auto pos, auto spec) { handleMouseClick(pos, spec); });
+        _inputController->addAction("Select object"_atom,
+                                    { InputBinding::MouseButton(Mouse::Key::Left).onPressed() },
+                                    [this] { handleMouseClick(); });
     }
 
-    void GameEditor::handleMouseClick(glm::vec2 pos, MouseInputAction::SpecKeysState state)
+    void GameEditor::handleMouseClick()
     {
         const auto* viewport = getWindow<GameViewportEWC>();
         if (!viewport || !viewport->isHovered() || viewport->blocksPicking())
@@ -683,9 +661,5 @@ namespace NX
         {
             GetObjectSelectorManager()->selectSingleObject(comp);
         }
-    }
-
-    void GameEditor::handleMouseDrag(glm::vec2 delta, MouseInputAction::SpecKeysState state)
-    {
     }
 } // namespace NX

@@ -141,7 +141,6 @@ namespace NX
     public:
         Editor::NotificationPopUpManager notifications;
         NX::KeyboardInputManger keyboardInput;
-        NX::MouseInputManger mouseInput;
         NX::RenderTargetToTexture sceneRenderTarget;
 
     protected:
@@ -150,8 +149,7 @@ namespace NX
         void setupShortcuts();
 
     private:
-        void handleMouseDrag(glm::vec2 delta, NX::MouseInputAction::SpecKeysState state);
-        void handleMouseClick(glm::vec2 pos, NX::MouseInputAction::SpecKeysState state);
+        void handleMouseClick();
         void responseOnPick(NX::Transformable* object);
 
     protected:
