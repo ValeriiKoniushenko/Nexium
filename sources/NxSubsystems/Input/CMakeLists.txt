@@ -1,13 +1,9 @@
 add_library(Nexium_Subsystem_Input STATIC)
 add_library(Nexium::Subsystem::Input ALIAS Nexium_Subsystem_Input)
 target_sources(Nexium_Subsystem_Input PRIVATE
-    InputAction.cpp
-    InputManager.cpp
     InputTypes.cpp
 )
 nexium_add_public_headers(Nexium_Subsystem_Input
-    NxSubsystems/Input/InputAction.h
-    NxSubsystems/Input/InputManager.h
     NxSubsystems/Input/InputTypes.h
     NxSubsystems/Input/InputTypes.generated.h
     NxSubsystems/PrivateModuleInfo.h

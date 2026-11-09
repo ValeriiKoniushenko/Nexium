@@ -11,7 +11,6 @@
 #include "Foundation/Configs.h"
 #include "NxFundamental/ECS/BaseComponent.h"
 #include "NxRuntime/Runtime.h"
-#include "NxSubsystems/Input/InputManager.h"
 #include "NxWorld/Entities/Camera/Camera.h"
 #include "NxWorld/Framework/GameInstance.h"
 #include "NxWorld/Scene/SceneObjects/Rectangle/Rectangle.h"
@@ -114,21 +113,6 @@ TEST(RuntimeTests, LinksWorldComponentRegistrars)
 
     EXPECT_TRUE(factory.containsSuchType("NX::SceneObj::Rectangle"_atom));
     EXPECT_TRUE(factory.containsSuchType("NX::SceneObj::RectangleAnimated"_atom));
-}
-
-TEST(RuntimeTests, MouseInputManagerForwardsWheelEvents)
-{
-    NX::MouseInputManger input;
-    glm::vec2 received{};
-    auto subscription
-        = input.onWheel->subscribeAndGetID([&](glm::vec2 offset) { received = offset; });
-
-    NX::MouseScrollEvent scrollEvent;
-    scrollEvent.setOffset(glm::vec2(2.f, -3.f));
-    Platform::GetWindow().onMouseWheel->trigger(scrollEvent);
-
-    EXPECT_FLOAT_EQ(received.x, 2.f);
-    EXPECT_FLOAT_EQ(received.y, -3.f);
 }
 
 TEST(RuntimeTests, OrthographicCameraZoomUpdatesProjectionAroundFrameCenter)
