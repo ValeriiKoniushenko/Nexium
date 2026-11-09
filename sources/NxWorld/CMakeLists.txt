@@ -101,7 +101,6 @@ target_link_libraries(Nexium_World_Base
     Nexium::RawBackend::Common
     Nexium::Subsystem::AssetsManager
     Nexium::Subsystem::Graphics
-    Nexium::Subsystem::Input
     Utils::Core
     Nexium::World::Animation
     PRIVATE

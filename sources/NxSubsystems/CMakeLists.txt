@@ -16,4 +16,3 @@ nexium_configure_target(${MODULE_PRIVATE_TARGET})
 
 add_subdirectory(Graphics)       # Nexium::Subsystem::Graphics (+ AssimpImporter when 3D is enabled)
 add_subdirectory(AssetsManager)  # Nexium::Subsystem::AssetsManager
-add_subdirectory(Input)          # Nexium::Subsystem::Input

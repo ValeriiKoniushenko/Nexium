@@ -13,7 +13,6 @@
 
 #include "Core/Delegate.h"
 #include "Core/Singleton.h"
-#include "NxSubsystems/Input/InputTypes.h"
 #include "Platform/Input/Events/AnyInputEvent.h"
 
 #include <vector>
@@ -77,8 +76,6 @@ namespace NX
         /// Events being handled by the current processEvents() call. Swapped with _events so
         /// both buffers keep their capacity and steady-state frames do not allocate.
         std::vector<AnyInputEvent> _processing;
-
-        std::vector<InputButton> _pressedKeys;
 
         std::vector<InputController*> _controllers;
 

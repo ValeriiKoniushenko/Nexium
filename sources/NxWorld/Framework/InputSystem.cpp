@@ -42,7 +42,6 @@ namespace NX
     void InputSystem::resetInput()
     {
         _events.clear();
-        _pressedKeys.clear();
     }
 
     void InputSystem::registerController(InputController* controller)

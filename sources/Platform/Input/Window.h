@@ -17,7 +17,6 @@
 #include "Foundation/BaseLog.h"
 #include "Foundation/Interfaces/DataStream.h"
 #include "Glfw.h"
-#include "NxSubsystems/Input/InputTypes.h"
 #include "Platform/Input/CursorDeltaTracker.h"
 #include "Platform/Input/Events/GamepadEvents.h"
 #include "Platform/Input/Events/InputEvent.h"

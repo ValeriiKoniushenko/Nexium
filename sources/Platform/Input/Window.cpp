@@ -10,7 +10,6 @@
 #include "Window.h"
 
 #include "Foundation/Configs.h"
-#include "NxSubsystems/Input/InputTypes.h"
 #include "Platform/Graphics/Graphics.h"
 #include "Platform/PrivateModuleInfo.h"
 #include "Stb/Image.h"
