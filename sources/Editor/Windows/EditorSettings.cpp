@@ -27,6 +27,24 @@ using namespace NX::Gui;
 using namespace NX;
 using namespace Platform;
 
+namespace
+{
+    /// "Shift, Gamepad LeftBumper" — every binding of the action, comma-separated.
+    StringAtom DescribeBindings(const InputAction& action)
+    {
+        std::string result;
+        for (const auto& binding : action.bindings)
+        {
+            if (!result.empty())
+            {
+                result += ", ";
+            }
+            result += binding.toString();
+        }
+        return StringAtom(result);
+    }
+} // namespace
+
 namespace NX
 {
     ECS_IMPL(EditorSettingsEWC);
@@ -272,13 +290,15 @@ namespace NX
             layout.addChildComponent<Label>()->setText("Spectator");
             layout.addChildComponent<Separator>();
 
-            for (const auto& [fst, snd] : spectator->keyboardInput.getMapping())
+            if (const auto* input = spectator->getInputController())
             {
-                auto* item = layout.addChildComponent<Internal::KeymapItem>();
-                item->setReadOnly(true);
-                item->setLabel(fst + (snd->onPress->isEmpty() ? "(disabled)" : ""));
-                item->setButtonName(
-                    R<Keyboard::Key>::ToString(snd->getKey().value_or(Keyboard::Key::None)).data());
+                for (const auto& action : input->getActions())
+                {
+                    auto* item = layout.addChildComponent<Internal::KeymapItem>();
+                    item->setReadOnly(true);
+                    item->setLabel(action.name);
+                    item->setButtonName(DescribeBindings(action));
+                }
             }
         }
     }

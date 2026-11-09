@@ -36,14 +36,6 @@ namespace NX
         return "EditorsRootSpectator";
     }
 
-    void BaseSpectator::onTick(float delta)
-    {
-        Actor::onTick(delta);
-
-        keyboardInput.update();
-        mouseInput.update();
-    }
-
     void BaseSpectator::onInitialize()
     {
         Actor::onInitialize();
@@ -62,15 +54,12 @@ namespace NX
 
     void BaseSpectator::onSceneActivated()
     {
-        _subscriptionPool.clearAndReleaseAll();
-        subscribeToInput();
         _isSceneActive = true;
         updateInputControllerState();
     }
 
     void BaseSpectator::onSceneDeactivated()
     {
-        _subscriptionPool.clearAndReleaseAll();
         _isSceneActive = false;
         updateInputControllerState();
     }
@@ -88,7 +77,7 @@ namespace NX
         using Axis = Platform::Joystick::GamepadAxis;
         using Key = Platform::Keyboard::Key;
 
-        input.addAction("Pan"_atom,{ InputBinding::MouseButton(Platform::Mouse::Key::Middle) });
+        input.addAction("Pan"_atom, { InputBinding::MouseButton(Platform::Mouse::Key::Middle) });
         input.addAction("PointerDelta"_atom, { InputBinding::MouseDelta() });
         input.addAction("Scroll"_atom, { InputBinding::MouseScroll() });
         input.addAction("Boost"_atom, { InputBinding::Key(Key::Left_Shift),

@@ -11,7 +11,6 @@
 
 #pragma once
 
-#include "NxSubsystems/Input/InputManager.h"
 #include "NxWorld/Entities/Actor.h"
 #include "NxWorld/Framework/Input/InputController.h"
 
@@ -34,25 +33,17 @@ namespace NX
         FIELD();
         float gamepadDeadzone = 0.15f;
 
-        KeyboardInputManger keyboardInput;
-        MouseInputManger mouseInput;
-
     public:
         [[nodiscard]] Core::StringAtom getCacheHash() const override;
+        [[nodiscard]] InputController* getInputController() const noexcept { return _input; }
 
     protected:
-        void onTick(float delta) override;
-        Core::DelegateSubscriberPoolGuard _subscriptionPool;
-
         void onInitialize() override;
 
         // Input is listened to only while the owning scene is current.
         void onSceneActivated() final;
         void onSceneDeactivated() final;
-        virtual void subscribeToInput() {}
         virtual void setupInputActions(InputController& input) {}
-
-        [[nodiscard]] InputController* getInputController() const noexcept { return _input; }
 
     private:
         void updateInputControllerState();
