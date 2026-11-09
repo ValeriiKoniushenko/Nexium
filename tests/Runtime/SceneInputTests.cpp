@@ -125,6 +125,22 @@ TEST_F(SceneInputTests, SpectatorAddedToCurrentSceneListensImmediately)
     EXPECT_NE(spectator->getPosition(), start);
 }
 
+TEST_F(SceneInputTests, SpectatorSurvivesRemovalOfItsInputController)
+{
+    NX::SceneManager manager(&gGameInstance->world);
+    auto spectator = addSpectator(*manager.getCurrentScene());
+    auto* input = spectator->findFirstChildOf<NX::InputController>();
+    ASSERT_NE(input, nullptr);
+
+    ASSERT_TRUE(spectator->removeChild(input));
+    ASSERT_EQ(spectator->findFirstChildOf<NX::InputController>(), nullptr);
+    const auto start = spectator->getPosition();
+
+    scroll({ spectator.get() });
+
+    EXPECT_EQ(spectator->getPosition(), start);
+}
+
 TEST_F(SceneInputTests, SpectatorAddedToBackgroundSceneStaysSilent)
 {
     NX::SceneManager manager(&gGameInstance->world);

@@ -292,7 +292,7 @@ namespace NX
             layout.addChildComponent<Label>()->setText("Spectator");
             layout.addChildComponent<Separator>();
 
-            if (const auto* input = spectator->getInputController())
+            if (const auto* input = spectator->findFirstChildOf<InputController>())
             {
                 for (const auto& action : input->getActions())
                 {

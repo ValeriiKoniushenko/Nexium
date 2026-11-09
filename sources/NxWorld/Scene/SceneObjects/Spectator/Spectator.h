@@ -35,7 +35,6 @@ namespace NX
 
     public:
         [[nodiscard]] Core::StringAtom getCacheHash() const override;
-        [[nodiscard]] InputController* getInputController() const noexcept { return _input; }
 
     protected:
         void onInitialize() override;
@@ -48,7 +47,6 @@ namespace NX
     private:
         void updateInputControllerState();
 
-        InputController* _input = nullptr;
         bool _isSceneActive = false;
     };
 

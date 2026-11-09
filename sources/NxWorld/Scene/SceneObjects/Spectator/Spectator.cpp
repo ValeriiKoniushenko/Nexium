@@ -40,14 +40,14 @@ namespace NX
     {
         Actor::onInitialize();
 
-        _input = findFirstChildOf<InputController>();
-        if (!_input)
+        auto* input = findFirstChildOf<InputController>();
+        if (!input)
         {
-            _input = addChildComponent<InputController>("Input"_atom);
+            input = addChildComponent<InputController>("Input"_atom);
         }
-        if (_input)
+        if (input)
         {
-            setupInputActions(*_input);
+            setupInputActions(*input);
         }
         updateInputControllerState();
     }
@@ -66,9 +66,9 @@ namespace NX
 
     void BaseSpectator::updateInputControllerState()
     {
-        if (_input)
+        if (auto* input = findFirstChildOf<InputController>())
         {
-            _input->setEnabled(_isSceneActive);
+            input->setEnabled(_isSceneActive);
         }
     }
 
@@ -96,7 +96,7 @@ namespace NX
     {
         BaseSpectator::onTick(delta);
 
-        auto* input = getInputController();
+        auto* input = findFirstChildOf<InputController>();
         if (!input)
         {
             return;
@@ -205,7 +205,7 @@ namespace NX
     {
         BaseSpectator::onTick(delta);
 
-        auto* input = getInputController();
+        auto* input = findFirstChildOf<InputController>();
         if (!input)
         {
             return;
