@@ -14,7 +14,6 @@
 #include "Core/BaseAssert.h"
 #include "Core/IntrusivePtr.h"
 #include "Foundation/BaseLog.h"
-#include "NxSubsystems/Input/InputManager.h"
 #include "NxWorld/Framework/Input/InputController.h"
 #include "ObjectPicker.h"
 #include "ToastNotifications.h"
@@ -140,8 +139,12 @@ namespace NX
 
     public:
         Editor::NotificationPopUpManager notifications;
-        NX::KeyboardInputManger keyboardInput;
         NX::RenderTargetToTexture sceneRenderTarget;
+
+        [[nodiscard]] InputController* getInputController() const noexcept
+        {
+            return _inputController.get();
+        }
 
     protected:
         void setupImGuiStyles();

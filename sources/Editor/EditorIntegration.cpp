@@ -69,11 +69,6 @@ namespace NX
             Foundation::Config::Path::imGuiWindowsIni.generic_string().c_str());
     }
 
-    void EditorIntegration::updateInput()
-    {
-        _editor.keyboardInput.update();
-    }
-
     void EditorIntegration::tick(float delta)
     {
         _editor.tick(delta);

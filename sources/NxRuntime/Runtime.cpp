@@ -85,11 +85,6 @@ namespace NX
 
                 glClear(clearBits);
 
-                if (auto* integration = _gameInstance.getApplicationIntegration())
-                {
-                    integration->updateInput();
-                }
-
                 if (_gameInstance.world.currentCamera)
                 {
                     _gameInstance.scenes.getCurrentScene()->directDraw(

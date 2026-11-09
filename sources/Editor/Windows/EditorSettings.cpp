@@ -266,13 +266,15 @@ namespace NX
         layout.addChildComponent<Label>()->setText("General");
         layout.addChildComponent<Separator>();
 
-        for (const auto& [fst, snd] : GetEditor()->keyboardInput.getMapping())
+        if (const auto* input = GetEditor()->getInputController())
         {
-            auto* item = layout.addChildComponent<Internal::KeymapItem>();
-            item->setReadOnly(true);
-            item->setLabel(fst);
-            item->setButtonName(
-                R<Keyboard::Key>::ToString(snd->getKey().value_or(Keyboard::Key::None)).data());
+            for (const auto& action : input->getActions())
+            {
+                auto* item = layout.addChildComponent<Internal::KeymapItem>();
+                item->setReadOnly(true);
+                item->setLabel(action.name);
+                item->setButtonName(DescribeBindings(action));
+            }
         }
 
         // static keys

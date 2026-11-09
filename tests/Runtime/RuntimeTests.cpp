@@ -32,7 +32,6 @@ namespace
         void initialize() override {}
         void readFromCache() override {}
         void writeToCache() override {}
-        void updateInput() override {}
         void tick(float) override {}
         void updateSceneInteraction(NX::Scene&) override {}
         [[nodiscard]] bool isViewportFocused() const override { return true; }

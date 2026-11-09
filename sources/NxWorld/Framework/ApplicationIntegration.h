@@ -30,7 +30,6 @@ namespace NX
 
         virtual void readFromCache() = 0;
         virtual void writeToCache() = 0;
-        virtual void updateInput() = 0;
         virtual void tick(float delta) = 0;
         virtual void updateSceneInteraction(Scene& scene) = 0;
         [[nodiscard]] virtual bool isViewportFocused() const = 0;

@@ -176,8 +176,6 @@ namespace NX
             {
                 _inputController->setEnabled(!ImGui::GetIO().WantTextInput);
             }
-
-            keyboardInput.update();
         }
     }
 
