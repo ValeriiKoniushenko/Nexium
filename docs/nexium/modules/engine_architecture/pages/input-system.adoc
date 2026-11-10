@@ -1,73 +1,205 @@
 = Input System
 
-Platform supplies window events, keyboard/button state, cursor position, and drag tracking.
-Two input layers sit on top of it, and both are live:
+The input system is mid-redesign. Platform now turns every GLFW callback into a small typed
+event, and `NX::InputSystem` collects those events into a per-frame queue. The layer that
+is meant to consume the queue — controllers, bindings, and input contexts — has been removed
+and not yet replaced, so gameplay and editor code currently read input by polling.
 
-* `NX::InputSystem` (NxWorld) routes keyboard *events* to `InputController` components,
-  filtered by an active input context. This is the newer path.
-* `NxSubsystems/Input` maps *polled* key state to named `InputAction` objects owned by
-  `KeyboardInputManger` / `MouseInputManger`. Mouse handling and most editor shortcuts
-  still use it.
+[cols="2,3,3",options="header"]
+|===
+|Layer |Where |State
+|Typed events |`Platform/Input/Events` |Live. Produced for keyboard, mouse, gamepad, and window focus/iconify changes.
+|Window delegates |`Platform::Window` |Live. One delegate per event kind; anything may subscribe.
+|Gamepad polling |`Platform::Joystick` |Live. Polled once per frame, reports changes as events.
+|Event queue |`NX::InputSystem` (NxWorld) |Live as a queue. Its per-type handlers are empty: nothing is routed yet.
+|Polled actions |`NxSubsystems/Input` |Live. The only path that drives behavior today.
+|Controllers, chords, contexts |`NxWorld/Framework/InputController.h` |Disabled. See <<disabled>>.
+|===
 
-New keyboard bindings should use `InputController`. The polled managers remain the only
-path for mouse move/drag/click.
+New code that needs input right now should either subscribe to a `Platform::Window`
+delegate (event-driven) or use the polled actions. Do not build on `InputController`,
+`KeyChord`, or `InputContext`: they are commented out.
 
-== Event routing: InputSystem and InputController
+== Events
 
-`GetInputSystem()` is a `Core::Singleton`. `GameInstance::initialize()` calls
-`initialize(window)` on it, which subscribes to the window's key events. Each frame Runtime
-sets the active context and then drains the queue:
+Every event derives from `NX::InputEvent`, which carries three things: an `EventType`, an
+`InputDeviceType`, and an `InputDeviceId`. The base is deliberately non-polymorphic — its
+destructor and copy operations are protected, so an event can be neither destroyed nor
+copied through a base reference. Events are plain values.
+
+[cols="2,2,4",options="header"]
+|===
+|Event |Device |Payload
+|`KeyboardEvent` |Keyboard |Key, `InputState`, scancode, `InputModifier` mask.
+|`TextInputEvent` |Keyboard |Unicode codepoint.
+|`MouseMoveEvent` |Mouse |Cursor position and delta since the previous sample.
+|`MouseButtonEvent` |Mouse |Button, `InputState`, modifiers, and the cursor position at the moment of the click.
+|`MouseScrollEvent` |Mouse |Scroll offset on both axes.
+|`MouseEnterEvent` |Mouse |Whether the cursor entered or left the window.
+|`GamepadButtonEvent` |Gamepad |Button and `InputState`.
+|`GamepadAxisEvent` |Gamepad |Axis index and value.
+|`GamepadConnectionEvent` |Gamepad |Connected or disconnected.
+|`WindowFocusEvent` |None |Focused or not.
+|`WindowIconifyEvent` |None |Iconified or not.
+|`WindowResizeEvent` |None |Window size and framebuffer size. Declared, not produced yet.
+|`WindowCloseEvent` |None |No payload. Declared, not produced yet.
+|===
+
+The shared vocabulary lives in `Events/InputEvent.h`:
+
+* `InputState` is `None`, `Pressed`, `Released`, or `Repeated`. It is platform-independent:
+  backends convert their native values explicitly, and `None` is distinct from `Released`.
+* `InputModifier` is a bitmask of Shift, Control, Alt, Super, CapsLock, and NumLock, with
+  `|` and `&` operators.
+* `InputButton` wraps a 16-bit index — a keyboard key code, a mouse button, or a gamepad
+  button, depending on the event that carries it. A default-constructed button is invalid
+  (`isValid()` is false).
+* `InputDeviceId` identifies the device. `0` is `InvalidInputDeviceId`; keyboard and mouse
+  events currently leave it at `0`, and gamepads use the GLFW joystick index plus one.
+
+`AnyInputEvent` is a `std::variant` over all event types, and it is what the queue stores:
 
 [source,cpp]
 ----
-GetInputSystem().setActiveContext(gameInstance.isApplicationViewportFocused()
-                                      ? InputContext::Gameplay
-                                      : InputContext::Editor);
-GetInputSystem().processEvents();
+include::example$any-input-event.h[tag=input_any_event,indent=0]
 ----
 
-`InputContext` is `Editor` or `Gameplay`, and `Editor` is the startup default. Controllers
-register themselves into the list for their own context, and `processEvents()` dispatches
-only to the controllers of the active context. Switching context rebuilds that routed list
-immediately and releases the actions the previous controllers were holding.
+The two assertions are the contract for adding an event: it must keep the variant within 32
+bytes and trivially copyable. The `InputEventType` concept is satisfied by exactly the
+variant's alternatives, and `InputSystem` declares one `handle()` overload per alternative,
+so a new event type fails to compile until it is handled.
 
-This is a context switch, not a stack: there is no per-event consumption, no priority
-between controllers in the same context, and no modal capture.
+== Platform layer
 
-=== Bindings and chords
+`Platform::Window` installs the GLFW callbacks, builds the matching event, and triggers a
+delegate. GLFW constants do not leave Platform: `Platform::ToInputState()` and
+`Platform::ToInputModifiers()` in `Platform/Input/Glfw.h` convert actions and modifier bits,
+and an unknown action maps to `InputState::None`.
 
-`InputController` is a reflected `BaseComponent` (`ECS_DECL`), so bindings persist with the
-component tree. A binding is an action name, a `KeyChord`, and a trigger:
-
-[cols="2,4",options="header"]
+[cols="3,3,2",options="header"]
 |===
-|Element |Meaning
-|`action` |`Core::StringAtom` name reported back in `InputActionEvent`.
-|`KeyChord::triggerKey` |The key whose press completes the chord.
-|`KeyChord::requiredKeys` |Keys that must already be held, for example Left Control and Left Shift.
-|`InputActionTrigger` |`OnPress`, `OnRelease`, or `WhileHeld`.
+|Delegate |Argument |Queued by InputSystem
+|`onKeyPressed` |`KeyboardEvent` |Yes
+|`onMouseMove` |`MouseMoveEvent` |Yes
+|`onMouseKeyPressed` |`MouseButtonEvent` |Yes
+|`onMouseWheel` |`MouseScrollEvent` |Yes
+|`onFocusChanged` |`WindowFocusEvent` |Yes
+|`onJoystickConnected` |`GamepadConnectionEvent` |Yes
+|`onJoystickButtonPressed` |`GamepadButtonEvent` |Yes
+|`onJoystickAxisChanged` |`GamepadAxisEvent` |Yes
+|`onTextInput` |`TextInputEvent` |No
+|`onCursorEntered` |`MouseEnterEvent` |No
+|`onIconifyChanged` |`WindowIconifyEvent` |No
+|`onResize`, `onFramebufferResize` |`Core::ISize2` |No; these do not use `WindowResizeEvent`.
 |===
 
-`bind()` takes an optional callback; the controller also exposes an `onAction` delegate that
-receives every `InputActionEvent`. `isActionPressed()` and `getActionModifiers()` give the
-current state, and `InputModifier` is a bitmask of Shift/Control/Alt/Super. When several
-bindings match one event, `findBestBinding()` picks one, so more specific chords win over a
-bare key. `setBindings()` replaces the list wholesale, and `_bindings` is a `FIELD()`, so
-serialized controllers round-trip through JRM; `from_json` still accepts legacy modifier
-fields. The editor exposes these under `Editor/Windows/Editors/InputBindings`.
+Delegates fire synchronously inside the GLFW callback, during `Window::pollEvent()`. A
+subscriber therefore sees an event before the queue is processed.
 
-Chords are written with the left-hand modifier keys. `InputSystem` normalizes the right
-Shift/Control/Alt/Super keys to their left equivalents when queueing an event, so a chord
-declared with `Left_Control` also matches the right Control key.
+`Window` also keeps its own state from these events: `isFocused()`, `isIconified()`, and the
+global drag-and-drop tracker `gDragDrop`, which starts on a button press at the event's
+position and becomes a drag after the cursor moves 15 pixels.
 
-== Polled actions: InputAction
+=== Click position
 
-`KeyboardInputManger` and `MouseInputManger` own intrusive action references indexed by
-`Core::StringAtom` names. "Manger" is the current API spelling.
+`MouseButtonEvent::getPosition()` is the cursor position sampled in the button callback.
+Use it rather than the current cursor position: by the time a queued click is handled the
+mouse may have moved.
+
+=== Cursor delta
+
+`MouseMoveEvent::getDelta()` comes from a `CursorDeltaTracker` owned by the window, not
+from static state. The first sample after a reset has a zero delta, which removes the jump
+that would otherwise follow a discontinuity:
+
+[cols="3,3",options="header"]
+|===
+|Trigger |Effect
+|Focus gained or lost |Tracker reset; next move reports zero delta.
+|Cursor enters or leaves the window |Tracker reset.
+|`Window::setCursorMode()` |Tracker reset.
+|`Window::setCursorPosition()` |Tracker re-based to the new position, so the warp is not reported as movement.
+|===
+
+[source,cpp]
+----
+include::example$input-events-tests.cpp[tag=input_cursor_delta_reset,indent=0]
+----
+
+== Gamepads
+
+`Platform::Joystick` is a static class polled once per frame, right after the window events.
+It supports only devices GLFW recognizes as standard gamepads; any other joystick is treated
+as disconnected. Its events go out through the window's joystick delegates, with
+`InputDeviceId` set to the GLFW joystick index plus one.
+
+* *Connection.* A newly seen gamepad has its state reset and then reports
+  `GamepadConnectionEvent(connected = true)`.
+* *Buttons.* A `GamepadButtonEvent` is sent only when a button changes: `Pressed` or
+  `Released`. There is no `Repeated` state for gamepad buttons.
+* *Axes.* A `GamepadAxisEvent` is sent when the value differs from the *last reported* value
+  by more than the threshold (`0.01` by default; `setAxisChangeThreshold()` clamps to
+  `[0, 2]`). Comparing against the last reported value means slow drift still produces an
+  event once it accumulates.
+* *Rest values.* Sticks rest at `0`, triggers at `-1` (`getAxisRestValue()`).
+* *Disconnection.* Before reporting `connected = false`, the class releases every button
+  that was held and returns every axis that is off its rest value. A consumer never keeps a
+  stuck button or axis from a device that went away.
+
+`isConnected()`, `isButtonPressed()`, and `getAxis()` expose the current state for polling.
+`Joystick::GamepadButton` and `Joystick::GamepadAxis` name the standard layout.
+
+== InputSystem: the event queue
+
+`GetInputSystem()` is a `Core::Singleton`. `GameInstance::initialize()` calls
+`initialize(window)`, which subscribes to the delegates marked _Yes_ above and copies each
+event into the queue with `queueEvent()`. `queueEvent()` is public and constrained by
+`InputEventType`, so tests and tools can inject events without a window.
+
+Each frame Runtime gathers events and then drains the queue:
+
+[source,cpp]
+----
+include::example$runtime.cpp[tags=input_frame_poll;input_frame_process,indent=0]
+----
+
+[source,cpp]
+----
+include::example$input-system.cpp[tag=input_process_events,indent=0]
+----
+
+The contract of the queue:
+
+* Events are stored by value in arrival order, across device types.
+* Two buffers are swapped each frame, so both keep their capacity and a steady-state frame
+  does not allocate.
+* An event queued while the queue is being processed lands in the next frame.
+* Losing window focus does not drop queued events. GLFW synthesizes key releases after the
+  focus callback, and they are queued after the presses they belong to.
+* `resetInput()` discards everything pending.
+
+[source,cpp]
+----
+include::example$input-events-tests.cpp[tag=input_queue_order,indent=0]
+----
+
+`getPendingEvents()` and `getPendingEventCount()` expose the queue before it is processed.
+The thirteen `handle()` overloads are the single entry point per event type and are currently
+empty. Processing a frame's events therefore has no observable effect yet.
+
+== Polled input
+
+`Platform::Keyboard` and `Platform::Mouse` (now under `Platform/Input/InputDevices`) answer
+"is this key down right now" straight from GLFW. `game-example/Player` uses that directly:
+W/A/S/D or the arrow keys.
+
+`KeyboardInputManger` and `MouseInputManger` build named actions on top. They own intrusive
+action references indexed by `Core::StringAtom` names; "Manger" is the current API spelling.
 `getOrCreate()` reuses the existing name; it does not change that action's key binding.
 
 `InputAction::update()` polls its key, applies repeat/frequency limits, snapshots left
-Shift/Alt/Ctrl, and passes that snapshot to `onPress`.
+Shift/Alt/Ctrl as `InputState` values, and passes that snapshot to `onPress`.
+`SpecKeysState::isNothingPressed()` is true when none of the three is `Pressed`.
 Repeat defaults to enabled with zero delay. Disable repeat for one notification per press;
 frequency limits use elapsed `system_clock` milliseconds.
 
@@ -78,6 +210,7 @@ Mouse actions also provide:
 * `onDrag`: position delta while Platform reports dragging and the action's button condition matches.
 
 A mouse click here is a press notification, not release detection.
+`MouseInputManger::onWheel` forwards the offset of the window's `MouseScrollEvent`.
 
 [cols="2,4",options="header"]
 |===
@@ -88,27 +221,51 @@ A mouse click here is a press notification, not release detection.
 |`NxECSBasedEditor` |Its own keyboard manager for the Delete shortcut inside component editors.
 |===
 
-Editor scene ticks require viewport focus. These polled actions are not filtered by
-`InputContext`, so a shortcut that must not fire during gameplay has to check focus itself —
-as the Delete shortcut does with `isApplicationViewportFocused()`.
+Nothing filters polled input by focus or context. A shortcut that must not fire during
+gameplay has to check focus itself — as the Delete shortcut does with
+`isApplicationViewportFocused()`.
 
 == Editor shortcuts
 
-`GameEditor::setupShortcuts()` installs:
+`GameEditor::setupShortcuts()` installs polled keyboard actions:
 
-[cols="2,2,3",options="header"]
+[cols="2,3,3",options="header"]
 |===
-|Shortcut |Action |Path
-|F1 |Toggle render mode |Polled keyboard action, non-repeatable.
-|F12 |Close the application |Polled keyboard action.
-|Escape |Clear selection |Polled keyboard action.
-|Delete |Delete selected objects from the scene |Polled keyboard action; requires no modifiers and a focused viewport.
-|Left Ctrl + Left Shift + S |Save all |`InputController` chord in the `Editor` context.
+|Shortcut |Action |Notes
+|F1 |Toggle render mode |Non-repeatable.
+|F12 |Close the application |
+|Escape |Clear selection |
+|Delete |Delete selected objects from the scene |Requires no modifiers and a focused viewport.
+|Left Ctrl + Left Shift + S |Save all |Disabled: it was an `InputController` chord.
 |===
 
 Render-mode switching uses the same current scene; see xref:lifecycle.adoc[Application Lifecycle].
 
-Implementation: `NxWorld/Framework/{InputSystem,InputController}.{h,cpp}`,
-`NxSubsystems/Input/{InputAction,InputManager,InputTypes}.{h,cpp}`,
+[#disabled]
+== Disabled during the redesign
+
+The previous routing layer is commented out in place rather than deleted, and the code that
+depended on it is switched off with it:
+
+[cols="2,4",options="header"]
+|===
+|What |Current state
+|`NX::InputController`, `KeyChord`, `InputContext`, `InputActionEvent` |Commented out in `NxWorld/Framework/InputController.{h,cpp}` and `NxSubsystems/Input/InputTypes.{h,cpp}`.
+|Context switching in the frame loop |`setActiveContext()` call is commented out; the system has no notion of Editor versus Gameplay input.
+|Right-to-left modifier normalization |Gone with the old dispatch. `KeyboardEvent` reports the key GLFW reported.
+|Editor binding editor |`ECSEditorInputControllerAdapter` is commented out and no longer registered in `NxECSBasedEditor`.
+|Editor "Save all" chord |Not bound.
+|`Spectator3D` keyboard movement and wheel dolly |Commented out. Right-drag look still works through the polled mouse action.
+|`tests/ECSTests/InputControllerTests.cpp` |Wrapped in `#if 0` until the tests are ported.
+|===
+
+`NxWorld/Framework/Input/InputController.h` holds the start of the replacement in namespace
+`NxWorld::Framework::Input`: `InputDevice`, `KeyChord`, `Binding`, and an empty
+`InputController` component. It is a sketch — not reflected, not registered, and not built.
+
+Implementation: `Platform/Input/Events/*.h`, `Platform/Input/{Window,Glfw,CursorDeltaTracker}.*`,
+`Platform/Input/InputDevices/{Keyboard,Mouse,Joystick}.{h,cpp}`,
+`NxWorld/Framework/InputSystem.{h,cpp}`,
+`NxSubsystems/Input/{InputAction,InputManager}.{h,cpp}`,
 `Editor/GameEditor.cpp`, and `NxWorld/Scene/SceneObjects/Spectator/Spectator.cpp`.
-Checks: `tests/ECSTests/InputControllerTests.cpp`.
+Checks: `tests/Runtime/InputEventsTests.cpp`.

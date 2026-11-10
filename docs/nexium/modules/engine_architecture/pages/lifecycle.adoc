@@ -24,8 +24,8 @@ independent concurrent game instances.
 
 == Each frame
 
-Window events are polled first, then the active input context is set from viewport focus and
-the queued key events are dispatched (see xref:input-system.adoc[Input System]).
+Window events are polled first, then gamepads, and then `InputSystem` drains the input events
+queued by both (see xref:input-system.adoc[Input System]).
 Updates use the previous frame's measured delta; the first delta is zero.
 
 [cols="2,3,3",options="header"]

@@ -6,7 +6,7 @@
     <title>Module Graph :: Nexium Engine</title>
     <link rel="prev" href="ue5-alignment.html">
     <link rel="next" href="lifecycle.html">
-    <meta name="generator" content="Antora 3.1.15">
+    <meta name="generator" content="Antora 3.2.2">
     <link rel="stylesheet" href="../../../_/css/site.css">
   </head>
   <body class="article">
@@ -217,7 +217,7 @@
     <li><a href="module-graph.html">Module Graph</a></li>
   </ul>
 </nav>
-<div class="edit-this-page"><a href="file:///home/valerii/workspace/Nexium//docs/nexium/modules/engine_architecture/pages/module-graph.adoc">Edit this Page</a></div>
+<div class="edit-this-page"><a href="file:///home/alex/Desktop/nexium//docs/nexium/modules/engine_architecture/pages/module-graph.adoc">Edit this Page</a></div>
 </div>
   <div class="content">
 <aside class="toc sidebar" data-title="Contents" data-levels="2">
@@ -423,7 +423,7 @@ Foundation&#8217;s separate private logging target is disabled.</p>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Nexium::World::Base</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">World/framework, InputSystem/InputController, framework managers and state, SceneManager, Scene, scene objects (grid, rectangles, spectator), actors, cameras, animator, skybox types</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">World/framework, InputSystem, framework managers and state, SceneManager, Scene, scene objects (grid, rectangles, spectator), actors, cameras, animator, skybox types</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Foundation, Foundation Interfaces, World Animation, Fundamental Assets/Base/ECS/ResourceManagement, Subsystem AssetsManager/Graphics/Input, Platform Input, RawBackend Common, Utils::Core, JustReflectMe::Adapter.</p></td>
 </tr>
 <tr>
@@ -516,7 +516,7 @@ WHOLE_ARCHIVE retains otherwise unreferenced component registrations in these st
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>InputSystem</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Singleton; holds non-owning InputController pointers per context. Controllers unregister themselves on destruction.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Singleton; owns the per-frame queue of input events by value. It subscribes to <code>Platform::Window</code> delegates and holds no listener pointers.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Scene</p></td>
@@ -548,7 +548,7 @@ WHOLE_ARCHIVE retains otherwise unreferenced component registrations in these st
 <p>RawBackend&#8217;s <code>IDrawable</code> still names higher-layer camera/actor/mesh types through forward declarations.
 <code>Scene::directDraw</code> receives the skybox and grid programs from Runtime and the camera from the
 World it was activated in, but still reads the render mode through the global <code>gGameInstance</code>.
-<code>InputSystem</code> is a <code>Core::Singleton</code>, so input routing is global rather than owned by a session.</p>
+<code>InputSystem</code> is a <code>Core::Singleton</code>, so the input queue is global rather than owned by a session.</p>
 </div>
 <div class="paragraph">
 <p>Public header sets support compilation checks, but the shared <code>sources/</code> include root also exposes private headers.

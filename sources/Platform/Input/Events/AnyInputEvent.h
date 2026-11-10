@@ -21,6 +21,7 @@
 
 namespace NX
 {
+    // tag::input_any_event[]
     /// Any input event, stored by value. Adding a new event type here makes every
     /// InputSystem::handle overload set fail to compile until the new type is handled.
     using AnyInputEvent
@@ -33,6 +34,7 @@ namespace NX
     static_assert(sizeof(AnyInputEvent) <= 32, "Input events must stay small");
     static_assert(std::is_trivially_copyable_v<AnyInputEvent>,
                   "Input events must be trivially copyable");
+    // end::input_any_event[]
 
     namespace Detail
     {

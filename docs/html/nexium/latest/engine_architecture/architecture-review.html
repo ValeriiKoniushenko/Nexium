@@ -6,7 +6,7 @@
     <title>Architecture and Migration Review :: Nexium Engine</title>
     <link rel="prev" href="index.html">
     <link rel="next" href="ue5-alignment.html">
-    <meta name="generator" content="Antora 3.1.15">
+    <meta name="generator" content="Antora 3.2.2">
     <link rel="stylesheet" href="../../../_/css/site.css">
   </head>
   <body class="article">
@@ -217,7 +217,7 @@
     <li><a href="architecture-review.html">Architecture and Migration Review</a></li>
   </ul>
 </nav>
-<div class="edit-this-page"><a href="file:///home/valerii/workspace/Nexium//docs/nexium/modules/engine_architecture/pages/architecture-review.adoc">Edit this Page</a></div>
+<div class="edit-this-page"><a href="file:///home/alex/Desktop/nexium//docs/nexium/modules/engine_architecture/pages/architecture-review.adoc">Edit this Page</a></div>
 </div>
   <div class="content">
 <aside class="toc sidebar" data-title="Contents" data-levels="2">
@@ -275,9 +275,9 @@ Scene owns root component trees and handles persistence and drawing.</p>
 <p>The model is suitable for a small authoring engine.
 World does not yet provide the ownership/lifetime boundary implied by its UE-style name.
 Most new managers and GameInstanceSubsystem have logging scaffolding without operational contracts.
-Input is the exception that proves the point: <code>InputSystem</code> is a real routing service with
-contexts, controllers, and tests, but it is a global singleton rather than something a session
-owns — so switching worlds or sessions has no defined effect on it.</p>
+Input shows the same gap: <code>InputSystem</code> has a tested typed event queue, but its routing layer
+(controllers and contexts) is removed pending a redesign, and it is a global singleton rather
+than something a session owns — so switching worlds or sessions has no defined effect on it.</p>
 </div>
 </div>
 </div>
@@ -325,8 +325,8 @@ camera and clears selection, but component subscriptions are not invalidated.</p
 <p>Extend executable interface checks and CI to the World/Runtime/editor boundary.</p>
 </li>
 <li>
-<p>Retire the polled <code>InputAction</code> managers once mouse events route through <code>InputSystem</code>,
-so input has one path and one context policy.</p>
+<p>Give the <code>InputSystem</code> event queue a consumer (bindings and a context policy), then retire
+the polled <code>InputAction</code> managers so input has one path.</p>
 </li>
 </ol>
 </div>

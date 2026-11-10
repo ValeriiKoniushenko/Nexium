@@ -6,7 +6,7 @@
     <title>Application Lifecycle :: Nexium Engine</title>
     <link rel="prev" href="module-graph.html">
     <link rel="next" href="threading.html">
-    <meta name="generator" content="Antora 3.1.15">
+    <meta name="generator" content="Antora 3.2.2">
     <link rel="stylesheet" href="../../../_/css/site.css">
   </head>
   <body class="article">
@@ -217,7 +217,7 @@
     <li><a href="lifecycle.html">Application Lifecycle</a></li>
   </ul>
 </nav>
-<div class="edit-this-page"><a href="file:///home/valerii/workspace/Nexium//docs/nexium/modules/engine_architecture/pages/lifecycle.adoc">Edit this Page</a></div>
+<div class="edit-this-page"><a href="file:///home/alex/Desktop/nexium//docs/nexium/modules/engine_architecture/pages/lifecycle.adoc">Edit this Page</a></div>
 </div>
   <div class="content">
 <aside class="toc sidebar" data-title="Contents" data-levels="2">
@@ -275,8 +275,8 @@ independent concurrent game instances.</p>
 <h2 id="_each_frame"><a class="anchor" href="#_each_frame"></a>Each frame</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Window events are polled first, then the active input context is set from viewport focus and
-the queued key events are dispatched (see <a href="input-system.html" class="xref page">Input System</a>).
+<p>Window events are polled first, then gamepads, and then <code>InputSystem</code> drains the input events
+queued by both (see <a href="input-system.html" class="xref page">Input System</a>).
 Updates use the previous frame&#8217;s measured delta; the first delta is zero.</p>
 </div>
 <table class="tableblock frame-all grid-all stretch">

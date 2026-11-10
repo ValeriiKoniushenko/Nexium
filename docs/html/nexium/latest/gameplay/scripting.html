@@ -6,7 +6,7 @@
     <title>Gameplay Hooks :: Nexium Engine</title>
     <link rel="prev" href="components.html">
     <link rel="next" href="prefabs.html">
-    <meta name="generator" content="Antora 3.1.15">
+    <meta name="generator" content="Antora 3.2.2">
     <link rel="stylesheet" href="../../../_/css/site.css">
   </head>
   <body class="article">
@@ -217,7 +217,7 @@
     <li><a href="scripting.html">Gameplay Hooks</a></li>
   </ul>
 </nav>
-<div class="edit-this-page"><a href="file:///home/valerii/workspace/Nexium//docs/nexium/modules/gameplay/pages/scripting.adoc">Edit this Page</a></div>
+<div class="edit-this-page"><a href="file:///home/alex/Desktop/nexium//docs/nexium/modules/gameplay/pages/scripting.adoc">Edit this Page</a></div>
 </div>
   <div class="content">
 <aside class="toc sidebar" data-title="Contents" data-levels="2">
@@ -254,24 +254,23 @@ so all example behavior lives in components instead.</p>
 <div class="sectionbody">
 <div class="paragraph">
 <p><code>game-example/Player</code> is the pattern to copy for gameplay behavior. It derives from
-<code>RectangleAnimated</code>, calls the base <code>onTick()</code> first, then reads its own state from two child
-components it looks up with <code>findFirstChildOf&lt;T&gt;()</code>:</p>
+<code>RectangleAnimated</code>, calls the base <code>onTick()</code> first, and then:</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p>an <code>InputController</code>, queried with <code>isActionPressed("Move right"_atom)</code> and the other three
-direction actions, normalized for diagonals and applied through <code>moveRight()</code>/<code>moveUp()</code>;</p>
+<p>polls <code>Platform::Keyboard::IsKeyPressed()</code> for W/A/S/D and the arrow keys, normalizes the
+result for diagonals, and applies it through <code>moveRight()</code>/<code>moveUp()</code>;</p>
 </li>
 <li>
-<p>a <code>FrameByFrameAnimator</code>, switched to the animation matching the movement direction.</p>
+<p>looks up its <code>FrameByFrameAnimator</code> child with <code>findFirstChildOf&lt;T&gt;()</code> and switches it to the
+animation matching the movement direction.</p>
 </li>
 </ul>
 </div>
 <div class="paragraph">
-<p>Nothing is hard-wired: the controller&#8217;s bindings are serialized component data, and the
-component does nothing when the controller is missing or disabled. Gameplay controllers belong
-to the <code>Gameplay</code> input context, which is active only while the viewport is focused — see
+<p>The keys are hard-wired for now. Rebindable actions and focus-aware input contexts were removed
+with <code>InputController</code> and have no replacement yet — see
 <a href="../engine_architecture/input-system.html" class="xref page">Input System</a>.</p>
 </div>
 </div>

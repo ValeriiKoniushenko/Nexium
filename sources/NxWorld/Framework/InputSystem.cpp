@@ -45,6 +45,7 @@ namespace NX
         _pressedKeys.clear();
     }
 
+    // tag::input_process_events[]
     void InputSystem::processEvents()
     {
         // Handlers may queue new events; they go to _events and are processed next frame.
@@ -58,6 +59,7 @@ namespace NX
 
         _processing.clear();
     }
+    // end::input_process_events[]
 
     // Controllers were removed during the input redesign, so there is no consumer to route
     // events to yet. These handlers are the single entry point for each event type.

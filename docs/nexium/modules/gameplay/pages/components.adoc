@@ -57,7 +57,6 @@ Some behavior is already available as a component rather than something to write
 [cols="2,4",options="header"]
 |===
 |Component |Use
-|`InputController` |Named actions bound to key chords in one input context; bindings are reflected and serialized.
 |`FrameByFrameAnimator` |Drives a `RectangleAnimated` parent through a named animation's frames.
 |`BaseCamera` subclasses |Provide the current scene's camera, which World observes; destroying one clears that pointer.
 |===

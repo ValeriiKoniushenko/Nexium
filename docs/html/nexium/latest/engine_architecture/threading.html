@@ -6,7 +6,7 @@
     <title>Threading :: Nexium Engine</title>
     <link rel="prev" href="lifecycle.html">
     <link rel="next" href="memory.html">
-    <meta name="generator" content="Antora 3.1.15">
+    <meta name="generator" content="Antora 3.2.2">
     <link rel="stylesheet" href="../../../_/css/site.css">
   </head>
   <body class="article">
@@ -217,7 +217,7 @@
     <li><a href="threading.html">Threading Model</a></li>
   </ul>
 </nav>
-<div class="edit-this-page"><a href="file:///home/valerii/workspace/Nexium//docs/nexium/modules/engine_architecture/pages/threading.adoc">Edit this Page</a></div>
+<div class="edit-this-page"><a href="file:///home/alex/Desktop/nexium//docs/nexium/modules/engine_architecture/pages/threading.adoc">Edit this Page</a></div>
 </div>
   <div class="content">
 <aside class="toc sidebar" data-title="Contents" data-levels="2">
@@ -239,7 +239,7 @@ Reference counting does not make component trees, registries, or resource payloa
 <div class="paragraph">
 <p><code>Foundation::Latency::Collector</code> is the one explicitly synchronized piece: it guards its sample
 list with a <code>std::shared_mutex</code> and records the originating thread id. Nothing else in the
-engine, including the <code>InputSystem</code> singleton and its controller lists, is written for
+engine, including the <code>InputSystem</code> singleton and its event queue, is written for
 concurrent access. See <a href="diagnostics.html" class="xref page">Diagnostics</a>.</p>
 </div>
 </div>

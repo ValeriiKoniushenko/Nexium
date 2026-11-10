@@ -84,6 +84,7 @@ TEST(InputEventsTests, EventsAreNonPolymorphicValueTypes)
     SUCCEED();
 }
 
+// tag::input_queue_order[]
 TEST_F(InputSystemQueueTests, QueuedEventsKeepArrivalOrder)
 {
     auto& window = Platform::GetWindow();
@@ -108,6 +109,7 @@ TEST_F(InputSystemQueueTests, QueuedEventsKeepArrivalOrder)
     EXPECT_EQ(std::get<NX::GamepadButtonEvent>(events[2]).getDeviceId(), 1U);
     EXPECT_EQ(std::get<NX::MouseMoveEvent>(events[1]).getDelta(), glm::vec2(1.f, 2.f));
 }
+// end::input_queue_order[]
 
 TEST_F(InputSystemQueueTests, QueueEventStoresACopy)
 {
@@ -164,6 +166,7 @@ TEST(CursorDeltaTrackerTests, FirstPositionHasNoDelta)
     EXPECT_EQ(tracker.update({ 103.f, 45.f }), glm::vec2(3.f, -5.f));
 }
 
+// tag::input_cursor_delta_reset[]
 TEST(CursorDeltaTrackerTests, ResetDropsTheJumpAfterCursorModeChange)
 {
     Platform::CursorDeltaTracker tracker;
@@ -172,6 +175,7 @@ TEST(CursorDeltaTrackerTests, ResetDropsTheJumpAfterCursorModeChange)
     EXPECT_EQ(tracker.update({ 900.f, 600.f }), glm::vec2(0.f));
     EXPECT_EQ(tracker.update({ 901.f, 600.f }), glm::vec2(1.f, 0.f));
 }
+// end::input_cursor_delta_reset[]
 
 TEST(CursorDeltaTrackerTests, ResetToIgnoresProgrammaticWarp)
 {

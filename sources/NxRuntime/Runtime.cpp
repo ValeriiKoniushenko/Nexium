@@ -67,12 +67,16 @@ namespace NX
         {
             NX_LATENCY_POINT("loop - start");
             clock.start();
+            // tag::input_frame_poll[]
             Platform::Window::pollEvent();
             Platform::Joystick::poll();
+            // end::input_frame_poll[]
             // GetInputSystem().setActiveContext(_gameInstance.isApplicationViewportFocused()
             //                                       ? InputContext::Gameplay
             //                                       : InputContext::Editor);
+            // tag::input_frame_process[]
             GetInputSystem().processEvents();
+            // end::input_frame_process[]
 
             if (!_gameInstance.isEditorMode())
             {

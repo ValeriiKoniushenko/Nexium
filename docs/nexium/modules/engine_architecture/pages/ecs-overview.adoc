@@ -67,5 +67,4 @@ neither is a stable identity across rename or reparenting.
 
 Implementation: `NxFundamental/ECS/BaseComponent.{h,cpp}`.
 `tests/ECSTests/ECSTests.cpp` covers factories, serialization, traversal, cloning, and parent repair;
-`tests/ECSTests/InputControllerTests.cpp` covers a reflected component with serialized state;
 `tests/Runtime/RuntimeTests.cpp` checks retained World registrations.
