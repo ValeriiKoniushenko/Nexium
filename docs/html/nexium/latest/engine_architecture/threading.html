@@ -239,7 +239,7 @@ Reference counting does not make component trees, registries, or resource payloa
 <div class="paragraph">
 <p><code>Foundation::Latency::Collector</code> is the one explicitly synchronized piece: it guards its sample
 list with a <code>std::shared_mutex</code> and records the originating thread id. Nothing else in the
-engine, including the <code>InputSystem</code> singleton and its event queue, is written for
+engine, including the <code>InputSystem</code> singleton, its event queue, and its controller list, is written for
 concurrent access. See <a href="diagnostics.html" class="xref page">Diagnostics</a>.</p>
 </div>
 </div>

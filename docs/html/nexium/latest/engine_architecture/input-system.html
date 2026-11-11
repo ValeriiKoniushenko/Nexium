@@ -228,10 +228,10 @@
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>The input system is mid-redesign. Platform now turns every GLFW callback into a small typed
-event, and <code>NX::InputSystem</code> collects those events into a per-frame queue. The layer that
-is meant to consume the queue — controllers, bindings, and input contexts — has been removed
-and not yet replaced, so gameplay and editor code currently read input by polling.</p>
+<p>Input flows one way. Platform turns every GLFW callback into a small typed event,
+<code>NX::InputSystem</code> collects the events into a per-frame queue, and once per frame it routes
+them to every registered <code>InputController</code>. A controller turns raw events into named
+<strong>actions</strong> that gameplay and editor code query or subscribe to.</p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
@@ -243,46 +243,41 @@ and not yet replaced, so gameplay and editor code currently read input by pollin
 <tr>
 <th class="tableblock halign-left valign-top">Layer</th>
 <th class="tableblock halign-left valign-top">Where</th>
-<th class="tableblock halign-left valign-top">State</th>
+<th class="tableblock halign-left valign-top">Role</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Typed events</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Platform/Input/Events</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Live. Produced for keyboard, mouse, gamepad, and window focus/iconify changes.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Value types for keyboard, mouse, gamepad, and window changes.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Window delegates</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Platform::Window</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Live. One delegate per event kind; anything may subscribe.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">One delegate per event kind, fired from the GLFW callback.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Gamepad polling</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Platform::Joystick</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Live. Polled once per frame, reports changes as events.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Polled once per frame; reports changes as events.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Event queue</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Event queue and routing</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>NX::InputSystem</code> (NxWorld)</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Live as a queue. Its per-type handlers are empty: nothing is routed yet.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Queues events, then feeds them to controllers.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Polled actions</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>NxSubsystems/Input</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Live. The only path that drives behavior today.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Controllers, chords, contexts</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>NxWorld/Framework/InputController.h</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Disabled. See <a href="#disabled">Disabled during the redesign</a>.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Actions and bindings</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>NX::InputController</code> (<code>NxWorld/Framework/Input</code>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Reflected ECS component that owns named actions.</p></td>
 </tr>
 </tbody>
 </table>
 <div class="paragraph">
-<p>New code that needs input right now should either subscribe to a <code>Platform::Window</code>
-delegate (event-driven) or use the polled actions. Do not build on <code>InputController</code>,
-<code>KeyChord</code>, or <code>InputContext</code>: they are commented out.</p>
+<p>New input code should add actions to an <code>InputController</code>. The polled <code>InputAction</code>
+managers and the <code>NxSubsystems/Input</code> module are gone; <code>Platform::Keyboard</code> and
+<code>Platform::Mouse</code> still answer "is this down right now" for the few places that poll.</p>
 </div>
 </div>
 </div>
@@ -405,9 +400,7 @@ events currently leave it at <code>0</code>, and gamepads use the GLFW joystick 
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">/// Any input event, stored by value. Adding a new event type here makes every
-/// InputSystem::handle overload set fail to compile until the new type is handled.
-using AnyInputEvent
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">using AnyInputEvent
     = std::variant&lt;KeyboardEvent, TextInputEvent, MouseMoveEvent, MouseButtonEvent,
                    MouseScrollEvent, MouseEnterEvent, GamepadButtonEvent, GamepadAxisEvent,
                    GamepadConnectionEvent, WindowResizeEvent, WindowFocusEvent,
@@ -423,7 +416,8 @@ static_assert(std::is_trivially_copyable_v&lt;AnyInputEvent&gt;,
 <p>The two assertions are the contract for adding an event: it must keep the variant within 32
 bytes and trivially copyable. The <code>InputEventType</code> concept is satisfied by exactly the
 variant&#8217;s alternatives, and <code>InputSystem</code> declares one <code>handle()</code> overload per alternative,
-so a new event type fails to compile until it is handled.</p>
+so a new event type fails to compile until it is handled. An overload may be empty: events
+that no controller source maps to are queued and then dropped.</p>
 </div>
 </div>
 </div>
@@ -623,7 +617,7 @@ stuck button or axis from a device that went away.</p>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_inputsystem_the_event_queue"><a class="anchor" href="#_inputsystem_the_event_queue"></a>InputSystem: the event queue</h2>
+<h2 id="_inputsystem_queue_and_routing"><a class="anchor" href="#_inputsystem_queue_and_routing"></a>InputSystem: queue and routing</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p><code>GetInputSystem()</code> is a <code>Core::Singleton</code>. <code>GameInstance::initialize()</code> calls
@@ -632,7 +626,7 @@ event into the queue with <code>queueEvent()</code>. <code>queueEvent()</code> i
 <code>InputEventType</code>, so tests and tools can inject events without a window.</p>
 </div>
 <div class="paragraph">
-<p>Each frame Runtime gathers events and then drains the queue:</p>
+<p>Each frame Runtime gathers events and then processes the queue:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -649,15 +643,99 @@ GetInputSystem().processEvents();</code></pre>
     _processing.clear();
     std::swap(_events, _processing);
 
+    for (auto* controller : _controllers)
+    {
+        controller-&gt;beginInputFrame();
+    }
+
     for (const auto&amp; event : _processing)
     {
         std::visit([this](const auto&amp; concreteEvent) { handle(concreteEvent); }, event);
+    }
+
+    for (auto* controller : _controllers)
+    {
+        controller-&gt;endInputFrame();
+    }
+
+    // A callback may add or destroy controllers, so iterate by index over the live list.
+    // NOLINTNEXTLINE(modernize-loop-convert): a range-for would be invalidated by erase.
+    for (std::size_t i = 0; i &lt; _controllers.size(); ++i)
+    {
+        _controllers[i]-&gt;dispatchTriggeredCallbacks();
     }
 
     _processing.clear();
 }</code></pre>
 </div>
 </div>
+<div class="paragraph">
+<p>A frame therefore has four phases, and every controller finishes one phase before any
+controller starts the next:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><strong>Begin.</strong> Each controller clears its per-frame state: press/release edges and the
+accumulated mouse delta and scroll.</p>
+</li>
+<li>
+<p><strong>Route.</strong> Each queued event goes to every controller, in arrival order.</p>
+</li>
+<li>
+<p><strong>End.</strong> Each controller combines its bindings into action values.</p>
+</li>
+<li>
+<p><strong>Callbacks.</strong> Each enabled controller runs the callbacks of the actions triggered this frame.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>Callbacks run last and outside the routing loops, so a callback may add or remove actions,
+or destroy controllers — including its own.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 42.8571%;">
+<col style="width: 57.1429%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Event</th>
+<th class="tableblock halign-left valign-top">Routed as</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>KeyboardEvent</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Button from source <code>Key</code>, with the event&#8217;s modifiers.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>MouseButtonEvent</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Button from source <code>MouseButton</code>, with the event&#8217;s modifiers.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>GamepadButtonEvent</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Button from source <code>GamepadButton</code>, with no modifiers.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>MouseMoveEvent</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Vector for <code>MouseDelta</code>: the event&#8217;s delta.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>MouseScrollEvent</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Vector for <code>MouseScroll</code>: the event&#8217;s offset.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>GamepadAxisEvent</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Axis value for <code>GamepadAxis</code>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Text input, cursor enter, gamepad connection, and window events</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Not routed.</p></td>
+</tr>
+</tbody>
+</table>
 <div class="paragraph">
 <p>The contract of the queue:</p>
 </div>
@@ -678,7 +756,7 @@ does not allocate.</p>
 focus callback, and they are queued after the presses they belong to.</p>
 </li>
 <li>
-<p><code>resetInput()</code> discards everything pending.</p>
+<p><code>resetInput()</code> discards everything pending. It does not reset controllers.</p>
 </li>
 </ul>
 </div>
@@ -711,51 +789,317 @@ focus callback, and they are queued after the presses they belong to.</p>
 </div>
 </div>
 <div class="paragraph">
-<p><code>getPendingEvents()</code> and <code>getPendingEventCount()</code> expose the queue before it is processed.
-The thirteen <code>handle()</code> overloads are the single entry point per event type and are currently
-empty. Processing a frame&#8217;s events therefore has no observable effect yet.</p>
+<p><code>InputSystem</code> holds non-owning controller pointers. A controller registers in
+<code>onInitialize()</code> and unregisters in <code>onDeinitialize()</code> and in its destructor. There is no
+priority between controllers and no event consumption: every controller sees every event.
+Routing is not filtered by focus or by a context either — see <a href="#gating">Enabling and gating</a>.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_polled_input"><a class="anchor" href="#_polled_input"></a>Polled input</h2>
+<h2 id="_inputcontroller_actions_and_bindings"><a class="anchor" href="#_inputcontroller_actions_and_bindings"></a>InputController: actions and bindings</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p><code>Platform::Keyboard</code> and <code>Platform::Mouse</code> (now under <code>Platform/Input/InputDevices</code>) answer
-"is this key down right now" straight from GLFW. <code>game-example/Player</code> uses that directly:
-W/A/S/D or the arrow keys.</p>
+<p><code>InputController</code> is a reflected <code>BaseComponent</code> (<code>ECS_DECL</code>), so it can be attached to any
+scene object and its actions are saved with the component tree. It owns a list of
+<code>InputAction</code> values; an action is a name (<code>Core::StringAtom</code>) and a list of <code>InputBinding</code>
+values. Names are unique within a controller: <code>addAction()</code> returns <code>false</code> for an empty or
+duplicate name.</p>
+</div>
+<div class="sect2">
+<h3 id="_bindings"><a class="anchor" href="#_bindings"></a>Bindings</h3>
+<div class="paragraph">
+<p>A binding names one physical input and how to read it. All of these fields are reflected:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 28.5714%;">
+<col style="width: 71.4286%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Field</th>
+<th class="tableblock halign-left valign-top">Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>source</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Key</code>, <code>MouseButton</code>, <code>MouseDelta</code>, <code>MouseScroll</code>, <code>GamepadButton</code>, or <code>GamepadAxis</code>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>code</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Key, button, or axis code. Ignored for <code>MouseDelta</code> and <code>MouseScroll</code>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>trigger</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">For buttons: <code>Down</code> (on while held), <code>Pressed</code> (on for the frame of the press), or <code>Released</code> (on for the frame of the release).</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>shift</code>, <code>control</code>, <code>alt</code>, <code>super</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Modifiers the binding requires.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>modifierMatch</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>AtLeast</code>: required modifiers must be held, extra ones are fine. <code>Exact</code>: exactly the required modifiers.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>negate</code>, <code>swizzleYX</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Value modifiers: flip the sign, then swap X and Y.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>Build bindings with the factories and chain the copies they return, rather than setting
+fields by hand:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 42.8571%;">
+<col style="width: 57.1429%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Call</th>
+<th class="tableblock halign-left valign-top">Result</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>InputBinding::Key(key)</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Key, <code>Down</code>, <code>AtLeast</code>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>InputBinding::Shortcut(key, modifiers)</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Key, <code>Pressed</code>, <code>Exact</code> — an editor-style shortcut.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>InputBinding::MouseButton(button)</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Mouse button, <code>Down</code>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>InputBinding::MouseDelta()</code>, <code>InputBinding::MouseScroll()</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Per-frame mouse vector.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>InputBinding::GamepadButton(button)</code>, <code>InputBinding::GamepadAxis(axis)</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Gamepad button or axis.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>withShift()</code>, <code>withControl()</code>, <code>withAlt()</code>, <code>withSuper()</code>, <code>withExactModifiers()</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Add a required modifier, or switch to <code>Exact</code>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>onDown()</code>, <code>onPressed()</code>, <code>onReleased()</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Change the trigger.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>negated()</code>, <code>swizzled()</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Set a value modifier.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>Modifiers follow two rules. Caps Lock and Num Lock are never compared. And modifiers are
+checked only on the press: a <code>Down</code> binding that is already held stays held when a modifier
+changes, and its release is always accepted.</p>
 </div>
 <div class="paragraph">
-<p><code>KeyboardInputManger</code> and <code>MouseInputManger</code> build named actions on top. They own intrusive
-action references indexed by <code>Core::StringAtom</code> names; "Manger" is the current API spelling.
-<code>getOrCreate()</code> reuses the existing name; it does not change that action&#8217;s key binding.</p>
+<p>The two match policies exist for different jobs. <code>AtLeast</code> suits gameplay — W keeps moving
+forward while Shift is held to sprint. <code>Exact</code> suits shortcuts — Ctrl+S does not fire on
+Ctrl+Shift+S. A binding has no notion of left versus right modifier keys: it compares the
+modifier mask the event carries.</p>
 </div>
 <div class="paragraph">
-<p><code>InputAction::update()</code> polls its key, applies repeat/frequency limits, snapshots left
-Shift/Alt/Ctrl as <code>InputState</code> values, and passes that snapshot to <code>onPress</code>.
-<code>SpecKeysState::isNothingPressed()</code> is true when none of the three is <code>Pressed</code>.
-Repeat defaults to enabled with zero delay. Disable repeat for one notification per press;
-frequency limits use elapsed <code>system_clock</code> milliseconds.</p>
+<p><code>toString()</code> renders a binding for UI, such as <code>Ctrl+Shift+S</code>, <code>Mouse Left</code>, or
+<code>Gamepad LeftX</code>; the editor&#8217;s settings window lists every action this way.</p>
 </div>
+</div>
+<div class="sect2">
+<h3 id="_action_values"><a class="anchor" href="#_action_values"></a>Action values</h3>
 <div class="paragraph">
-<p>Mouse actions also provide:</p>
+<p>Every binding contributes a <code>glm::vec2</code>, and the action&#8217;s value is the sum:</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p><code>onMouseClick</code>: current position on a qualifying press, using the same repeat policy.</p>
+<p>A button contributes <code>(1, 0)</code> while it is on, per its trigger.</p>
 </li>
 <li>
-<p><code>onMove</code>: position delta after the first sample establishes a baseline.</p>
+<p><code>MouseDelta</code> and <code>MouseScroll</code> contribute the sum of that frame&#8217;s events, then reset.</p>
 </li>
 <li>
-<p><code>onDrag</code>: position delta while Platform reports dragging and the action&#8217;s button condition matches.</p>
+<p><code>GamepadAxis</code> contributes <code>(value, 0)</code> and keeps the last value until the axis moves again.
+Triggers are normalized from their rest position, so they read <code>0</code> to <code>1</code> instead of
+<code>-1</code> to <code>1</code>.</p>
 </li>
 </ul>
 </div>
 <div class="paragraph">
-<p>A mouse click here is a press notification, not release detection.
-<code>MouseInputManger::onWheel</code> forwards the offset of the window&#8217;s <code>MouseScrollEvent</code>.</p>
+<p><code>negate</code> and <code>swizzleYX</code> are applied to each contribution before summing. That is how
+several one-dimensional inputs become one 2D action — opposing keys cancel out, and a
+swizzled binding feeds the Y axis:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">void Spectator2D::setupInputActions(InputController&amp; input)
+{
+    using Axis = Platform::Joystick::GamepadAxis;
+    using Key = Platform::Keyboard::Key;
+
+    input.addAction("Pan"_atom, { InputBinding::MouseButton(Platform::Mouse::Key::Middle) });
+    input.addAction("PointerDelta"_atom, { InputBinding::MouseDelta() });
+    input.addAction("Scroll"_atom, { InputBinding::MouseScroll() });
+    input.addAction("Boost"_atom, { InputBinding::Key(Key::Left_Shift),
+                                    InputBinding::GamepadButton(
+                                        Platform::Joystick::GamepadButton::LeftBumper) });
+    input.addAction("Zoom"_atom, { InputBinding::Key(Key::Left_Control) });
+    input.addAction("Move"_atom,
+                    { InputBinding::GamepadAxis(Axis::LeftX),
+                      InputBinding::GamepadAxis(Axis::LeftY).negated().swizzled() });
+    input.addAction("GamepadZoom"_atom,
+                    { InputBinding::GamepadAxis(Axis::RightTrigger),
+                      InputBinding::GamepadAxis(Axis::LeftTrigger).negated() });
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Deadzones are not part of the binding. A consumer applies its own, as the spectators do
+with a radial deadzone on the stick vector.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_reading_actions"><a class="anchor" href="#_reading_actions"></a>Reading actions</h3>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 66.6667%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Call</th>
+<th class="tableblock halign-left valign-top">Returns</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isActive(name)</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Whether the action&#8217;s value is non-zero this frame.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>wasTriggered(name)</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Whether the action started this frame: it became active, a <code>Down</code> binding was pressed, or a <code>Pressed</code>/<code>Released</code> binding fired.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>getValue&lt;bool&gt;(name)</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Same as non-zero value.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>getValue&lt;float&gt;(name)</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The X component.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>getValue&lt;glm::vec2&gt;(name)</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The full value.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">TEST_F(InputControllerRuntimeTests, DownBindingIsActiveWhileHeld)
+{
+    addAction("Fire", { KeyBinding(Key::Space, NX::InputTrigger::Down) });
+    controller-&gt;initialize();
+
+    key(Key::Space, NX::InputState::Pressed);
+    frame();
+    EXPECT_TRUE(controller-&gt;isActive("Fire"_atom));
+    EXPECT_TRUE(controller-&gt;wasTriggered("Fire"_atom));
+
+    frame();
+    EXPECT_TRUE(controller-&gt;isActive("Fire"_atom));
+    EXPECT_FALSE(controller-&gt;wasTriggered("Fire"_atom));
+
+    key(Key::Space, NX::InputState::Released);
+    frame();
+    EXPECT_FALSE(controller-&gt;isActive("Fire"_atom));
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>A press and release that both arrive within one frame still count: <code>wasTriggered()</code> is true
+for that frame even though <code>isActive()</code> is not.</p>
+</div>
+<div class="paragraph">
+<p>Asking for an action the controller does not have returns the default (<code>false</code> or zero) and
+logs one warning per name.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_callbacks"><a class="anchor" href="#_callbacks"></a>Callbacks</h3>
+<div class="paragraph">
+<p><code>onTriggered(name, callback)</code> registers a <code>void()</code> callback that runs once in every frame
+where <code>wasTriggered(name)</code> is true; <code>addAction()</code> has an overload that takes the callback
+directly. A callback can be registered before its action exists. <code>clearCallbacks(name)</code>
+removes them. Callbacks are runtime-only and are not saved with the component.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">TEST_F(InputControllerRuntimeTests, TriggeredCallbackRunsOncePerPress)
+{
+    int calls = 0;
+    ASSERT_TRUE(controller-&gt;addAction("Fire"_atom, { NX::InputBinding::Key(Key::Space) },
+                                      [&amp;] { ++calls; }));
+    controller-&gt;initialize();
+
+    key(Key::Space, NX::InputState::Pressed);
+    frame();
+    EXPECT_EQ(calls, 1);
+
+    frame();
+    EXPECT_EQ(calls, 1);
+
+    key(Key::Space, NX::InputState::Released);
+    key(Key::Space, NX::InputState::Pressed);
+    frame();
+    EXPECT_EQ(calls, 2);
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_persistence"><a class="anchor" href="#_persistence"></a>Persistence</h3>
+<div class="paragraph">
+<p><code>_actions</code> is a <code>FIELD()</code>, and <code>InputBinding</code> and <code>InputAction</code> are reflected types with
+JSON adapters, so a controller round-trips through JRM with its component. Runtime state —
+held buttons, values, callbacks — is not reflected and is never saved. Code that builds its
+actions in <code>onInitialize()</code> should first look for an existing child controller, as the
+spectators do, so a deserialized controller is reused instead of duplicated.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="gating"><a class="anchor" href="#gating"></a>Enabling and gating</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><code>InputSystem</code> routes every event to every registered controller, so the owner decides when
+its controller counts. The switch is the component&#8217;s enabled state:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>A disabled controller returns defaults from <code>isActive()</code>, <code>wasTriggered()</code>, and
+<code>getValue()</code>, and its callbacks do not run.</p>
+</li>
+<li>
+<p>It still receives events. A key released while the controller is disabled is recorded, so
+nothing is stuck when it is enabled again.</p>
+</li>
+<li>
+<p><code>onDeinitialize()</code> unregisters the controller and clears all held state.</p>
+</li>
+</ul>
 </div>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
@@ -765,40 +1109,53 @@ frequency limits use elapsed <code>system_clock</code> milliseconds.</p>
 <thead>
 <tr>
 <th class="tableblock halign-left valign-top">Owner</th>
-<th class="tableblock halign-left valign-top">Update path</th>
+<th class="tableblock halign-left valign-top">Rule</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">GameEditor</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Keyboard and mouse mappings after drawing editor windows.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">EditorIntegration in GameOnly mode</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Editor keyboard mappings only.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Spectator</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Its own keyboard and mouse mappings during its scene tick.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>GameEditor</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Enabled unless ImGui wants text input, so shortcuts do not fire while typing.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>NxECSBasedEditor</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Its own keyboard manager for the Delete shortcut inside component editors.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Enabled only while its window is focused and ImGui does not want text input.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Spectators</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Enabled only while their scene is the active one.</p></td>
 </tr>
 </tbody>
 </table>
 <div class="paragraph">
-<p>Nothing filters polled input by focus or context. A shortcut that must not fire during
-gameplay has to check focus itself — as the Delete shortcut does with
-<code>isApplicationViewportFocused()</code>.</p>
+<p>Finer conditions stay in the consumer: the spectators ignore scroll and gamepad input, and
+the editor ignores Delete, unless <code>isApplicationViewportFocused()</code>; the editor&#8217;s pick
+click requires the cursor over the viewport instead.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_editor_shortcuts"><a class="anchor" href="#_editor_shortcuts"></a>Editor shortcuts</h2>
+<h2 id="_consumers"><a class="anchor" href="#_consumers"></a>Consumers</h2>
 <div class="sectionbody">
+<div class="sect2">
+<h3 id="_editor_shortcuts"><a class="anchor" href="#_editor_shortcuts"></a>Editor shortcuts</h3>
 <div class="paragraph">
-<p><code>GameEditor::setupShortcuts()</code> installs polled keyboard actions:</p>
+<p><code>GameEditor::setupShortcuts()</code> creates a standalone controller — not attached to a scene
+object — and registers each shortcut with its callback:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">_inputController = InputController::Create();
+_inputController-&gt;initialize();
+
+_inputController-&gt;addAction("Close editor"_atom, { InputBinding::Shortcut(Key::F12) },
+                            [] { GetWindow().close(); });
+
+_inputController-&gt;addAction(
+    "Save all"_atom,
+    { InputBinding::Shortcut(Key::S, InputModifier::Control | InputModifier::Shift) },
+    [] { gGameInstance-&gt;saveAllToCache(); });</code></pre>
+</div>
 </div>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
@@ -817,7 +1174,7 @@ gameplay has to check focus itself — as the Delete shortcut does with
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">F1</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Toggle render mode</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Non-repeatable.</p></td>
+<td class="tableblock halign-left valign-top"></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">F12</p></td>
@@ -830,83 +1187,112 @@ gameplay has to check focus itself — as the Delete shortcut does with
 <td class="tableblock halign-left valign-top"></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Delete</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Delete selected objects from the scene</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Requires no modifiers and a focused viewport.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Ctrl + Shift + S</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Save all</p></td>
+<td class="tableblock halign-left valign-top"></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Left Ctrl + Left Shift + S</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Save all</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Disabled: it was an <code>InputController</code> chord.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Delete</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Delete selected objects from the scene</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Requires a focused viewport.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Left mouse button</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Pick the object under the cursor</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Requires the cursor over the viewport; skipped while dragging.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Delete (component editor)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Delete the selected component</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">`NxECSBasedEditor&#8217;s own controller; focused window only.</p></td>
 </tr>
 </tbody>
 </table>
 <div class="paragraph">
-<p>Render-mode switching uses the same current scene; see <a href="lifecycle.html" class="xref page">Application Lifecycle</a>.</p>
+<p>All keyboard shortcuts use <code>InputBinding::Shortcut</code>, so they need exact modifiers: Delete
+does not fire on Shift+Delete. Render-mode switching uses the same current scene; see
+<a href="lifecycle.html" class="xref page">Application Lifecycle</a>.</p>
 </div>
 </div>
-</div>
-<div class="sect1">
-<h2 id="disabled"><a class="anchor" href="#disabled"></a>Disabled during the redesign</h2>
-<div class="sectionbody">
+<div class="sect2">
+<h3 id="_spectators"><a class="anchor" href="#_spectators"></a>Spectators</h3>
 <div class="paragraph">
-<p>The previous routing layer is commented out in place rather than deleted, and the code that
-depended on it is switched off with it:</p>
+<p><code>BaseSpectator::onInitialize()</code> finds or adds a child <code>InputController</code> named <code>Input</code> and
+calls the virtual <code>setupInputActions()</code>. Each spectator reads its actions in <code>onTick()</code> and
+looks the controller up every tick rather than caching a pointer, so removing the child
+component is safe.</p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
-<col style="width: 33.3333%;">
-<col style="width: 66.6667%;">
+<col style="width: 14.2857%;">
+<col style="width: 28.5714%;">
+<col style="width: 57.1429%;">
 </colgroup>
 <thead>
 <tr>
-<th class="tableblock halign-left valign-top">What</th>
-<th class="tableblock halign-left valign-top">Current state</th>
+<th class="tableblock halign-left valign-top">Spectator</th>
+<th class="tableblock halign-left valign-top">Action</th>
+<th class="tableblock halign-left valign-top">Bindings and effect</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>NX::InputController</code>, <code>KeyChord</code>, <code>InputContext</code>, <code>InputActionEvent</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Commented out in <code>NxWorld/Framework/InputController.{h,cpp}</code> and <code>NxSubsystems/Input/InputTypes.{h,cpp}</code>.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2D</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Pan</code> + <code>PointerDelta</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Middle mouse button held; mouse delta pans the camera.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Context switching in the frame loop</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>setActiveContext()</code> call is commented out; the system has no notion of Editor versus Gameplay input.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2D</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Scroll</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Mouse wheel pans, or zooms while <code>Zoom</code> (Left Ctrl) is active.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Right-to-left modifier normalization</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Gone with the old dispatch. <code>KeyboardEvent</code> reports the key GLFW reported.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2D</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Boost</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Left Shift or gamepad left bumper; multiplies pan and scroll speed.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Editor binding editor</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>ECSEditorInputControllerAdapter</code> is commented out and no longer registered in <code>NxECSBasedEditor</code>.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2D</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Move</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Gamepad left stick pans.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Editor "Save all" chord</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Not bound.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2D</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>GamepadZoom</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Right trigger minus left trigger zooms.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Spectator3D</code> keyboard movement and wheel dolly</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Commented out. Right-drag look still works through the polled mouse action.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">3D</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Rotate</code> + <code>PointerDelta</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Right mouse button held; mouse delta yaws and pitches.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>tests/ECSTests/InputControllerTests.cpp</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Wrapped in <code>#if 0</code> until the tests are ported.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">3D</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Move</code>, <code>Look</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Gamepad left stick moves, right stick looks.</p></td>
 </tr>
 </tbody>
 </table>
 <div class="paragraph">
-<p><code>NxWorld/Framework/Input/InputController.h</code> holds the start of the replacement in namespace
-<code>NxWorld::Framework::Input</code>: <code>InputDevice</code>, <code>KeyChord</code>, <code>Binding</code>, and an empty
-<code>InputController</code> component. It is a sketch — not reflected, not registered, and not built.</p>
+<p><code>Spectator3D</code> has no keyboard movement or wheel dolly bindings yet.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_still_polling"><a class="anchor" href="#_still_polling"></a>Still polling</h3>
+<div class="paragraph">
+<p><code>game-example/Player</code> has not been ported: it reads W/A/S/D and the arrow keys through
+<code>Platform::Keyboard::IsKeyPressed()</code>.</p>
 </div>
 <div class="paragraph">
 <p>Implementation: <code>Platform/Input/Events/<strong>.h</code>, <code>Platform/Input/{Window,Glfw,CursorDeltaTracker}.</strong></code>,
 <code>Platform/Input/InputDevices/{Keyboard,Mouse,Joystick}.{h,cpp}</code>,
 <code>NxWorld/Framework/InputSystem.{h,cpp}</code>,
-<code>NxSubsystems/Input/{InputAction,InputManager}.{h,cpp}</code>,
-<code>Editor/GameEditor.cpp</code>, and <code>NxWorld/Scene/SceneObjects/Spectator/Spectator.cpp</code>.
-Checks: <code>tests/Runtime/InputEventsTests.cpp</code>.</p>
+<code>NxWorld/Framework/Input/{InputController,InputActionTypes}.{h,cpp}</code>,
+<code>Editor/GameEditor.cpp</code>, <code>Editor/Windows/NxECSBasedEditor.cpp</code>, and
+<code>NxWorld/Scene/SceneObjects/Spectator/Spectator.cpp</code>.
+Checks: <code>tests/Runtime/InputEventsTests.cpp</code>, <code>tests/ECSTests/InputControllerTests.cpp</code>,
+<code>tests/ECSTests/InputActionStateTests.cpp</code>, and <code>tests/Runtime/SceneInputTests.cpp</code>.</p>
+</div>
 </div>
 </div>
 </div>

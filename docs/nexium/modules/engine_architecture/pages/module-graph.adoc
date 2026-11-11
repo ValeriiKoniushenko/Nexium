@@ -44,15 +44,14 @@ Foundation's separate private logging target is disabled.
 |`Nexium::Fundamental::TextureAtlas` |Atlas packing and GPU texture |Foundation, RawBackend Common and Graphics, Utils::Core.
 |`Nexium::Subsystem::Graphics` |ShaderManager, ShaderProgram, metadata, graphics data, debug lines, Font/Face text rendering |Foundation, Foundation Interfaces, Fundamental ResourceManagement, Platform Graphics, RawBackend Graphics, Utils::Core, JustReflectMe::Adapter, glm.
 |`Nexium::Subsystem::AssetsManager` |Filesystem index and loading, TextureAsset |Fundamental Assets/ECS/ResourceManagement/TextureAtlas, RawBackend Graphics, Utils::Utils.
-|`Nexium::Subsystem::Input` |InputAction, keyboard/mouse managers, InputTypes (contexts, chords, triggers) |Foundation, Foundation Interfaces, Platform Input, Utils::Core, glm.
 |`Nexium::Subsystem::AssimpImporter` |Optional mesh importer |Subsystem Graphics.
 |`Nexium::World::Animation` |BaseAnimation, FrameByFrameAnimation |Foundation, Fundamental ECS and ResourceManagement, Utils::Core, JustReflectMe::Adapter.
 |`Nexium::World::AssimpMisc` |AssimpHelper (3D only) |Foundation is private; Utils::Core, assimp::assimp.
-|`Nexium::World::Base` |World/framework, InputSystem, framework managers and state, SceneManager, Scene, scene objects (grid, rectangles, spectator), actors, cameras, animator, skybox types |Foundation, Foundation Interfaces, World Animation, Fundamental Assets/Base/ECS/ResourceManagement, Subsystem AssetsManager/Graphics/Input, Platform Input, RawBackend Common, Utils::Core, JustReflectMe::Adapter.
+|`Nexium::World::Base` |World/framework, InputSystem, InputController and its action/binding types, framework managers and state, SceneManager, Scene, scene objects (grid, rectangles, spectator), actors, cameras, animator, skybox types |Foundation, Foundation Interfaces, World Animation, Fundamental Assets/Base/ECS/ResourceManagement, Subsystem AssetsManager/Graphics, Platform Input, RawBackend Common, Utils::Core, JustReflectMe::Adapter.
 |`Nexium::Runtime::Base` |Runtime |World through WHOLE_ARCHIVE.
 |`Nexium::Runtime::GameUtils` |FPSCounter |None.
 |`Nexium::Editor::GuiComponents` |Widgets and layouts |Foundation, Fundamental ECS and ResourceManagement, Platform Input, Subsystem AssetsManager, Core::ImGui, Utils::Core, Utils::Utils.
-|`Nexium::Editor::Base` |EditorIntegration, GameEditor, windows, gizmos, picking, toasts, tools |Runtime, Editor GuiComponents, World, World Animation, Foundation, Fundamental Assets/ECS/ResourceManagement, Subsystem AssetsManager/Graphics/Input, RawBackend Graphics, Core::ImGui, imguizmo::imguizmo, Utils::Core, Utils::Utils, glm, JustReflectMe::Adapter.
+|`Nexium::Editor::Base` |EditorIntegration, GameEditor, windows, gizmos, picking, toasts, tools |Runtime, Editor GuiComponents, World, World Animation, Foundation, Fundamental Assets/ECS/ResourceManagement, Subsystem AssetsManager/Graphics, RawBackend Graphics, Core::ImGui, imguizmo::imguizmo, Utils::Core, Utils::Utils, glm, JustReflectMe::Adapter.
 |===
 
 Every target links only the targets whose headers its own sources include; there are no
@@ -86,7 +85,7 @@ WHOLE_ARCHIVE retains otherwise unreferenced component registrations in these st
 |GameInstance integration pointer |Borrows ApplicationIntegration; attachment/detachment is explicit.
 |World |Owns lighting/time, game/player/level state, and the start-scene name; observes currentCamera. SceneManager is its sibling, not its child.
 |SceneManager |Owns every Scene through intrusive pointers; borrows World and activates the current scene in it.
-|`InputSystem` |Singleton; owns the per-frame queue of input events by value. It subscribes to `Platform::Window` delegates and holds no listener pointers.
+|`InputSystem` |Singleton; owns the per-frame queue of input events by value and holds non-owning `InputController` pointers. Controllers unregister themselves on deinitialize and destruction.
 |Scene |Owns root SceneObjects through intrusive pointers, plus grid/skybox state; weakly remembers its main camera and borrows World while active.
 |BaseComponent |Owns children through intrusive pointers; observes its parent.
 |ObjectSelectorManager |Holds strong pointers to selected components, keyed by addresses.
@@ -102,7 +101,7 @@ Source anchors: `Framework/{GameInstance,World}.h`, `Scene/{Scene,SceneManager}.
 RawBackend's `IDrawable` still names higher-layer camera/actor/mesh types through forward declarations.
 `Scene::directDraw` receives the skybox and grid programs from Runtime and the camera from the
 World it was activated in, but still reads the render mode through the global `gGameInstance`.
-`InputSystem` is a `Core::Singleton`, so the input queue is global rather than owned by a session.
+`InputSystem` is a `Core::Singleton`, so input routing is global rather than owned by a session.
 
 Public header sets support compilation checks, but the shared `sources/` include root also exposes private headers.
 “Subsystem” currently means a service library, not automatic lifetime management.

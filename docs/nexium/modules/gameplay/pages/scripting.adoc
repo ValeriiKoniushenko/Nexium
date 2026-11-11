@@ -26,6 +26,6 @@ so all example behavior lives in components instead.
 * looks up its `FrameByFrameAnimator` child with `findFirstChildOf<T>()` and switches it to the
   animation matching the movement direction.
 
-The keys are hard-wired for now. Rebindable actions and focus-aware input contexts were removed
-with `InputController` and have no replacement yet — see
-xref:engine_architecture:input-system.adoc[Input System].
+The keys are hard-wired because `Player` predates the current `InputController`. New gameplay
+code should add a child `InputController` with named actions and read them in `onTick()`, the way
+the spectators do — see xref:engine_architecture:input-system.adoc[Input System].

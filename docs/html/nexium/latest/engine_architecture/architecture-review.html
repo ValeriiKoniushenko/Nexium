@@ -275,9 +275,9 @@ Scene owns root component trees and handles persistence and drawing.</p>
 <p>The model is suitable for a small authoring engine.
 World does not yet provide the ownership/lifetime boundary implied by its UE-style name.
 Most new managers and GameInstanceSubsystem have logging scaffolding without operational contracts.
-Input shows the same gap: <code>InputSystem</code> has a tested typed event queue, but its routing layer
-(controllers and contexts) is removed pending a redesign, and it is a global singleton rather
-than something a session owns — so switching worlds or sessions has no defined effect on it.</p>
+Input is the exception that proves the point: <code>InputSystem</code> is a real routing service with a
+typed event queue, action controllers, and tests, but it is a global singleton rather than
+something a session owns — so switching worlds or sessions has no defined effect on it.</p>
 </div>
 </div>
 </div>
@@ -325,8 +325,8 @@ camera and clears selection, but component subscriptions are not invalidated.</p
 <p>Extend executable interface checks and CI to the World/Runtime/editor boundary.</p>
 </li>
 <li>
-<p>Give the <code>InputSystem</code> event queue a consumer (bindings and a context policy), then retire
-the polled <code>InputAction</code> managers so input has one path.</p>
+<p>Give input a routing policy — priority, consumption, or contexts — so each owner no longer
+gates its own <code>InputController</code> by hand, and port <code>game-example/Player</code> off direct key polling.</p>
 </li>
 </ol>
 </div>

@@ -9,7 +9,7 @@ Reference counting does not make component trees, registries, or resource payloa
 
 `Foundation::Latency::Collector` is the one explicitly synchronized piece: it guards its sample
 list with a `std::shared_mutex` and records the originating thread id. Nothing else in the
-engine, including the `InputSystem` singleton and its event queue, is written for
+engine, including the `InputSystem` singleton, its event queue, and its controller list, is written for
 concurrent access. See xref:diagnostics.adoc[Diagnostics].
 
 == Build-time concurrency

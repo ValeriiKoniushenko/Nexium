@@ -21,7 +21,6 @@
 
 namespace NX
 {
-
     // tag::input_any_event[]
     using AnyInputEvent
         = std::variant<KeyboardEvent, TextInputEvent, MouseMoveEvent, MouseButtonEvent,

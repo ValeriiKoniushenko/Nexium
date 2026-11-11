@@ -181,6 +181,7 @@ TEST_F(InputControllerRuntimeTests, RegistersOnInitializeAndUnregistersOnDestruc
     EXPECT_FALSE(NX::GetInputSystem().isRegistered(raw));
 }
 
+// tag::input_controller_down[]
 TEST_F(InputControllerRuntimeTests, DownBindingIsActiveWhileHeld)
 {
     addAction("Fire", { KeyBinding(Key::Space, NX::InputTrigger::Down) });
@@ -199,6 +200,7 @@ TEST_F(InputControllerRuntimeTests, DownBindingIsActiveWhileHeld)
     frame();
     EXPECT_FALSE(controller->isActive("Fire"_atom));
 }
+// end::input_controller_down[]
 
 TEST_F(InputControllerRuntimeTests, QuickTapWithinOneFrameIsTriggered)
 {
@@ -415,6 +417,7 @@ TEST_F(InputControllerRuntimeTests, AddActionFromNameAndBindings)
     EXPECT_TRUE(controller->wasTriggered("Save"_atom));
 }
 
+// tag::input_controller_callback[]
 TEST_F(InputControllerRuntimeTests, TriggeredCallbackRunsOncePerPress)
 {
     int calls = 0;
@@ -434,6 +437,7 @@ TEST_F(InputControllerRuntimeTests, TriggeredCallbackRunsOncePerPress)
     frame();
     EXPECT_EQ(calls, 2);
 }
+// end::input_controller_callback[]
 
 TEST_F(InputControllerRuntimeTests, CallbacksCanBeAttachedBeforeActionExists)
 {

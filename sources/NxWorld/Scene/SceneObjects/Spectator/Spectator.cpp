@@ -72,6 +72,7 @@ namespace NX
         }
     }
 
+    // tag::input_spectator2d_actions[]
     void Spectator2D::setupInputActions(InputController& input)
     {
         using Axis = Platform::Joystick::GamepadAxis;
@@ -91,6 +92,7 @@ namespace NX
                         { InputBinding::GamepadAxis(Axis::RightTrigger),
                           InputBinding::GamepadAxis(Axis::LeftTrigger).negated() });
     }
+    // end::input_spectator2d_actions[]
 
     void Spectator2D::onTick(float delta)
     {

@@ -402,11 +402,6 @@ Foundation&#8217;s separate private logging target is disabled.</p>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Fundamental Assets/ECS/ResourceManagement/TextureAtlas, RawBackend Graphics, Utils::Utils.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Nexium::Subsystem::Input</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">InputAction, keyboard/mouse managers, InputTypes (contexts, chords, triggers)</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Foundation, Foundation Interfaces, Platform Input, Utils::Core, glm.</p></td>
-</tr>
-<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Nexium::Subsystem::AssimpImporter</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Optional mesh importer</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Subsystem Graphics.</p></td>
@@ -423,8 +418,8 @@ Foundation&#8217;s separate private logging target is disabled.</p>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Nexium::World::Base</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">World/framework, InputSystem, framework managers and state, SceneManager, Scene, scene objects (grid, rectangles, spectator), actors, cameras, animator, skybox types</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Foundation, Foundation Interfaces, World Animation, Fundamental Assets/Base/ECS/ResourceManagement, Subsystem AssetsManager/Graphics/Input, Platform Input, RawBackend Common, Utils::Core, JustReflectMe::Adapter.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">World/framework, InputSystem, InputController and its action/binding types, framework managers and state, SceneManager, Scene, scene objects (grid, rectangles, spectator), actors, cameras, animator, skybox types</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Foundation, Foundation Interfaces, World Animation, Fundamental Assets/Base/ECS/ResourceManagement, Subsystem AssetsManager/Graphics, Platform Input, RawBackend Common, Utils::Core, JustReflectMe::Adapter.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Nexium::Runtime::Base</code></p></td>
@@ -444,7 +439,7 @@ Foundation&#8217;s separate private logging target is disabled.</p>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Nexium::Editor::Base</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">EditorIntegration, GameEditor, windows, gizmos, picking, toasts, tools</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Runtime, Editor GuiComponents, World, World Animation, Foundation, Fundamental Assets/ECS/ResourceManagement, Subsystem AssetsManager/Graphics/Input, RawBackend Graphics, Core::ImGui, imguizmo::imguizmo, Utils::Core, Utils::Utils, glm, JustReflectMe::Adapter.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Runtime, Editor GuiComponents, World, World Animation, Foundation, Fundamental Assets/ECS/ResourceManagement, Subsystem AssetsManager/Graphics, RawBackend Graphics, Core::ImGui, imguizmo::imguizmo, Utils::Core, Utils::Utils, glm, JustReflectMe::Adapter.</p></td>
 </tr>
 </tbody>
 </table>
@@ -516,7 +511,7 @@ WHOLE_ARCHIVE retains otherwise unreferenced component registrations in these st
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>InputSystem</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Singleton; owns the per-frame queue of input events by value. It subscribes to <code>Platform::Window</code> delegates and holds no listener pointers.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Singleton; owns the per-frame queue of input events by value and holds non-owning <code>InputController</code> pointers. Controllers unregister themselves on deinitialize and destruction.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Scene</p></td>
@@ -548,7 +543,7 @@ WHOLE_ARCHIVE retains otherwise unreferenced component registrations in these st
 <p>RawBackend&#8217;s <code>IDrawable</code> still names higher-layer camera/actor/mesh types through forward declarations.
 <code>Scene::directDraw</code> receives the skybox and grid programs from Runtime and the camera from the
 World it was activated in, but still reads the render mode through the global <code>gGameInstance</code>.
-<code>InputSystem</code> is a <code>Core::Singleton</code>, so the input queue is global rather than owned by a session.</p>
+<code>InputSystem</code> is a <code>Core::Singleton</code>, so input routing is global rather than owned by a session.</p>
 </div>
 <div class="paragraph">
 <p>Public header sets support compilation checks, but the shared <code>sources/</code> include root also exposes private headers.

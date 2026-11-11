@@ -269,9 +269,9 @@ animation matching the movement direction.</p>
 </ul>
 </div>
 <div class="paragraph">
-<p>The keys are hard-wired for now. Rebindable actions and focus-aware input contexts were removed
-with <code>InputController</code> and have no replacement yet — see
-<a href="../engine_architecture/input-system.html" class="xref page">Input System</a>.</p>
+<p>The keys are hard-wired because <code>Player</code> predates the current <code>InputController</code>. New gameplay
+code should add a child <code>InputController</code> with named actions and read them in <code>onTick()</code>, the way
+the spectators do — see <a href="../engine_architecture/input-system.html" class="xref page">Input System</a>.</p>
 </div>
 </div>
 </div>

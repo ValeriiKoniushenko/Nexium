@@ -275,8 +275,9 @@ independent concurrent game instances.</p>
 <h2 id="_each_frame"><a class="anchor" href="#_each_frame"></a>Each frame</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Window events are polled first, then gamepads, and then <code>InputSystem</code> drains the input events
-queued by both (see <a href="input-system.html" class="xref page">Input System</a>).
+<p>Window events are polled first, then gamepads, and then <code>InputSystem</code> routes the input events
+queued by both to the registered <code>InputController</code> components and runs their action callbacks
+(see <a href="input-system.html" class="xref page">Input System</a>).
 Updates use the previous frame&#8217;s measured delta; the first delta is zero.</p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
@@ -300,8 +301,8 @@ Updates use the previous frame&#8217;s measured delta; the first delta is zero.<
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Integration update</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>updateInput()</code>, if an integration is attached.</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>tick(delta)</code>: editor windows and keyboard/mouse actions.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">None.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>tick(delta)</code>: editor windows; it also enables or disables the editor&#8217;s shortcut controller.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Drawing</p></td>
@@ -363,7 +364,7 @@ See <a href="file-io.html" class="xref page">File I/O</a> for persistence and <a
 </div>
 <div class="paragraph">
 <p>The editor hooks Runtime calls are declared in <code>NxWorld/Framework/ApplicationIntegration.h</code>:
-<code>preInitialize</code>, <code>initialize</code>, <code>readFromCache</code>, <code>writeToCache</code>, <code>updateInput</code>, <code>tick</code>,
+<code>preInitialize</code>, <code>initialize</code>, <code>readFromCache</code>, <code>writeToCache</code>, <code>tick</code>,
 <code>updateSceneInteraction</code>, <code>isViewportFocused</code>, <code>beforeSceneDraw</code>, <code>afterSceneDraw</code>,
 <code>clearSceneRenderTarget</code>, and <code>getRenderSize</code>.</p>
 </div>

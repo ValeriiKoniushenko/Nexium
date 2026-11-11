@@ -10,7 +10,7 @@ editor only through the `ApplicationIntegration` interface.
 |===
 |Object |Role
 |`EditorIntegration` |Implements `ApplicationIntegration`. Borrows Runtime, owns the three objects below plus `SceneTabsCache`, and attaches/detaches itself from GameInstance.
-|`GameEditor` |Owns the ImGui setup, the window list, toast notifications, the polled input managers, and the scene render target (`sceneRenderTarget`).
+|`GameEditor` |Owns the ImGui setup, the window list, toast notifications, the shortcut `InputController`, and the scene render target (`sceneRenderTarget`).
 |`ObjectSelectorManager` |Holds strong references to selected components, keyed by address.
 |`ObjectPickerAggregator` |Chooses a picking strategy and dispatches pick requests.
 |===
@@ -20,7 +20,7 @@ are global accessors over the integration instance, so editor code reaches these
 without being handed them.
 
 `EditorIntegration` maps the Runtime hooks onto `GameEditor`: `tick()` draws the windows,
-`updateInput()` updates the polled keyboard manager, `updateSceneInteraction()` services
+`updateSceneInteraction()` services
 pick requests, `isViewportFocused()` forwards to the `GameViewportEWC` window,
 `beforeSceneDraw()`/`afterSceneDraw()` bind and unbind the scene target through
 `RenderTargetToTexture::callMePreDraw()` / `callMeAfterDraw()`, and

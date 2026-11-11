@@ -255,7 +255,7 @@ editor only through the <code>ApplicationIntegration</code> interface.</p>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>GameEditor</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Owns the ImGui setup, the window list, toast notifications, the polled input managers, and the scene render target (<code>sceneRenderTarget</code>).</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Owns the ImGui setup, the window list, toast notifications, the shortcut <code>InputController</code>, and the scene render target (<code>sceneRenderTarget</code>).</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>ObjectSelectorManager</code></p></td>
@@ -274,7 +274,7 @@ without being handed them.</p>
 </div>
 <div class="paragraph">
 <p><code>EditorIntegration</code> maps the Runtime hooks onto <code>GameEditor</code>: <code>tick()</code> draws the windows,
-<code>updateInput()</code> updates the polled keyboard manager, <code>updateSceneInteraction()</code> services
+<code>updateSceneInteraction()</code> services
 pick requests, <code>isViewportFocused()</code> forwards to the <code>GameViewportEWC</code> window,
 <code>beforeSceneDraw()</code>/<code>afterSceneDraw()</code> bind and unbind the scene target through
 <code>RenderTargetToTexture::callMePreDraw()</code> / <code>callMeAfterDraw()</code>, and

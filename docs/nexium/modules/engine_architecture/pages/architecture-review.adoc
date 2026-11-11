@@ -35,9 +35,9 @@ Scene owns root component trees and handles persistence and drawing.
 The model is suitable for a small authoring engine.
 World does not yet provide the ownership/lifetime boundary implied by its UE-style name.
 Most new managers and GameInstanceSubsystem have logging scaffolding without operational contracts.
-Input shows the same gap: `InputSystem` has a tested typed event queue, but its routing layer
-(controllers and contexts) is removed pending a redesign, and it is a global singleton rather
-than something a session owns — so switching worlds or sessions has no defined effect on it.
+Input is the exception that proves the point: `InputSystem` is a real routing service with a
+typed event queue, action controllers, and tests, but it is a global singleton rather than
+something a session owns — so switching worlds or sessions has no defined effect on it.
 
 == Reflection and persistence
 
@@ -61,8 +61,8 @@ Prioritize these behaviors within the existing modules:
 . Create a disposable Play-session copy from authored state and destroy it on Stop.
 . Add an asset-reference/move policy and portable content identifiers.
 . Extend executable interface checks and CI to the World/Runtime/editor boundary.
-. Give the `InputSystem` event queue a consumer (bindings and a context policy), then retire
-  the polled `InputAction` managers so input has one path.
+. Give input a routing policy — priority, consumption, or contexts — so each owner no longer
+  gates its own `InputController` by hand, and port `game-example/Player` off direct key polling.
 
 A project-content context should move game-specific atlas setup into game-example.
 Keep the editor-enabled executable while building these contracts.

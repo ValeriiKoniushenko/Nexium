@@ -289,7 +289,11 @@
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">InputSystem → queued events</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Owned by value in two reused buffers; no pointers to devices or listeners.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Owned by value in two reused buffers.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">InputSystem → controllers</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Non-owning pointers; each <code>InputController</code> unregisters itself on deinitialize and in its destructor.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">GameEditor → windows</p></td>

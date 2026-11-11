@@ -61,6 +61,7 @@ namespace NX
     {
         return std::ranges::find(_controllers, controller) != _controllers.end();
     }
+
     // tag::input_process_events[]
     void InputSystem::processEvents()
     {

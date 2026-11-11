@@ -563,6 +563,7 @@ namespace NX
     void GameEditor::setupShortcuts()
     {
         using Key = Platform::Keyboard::Key;
+        // tag::input_editor_shortcuts[]
         _inputController = InputController::Create();
         _inputController->initialize();
 
@@ -574,6 +575,7 @@ namespace NX
             { InputBinding::Shortcut(Key::S, InputModifier::Control | InputModifier::Shift) },
             [] { gGameInstance->saveAllToCache(); });
 
+        // end::input_editor_shortcuts[]
         _inputController->addAction("Toggle render mode"_atom, { InputBinding::Shortcut(Key::F1) },
                                     [] { gGameInstance->toggleRenderMode(); });
 
