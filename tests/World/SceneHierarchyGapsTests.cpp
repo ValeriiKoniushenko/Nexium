@@ -85,3 +85,28 @@ TEST(SceneHierarchyGaps, DisabledChildIsNotDrawnEvenIfParentIs)
 
     EXPECT_EQ(child->draws, 0);
 }
+
+TEST(SceneHierarchyGaps, GlobalPositionFollowsTheParentsRotationAndScale)
+{
+    // SceneObject::getGlobalPosition()/getGlobalRotation() (and BaseCamera::recalculate-
+    // CameraMatrices, which repeats the same walk) add up the parent chain's positions and
+    // Euler angles. That is only correct while every ancestor is unrotated and unscaled: a
+    // child at local (100, 0, 0) under a parent rotated 90 degrees around Z sits at world
+    // (0, 100, 0), which is what the model matrix (and the rendered sprite) says. The Spectator
+    // -> OrthographicCamera rig is exactly such a parent/child pair, so a rotated or scaled
+    // spectator would move its camera somewhere else than its gizmo shows. For 3D parents
+    // Euler angles do not even add. Expected to FAIL until global transforms are derived from
+    // the composed model matrix.
+    NX::SceneObject parent;
+    parent.setRotationZ(90.f);
+    parent.setScale({ 2.f, 2.f, 1.f });
+    auto* child = parent.addChildComponent<NX::SceneObj::Rectangle>();
+    child->setPosition(NX::GPos3{ 100.f, 0.f, 0.f });
+    parent.recalculateMatrices();
+
+    const glm::vec3 fromMatrix = child->getModelMatrix()[3];
+    const glm::vec3 reported = child->getGlobalPosition();
+    EXPECT_NEAR(reported.x, fromMatrix.x, 1.e-3f);
+    EXPECT_NEAR(reported.y, fromMatrix.y, 1.e-3f);
+    EXPECT_NEAR(fromMatrix.y, 200.f, 1.e-3f); // sanity: the matrix really rotates and scales
+}
