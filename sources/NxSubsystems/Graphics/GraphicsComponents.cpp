@@ -98,10 +98,18 @@ namespace NX
 
     void BaseGraphicsData::generate()
     {
-        if (Verify(!isValid())) [[likely]]
+        // Idempotent: isValid() also needs a shader, so it cannot tell "already generated"
+        // from "not configured yet"; guard on the names themselves to never lose a set.
+        if (_vao == 0)
         {
             glGenVertexArrays(1, &_vao);
+        }
+        if (_vbo == 0)
+        {
             glGenBuffers(1, &_vbo);
+        }
+        if (_ebo == 0)
+        {
             glGenBuffers(1, &_ebo);
         }
     }
@@ -292,9 +300,9 @@ namespace NX
 
     void BaseTextureGraphicsData::generate()
     {
-        if (Verify(!isValid())) [[likely]]
+        BaseGraphicsData::generate();
+        if (_texture == 0)
         {
-            BaseGraphicsData::generate();
             glGenTextures(1, &_texture);
         }
     }
@@ -400,9 +408,9 @@ namespace NX
 
     void SeparTextureGraphicsData::generate()
     {
-        if (Verify(!isValid())) [[likely]]
+        BaseTextureGraphicsData::generate();
+        if (_textureVbo == 0)
         {
-            BaseTextureGraphicsData::generate();
             glGenBuffers(1, &_textureVbo);
         }
     }
