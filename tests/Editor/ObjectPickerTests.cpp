@@ -74,11 +74,14 @@ namespace
             gGameInstance.reset();
         }
 
-        NX::SceneObj::Rectangle* addRectangle(glm::vec3 position)
+        NX::SceneObj::Rectangle* addRectangle(glm::vec3 position, bool recalculate = true)
         {
             auto rectangle = NX::SceneObj::Rectangle::Create();
             rectangle->setPosition(NX::GPos3(position));
-            rectangle->recalculateMatrices();
+            if (recalculate)
+            {
+                rectangle->recalculateMatrices();
+            }
             auto* raw = rectangle.get();
             _scene.addObjectToScene(std::move(rectangle));
             return raw;
@@ -119,5 +122,20 @@ namespace
         EXPECT_EQ(pick({ 175.f, 175.f }), top);
         EXPECT_EQ(pick({ 110.f, 110.f }), bottom);
         EXPECT_EQ(pick({ 240.f, 240.f }), top);
+    }
+
+    TEST_F(ObjectPickerTests, PicksWithTheTransformEditedSinceTheLastDraw)
+    {
+        // Picking runs before the scene is drawn in a frame, so a rectangle moved by the
+        // properties window (or by gameplay code) has a dirty, not yet recalculated matrix.
+        // The picker must look at where the rectangle is, not where it was last drawn.
+        auto* rectangle = addRectangle({ 100.f, 100.f, 0.f });
+        rectangle->setPosition(NX::GPos3{ 500.f, 400.f, 0.f });
+
+        EXPECT_EQ(pick({ 550.f, 450.f }), rectangle);
+        EXPECT_EQ(pick({ 150.f, 150.f }), nullptr);
+
+        auto* neverDrawn = addRectangle({ 300.f, 100.f, 0.f }, false);
+        EXPECT_EQ(pick({ 350.f, 150.f }), neverDrawn);
     }
 } // namespace
