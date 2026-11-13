@@ -208,6 +208,8 @@ namespace NX
             2.f * pickPos.y / frameSize.height - 1.f,
         };
 
+        // Scene objects are drawn in order with the depth test disabled, so a later object is
+        // painted over an earlier one: the last rectangle under the cursor is the visible one.
         SceneObj::Rectangle* pickedRect = nullptr;
 
         for (auto& object : scene.getObjects())
@@ -250,14 +252,9 @@ namespace NX
             const glm::vec3 localHit = rayOrigin + rayDirection * t;
             constexpr float size = SceneObj::Rectangle::GetDefaultDrawRectSize();
 
-            auto rectPos = rectangle->getPosition();
-            auto rectSize = rectangle->getDrawRectSize();
-            rectPos -= camera->getGlobalPosition();
-
             if (localHit.x >= 0.f && localHit.x <= size && localHit.y >= 0.f && localHit.y <= size)
             {
                 pickedRect = rectangle;
-                break;
             }
         }
 
