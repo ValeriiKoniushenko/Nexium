@@ -224,6 +224,9 @@ namespace NX
             {
                 continue;
             }
+            // Picking runs before this frame's draw: use the current transform, not the one
+            // cached by the previous draw.
+            rectangle->tryToRecalculateMatrices();
             const glm::mat4& model = rectangle->getModelMatrix();
             const float modelDeterminant = glm::determinant(model);
             if (!std::isfinite(modelDeterminant) || modelDeterminant == 0.f)
