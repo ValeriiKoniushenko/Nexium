@@ -13,6 +13,8 @@
 #include "Platform/Input/Glfw.h"
 
 #include "gtest/gtest.h"
+#include <cstdlib>
+#include <string_view>
 
 /// Fixture for tests that need real GL objects. Each test gets a hidden GLFW window with an
 /// OpenGL 4.5 core context, torn down again afterwards so the rest of the suite keeps running
@@ -25,6 +27,13 @@ class GLContextTest : public ::testing::Test
 protected:
     void SetUp() override
     {
+        // GPU drivers (proprietary ones especially) are not valgrind-clean; the CI valgrind
+        // jobs are headless anyway, so keep local valgrind runs focused on engine code.
+        if (const char* preload = std::getenv("LD_PRELOAD");
+            preload && std::string_view(preload).contains("vgpreload"))
+        {
+            GTEST_SKIP() << "GL tests are skipped under valgrind.";
+        }
         if (!glfwInit())
         {
             GTEST_SKIP() << "GLFW cannot initialise in this environment.";
