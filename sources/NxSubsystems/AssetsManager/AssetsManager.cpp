@@ -192,26 +192,38 @@ namespace NX
 
     TextureAtlas& AssetsManager::getAtlas(const Core::StringAtom& atlasName)
     {
-        auto it = _textureAtlases.find(atlasName);
-        if (it == _textureAtlases.end()) [[unlikely]]
+        auto* atlas = findAtlas(atlasName);
+        if (!atlas) [[unlikely]]
         {
             throw std::runtime_error("AssetsManager: No texture atlas with name '"
                                      + atlasName.toStdString() + "' found");
         }
 
-        return it->second;
+        return *atlas;
     }
 
     const TextureAtlas& AssetsManager::getAtlas(const Core::StringAtom& atlasName) const
     {
-        auto it = _textureAtlases.find(atlasName);
-        if (it == _textureAtlases.end()) [[unlikely]]
+        const auto* atlas = findAtlas(atlasName);
+        if (!atlas) [[unlikely]]
         {
             throw std::runtime_error("AssetsManager: No texture atlas with name '"
                                      + atlasName.toStdString() + "' found");
         }
 
-        return it->second;
+        return *atlas;
+    }
+
+    TextureAtlas* AssetsManager::findAtlas(const Core::StringAtom& atlasName) noexcept
+    {
+        const auto it = _textureAtlases.find(atlasName);
+        return it == _textureAtlases.end() ? nullptr : &it->second;
+    }
+
+    const TextureAtlas* AssetsManager::findAtlas(const Core::StringAtom& atlasName) const noexcept
+    {
+        const auto it = _textureAtlases.find(atlasName);
+        return it == _textureAtlases.end() ? nullptr : &it->second;
     }
 
     std::vector<Core::StringAtom> AssetsManager::getAtlasesAsVector() const
