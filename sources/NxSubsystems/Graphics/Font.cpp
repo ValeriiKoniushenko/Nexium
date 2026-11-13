@@ -168,8 +168,9 @@ namespace NX
 
             const auto& ch = _glyphs[c].glyph;
 
-            const auto xpos = static_cast<float>(xOffset + ch.bearing.width);
-            const auto ypos = (static_cast<float>(ch.size.height - ch.bearing.height));
+            const auto quadOrigin = GetGlyphQuadOrigin(ch, static_cast<float>(xOffset));
+            const float xpos = quadOrigin.x;
+            const float ypos = quadOrigin.y;
             const auto w = static_cast<float>(ch.size.width);
             const auto h = static_cast<float>(ch.size.height);
 
@@ -190,6 +191,12 @@ namespace NX
             glDrawArrays(GL_TRIANGLES, 0, 6);
             xOffset += ch.advance >> 6;
         }
+    }
+
+    glm::vec2 Face::GetGlyphQuadOrigin(const GlyphSize& glyph, float penX) noexcept
+    {
+        return { penX + static_cast<float>(glyph.bearing.width),
+                 static_cast<float>(glyph.bearing.height - glyph.size.height) };
     }
 
     void Face::release()

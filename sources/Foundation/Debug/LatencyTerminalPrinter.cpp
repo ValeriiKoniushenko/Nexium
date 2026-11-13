@@ -204,12 +204,19 @@ namespace Foundation::Latency
                 nameWidth = std::max(nameWidth, hotspotName(hotspot).size());
             }
 
-            output << std::format("{:<{}}  {:>7}  {:>11}  {:>11}  {:>11}  {:>11}\n", "Hotspot",
-                                  nameWidth, "Calls", "Total", "Average", "Min", "Max");
+            // Pad by hand: a dynamic width ("{:<{}}") is rejected by clang 23's C++26 mode
+            // with libstdc++, while a fixed-width field is fine everywhere.
+            const auto padded = [nameWidth](std::string name)
+            {
+                name.resize(std::max(name.size(), nameWidth), ' ');
+                return name;
+            };
+            output << std::format("{}  {:>7}  {:>11}  {:>11}  {:>11}  {:>11}\n", padded("Hotspot"),
+                                  "Calls", "Total", "Average", "Min", "Max");
             for (const auto& hotspot : hotspots)
             {
-                output << std::format("{:<{}}  {:>7}  {:>11}  {:>11}  {:>11}  {:>11}\n",
-                                      hotspotName(hotspot), nameWidth, hotspot.calls,
+                output << std::format("{}  {:>7}  {:>11}  {:>11}  {:>11}  {:>11}\n",
+                                      padded(std::string(hotspotName(hotspot))), hotspot.calls,
                                       formatDuration(hotspot.total),
                                       formatDuration(hotspot.average()),
                                       formatDuration(hotspot.min), formatDuration(hotspot.max));

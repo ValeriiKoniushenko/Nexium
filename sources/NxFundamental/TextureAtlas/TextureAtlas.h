@@ -50,7 +50,11 @@ namespace NX
 
         [[nodiscard]] const RawBackend::Texture& getTexture() const noexcept { return _texture; }
 
+        /// Throws std::runtime_error when `name` is unknown; use findRect on hot paths.
         [[nodiscard]] const Core::FRect& getRect(const Core::StringAtom& name) const;
+
+        /// Non-throwing lookup: nullptr when `name` is not part of this atlas.
+        [[nodiscard]] const Core::FRect* findRect(const Core::StringAtom& name) const noexcept;
 
         [[nodiscard]] const std::unordered_map<Core::StringAtom, Core::FRect>& getRects()
             const noexcept

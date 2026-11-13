@@ -78,6 +78,32 @@ namespace NX::SceneObj
         return FSize2(GetDefaultDrawRectSize() * glm::vec2(_scale));
     }
 
+    std::array<glm::vec3, 4> Rectangle::getWorldCorners()
+    {
+        constexpr float size = GetDefaultDrawRectSize();
+        constexpr std::array<glm::vec3, 4> localCorners = {
+            glm::vec3(0.0f, 0.0f, 0.0f), // bottom-left (pivot of the unit quad)
+            glm::vec3(size, 0.0f, 0.0f), // bottom-right
+            glm::vec3(size, size, 0.0f), // top-right
+            glm::vec3(0.0f, size, 0.0f)  // top-left
+        };
+
+        // Only a dirty root knows its parent chain is clean; a dirty child is recalculated by
+        // its parent. Without a parent, recalculate against the identity like onDraw does.
+        if (!getParent())
+        {
+            tryToRecalculateMatrices();
+        }
+
+        const auto& model = getModelMatrix();
+        std::array<glm::vec3, 4> worldCorners{};
+        for (std::size_t i = 0; i < worldCorners.size(); ++i)
+        {
+            worldCorners[i] = glm::vec3(model * glm::vec4(localCorners[i], 1.f));
+        }
+        return worldCorners;
+    }
+
     void Rectangle::tryDrawOutline(BaseCamera& camera)
     {
         if (!shouldDrawOutline())
@@ -93,27 +119,9 @@ namespace NX::SceneObj
             return;
         }
 
-        auto pos = getGlobalPosition();
-        auto rot = glm::radians(getGlobalRotation());
-        auto size = getDrawRectSize().toGlm();
-
-        // // Converting Left-Bottom origin -> Left-Top origin
-        // pos.y -= GetDefaultDrawRectSize();
-
-        auto rotation = glm::quat(rot);
-
-        std::array<glm::vec3, 4> localCorners = {
-            glm::vec3(0.0f, 0.0f, 0.0f),     // top-left (pivot)
-            glm::vec3(size.x, 0.0f, 0.0f),   // top-right
-            glm::vec3(size.x, size.y, 0.0f), // bottom-right
-            glm::vec3(0.0f, size.y, 0.0f)    // bottom-left
-        };
-
-        std::array<glm::vec3, 4> worldCorners{};
-        for (int i = 0; i < 4; ++i)
-        {
-            worldCorners[i] = pos + rotation * localCorners[i];
-        }
+        // Same geometry the shader draws: the unit quad through the model matrix, so origin,
+        // scale pivot and parent transforms are all respected.
+        const auto worldCorners = getWorldCorners();
 
         Debug::Line::Draw(shader, camera.getMatrix(), worldCorners[0], worldCorners[1], 2.f);
         Debug::Line::Draw(shader, camera.getMatrix(), worldCorners[1], worldCorners[2], 2.f);
@@ -126,7 +134,16 @@ namespace NX::SceneObj
         static BaseGraphicsData gcd = GetDefaultGraphicsData(GetDefaultDrawRectSize());
         tryToRecalculateMatrices();
 
-        auto& atlas = GetAssetsManager()->getAtlas(_atlasName);
+        // Content may reference assets that no longer exist; the render loop must survive it.
+        auto* atlasPtr = GetAssetsManager()->findAtlas(_atlasName);
+        if (!atlasPtr) [[unlikely]]
+        {
+            LOG_CRITICAL_ONCE(("Atlas '{}' isn't generated. '{}' won't be drawn."_f
+                               << _atlasName << getComponentName())
+                                  .c_str());
+            return;
+        }
+        auto& atlas = *atlasPtr;
         auto* shader = GetShaderManager().getShaderProgram("2d_rect"_atom);
         if (!shader) [[unlikely]]
         {
@@ -150,9 +167,20 @@ namespace NX::SceneObj
         glm::vec2 textureSize{ 1.f, 1.f };
         if (!_textureName.isEmpty())
         {
-            const auto rect = atlas.getRect(_textureName);
-            textureOffset = rect.getLeftTop();
-            textureSize = rect.getRightBottom() - textureOffset;
+            if (const auto* rect = atlas.findRect(_textureName)) [[likely]]
+            {
+                textureOffset = rect->getLeftTop();
+                textureSize = rect->getRightBottom() - textureOffset;
+            }
+            else
+            {
+                // Keep the sprite visible (whole atlas) so it can be found and fixed in the
+                // editor instead of taking the application down.
+                LOG_CRITICAL_ONCE(("Texture '{}' isn't in atlas '{}'. '{}' is drawn with the "
+                                   "whole atlas."_f
+                                   << _textureName << _atlasName << getComponentName())
+                                      .c_str());
+            }
         }
 
         auto modelMatrix = getModelMatrix();

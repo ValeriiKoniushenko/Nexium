@@ -117,8 +117,14 @@ namespace NX
         void generateTextureAtlas(const Core::StringAtom& atlasName,
                                   const std::filesystem::path& atlasFolder);
 
+        /// Throws std::runtime_error when the atlas is unknown; use findAtlas on hot paths.
         [[nodiscard]] NX::TextureAtlas& getAtlas(const Core::StringAtom& atlasName);
         [[nodiscard]] const NX::TextureAtlas& getAtlas(const Core::StringAtom& atlasName) const;
+
+        /// Non-throwing lookup: nullptr when no atlas was generated under `atlasName`.
+        [[nodiscard]] NX::TextureAtlas* findAtlas(const Core::StringAtom& atlasName) noexcept;
+        [[nodiscard]] const NX::TextureAtlas* findAtlas(
+            const Core::StringAtom& atlasName) const noexcept;
         [[nodiscard]] std::vector<Core::StringAtom> getAtlasesAsVector() const;
         [[nodiscard]] std::size_t getAtlasesCount() const noexcept
         {
