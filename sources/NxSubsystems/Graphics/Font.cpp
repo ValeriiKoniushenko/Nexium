@@ -16,7 +16,7 @@
 
 #include <exception>
 
-namespace NX
+namespace NX::Graphics
 {
     Face::Face()
         : _face{ std::make_unique<RawBackend::Font::Face>() }
@@ -218,4 +218,4 @@ namespace NX
         return NxSubsystems::getLogger();
     }
 
-} // namespace NX
+} // namespace NX::Graphics

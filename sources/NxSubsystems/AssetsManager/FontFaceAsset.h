@@ -42,8 +42,8 @@ namespace NX
         void setFilePath(const std::filesystem::path& value);
         [[nodiscard]] const std::filesystem::path& getFilePath() const noexcept { return _path; }
 
-        [[nodiscard]] const NX::Face& getData() const noexcept { return _data; }
-        [[nodiscard]] NX::Face& getData() noexcept { return _data; }
+        [[nodiscard]] const NX::Graphics::Face& getData() const noexcept { return _data; }
+        [[nodiscard]] NX::Graphics::Face& getData() noexcept { return _data; }
 
         // Overrides
         [[nodiscard]] const char* getPrefix() const override { return "FFace"; }
@@ -53,7 +53,7 @@ namespace NX
         void onUnloadRequest() override;
 
     protected:
-        NX::Face _data;
+        NX::Graphics::Face _data;
 
         // properties
 

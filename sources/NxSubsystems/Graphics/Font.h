@@ -25,7 +25,7 @@ namespace RawBackend::Font
     class Face;
 }
 
-namespace NX
+namespace NX::Graphics
 {
     class ShaderProgram;
     class BaseCamera;
@@ -108,4 +108,4 @@ namespace NX
         std::vector<Glyph> _glyphs;
     };
 
-} // namespace NX
+} // namespace NX::Graphics
