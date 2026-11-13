@@ -79,12 +79,14 @@ namespace RawBackend
 
     void Texture::release()
     {
-        if (_size.height != 0 && _textureId != 0)
+        // Ownership is the GL name alone: textures filled through putImage() (glyphs, atlas)
+        // never record a size, and must be freed all the same.
+        if (_textureId != 0)
         {
             glDeleteTextures(1, &_textureId);
             _textureId = 0;
-            _size = {};
         }
+        _size = {};
     }
 
     void Texture::activateTextureUnit(GLuint unit) const
