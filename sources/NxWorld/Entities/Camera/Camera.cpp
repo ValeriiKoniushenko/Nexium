@@ -48,7 +48,6 @@ namespace NX
         mat = glm::rotate(mat, glm::radians(_worldRotation.z), glm::vec3(0.f, 0.f, 1.f));
 
         mat = glm::translate(mat, _worldPos * -1.f);
-        mat = glm::translate(mat, _origin);
 
         _isDirtyModelMatrix = false;
     }

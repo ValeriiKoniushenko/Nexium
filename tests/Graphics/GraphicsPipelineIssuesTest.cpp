@@ -80,8 +80,9 @@ TEST(GraphicsPipelineIssues, BaseGraphicsDataMoveAssignmentKeepsDrawModifiers)
 
 TEST(GraphicsPipelineIssues, GlyphVerticalOffsetIsSignedArithmetic)
 {
-    // Font.cpp computes `ch.size.height - ch.bearing.height`; glyphs whose bitmap_top exceeds
-    // their bitmap rows ('-', '^', '"', '*', ...) need a negative result here.
+    // Glyph placement subtracts `size.height` from `bearing.height` (see
+    // Face::GetGlyphQuadOrigin); glyphs whose bitmap rows exceed their bitmap_top
+    // ('g', 'p', 'y', ...) need a negative result, so the arithmetic must be signed.
     using G = Face::GlyphSize;
     using Diff = decltype(std::declval<G>().size.height - std::declval<G>().bearing.height);
 

@@ -89,6 +89,11 @@ namespace NX
 
         void drawText(std::string_view text, glm::vec2 pos, BaseCamera& camera);
 
+        /// Bottom-left corner of a glyph's quad, relative to the baseline at `penX` (Y-up):
+        /// the bitmap top is `bearing.height` above the baseline and spans `size.height` rows.
+        [[nodiscard]] static glm::vec2 GetGlyphQuadOrigin(const GlyphSize& glyph,
+                                                          float penX) noexcept;
+
         void release();
 
         friend void swap(Face& a, Face& b) noexcept
