@@ -27,7 +27,7 @@ namespace NX
 
     GPos3 Transformable::getPosition() const noexcept
     {
-        return GPos3{ _position + _origin };
+        return _position;
     }
 
     void Transformable::moveForward(float offset) noexcept
