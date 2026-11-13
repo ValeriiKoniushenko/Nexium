@@ -8,6 +8,7 @@
 //     http://www.apache.org/licenses/LICENSE-2.0
 
 #include "Graphics/GLContextTest.h"
+#include "NxSubsystems/Graphics/GraphicsComponents.h"
 #include "RawBackend/Graphics/Texture.h"
 
 #include <array>
@@ -52,4 +53,60 @@ TEST_F(GpuResourceLifetimeTests, DestroyingAGeneratedButEmptyTextureDeletesIt)
     }
 
     EXPECT_FALSE(glIsTexture(id));
+}
+
+TEST_F(GpuResourceLifetimeTests, GeneratingGraphicsDataTwiceKeepsTheFirstBuffers)
+{
+    // generate() is guarded by !isValid(), but isValid() also requires a shader, so a second
+    // generate() before setShader() silently requests fresh VAO/VBO/EBO (and texture) names
+    // and loses the first set. Generation must be idempotent.
+    NX::BaseGraphicsData data;
+    data.generate();
+    const GLuint vao = data.getVaoId();
+    const GLuint vbo = data.getVboId();
+    const GLuint ebo = data.getEboId();
+    ASSERT_NE(vao, 0u);
+
+    data.generate();
+
+    EXPECT_EQ(data.getVaoId(), vao);
+    EXPECT_EQ(data.getVboId(), vbo);
+    EXPECT_EQ(data.getEboId(), ebo);
+
+    NX::SeparTextureGraphicsData textured;
+    textured.generate();
+    const GLuint texturedVao = textured.getVaoId();
+    const GLuint texture = textured.getTextureId();
+    const GLuint textureVbo = textured.getTextureVboId();
+    ASSERT_NE(texture, 0u);
+
+    textured.generate();
+
+    EXPECT_EQ(textured.getVaoId(), texturedVao);
+    EXPECT_EQ(textured.getTextureId(), texture);
+    EXPECT_EQ(textured.getTextureVboId(), textureVbo);
+}
+
+TEST_F(GpuResourceLifetimeTests, ClearingGraphicsDataDeletesItsBuffers)
+{
+    NX::SeparTextureGraphicsData data;
+    data.generate();
+    data.bindAllBuffers(); // glGen* reserves names; binding turns them into objects.
+    const GLuint vao = data.getVaoId();
+    const GLuint vbo = data.getVboId();
+    const GLuint ebo = data.getEboId();
+    const GLuint textureVbo = data.getTextureVboId();
+    data.bindTexture();
+    const GLuint texture = data.getTextureId();
+    ASSERT_TRUE(glIsVertexArray(vao));
+    ASSERT_TRUE(glIsBuffer(vbo));
+
+    data.clear();
+
+    EXPECT_FALSE(glIsVertexArray(vao));
+    EXPECT_FALSE(glIsBuffer(vbo));
+    EXPECT_FALSE(glIsBuffer(ebo));
+    EXPECT_FALSE(glIsBuffer(textureVbo));
+    EXPECT_FALSE(glIsTexture(texture));
+    EXPECT_EQ(data.getVaoId(), 0u);
 }
