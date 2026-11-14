@@ -22,7 +22,7 @@ namespace NX
     MouseInputManger::MouseInputManger()
     {
         _wheelSubscription = Platform::GetWindow().onMouseWheel->subscribeAndGetID(
-            [this](glm::vec2 offset) { onWheel->trigger(offset); });
+            [this](const MouseScrollEvent& event) { onWheel->trigger(event.getOffset()); });
     }
 
     Core::StringAtom MouseInputManger::getCacheHash() const

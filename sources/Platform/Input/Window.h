@@ -17,8 +17,14 @@
 #include "Foundation/BaseLog.h"
 #include "Foundation/Interfaces/DataStream.h"
 #include "Glfw.h"
-#include "Keyboard.h"
-#include "Mouse.h"
+#include "NxSubsystems/Input/InputTypes.h"
+#include "Platform/Input/Events/GamepadEvents.h"
+#include "Platform/Input/Events/InputEvent.h"
+#include "Platform/Input/Events/KeyboardEvents.h"
+#include "Platform/Input/Events/MouseEvents.h"
+#include "Platform/Input/Events/WindowEvents.h"
+#include "Platform/Input/InputDevices/Keyboard.h"
+#include "Platform/Input/InputDevices/Mouse.h"
 
 namespace Platform
 {
@@ -57,7 +63,7 @@ namespace Platform
         [[nodiscard]] glm::vec2 getCurrentPos() const noexcept { return _currentPos; }
         [[nodiscard]] glm::vec2 getLastDelta() const noexcept { return _lastDelta; }
         [[nodiscard]] State getState() const noexcept { return _state; }
-        [[nodiscard]] Mouse::Key getKey() const noexcept { return _key; }
+        [[nodiscard]] NX::InputButton getKey() const noexcept { return _key; }
 
         template<class T>
             requires std::derived_from<std::remove_reference_t<T>, Data>
@@ -78,7 +84,7 @@ namespace Platform
         glm::vec2 _lastDelta = {};
         glm::vec2 _startPos = {};
         glm::vec2 _currentPos = {};
-        Mouse::Key _key = Mouse::Key::None;
+        NX::InputButton _key;
         State _state = State::Idle;
 
         friend class Window;
@@ -149,36 +155,42 @@ namespace Platform
 
     public:
         /// @param glm::vec2 mouse position (X & Y)
-        Core::Delegate<void(glm::vec2)>::Ptr onMouseMove
-            = Core::Delegate<void(glm::vec2)>::Create();
+        Core::Delegate<void(NX::MouseMoveEvent)>::Ptr onMouseMove
+            = Core::Delegate<void(NX::MouseMoveEvent)>::Create();
 
         /// @param Mouse::Key is a key
         /// @param Mouse::State pressed or released
         /// @param Mouse::Mod is a mod
-        Core::Delegate<void(Mouse::Key, Mouse::State, Mouse::Mod)>::Ptr onMouseKeyPressed
-            = Core::Delegate<void(Mouse::Key, Mouse::State, Mouse::Mod)>::Create();
+        Core::Delegate<void(NX::MouseButtonEvent)>::Ptr onMouseKeyPressed
+            = Core::Delegate<void(NX::MouseButtonEvent)>::Create();
 
         /// @param glm::vec2 mouse scroll offsets (X & Y)
-        Core::Delegate<void(glm::vec2)>::Ptr onMouseWheel
-            = Core::Delegate<void(glm::vec2)>::Create();
+        Core::Delegate<void(NX::MouseScrollEvent)>::Ptr onMouseWheel
+            = Core::Delegate<void(NX::MouseScrollEvent)>::Create();
 
         /// @param Keyboard::Key is a key
         /// @param int is a scancode
         /// @param Keyboard::KeyState is an action: GLFW_PRESS, GLFW_RELEASE or GLFW_REPEAT
         /// @param int is a mod
-        Core::Delegate<void(Keyboard::Key, int, Keyboard::KeyState, int)>::Ptr onKeyPressed
-            = Core::Delegate<void(Keyboard::Key, int, Keyboard::KeyState, int)>::Create();
+        Core::Delegate<void(NX::KeyboardEvent)>::Ptr onKeyPressed
+            = Core::Delegate<void(NX::KeyboardEvent)>::Create();
+
+        Core::Delegate<void(NX::GamepadConnectionEvent)>::Ptr onJoystickConnected
+            = Core::Delegate<void(NX::GamepadConnectionEvent)>::Create();
 
         /// @param unsigned int is a Scancode
-        Core::Delegate<void(unsigned int)>::Ptr onTextInput
-            = Core::Delegate<void(unsigned int)>::Create();
+        Core::Delegate<void(NX::TextInputEvent)>::Ptr onTextInput
+            = Core::Delegate<void(NX::TextInputEvent)>::Create();
 
         /// @param bool is Entered the cursor or no
-        Core::Delegate<void(bool)>::Ptr onCursorEntered = Core::Delegate<void(bool)>::Create();
+        Core::Delegate<void(NX::MouseEnterEvent)>::Ptr onCursorEntered
+            = Core::Delegate<void(NX::MouseEnterEvent)>::Create();
 
-        Core::Delegate<void(bool)>::Ptr onFocusChanged = Core::Delegate<void(bool)>::Create();
+        Core::Delegate<void(NX::WindowFocusEvent)>::Ptr onFocusChanged
+            = Core::Delegate<void(NX::WindowFocusEvent)>::Create();
 
-        Core::Delegate<void(bool)>::Ptr onIconifyChanged = Core::Delegate<void(bool)>::Create();
+        Core::Delegate<void(NX::WindowIconifyEvent)>::Ptr onIconifyChanged
+            = Core::Delegate<void(NX::WindowIconifyEvent)>::Create();
 
         /// @param ISize2 new window size
         Core::Delegate<void(Core::ISize2)>::Ptr onResize

@@ -155,7 +155,7 @@ namespace NX
         void responseOnPick(NX::Transformable* object);
 
     protected:
-        InputController::Ptr _inputController;
+        // InputController::Ptr _inputController;
         DelegateSubscriberPoolGuard _subscriptionPool;
         std::vector<BaseEWC::Ptr> _windows;
         std::set<StringAtom> _windowTypes;

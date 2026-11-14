@@ -11,8 +11,8 @@
 
 #include "Foundation/Configs.h"
 #include "NxFundamental/ResourceManagement/JsonAdapter.h"
-#include "Platform/Input/Keyboard.h"
-#include "Platform/Input/Mouse.h"
+#include "Platform/Input/InputDevices/Keyboard.h"
+#include "Platform/Input/InputDevices/Mouse.h"
 
 namespace NX::Gui
 {

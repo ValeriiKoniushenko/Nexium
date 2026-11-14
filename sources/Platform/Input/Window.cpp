@@ -10,6 +10,8 @@
 #include "Window.h"
 
 #include "Foundation/Configs.h"
+#include "NxSubsystems/Input/InputTypes.h"
+#include "NxWorld/Framework/InputSystem.h"
 #include "Platform/Graphics/Graphics.h"
 #include "Platform/PrivateModuleInfo.h"
 #include "Stb/Image.h"
@@ -32,47 +34,107 @@ namespace
         gGlobalLog.errorLog("GLFW Error [{}]: {}"_f << error << description);
     }
 
-    void MouseMoveHandler(GLFWwindow*, double x, double y)
+    void MouseMoveHandler(GLFWwindow* window, double x, double y)
     {
-        GetWindow().onMouseMove->trigger(glm::vec2(static_cast<float>(x), static_cast<float>(y)));
+        static glm::vec2 previousMousePosition{ 0.f };
+        static bool hasPreviousMousePosition = false;
+
+        const glm::vec2 currentPosition{ static_cast<float>(x), static_cast<float>(y) };
+
+        glm::vec2 delta{ 0.f };
+
+        if (hasPreviousMousePosition)
+        {
+            delta = currentPosition - previousMousePosition;
+        }
+
+        previousMousePosition = currentPosition;
+        hasPreviousMousePosition = true;
+
+        NX::MouseMoveEvent event;
+        event.setPosition(currentPosition);
+        event.setDelta(delta);
+
+        GetWindow().onMouseMove->trigger(event);
     }
 
     void MouseKeyPressHandler(GLFWwindow*, int button, int action, int mods)
     {
-        GetWindow().onMouseKeyPressed->trigger(static_cast<Mouse::Key>(button),
-                                               static_cast<Mouse::State>(action),
-                                               static_cast<Mouse::Mod>(mods));
+        NX::MouseButtonEvent event;
+
+        event.setButton(NX::InputButton(static_cast<uint16_t>(button)));
+        event.setState(static_cast<NX::InputState>(action));
+        event.setMods(NX::GetInputSystem().ConvertModifiers(mods));
+        GetWindow().onMouseKeyPressed->trigger(event);
     }
 
-    void KeyPressHandler(auto*, int key, int scancode, int action, int mods)
+    void JoystickConnectionHandler(int jid, int event)
     {
-        GetWindow().onKeyPressed->trigger(static_cast<Keyboard::Key>(key), scancode,
-                                          static_cast<Keyboard::KeyState>(action), mods);
+        const auto deviceId = static_cast<NX::InputDeviceId>(jid + 1);
+
+        NX::GamepadConnectionEvent connectionEvent(deviceId);
+        if (event == GLFW_CONNECTED)
+        {
+            // GLFW callback is triggered for all joysticks.
+            if (glfwJoystickIsGamepad(jid) != GLFW_TRUE)
+            {
+                return;
+            }
+            connectionEvent.setConnected(true);
+        }
+        else if (event == GLFW_DISCONNECTED)
+        {
+            connectionEvent.setConnected(false);
+        }
+        GetWindow().onJoystickConnected->trigger(connectionEvent);
     }
 
-    void TextInputHandler(auto*, unsigned int scancode)
+    void KeyPressHandler(GLFWwindow*, int key, int scancode, int action, int mods)
     {
-        GetWindow().onTextInput->trigger(scancode);
+        NX::KeyboardEvent event;
+
+        event.setKey(NX::InputButton(static_cast<uint16_t>(key)));
+        event.setScancode(scancode);
+        event.setState(static_cast<NX::InputState>(action));
+        event.setMods(NX::GetInputSystem().ConvertModifiers(mods));
+
+        GetWindow().onKeyPressed->trigger(event);
     }
 
-    void CursorEnterHandler(auto*, int entered)
+    void TextInputHandler(GLFWwindow*, unsigned int scancode)
     {
-        GetWindow().onCursorEntered->trigger(entered == GLFW_TRUE);
+        NX::TextInputEvent event;
+        event.setCodepoint(scancode);
+        GetWindow().onTextInput->trigger(event);
     }
 
-    void MouseScrollHandler(auto*, double x, double y)
+    void CursorEnterHandler(GLFWwindow*, int entered)
     {
-        GetWindow().onMouseWheel->trigger(glm::vec2(static_cast<float>(x), static_cast<float>(y)));
+        NX::MouseEnterEvent event;
+        event.setEntered(entered == GLFW_TRUE);
+
+        GetWindow().onCursorEntered->trigger(event);
+    }
+
+    void MouseScrollHandler(GLFWwindow*, double x, double y)
+    {
+        NX::MouseScrollEvent event;
+        event.setOffset({ static_cast<float>(x), static_cast<float>(y) });
+        GetWindow().onMouseWheel->trigger(event);
     }
 
     void WindowFocusCallback(GLFWwindow*, int focused)
     {
-        GetWindow().onFocusChanged->trigger(focused == GLFW_TRUE);
+        NX::WindowFocusEvent event;
+        event.setFocused(focused == GLFW_TRUE);
+        GetWindow().onFocusChanged->trigger(event);
     }
 
     void WindowIconifyCallback(GLFWwindow*, int iconified)
     {
-        GetWindow().onIconifyChanged->trigger(iconified == GLFW_TRUE);
+        NX::WindowIconifyEvent event;
+        event.setIconified(iconified == GLFW_TRUE);
+        GetWindow().onIconifyChanged->trigger(event);
     }
 
 #ifndef _WIN32
@@ -169,7 +231,7 @@ namespace Platform
             },
             nullptr);
 #endif
-
+        glfwSetJoystickCallback(JoystickConnectionHandler);
         glfwSetMouseButtonCallback(_window, MouseKeyPressHandler);
         glfwSetCursorPosCallback(_window, MouseMoveHandler);
         glfwSetKeyCallback(_window, KeyPressHandler);
@@ -309,53 +371,53 @@ namespace Platform
 
     void Window::registerEvents()
     {
-        _subscriptionPool << onFocusChanged->subscribeAndGetID([this](bool focused)
-                                                               { _isFocused = focused; });
-        _subscriptionPool << onIconifyChanged->subscribeAndGetID([this](bool iconified)
-                                                                 { _isIconified = iconified; });
+        // _subscriptionPool << onFocusChanged->subscribeAndGetID([this](bool focused)
+        //                                                        { _isFocused = focused; });
+        // _subscriptionPool << onIconifyChanged->subscribeAndGetID([this](bool iconified)
+        //                                                          { _isIconified = iconified; });
 
-        _subscriptionPool << onMouseMove->subscribeAndGetID(
-            [](glm::vec2 pos)
-            {
-                static glm::vec2 lastPos = pos;
-                gDragDrop._lastDelta = lastPos - pos;
-                lastPos = pos;
+        // _subscriptionPool << onMouseMove->subscribeAndGetID(
+        //     [](glm::vec2 pos)
+        //     {
+        //         static glm::vec2 lastPos = pos;
+        //         gDragDrop._lastDelta = lastPos - pos;
+        //         lastPos = pos;
 
-                if (gDragDrop._state == DragAndDrop::State::Started)
-                {
-                    if (glm::distance(pos, gDragDrop._startPos) >= DragAndDrop::dragTreshold)
-                    {
-                        gDragDrop._state = DragAndDrop::State::Dragging;
-                    }
-                }
-                if (gDragDrop._state == DragAndDrop::State::Dragging)
-                {
-                    gDragDrop._currentPos = pos;
-                }
-            });
+        //         if (gDragDrop._state == DragAndDrop::State::Started)
+        //         {
+        //             if (glm::distance(pos, gDragDrop._startPos) >= DragAndDrop::dragTreshold)
+        //             {
+        //                 gDragDrop._state = DragAndDrop::State::Dragging;
+        //             }
+        //         }
+        //         if (gDragDrop._state == DragAndDrop::State::Dragging)
+        //         {
+        //             gDragDrop._currentPos = pos;
+        //         }
+        //     });
 
-        _subscriptionPool << onMouseKeyPressed->subscribeAndGetID(
-            [](Mouse::Key key, Mouse::State state, Mouse::Mod mod)
-            {
-                if (state == Mouse::State::Release)
-                {
-                    if (glm::distance(gDragDrop._startPos, Mouse::GetPosition())
-                        >= DragAndDrop::dragTreshold)
-                    {
-                        gDragDrop._state = DragAndDrop::State::Dragging;
-                    }
-                    gDragDrop._state = DragAndDrop::State::Idle;
-                    gDragDrop.payload = {};
-                    gDragDrop._key = Mouse::Key::None;
-                }
-                else if (state == Mouse::State::Press)
-                {
-                    gDragDrop._state = DragAndDrop::State::Started;
-                    gDragDrop._key = key;
-                    gDragDrop.payload.type = ""_atom;
-                    gDragDrop._startPos = Mouse::GetPosition();
-                }
-            });
+        // _subscriptionPool << onMouseKeyPressed->subscribeAndGetID(
+        //     [](NX::InputButton key, NX::InputState state, NX::InputModifier mod)
+        //     {
+        //         if (state == NX::InputState::Released)
+        //         {
+        //             if (glm::distance(gDragDrop._startPos, Mouse::GetPosition())
+        //                 >= DragAndDrop::dragTreshold)
+        //             {
+        //                 gDragDrop._state = DragAndDrop::State::Dragging;
+        //             }
+        //             gDragDrop._state = DragAndDrop::State::Idle;
+        //             gDragDrop.payload = {};
+        //             gDragDrop._key.reset();
+        //         }
+        //         else if (state == NX::InputState::Pressed)
+        //         {
+        //             gDragDrop._state = DragAndDrop::State::Started;
+        //             gDragDrop._key.reset();
+        //             gDragDrop.payload.type = ""_atom;
+        //             gDragDrop._startPos = Mouse::GetPosition();
+        //         }
+        //     });
     }
 
     spdlog::logger* Window::getLogger() const

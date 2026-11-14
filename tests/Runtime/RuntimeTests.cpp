@@ -124,7 +124,9 @@ TEST(RuntimeTests, MouseInputManagerForwardsWheelEvents)
     auto subscription
         = input.onWheel->subscribeAndGetID([&](glm::vec2 offset) { received = offset; });
 
-    Platform::GetWindow().onMouseWheel->trigger(glm::vec2(2.f, -3.f));
+    NX::MouseScrollEvent scrollEvent;
+    scrollEvent.setOffset(glm::vec2(2.f, -3.f));
+    Platform::GetWindow().onMouseWheel->trigger(scrollEvent);
 
     EXPECT_FLOAT_EQ(received.x, 2.f);
     EXPECT_FLOAT_EQ(received.y, -3.f);

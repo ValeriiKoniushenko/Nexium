@@ -61,7 +61,12 @@ namespace
             return spectator;
         }
 
-        static void scroll() { Platform::GetWindow().onMouseWheel->trigger(glm::vec2(1.f, 0.f)); }
+        static void scroll()
+        {
+            NX::MouseScrollEvent event;
+            event.setOffset(glm::vec2(1.f, 0.f));
+            Platform::GetWindow().onMouseWheel->trigger(event);
+        }
 
         SceneFilesGuard sceneFiles;
         FocusedViewport viewport;

@@ -555,12 +555,14 @@ namespace NX
     {
         _subscriptionPool << keyboardInput.getOrCreate("Close editor", Keyboard::Key::F12)
                                  ->onPress->subscribeAndGetID([&](auto) { GetWindow().close(); });
-        _inputController = InputController::Create("Editor input"_atom, InputContext::Editor);
-        _inputController->bind(
-            "Save all"_atom,
-            KeyChord{ .triggerKey = Keyboard::Key::S,
-                      .requiredKeys = { Keyboard::Key::Left_Control, Keyboard::Key::Left_Shift } },
-            [](const InputActionEvent&) { gGameInstance->saveAllToCache(); });
+        // _inputController = InputController::Create("Editor input"_atom, InputContext::Editor);
+        // _inputController->bind(
+        //     "Save all"_atom,
+        //     KeyChord{ .triggerKey = static_cast<int>(Platform::Keyboard::Key::S),
+        //               .requiredKeys = { static_cast<int>(Platform::Keyboard::Key::Left_Control),
+        //                                 static_cast<int>(Platform::Keyboard::Key::Left_Shift) }
+        //                                 },
+        //     [](const InputActionEvent&) { gGameInstance->saveAllToCache(); });
 
         auto deleteObjectFromSceneKey
             = keyboardInput.getOrCreate("Del object from scene", Keyboard::Key::Delete);

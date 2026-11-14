@@ -15,6 +15,7 @@
 #include "NxSubsystems/Graphics/ShaderManager.h"
 #include "NxWorld/Framework/GameInstance.h"
 #include "NxWorld/Framework/InputSystem.h"
+#include "Platform/Input/InputDevices/Joystick.h"
 
 #include <chrono>
 #include <thread>
@@ -67,9 +68,10 @@ namespace NX
             NX_LATENCY_POINT("loop - start");
             clock.start();
             Platform::Window::pollEvent();
-            GetInputSystem().setActiveContext(_gameInstance.isApplicationViewportFocused()
-                                                  ? InputContext::Gameplay
-                                                  : InputContext::Editor);
+            Platform::Joystick::poll();
+            // GetInputSystem().setActiveContext(_gameInstance.isApplicationViewportFocused()
+            //                                       ? InputContext::Gameplay
+            //                                       : InputContext::Editor);
             GetInputSystem().processEvents();
 
             if (!_gameInstance.isEditorMode())

@@ -10,33 +10,13 @@
 
 #include "GLFW/glfw3.h"
 #include "NxWorld/Framework/InputController.h"
+#include "Platform/Input/Events/InputEvent.h"
 #include "Platform/Input/Window.h"
 
 #include <ranges>
 
 namespace
 {
-    NX::InputModifier ConvertModifiers(int mods)
-    {
-        auto result = NX::InputModifier::None;
-        if (mods & GLFW_MOD_SHIFT)
-        {
-            result = result | NX::InputModifier::Shift;
-        }
-        if (mods & GLFW_MOD_CONTROL)
-        {
-            result = result | NX::InputModifier::Control;
-        }
-        if (mods & GLFW_MOD_ALT)
-        {
-            result = result | NX::InputModifier::Alt;
-        }
-        if (mods & GLFW_MOD_SUPER)
-        {
-            result = result | NX::InputModifier::Super;
-        }
-        return result;
-    }
 
     Platform::Keyboard::Key NormalizeModifier(Platform::Keyboard::Key key)
     {
@@ -63,6 +43,45 @@ namespace
 
 namespace NX
 {
+
+    NX::InputModifier InputSystem::ConvertModifiers(int mods)
+    {
+        auto result = NX::InputModifier::None;
+
+        if (mods & GLFW_MOD_SHIFT)
+        {
+            result = result | NX::InputModifier::Shift;
+        }
+
+        if (mods & GLFW_MOD_CONTROL)
+        {
+            result = result | NX::InputModifier::Control;
+        }
+
+        if (mods & GLFW_MOD_ALT)
+        {
+            result = result | NX::InputModifier::Alt;
+        }
+
+        if (mods & GLFW_MOD_SUPER)
+        {
+            result = result | NX::InputModifier::Super;
+        }
+
+        if (mods & GLFW_MOD_CAPS_LOCK)
+        {
+            result = result | NX::InputModifier::CapsLock;
+        }
+
+        if (mods & GLFW_MOD_NUM_LOCK)
+        {
+            result = result | NX::InputModifier::NumLock;
+        }
+
+        return result;
+        return static_cast<NX::InputModifier>(mods);
+    }
+
     void InputSystem::initialize(Platform::Window& window)
     {
         if (_initialized)
@@ -70,122 +89,45 @@ namespace NX
             return;
         }
 
-        _subscriptions << window.onKeyPressed->subscribeAndGetID(
-            [this](Platform::Keyboard::Key key, int scancode, Platform::Keyboard::KeyState state,
-                   int mods) { pushKeyEvent(key, scancode, state, mods); });
+        auto registerEvent
+            = [this](auto&& event) { pushEvent(std::forward<decltype(event)>(event)); };
+
+        _subscriptions << window.onKeyPressed->subscribeAndGetID(registerEvent);
+        _subscriptions << window.onMouseKeyPressed->subscribeAndGetID(registerEvent);
+        _subscriptions << window.onFocusChanged->subscribeAndGetID(registerEvent);
+
         _subscriptions << window.onFocusChanged->subscribeAndGetID(
-            [this](bool focused)
+            [this](const WindowFocusEvent& event)
             {
-                if (!focused)
+                if (!event.isFocused())
                 {
                     resetInput();
                 }
             });
         _initialized = true;
     }
-    void InputSystem::setActiveContext(InputContext context)
-    {
-        if (_activeContext == context)
-        {
-            return;
-        }
 
-        _activeContext = context;
-        refreshRoutedControllers();
-    }
-    void InputSystem::pushKeyEvent(Platform::Keyboard::Key key, int scancode,
-                                   Platform::Keyboard::KeyState state, int mods)
+    void InputSystem::resetInput()
     {
-        _events.push_back({
-            .key = NormalizeModifier(key),
-            .state = state,
-            .modifiers = ConvertModifiers(mods),
-            .scancode = scancode,
-            .pressedKeys = {},
-        });
-    }
-    void InputSystem::registerController(InputController* controller)
-    {
-        if (!controller)
-        {
-            return;
-        }
-
-        auto& controllers = controllersFor(controller->getInputContext());
-        if (std::ranges::find(controllers, controller) != controllers.end())
-        {
-            return;
-        }
-        controllers.emplace_back(controller);
-        if (controller->getInputContext() == _activeContext)
-        {
-            refreshRoutedControllers();
-        }
+        _events.clear();
+        _pressedKeys.clear();
     }
 
-    void InputSystem::unregisterController(InputController* controller)
-    {
-        if (!controller)
-        {
-            return;
-        }
-
-        std::erase(_editorControllers, controller);
-        std::erase(_gameplayControllers, controller);
-        std::erase(_routedControllers, controller);
-    }
     void InputSystem::processEvents()
     {
-        refreshRoutedControllers();
-        for (auto* controller : _routedControllers)
-        {
-            if (controller->isEnabled())
-            {
-                controller->beginInputFrame();
-            }
-        }
-
         while (!_events.empty())
         {
-            const auto event = _events.front();
+            const auto event = std::move(_events.front());
             _events.pop_front();
-            dispatch(event);
+            dispatch(event.get());
         }
     }
-    void InputSystem::dispatch(const KeyInputEvent& event)
-    {
-        auto routedEvent = event;
-        if (event.state == Platform::Keyboard::KeyState::Pressed
-            && std::ranges::find(_pressedKeys, event.key) == _pressedKeys.end())
-        {
-            _pressedKeys.push_back(event.key);
-        }
-        routedEvent.pressedKeys = _pressedKeys;
 
-        if (event.state == Platform::Keyboard::KeyState::Released)
-        {
-            std::erase(_pressedKeys, event.key);
-        }
-
-        const auto controllers = _routedControllers;
-        for (auto* controller : controllers)
-        {
-            if (std::ranges::find(_routedControllers, controller) != _routedControllers.end()
-                && controller->isEnabled())
-            {
-                InputController::Ptr keepAlive
-                    = controller->getHardRefCount() ? controller : nullptr;
-                controller->handleRoutedEvent(routedEvent);
-            }
-        }
-    }
-    std::vector<InputController*>& InputSystem::controllersFor(InputContext context)
+    void InputSystem::dispatch(const InputEvent* event)
     {
-        return context == InputContext::Editor ? _editorControllers : _gameplayControllers;
-    }
-    const std::vector<InputController*>& InputSystem::controllersFor(InputContext context) const
-    {
-        return context == InputContext::Editor ? _editorControllers : _gameplayControllers;
+        // Controllers were removed during the input redesign; there is no consumer to route
+        // events to yet.
+        (void)event;
     }
 
     InputSystem& GetInputSystem()
@@ -193,43 +135,147 @@ namespace NX
         return InputSystem::Instance();
     }
 
-    void InputSystem::resetInput()
-    {
-        _events.clear();
-        _pressedKeys.clear();
-        for (auto* controller : _editorControllers)
-        {
-            controller->releaseAllActions();
-        }
-        for (auto* controller : _gameplayControllers)
-        {
-            controller->releaseAllActions();
-        }
-    }
+    // void InputSystem::setActiveContext(InputContext context)
+    // {
+    //     if (_activeContext == context)
+    //     {
+    //         return;
+    //     }
 
-    void InputSystem::refreshRoutedControllers()
-    {
-        auto controllers = selectControllers();
-        for (auto* previous : _routedControllers)
-        {
-            if (std::ranges::find(controllers, previous) == controllers.end())
-            {
-                previous->releaseAllActions();
-            }
-        }
+    //     _activeContext = context;
+    //     refreshRoutedControllers();
+    // }
 
-        _routedControllers = std::move(controllers);
-    }
-    std::vector<InputController*> InputSystem::selectControllers() const
-    {
-        std::vector<InputController*> selected;
-        for (auto* controller : controllersFor(_activeContext))
-        {
-            if (controller->isEnabled())
-            {
-                selected.emplace_back(controller);
-            }
-        }
-        return selected;
-    }
+    // void InputSystem::registerController(InputController* controller)
+    // {
+    //     if (!controller)
+    //     {
+    //         return;
+    //     }
+
+    //     auto& controllers = controllersFor(controller->getInputContext());
+    //     if (std::ranges::find(controllers, controller) != controllers.end())
+    //     {
+    //         return;
+    //     }
+    //     controllers.emplace_back(controller);
+    //     if (controller->getInputContext() == _activeContext)
+    //     {
+    //         refreshRoutedControllers();
+    //     }
+    // }
+
+    // void InputSystem::unregisterController(InputController* controller)
+    // {
+    //     if (!controller)
+    //     {
+    //         return;
+    //     }
+
+    //     std::erase(_editorControllers, controller);
+    //     std::erase(_gameplayControllers, controller);
+    //     std::erase(_routedControllers, controller);
+    // }
+    // void InputSystem::processEvents()
+    // {
+    //     refreshRoutedControllers();
+    //     for (auto* controller : _routedControllers)
+    //     {
+    //         if (controller->isEnabled())
+    //         {
+    //             controller->beginInputFrame();
+    //         }
+    //     }
+
+    //     while (!_events.empty())
+    //     {
+    //         const auto& event = _events.front();
+    //         _events.pop_front();
+    //         dispatch(event.get());
+    //     }
+    // }
+    // void InputSystem::dispatch(const InputEvent* event)
+    // {
+    //     if (event->getEventType() == NX::EventType::Keyboard
+    //         || event->getEventType() == NX::EventType::MouseButton)
+    //     {
+    //     }
+
+    //     auto routedEvent = event;
+    //     if (event.state == InputState::Pressed
+    //         && std::ranges::find(_pressedKeys, event.button) == _pressedKeys.end())
+    //     {
+    //         _pressedKeys.push_back(event.button);
+    //     }
+    //     routedEvent.allPressedButtons = _pressedKeys;
+
+    //     if (event.state == InputState::Released)
+    //     {
+    //         std::erase(_pressedKeys, event.button);
+    //     }
+
+    //     const auto controllers = _routedControllers;
+    //     for (auto* controller : controllers)
+    //     {
+    //         if (std::ranges::find(_routedControllers, controller) != _routedControllers.end()
+    //             && controller->isEnabled())
+    //         {
+    //             InputController::Ptr keepAlive
+    //                 = controller->getHardRefCount() ? controller : nullptr;
+
+    //             // NEW IMPL
+    //             // controller->handleRoutedEvent(routedEvent);
+    //         }
+    //     }
+    // }
+    // std::vector<InputController*>& InputSystem::controllersFor(InputContext context)
+    // {
+    //     return context == InputContext::Editor ? _editorControllers : _gameplayControllers;
+    // }
+
+    // InputSystem& GetInputSystem()
+    // {
+    //     return InputSystem::Instance();
+    // }
+
+    // void InputSystem::resetInput()
+    // {
+    //     _events.clear();
+    //     _pressedKeys.clear();
+    //     for (auto* controller : _editorControllers)
+    //     {
+    //         controller->releaseAllActions();
+    //     }
+    //     for (auto* controller : _gameplayControllers)
+    //     {
+    //         controller->releaseAllActions();
+    //     }
+    // }
+
+    // void InputSystem::refreshRoutedControllers()
+    // {
+    //     auto controllers = selectControllers();
+    //     for (auto* previous : _routedControllers)
+    //     {
+    //         if (std::ranges::find(controllers, previous) == controllers.end())
+    //         {
+    //             previous->releaseAllActions();
+    //         }
+    //     }
+
+    //     _routedControllers = std::move(controllers);
+    // }
+
+    // std::vector<InputController*> InputSystem::selectControllers()
+    // {
+    //     std::vector<InputController*> selected;
+    //     for (auto* controller : controllersFor(_activeContext))
+    //     {
+    //         if (controller->isEnabled())
+    //         {
+    //             selected.emplace_back(controller);
+    //         }
+    //     }
+    //     return selected;
+    // }
 } // namespace NX
