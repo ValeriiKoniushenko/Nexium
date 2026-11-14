@@ -9,9 +9,32 @@
 
 #include "TemplateGameInstance.h"
 
+#include "Player.h"
+
+#include <algorithm>
+
 using namespace NX;
 
 TemplateGameInstance::TemplateGameInstance(int argc, char** argv)
     : GameInstance(argc, argv)
 {
+}
+
+void TemplateGameInstance::onInitializeReadCache()
+{
+    auto* scene = scenes.getCurrentScene();
+    if (!scene)
+    {
+        return;
+    }
+
+    const auto hasPlayer = std::ranges::any_of(
+        scene->getObjects(), [](const auto& object) { return dynamic_cast<Player*>(object.get()); });
+    if (hasPlayer)
+    {
+        return;
+    }
+
+    scene->addObjectToScene(Player::Create());
+    infoLog("Spawned a Player in the current scene");
 }
