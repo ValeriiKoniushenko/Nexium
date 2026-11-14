@@ -62,6 +62,7 @@ namespace NX
         }
         [[nodiscard]] bool isEditorMode() const noexcept;
         [[nodiscard]] bool isApplicationViewportFocused() const;
+        [[nodiscard]] bool isApplicationViewportHovered() const;
         [[nodiscard]] Core::ISize2 getRenderSize() const;
         [[nodiscard]] float getTimeout() const noexcept { return _timeout; }
 

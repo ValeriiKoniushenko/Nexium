@@ -44,10 +44,17 @@ namespace NX
         void onSceneDeactivated() final;
         virtual void setupInputActions(InputController& input) {}
 
+        /// True while a drag action that started over the viewport is held. The cursor may leave
+        /// the viewport during the drag, but a drag that started over another panel never moves
+        /// the camera, and a button that was already down is ignored until it is pressed again.
+        [[nodiscard]] bool isDragAllowed(const InputController& input,
+                                         const Core::StringAtom& action);
+
     private:
         void updateInputControllerState();
 
         bool _isSceneActive = false;
+        bool _isDragAllowed = false;
     };
 
     CLASS();

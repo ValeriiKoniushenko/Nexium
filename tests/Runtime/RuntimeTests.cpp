@@ -34,6 +34,7 @@ namespace
         void tick(float) override {}
         void updateSceneInteraction(NX::Scene&) override {}
         [[nodiscard]] bool isViewportFocused() const override { return true; }
+        [[nodiscard]] bool isViewportHovered() const override { return true; }
         void beforeSceneDraw() override {}
         void afterSceneDraw() override {}
         void clearSceneRenderTarget() override {}

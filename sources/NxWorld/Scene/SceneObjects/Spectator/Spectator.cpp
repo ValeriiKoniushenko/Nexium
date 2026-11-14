@@ -72,6 +72,21 @@ namespace NX
         }
     }
 
+    bool BaseSpectator::isDragAllowed(const InputController& input, const Core::StringAtom& action)
+    {
+        if (!input.isActive(action))
+        {
+            _isDragAllowed = false;
+            return false;
+        }
+
+        if (input.wasTriggered(action))
+        {
+            _isDragAllowed = gGameInstance->isApplicationViewportHovered();
+        }
+        return _isDragAllowed;
+    }
+
     // tag::input_spectator2d_actions[]
     void Spectator2D::setupInputActions(InputController& input)
     {
@@ -105,7 +120,7 @@ namespace NX
         }
 
         const bool boost = input->isActive("Boost"_atom);
-        if (input->isActive("Pan"_atom))
+        if (isDragAllowed(*input, "Pan"_atom))
         {
             const auto drag = input->getValue<glm::vec2>("PointerDelta"_atom);
             const auto mlt = (speed * (boost ? 5.f : 1.f)) * gGameInstance->world.getTimeDelta();
@@ -213,7 +228,7 @@ namespace NX
             return;
         }
 
-        if (input->isActive("Rotate"_atom))
+        if (isDragAllowed(*input, "Rotate"_atom))
         {
             yawAndPitch(input->getValue<glm::vec2>("PointerDelta"_atom) * mouseSensitivity);
         }

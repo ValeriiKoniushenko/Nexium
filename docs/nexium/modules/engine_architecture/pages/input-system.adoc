@@ -359,6 +359,13 @@ Finer conditions stay in the consumer: the spectators ignore scroll and gamepad 
 the editor ignores Delete, unless `isApplicationViewportFocused()`; the editor's pick
 click requires the cursor over the viewport instead.
 
+Camera drags (2D Pan, 3D Rotate) use the cursor too, not focus: ImGui moves focus only on a
+left click, so a middle or right press in another panel would otherwise still move the camera.
+`BaseSpectator::isDragAllowed()` samples `isApplicationViewportHovered()` on the frame the
+drag action triggers and keeps that answer until the button is released. A drag that starts over
+the viewport keeps working when the cursor leaves it; a drag that starts elsewhere, or a button
+that was already down, is ignored until it is pressed again.
+
 == Consumers
 
 === Editor shortcuts

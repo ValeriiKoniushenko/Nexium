@@ -1152,6 +1152,14 @@ nothing is stuck when it is enabled again.</p>
 the editor ignores Delete, unless <code>isApplicationViewportFocused()</code>; the editor&#8217;s pick
 click requires the cursor over the viewport instead.</p>
 </div>
+<div class="paragraph">
+<p>Camera drags (2D Pan, 3D Rotate) use the cursor too, not focus: ImGui moves focus only on a
+left click, so a middle or right press in another panel would otherwise still move the camera.
+<code>BaseSpectator::isDragAllowed()</code> samples <code>isApplicationViewportHovered()</code> on the frame the
+drag action triggers and keeps that answer until the button is released. A drag that starts over
+the viewport keeps working when the cursor leaves it; a drag that starts elsewhere, or a button
+that was already down, is ignored until it is pressed again.</p>
+</div>
 </div>
 </div>
 <div class="sect1">

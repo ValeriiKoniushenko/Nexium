@@ -127,6 +127,11 @@ namespace NX
         return !isEditorMode() || _applicationIntegration->isViewportFocused();
     }
 
+    bool GameInstance::isApplicationViewportHovered() const
+    {
+        return !isEditorMode() || _applicationIntegration->isViewportHovered();
+    }
+
     Core::ISize2 GameInstance::getRenderSize() const
     {
         if (isEditorMode())

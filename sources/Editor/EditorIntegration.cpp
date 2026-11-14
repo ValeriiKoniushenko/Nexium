@@ -85,6 +85,12 @@ namespace NX
         return viewport && viewport->isFocused();
     }
 
+    bool EditorIntegration::isViewportHovered() const
+    {
+        const auto* viewport = _editor.getWindow<GameViewportEWC>();
+        return viewport && viewport->isHovered();
+    }
+
     void EditorIntegration::beforeSceneDraw()
     {
         _editor.sceneRenderTarget.callMePreDraw();

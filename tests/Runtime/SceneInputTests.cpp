@@ -32,6 +32,7 @@ namespace
         void tick(float) override {}
         void updateSceneInteraction(NX::Scene&) override {}
         [[nodiscard]] bool isViewportFocused() const override { return true; }
+        [[nodiscard]] bool isViewportHovered() const override { return hovered; }
         void beforeSceneDraw() override {}
         void afterSceneDraw() override {}
         void clearSceneRenderTarget() override {}
@@ -39,6 +40,8 @@ namespace
         {
             return Core::ISize2{ 800, 600 };
         }
+
+        bool hovered = true;
     };
 
     class SceneInputTests : public ::testing::Test
@@ -84,6 +87,25 @@ namespace
             event.setAxis(static_cast<std::uint16_t>(axis));
             event.setValue(value);
             NX::GetInputSystem().queueEvent(event);
+            NX::GetInputSystem().processEvents();
+            spectator.tick(1.f);
+        }
+
+        static void middleButton(NX::InputState state)
+        {
+            NX::MouseButtonEvent event;
+            event.setButton(
+                NX::InputButton(static_cast<std::uint16_t>(Platform::Mouse::Key::Middle)));
+            event.setState(state);
+            NX::GetInputSystem().queueEvent(event);
+        }
+
+        /// One frame with the middle button in its current state and a mouse move.
+        static void dragFrame(NX::Spectator2D& spectator)
+        {
+            NX::MouseMoveEvent move;
+            move.setDelta({ 10.f, 0.f });
+            NX::GetInputSystem().queueEvent(move);
             NX::GetInputSystem().processEvents();
             spectator.tick(1.f);
         }
@@ -203,4 +225,62 @@ TEST_F(SceneInputTests, GamepadTriggersZoomCamera)
     gamepadAxis(Platform::Joystick::GamepadAxis::RightTrigger, -1.f, *spectator);
     gamepadAxis(Platform::Joystick::GamepadAxis::LeftTrigger, 1.f, *spectator);
     EXPECT_LT(camera->getZoom(), zoomedIn);
+}
+
+TEST_F(SceneInputTests, MiddleDragStartedOverViewportKeepsPanningAfterTheCursorLeaves)
+{
+    NX::SceneManager manager(&gGameInstance->world);
+    auto spectator = addSpectator(*manager.getCurrentScene());
+
+    const auto start = spectator->getPosition();
+    viewport.hovered = true;
+    middleButton(NX::InputState::Pressed);
+    dragFrame(*spectator);
+    const auto afterFirstFrame = spectator->getPosition();
+
+    viewport.hovered = false;
+    dragFrame(*spectator);
+
+    EXPECT_NE(afterFirstFrame, start);
+    EXPECT_NE(spectator->getPosition(), afterFirstFrame);
+}
+
+TEST_F(SceneInputTests, MiddleDragStartedOverAnotherPanelNeverMovesTheCamera)
+{
+    NX::SceneManager manager(&gGameInstance->world);
+    auto spectator = addSpectator(*manager.getCurrentScene());
+    const auto start = spectator->getPosition();
+
+    viewport.hovered = false;
+    middleButton(NX::InputState::Pressed);
+    dragFrame(*spectator);
+
+    // Moving over the viewport while the button is still held does not turn it into a pan.
+    viewport.hovered = true;
+    dragFrame(*spectator);
+    EXPECT_EQ(spectator->getPosition(), start);
+
+    // A new press over the viewport does.
+    middleButton(NX::InputState::Released);
+    middleButton(NX::InputState::Pressed);
+    dragFrame(*spectator);
+    EXPECT_NE(spectator->getPosition(), start);
+}
+
+TEST_F(SceneInputTests, MiddleButtonAlreadyHeldWhenTheSpectatorStartsListeningIsIgnored)
+{
+    NX::SceneManager manager(&gGameInstance->world);
+    auto spectator = addSpectator(*manager.getCurrentScene());
+    const auto start = spectator->getPosition();
+
+    viewport.hovered = true;
+    auto* input = spectator->findFirstChildOf<NX::InputController>();
+    ASSERT_NE(input, nullptr);
+    input->setEnabled(false);
+    middleButton(NX::InputState::Pressed);
+    NX::GetInputSystem().processEvents();
+
+    input->setEnabled(true);
+    dragFrame(*spectator);
+    EXPECT_EQ(spectator->getPosition(), start);
 }
