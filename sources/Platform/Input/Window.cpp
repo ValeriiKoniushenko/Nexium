@@ -358,9 +358,8 @@ namespace Platform
             [](const NX::MouseMoveEvent& event)
             {
                 const glm::vec2 pos = event.getPosition();
-                static glm::vec2 lastPos = pos;
-                gDragDrop._lastDelta = lastPos - pos;
-                lastPos = pos;
+                // The event delta already ignores jumps after focus, enter, or cursor-mode changes.
+                gDragDrop._lastDelta = -event.getDelta();
 
                 if (gDragDrop._state == DragAndDrop::State::Started)
                 {
