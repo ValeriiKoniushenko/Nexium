@@ -19,13 +19,16 @@ so all example behavior lives in components instead.
 == The worked example
 
 `game-example/Player` is the pattern to copy for gameplay behavior. It derives from
-`RectangleAnimated`, calls the base `onTick()` first, and then:
+`RectangleAnimated`.
 
-* polls `Platform::Keyboard::IsKeyPressed()` for W/A/S/D and the arrow keys, normalizes the
-  result for diagonals, and applies it through `moveRight()`/`moveUp()`;
-* looks up its `FrameByFrameAnimator` child with `findFirstChildOf<T>()` and switches it to the
-  animation matching the movement direction.
+* `onInitialize()` reuses or adds a child `InputController` named `Input` and registers one
+  `Move` action: W/A/S/D and the arrow keys, with `negated()`/`swizzled()` bindings building a
+  2D value.
+* `onTick()` calls the base `onTick()` first, reads `Move` as a `glm::vec2` clamped to
+  `[-1, 1]` (two keys for one direction add up), normalizes diagonals, and applies it through
+  `moveRight()`/`moveUp()`.
+* It then looks up its `FrameByFrameAnimator` child with `findFirstChildOf<T>()` and switches it
+  to the animation matching the movement direction.
 
-The keys are hard-wired because `Player` predates the current `InputController`. New gameplay
-code should add a child `InputController` with named actions and read them in `onTick()`, the way
-the spectators do — see xref:engine_architecture:input-system.adoc[Input System].
+New gameplay code should follow the same shape — named actions on a child `InputController`,
+read in `onTick()`; see xref:engine_architecture:input-system.adoc[Input System].

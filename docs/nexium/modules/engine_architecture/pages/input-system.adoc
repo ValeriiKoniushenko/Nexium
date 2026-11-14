@@ -89,7 +89,7 @@ and an unknown action maps to `InputState::None`.
 |`onJoystickAxisChanged` |`GamepadAxisEvent` |Yes
 |`onTextInput` |`TextInputEvent` |No
 |`onCursorEntered` |`MouseEnterEvent` |No
-|`onIconifyChanged` |`WindowIconifyEvent` |No
+|`onIconifyChanged` |`WindowIconifyEvent` |Yes
 |`onResize`, `onFramebufferResize` |`Core::ISize2` |No; these do not use `WindowResizeEvent`.
 |===
 
@@ -192,7 +192,8 @@ still runs its callbacks, and a controller initialized by a callback starts with
 |`MouseMoveEvent` |Vector for `MouseDelta`: the event's delta.
 |`MouseScrollEvent` |Vector for `MouseScroll`: the event's offset.
 |`GamepadAxisEvent` |Axis value for `GamepadAxis`.
-|Text input, cursor enter, gamepad connection, and window events |Not routed.
+|`WindowFocusEvent`, `WindowIconifyEvent` |Not routed; they update the window-active state (<<window-active>>).
+|Text input, cursor enter, gamepad connection, resize, and close |Not routed.
 |===
 
 The contract of the queue:
@@ -258,7 +259,8 @@ fields by hand:
 
 Modifiers follow two rules. Caps Lock and Num Lock are never compared. And modifiers are
 checked only on the press: a `Down` binding that is already held stays held when a modifier
-changes, and its release is always accepted.
+changes, and its release is always accepted. `Repeated` key events are ignored by bindings:
+holding a key does not re-fire a `Pressed` binding.
 
 The two match policies exist for different jobs. `AtLeast` suits gameplay — W keeps moving
 forward while Shift is held to sprint. `Exact` suits shortcuts — Ctrl+S does not fire on
@@ -266,7 +268,8 @@ Ctrl+Shift+S. A binding has no notion of left versus right modifier keys: it com
 modifier mask the event carries.
 
 `toString()` renders a binding for UI, such as `Ctrl+Shift+S`, `Mouse Left`, or
-`Gamepad LeftX`; the editor's settings window lists every action this way.
+`Gamepad LeftX`; the editor's settings window lists the `GameEditor` and spectator actions
+this way.
 
 === Action values
 
@@ -310,6 +313,9 @@ still applies its own, as the spectators do.
 include::example$input-controller-tests.cpp[tag=input_controller_down,indent=0]
 ----
 
+`findAction(name)` returns the action or `nullptr`, `getActions()` lists them, and
+`removeAction(name)` erases one (its callbacks stay registered under the name).
+
 A press and release that both arrive within one frame still count: `wasTriggered()` is true
 for that frame even though `isActive()` is not.
 
@@ -330,8 +336,9 @@ include::example$input-controller-tests.cpp[tag=input_controller_callback,indent
 
 === Persistence
 
-`_actions` is a `FIELD()`, and `InputBinding` and `InputAction` are reflected types with
-JSON adapters, so a controller round-trips through JRM with its component. Runtime state —
+`_actions`, `_priority`, and `_consumesInput` are `FIELD()`s, and `InputBinding` and
+`InputAction` are reflected types with JSON adapters, so a controller round-trips through JRM
+with its component, priority included. Runtime state —
 held buttons, values, callbacks — is not reflected and is never saved. Code that builds its
 actions in `onInitialize()` should first look for an existing child controller, as the
 spectators do, so a deserialized controller is reused instead of duplicated.
@@ -477,6 +484,13 @@ component is safe.
 
 `Spectator3D` has no keyboard movement or wheel dolly bindings yet.
 
+=== Player
+
+`game-example/Player` follows the spectator pattern: it reuses or adds a child controller named
+`Input` and registers one `Move` action from W/A/S/D and the arrow keys, using `negated()` and
+`swizzled()` to build a 2D value. `onTick()` clamps it to `[-1, 1]`, because two keys for one
+direction add up. See xref:gameplay:scripting.adoc[Gameplay Hooks].
+
 === Polled queries
 
 Polled queries such as `Platform::Mouse::GetPosition()` and `Platform::Keyboard::IsKeyPressed()`
@@ -488,7 +502,8 @@ Implementation: `Platform/Input/Events/*.h`, `Platform/Input/{Window,Glfw,Cursor
 `Platform/Input/InputDevices/{Keyboard,Mouse,Joystick}.{h,cpp}`,
 `NxWorld/Framework/InputSystem.{h,cpp}`,
 `NxWorld/Framework/Input/{InputController,InputActionTypes}.{h,cpp}`,
-`Editor/GameEditor.cpp`, `Editor/Windows/NxECSBasedEditor.cpp`, and
-`NxWorld/Scene/SceneObjects/Spectator/Spectator.cpp`.
+`Editor/GameEditor.cpp`, `Editor/Windows/{NxECSBasedEditor,EditorSettings}.cpp`,
+`NxWorld/Scene/SceneObjects/Spectator/Spectator.cpp`, and `game-example/Player.cpp`.
 Checks: `tests/Runtime/InputEventsTests.cpp`, `tests/ECSTests/InputControllerTests.cpp`,
-`tests/ECSTests/InputActionStateTests.cpp`, and `tests/Runtime/SceneInputTests.cpp`.
+`tests/ECSTests/InputActionStateTests.cpp`, `tests/ECSTests/InputRoutingTests.cpp`, and
+`tests/Runtime/SceneInputTests.cpp`.

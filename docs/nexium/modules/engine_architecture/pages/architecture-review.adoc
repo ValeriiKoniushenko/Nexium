@@ -61,8 +61,9 @@ Prioritize these behaviors within the existing modules:
 . Create a disposable Play-session copy from authored state and destroy it on Stop.
 . Add an asset-reference/move policy and portable content identifiers.
 . Extend executable interface checks and CI to the World/Runtime/editor boundary.
-. Give input a routing policy — priority, consumption, or contexts — so each owner no longer
-  gates its own `InputController` by hand, and port `game-example/Player` off direct key polling.
+. Finish the input routing policy: priority and consumption exist, but each owner still enables
+  its own `InputController` by hand (focus, text input, active scene); a context model could
+  replace that per-owner gating.
 
 A project-content context should move game-specific atlas setup into game-example.
 Keep the editor-enabled executable while building these contracts.
