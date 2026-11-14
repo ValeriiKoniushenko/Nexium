@@ -10,6 +10,7 @@
 #include "Player.h"
 
 #include "NxWorld/Animations/FrameByFrame/FrameByFrameAnimator.h"
+#include "NxWorld/Framework/Input/InputController.h"
 #include "Platform/Input/InputDevices/Keyboard.h"
 
 using namespace Core;
@@ -17,23 +18,42 @@ using namespace NX;
 
 ECS_IMPL(Player);
 
+void Player::onInitialize()
+{
+    SceneObj::RectangleAnimated::onInitialize();
+
+    auto* input = findFirstChildOf<InputController>();
+    if (!input)
+    {
+        input = addChildComponent<InputController>("Input"_atom);
+    }
+    if (!input)
+    {
+        return;
+    }
+
+    // One action for both axes: X is right minus left, Y is up minus down. Two keys for the
+    // same direction add up, so onTick clamps the result.
+    using Key = Platform::Keyboard::Key;
+    input->addAction("Move"_atom,
+                     { InputBinding::Key(Key::D), InputBinding::Key(Key::Right),
+                       InputBinding::Key(Key::A).negated(), InputBinding::Key(Key::Left).negated(),
+                       InputBinding::Key(Key::W).swizzled(), InputBinding::Key(Key::Up).swizzled(),
+                       InputBinding::Key(Key::S).negated().swizzled(),
+                       InputBinding::Key(Key::Down).negated().swizzled() });
+}
+
 void Player::onTick(float delta)
 {
     SceneObj::RectangleAnimated::onTick(delta);
 
     auto* _animator = findFirstChildOf<Animation::FrameByFrameAnimator>();
+    const auto* input = findFirstChildOf<InputController>();
 
-    using Key = Platform::Keyboard::Key;
-    const auto isPressed = [](Key primary, Key secondary)
-    {
-        return Platform::Keyboard::IsKeyPressed(primary)
-               || Platform::Keyboard::IsKeyPressed(secondary);
-    };
-
-    const int horizontal = static_cast<int>(isPressed(Key::D, Key::Right))
-                           - static_cast<int>(isPressed(Key::A, Key::Left));
-    const int vertical = static_cast<int>(isPressed(Key::W, Key::Up))
-                         - static_cast<int>(isPressed(Key::S, Key::Down));
+    const glm::vec2 move
+        = input ? glm::clamp(input->getValue<glm::vec2>("Move"_atom), -1.f, 1.f) : glm::vec2{ 0.f };
+    const int horizontal = static_cast<int>(move.x);
+    const int vertical = static_cast<int>(move.y);
 
     constexpr float diagonalFactor = 0.70710678f;
     const float movementFactor = horizontal != 0 && vertical != 0 ? diagonalFactor : 1.f;

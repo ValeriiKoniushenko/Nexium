@@ -1306,11 +1306,7 @@ component is safe.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_still_polling"><a class="anchor" href="#_still_polling"></a>Still polling</h3>
-<div class="paragraph">
-<p><code>game-example/Player</code> has not been ported: it reads W/A/S/D and the arrow keys through
-<code>Platform::Keyboard::IsKeyPressed()</code>.</p>
-</div>
+<h3 id="_polled_queries"><a class="anchor" href="#_polled_queries"></a>Polled queries</h3>
 <div class="paragraph">
 <p>Polled queries such as <code>Platform::Mouse::GetPosition()</code> and <code>Platform::Keyboard::IsKeyPressed()</code>
 remain for reading the current state at an arbitrary moment, for example the editor&#8217;s object

@@ -415,10 +415,7 @@ component is safe.
 
 `Spectator3D` has no keyboard movement or wheel dolly bindings yet.
 
-=== Still polling
-
-`game-example/Player` has not been ported: it reads W/A/S/D and the arrow keys through
-`Platform::Keyboard::IsKeyPressed()`.
+=== Polled queries
 
 Polled queries such as `Platform::Mouse::GetPosition()` and `Platform::Keyboard::IsKeyPressed()`
 remain for reading the current state at an arbitrary moment, for example the editor's object
