@@ -178,13 +178,19 @@ namespace NX
 
     const FRect& TextureAtlas::getRect(const StringAtom& name) const
     {
-        auto it = _rects.find(name);
-        if (it == _rects.end()) [[unlikely]]
+        const auto* rect = findRect(name);
+        if (!rect) [[unlikely]]
         {
             throw std::runtime_error("TextureAtlas: No rect with name '" + name.toStdString()
                                      + "' found");
         }
-        return it->second;
+        return *rect;
+    }
+
+    const FRect* TextureAtlas::findRect(const StringAtom& name) const noexcept
+    {
+        const auto it = _rects.find(name);
+        return it == _rects.end() ? nullptr : &it->second;
     }
 
 } // namespace NX

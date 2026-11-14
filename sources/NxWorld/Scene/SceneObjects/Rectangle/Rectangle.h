@@ -14,6 +14,7 @@
 #include "Core/Size.h"
 #include "NxWorld/Scene/SceneObjects/SceneObject.h"
 
+#include <array>
 #include <utility>
 
 namespace NX
@@ -49,6 +50,11 @@ namespace NX::SceneObj
 
         [[nodiscard]] constexpr static float GetDefaultDrawRectSize() noexcept { return 100.f; }
         [[nodiscard]] Core::FSize2 getDrawRectSize() const noexcept;
+
+        /// World-space corners of the drawn quad (bottom-left, bottom-right, top-right,
+        /// top-left), i.e. the unit rectangle transformed by the current model matrix.
+        /// Recalculates the matrix when it is dirty.
+        [[nodiscard]] std::array<glm::vec3, 4> getWorldCorners();
 
         [[nodiscard]] Core::StringAtom getAtlasName() const { return _atlasName; }
         void setAtlas(const Core::StringAtom& value) { _atlasName = value; }
