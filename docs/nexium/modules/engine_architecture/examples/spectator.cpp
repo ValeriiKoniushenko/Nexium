@@ -1,0 +1,1 @@
+../../../../../sources/NxWorld/Scene/SceneObjects/Spectator/Spectator.cpp

@@ -17,4 +17,8 @@ class TemplateGameInstance : public NX::GameInstance
 {
 public:
     TemplateGameInstance(int argc, char** argv);
+
+protected:
+    /// Test game only: makes sure the current scene has a Player to drive with the input system.
+    void onInitializeReadCache() override;
 };

@@ -6,7 +6,7 @@
     <title>Module Graph :: Nexium Engine</title>
     <link rel="prev" href="ue5-alignment.html">
     <link rel="next" href="lifecycle.html">
-    <meta name="generator" content="Antora 3.1.15">
+    <meta name="generator" content="Antora 3.2.2">
     <link rel="stylesheet" href="../../../_/css/site.css">
   </head>
   <body class="article">
@@ -217,7 +217,7 @@
     <li><a href="module-graph.html">Module Graph</a></li>
   </ul>
 </nav>
-<div class="edit-this-page"><a href="file:///home/valerii/workspace/Nexium//docs/nexium/modules/engine_architecture/pages/module-graph.adoc">Edit this Page</a></div>
+<div class="edit-this-page"><a href="file:///home/alex/Desktop/nexium//docs/nexium/modules/engine_architecture/pages/module-graph.adoc">Edit this Page</a></div>
 </div>
   <div class="content">
 <aside class="toc sidebar" data-title="Contents" data-levels="2">
@@ -402,11 +402,6 @@ Foundation&#8217;s separate private logging target is disabled.</p>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Fundamental Assets/ECS/ResourceManagement/TextureAtlas, RawBackend Graphics, Utils::Utils.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Nexium::Subsystem::Input</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">InputAction, keyboard/mouse managers, InputTypes (contexts, chords, triggers)</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Foundation, Foundation Interfaces, Platform Input, Utils::Core, glm.</p></td>
-</tr>
-<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Nexium::Subsystem::AssimpImporter</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Optional mesh importer</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Subsystem Graphics.</p></td>
@@ -423,8 +418,8 @@ Foundation&#8217;s separate private logging target is disabled.</p>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Nexium::World::Base</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">World/framework, InputSystem/InputController, framework managers and state, SceneManager, Scene, scene objects (grid, rectangles, spectator), actors, cameras, animator, skybox types</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Foundation, Foundation Interfaces, World Animation, Fundamental Assets/Base/ECS/ResourceManagement, Subsystem AssetsManager/Graphics/Input, Platform Input, RawBackend Common, Utils::Core, JustReflectMe::Adapter.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">World/framework, InputSystem, InputController and its action/binding types, framework managers and state, SceneManager, Scene, scene objects (grid, rectangles, spectator), actors, cameras, animator, skybox types</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Foundation, Foundation Interfaces, World Animation, Fundamental Assets/Base/ECS/ResourceManagement, Subsystem AssetsManager/Graphics, Platform Input, RawBackend Common, Utils::Core, JustReflectMe::Adapter.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Nexium::Runtime::Base</code></p></td>
@@ -444,7 +439,7 @@ Foundation&#8217;s separate private logging target is disabled.</p>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Nexium::Editor::Base</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">EditorIntegration, GameEditor, windows, gizmos, picking, toasts, tools</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Runtime, Editor GuiComponents, World, World Animation, Foundation, Fundamental Assets/ECS/ResourceManagement, Subsystem AssetsManager/Graphics/Input, RawBackend Graphics, Core::ImGui, imguizmo::imguizmo, Utils::Core, Utils::Utils, glm, JustReflectMe::Adapter.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Runtime, Editor GuiComponents, World, World Animation, Foundation, Fundamental Assets/ECS/ResourceManagement, Subsystem AssetsManager/Graphics, RawBackend Graphics, Core::ImGui, imguizmo::imguizmo, Utils::Core, Utils::Utils, glm, JustReflectMe::Adapter.</p></td>
 </tr>
 </tbody>
 </table>
@@ -516,7 +511,7 @@ WHOLE_ARCHIVE retains otherwise unreferenced component registrations in these st
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>InputSystem</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Singleton; holds non-owning InputController pointers per context. Controllers unregister themselves on destruction.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Singleton; owns the per-frame queue of input events by value and holds non-owning <code>InputController</code> pointers. Controllers unregister themselves on deinitialize and destruction.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Scene</p></td>

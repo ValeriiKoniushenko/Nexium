@@ -14,8 +14,7 @@
 #include "Core/BaseAssert.h"
 #include "Core/IntrusivePtr.h"
 #include "Foundation/BaseLog.h"
-#include "NxSubsystems/Input/InputManager.h"
-#include "NxWorld/Framework/InputController.h"
+#include "NxWorld/Framework/Input/InputController.h"
 #include "ObjectPicker.h"
 #include "ToastNotifications.h"
 #include "Windows/BaseWindow.h"
@@ -140,9 +139,12 @@ namespace NX
 
     public:
         Editor::NotificationPopUpManager notifications;
-        NX::KeyboardInputManger keyboardInput;
-        NX::MouseInputManger mouseInput;
         NX::RenderTargetToTexture sceneRenderTarget;
+
+        [[nodiscard]] InputController* getInputController() const noexcept
+        {
+            return _inputController.get();
+        }
 
     protected:
         void setupImGuiStyles();
@@ -150,12 +152,11 @@ namespace NX
         void setupShortcuts();
 
     private:
-        void handleMouseDrag(glm::vec2 delta, NX::MouseInputAction::SpecKeysState state);
-        void handleMouseClick(glm::vec2 pos, NX::MouseInputAction::SpecKeysState state);
+        void handleMouseClick();
         void responseOnPick(NX::Transformable* object);
 
     protected:
-        // InputController::Ptr _inputController;
+        InputController::Ptr _inputController;
         DelegateSubscriberPoolGuard _subscriptionPool;
         std::vector<BaseEWC::Ptr> _windows;
         std::set<StringAtom> _windowTypes;

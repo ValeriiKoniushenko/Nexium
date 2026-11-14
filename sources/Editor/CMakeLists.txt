@@ -67,7 +67,6 @@ target_link_libraries(Nexium_Editor_Base
     Nexium::Runtime::Base
     Nexium::Subsystem::AssetsManager
     Nexium::Subsystem::Graphics
-    Nexium::Subsystem::Input
     Utils::Core
     Utils::Utils
     Nexium::World::Base

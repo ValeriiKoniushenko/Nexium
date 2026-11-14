@@ -30,10 +30,12 @@ namespace NX
 
         virtual void readFromCache() = 0;
         virtual void writeToCache() = 0;
-        virtual void updateInput() = 0;
         virtual void tick(float delta) = 0;
         virtual void updateSceneInteraction(Scene& scene) = 0;
         [[nodiscard]] virtual bool isViewportFocused() const = 0;
+        /// The cursor is over the game viewport. Unlike focus, ImGui does not change it on a
+        /// middle or right click, so it tells where a camera drag was started.
+        [[nodiscard]] virtual bool isViewportHovered() const = 0;
         virtual void beforeSceneDraw() = 0;
         virtual void afterSceneDraw() = 0;
         virtual void clearSceneRenderTarget() = 0;

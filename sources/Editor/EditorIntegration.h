@@ -35,10 +35,10 @@ namespace NX
         void initialize() override;
         void readFromCache() override;
         void writeToCache() override;
-        void updateInput() override;
         void tick(float delta) override;
         void updateSceneInteraction(NX::Scene& scene) override;
         [[nodiscard]] bool isViewportFocused() const override;
+        [[nodiscard]] bool isViewportHovered() const override;
         void beforeSceneDraw() override;
         void afterSceneDraw() override;
         void clearSceneRenderTarget() override;

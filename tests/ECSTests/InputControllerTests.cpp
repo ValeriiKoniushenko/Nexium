@@ -7,235 +7,596 @@
 //
 //     http://www.apache.org/licenses/LICENSE-2.0
 
-// TODO(input-redesign): InputController, InputContext and KeyChord were removed from the engine
-// (see the commented-out NxWorld/Framework/InputController.h). Re-enable and port these tests to
-// the new input system once it replaces them.
-#if 0
-    #include "NxWorld/Framework/InputController.h"
-    #include "NxWorld/Framework/InputSystem.h"
-    #include "Platform/Input/Window.h"
+#include "NxWorld/Framework/Input/InputController.h"
+#include "NxWorld/Framework/InputSystem.h"
+#include "NxWorld/Scene/SceneObjects/SceneObject.h"
+#include "Platform/Input/InputDevices/Keyboard.h"
 
-    #include "gtest/gtest.h"
+#include "gtest/gtest.h"
 
-using namespace NX;
-using Key = Platform::Keyboard::Key;
-using State = Platform::Keyboard::KeyState;
+TEST(InputControllerTests, IsRegisteredInComponentFactory)
+{
+    EXPECT_TRUE(NX::GetGlobalComponentFactory().containsSuchType("NX::InputController"_atom));
+}
+
+TEST(InputControllerTests, CanBeAttachedToSceneObject)
+{
+    auto object = NX::SceneObject::Create();
+    auto* controller = object->addChildComponent<NX::InputController>();
+
+    ASSERT_NE(controller, nullptr);
+    EXPECT_EQ(object->findFirstChildOf<NX::InputController>(), controller);
+}
 
 namespace
 {
-    class InputControllerTests : public ::testing::Test
+    NX::InputBinding KeyBinding(Platform::Keyboard::Key key)
+    {
+        NX::InputBinding binding;
+        binding.source = NX::InputSource::Key;
+        binding.code = static_cast<std::uint16_t>(key);
+        return binding;
+    }
+
+    NX::InputAction MoveAction()
+    {
+        auto up = KeyBinding(Platform::Keyboard::Key::W);
+        up.swizzleYX = true;
+
+        auto down = KeyBinding(Platform::Keyboard::Key::S);
+        down.swizzleYX = true;
+        down.negate = true;
+
+        NX::InputAction move;
+        move.name = "Move"_atom;
+        move.bindings = { up, down };
+        return move;
+    }
+} // namespace
+
+TEST(InputControllerTests, AddActionRejectsEmptyAndDuplicateNames)
+{
+    auto controller = NX::InputController::Create();
+
+    EXPECT_TRUE(controller->addAction(MoveAction()));
+    EXPECT_FALSE(controller->addAction(MoveAction()));
+    EXPECT_FALSE(controller->addAction(NX::InputAction{}));
+    EXPECT_EQ(controller->getActions().size(), 1U);
+}
+
+TEST(InputControllerTests, FindsAndRemovesActionsByName)
+{
+    auto controller = NX::InputController::Create();
+    ASSERT_TRUE(controller->addAction(MoveAction()));
+
+    const auto* move = controller->findAction("Move"_atom);
+    ASSERT_NE(move, nullptr);
+    EXPECT_EQ(move->bindings.size(), 2U);
+    EXPECT_EQ(controller->findAction("Jump"_atom), nullptr);
+
+    EXPECT_FALSE(controller->removeAction("Jump"_atom));
+    EXPECT_TRUE(controller->removeAction("Move"_atom));
+    EXPECT_TRUE(controller->getActions().empty());
+}
+
+TEST(InputControllerTests, BindingBuildsModifierMask)
+{
+    NX::InputBinding binding;
+    EXPECT_EQ(binding.getModifiers(), NX::InputModifier::None);
+
+    binding.control = true;
+    binding.shift = true;
+    EXPECT_EQ(binding.getModifiers(), NX::InputModifier::Control | NX::InputModifier::Shift);
+
+    binding.alt = true;
+    binding.super = true;
+    EXPECT_EQ(binding.getModifiers(), NX::InputModifier::Control | NX::InputModifier::Shift
+                                          | NX::InputModifier::Alt | NX::InputModifier::Super);
+}
+
+TEST(InputControllerTests, ActionsSurviveSerializationRoundTrip)
+{
+    auto original = NX::InputController::Create();
+    ASSERT_TRUE(original->addAction(MoveAction()));
+
+    auto save = KeyBinding(Platform::Keyboard::Key::S);
+    save.control = true;
+    save.shift = true;
+    save.trigger = NX::InputTrigger::Pressed;
+    ASSERT_TRUE(original->addAction(NX::InputAction{ "Save"_atom, { save } }));
+
+    RResourceStream<RJsonResourceStream> stream(original->serialize());
+    auto restored = NX::InputController::Create();
+    restored->deserialize(stream);
+
+    ASSERT_EQ(restored->getActions().size(), 2U);
+
+    const auto* move = restored->findAction("Move"_atom);
+    ASSERT_NE(move, nullptr);
+    ASSERT_EQ(move->bindings.size(), 2U);
+    EXPECT_EQ(move->bindings[1].code, static_cast<std::uint16_t>(Platform::Keyboard::Key::S));
+    EXPECT_TRUE(move->bindings[1].negate);
+    EXPECT_TRUE(move->bindings[1].swizzleYX);
+
+    const auto* restoredSave = restored->findAction("Save"_atom);
+    ASSERT_NE(restoredSave, nullptr);
+    ASSERT_EQ(restoredSave->bindings.size(), 1U);
+    EXPECT_EQ(restoredSave->bindings[0].trigger, NX::InputTrigger::Pressed);
+    EXPECT_EQ(restoredSave->bindings[0].getModifiers(),
+              NX::InputModifier::Control | NX::InputModifier::Shift);
+}
+
+namespace
+{
+    using Key = Platform::Keyboard::Key;
+
+    class InputControllerRuntimeTests : public ::testing::Test
     {
     protected:
         void SetUp() override
         {
-            GetInputSystem().initialize(Platform::GetWindow());
-            GetInputSystem().resetInput();
-            GetInputSystem().setActiveContext(InputContext::Gameplay);
+            NX::GetInputSystem().resetInput();
+            controller = NX::InputController::Create();
         }
 
-        void TearDown() override { GetInputSystem().resetInput(); }
+        void TearDown() override { NX::GetInputSystem().resetInput(); }
 
-        static void key(Key key, State state, int modifiers = 0)
+        void addAction(const char* name, std::vector<NX::InputBinding> bindings)
         {
-            GetInputSystem().pushKeyEvent(InputButton(static_cast<std::uint16_t>(key)),
-                                          static_cast<InputState>(state),
-                                          static_cast<InputModifier>(modifiers));
+            ASSERT_TRUE(controller->addAction(
+                NX::InputAction{ Core::StringAtom(name), std::move(bindings) }));
         }
 
-        static void frame() { GetInputSystem().processEvents(); }
+        static void key(Key key, NX::InputState state,
+                        NX::InputModifier mods = NX::InputModifier::None)
+        {
+            NX::KeyboardEvent event;
+            event.setKey(NX::InputButton(static_cast<std::uint16_t>(key)));
+            event.setState(state);
+            event.setMods(mods);
+            NX::GetInputSystem().queueEvent(event);
+        }
+
+        static void frame() { NX::GetInputSystem().processEvents(); }
+
+        NX::InputController::Ptr controller;
     };
+
+    NX::InputBinding KeyBinding(Key key, NX::InputTrigger trigger)
+    {
+        auto binding = KeyBinding(key);
+        binding.trigger = trigger;
+        return binding;
+    }
 } // namespace
 
-TEST_F(InputControllerTests, RoutesContextsAndReleasesHeldActions)
+TEST_F(InputControllerRuntimeTests, RegistersOnInitializeAndUnregistersOnDestruction)
 {
-    auto game = InputController::Create("Game"_atom, InputContext::Gameplay);
-    auto editor = InputController::Create("Editor"_atom, InputContext::Editor);
-    game->bind("Move"_atom, KeyChord::Exact(InputButton(static_cast<std::uint16_t>(Key::W))), InputState::Repeated);
-    editor->bind("Move"_atom, KeyChord::Exact(InputButton(static_cast<std::uint16_t>(Key::W))), InputState::Repeated);
-    key(Key::W, State::Pressed);
-    frame();
-    EXPECT_TRUE(game->isActionPressed("Move"_atom));
-    EXPECT_FALSE(editor->isActionPressed("Move"_atom));
-    frame();
-    EXPECT_TRUE(game->isActionPressed("Move"_atom));
-    GetInputSystem().setActiveContext(InputContext::Editor);
-    EXPECT_FALSE(game->isActionPressed("Move"_atom));
-    key(Key::W, State::Released);
-    key(Key::W, State::Pressed);
-    frame();
-    EXPECT_TRUE(editor->isActionPressed("Move"_atom));
+    EXPECT_FALSE(NX::GetInputSystem().isRegistered(controller.get()));
+    controller->initialize();
+    EXPECT_TRUE(NX::GetInputSystem().isRegistered(controller.get()));
+
+    const auto* raw = controller.get();
+    controller = nullptr;
+    EXPECT_FALSE(NX::GetInputSystem().isRegistered(raw));
 }
 
-TEST_F(InputControllerTests, MostSpecificChordWinsAndRightModifiersWork)
+// tag::input_controller_down[]
+TEST_F(InputControllerRuntimeTests, DownBindingIsActiveWhileHeld)
 {
-    auto controller = InputController::Create("Game"_atom, InputContext::Gameplay);
-    int saved = 0;
-    controller->bind("Plain"_atom, KeyChord::Exact(InputButton(static_cast<std::uint16_t>(Key::S))));
-    controller->bind(
-        "Save"_atom,
-        KeyChord{ .triggerKey = InputButton(static_cast<std::uint16_t>(Key::S)),
-                  .requiredKeys = { InputButton(static_cast<std::uint16_t>(Key::Left_Control)),
-                                    InputButton(static_cast<std::uint16_t>(Key::Left_Shift)) } },
-        [&](const InputActionEvent&) { ++saved; });
-    key(Key::Right_Control, State::Pressed);
-    key(Key::Right_Shift, State::Pressed);
-    key(Key::S, State::Pressed, GLFW_MOD_CONTROL | GLFW_MOD_SHIFT);
+    addAction("Fire", { KeyBinding(Key::Space, NX::InputTrigger::Down) });
+    controller->initialize();
+
+    key(Key::Space, NX::InputState::Pressed);
     frame();
-    EXPECT_EQ(saved, 1);
-    EXPECT_TRUE(controller->isActionPressed("Save"_atom));
-    EXPECT_FALSE(controller->isActionPressed("Plain"_atom));
-    key(Key::S, State::Repeated);
+    EXPECT_TRUE(controller->isActive("Fire"_atom));
+    EXPECT_TRUE(controller->wasTriggered("Fire"_atom));
+
     frame();
-    EXPECT_EQ(saved, 1);
-    EXPECT_FALSE(controller->isActionPressed("Save"_atom));
+    EXPECT_TRUE(controller->isActive("Fire"_atom));
+    EXPECT_FALSE(controller->wasTriggered("Fire"_atom));
+
+    key(Key::Space, NX::InputState::Released);
+    frame();
+    EXPECT_FALSE(controller->isActive("Fire"_atom));
+}
+// end::input_controller_down[]
+
+TEST_F(InputControllerRuntimeTests, QuickTapWithinOneFrameIsTriggered)
+{
+    addAction("Fire", { KeyBinding(Key::Space, NX::InputTrigger::Down) });
+    controller->initialize();
+
+    key(Key::Space, NX::InputState::Pressed);
+    key(Key::Space, NX::InputState::Released);
+    frame();
+    EXPECT_TRUE(controller->wasTriggered("Fire"_atom));
+    EXPECT_FALSE(controller->isActive("Fire"_atom));
 }
 
-TEST_F(InputControllerTests, ReleaseTriggerLastsOneFrame)
+TEST_F(InputControllerRuntimeTests, PressedAndReleasedTriggersFireOnce)
 {
-    auto controller = InputController::Create("Game"_atom, InputContext::Gameplay);
-    controller->bind("Release"_atom, KeyChord::Exact(InputButton(static_cast<std::uint16_t>(Key::W))), InputState::Released);
-    key(Key::W, State::Pressed);
+    addAction("Jump", { KeyBinding(Key::Space, NX::InputTrigger::Pressed) });
+    addAction("Land", { KeyBinding(Key::Space, NX::InputTrigger::Released) });
+    controller->initialize();
+
+    key(Key::Space, NX::InputState::Pressed);
     frame();
-    EXPECT_FALSE(controller->isActionPressed("Release"_atom));
-    key(Key::W, State::Released);
+    EXPECT_TRUE(controller->wasTriggered("Jump"_atom));
+    EXPECT_FALSE(controller->wasTriggered("Land"_atom));
+
     frame();
-    EXPECT_TRUE(controller->isActionPressed("Release"_atom));
+    EXPECT_FALSE(controller->wasTriggered("Jump"_atom));
+    EXPECT_FALSE(controller->isActive("Jump"_atom));
+
+    key(Key::Space, NX::InputState::Released);
     frame();
-    EXPECT_FALSE(controller->isActionPressed("Release"_atom));
+    EXPECT_TRUE(controller->wasTriggered("Land"_atom));
+    EXPECT_FALSE(controller->wasTriggered("Jump"_atom));
 }
 
-TEST_F(InputControllerTests, DisableAndReenableDoesNotLeaveStuckKeys)
+TEST_F(InputControllerRuntimeTests, KeysComposeMoveVector)
 {
-    auto controller = InputController::Create("Game"_atom, InputContext::Gameplay);
-    controller->bind("Move"_atom, KeyChord::Exact(InputButton(static_cast<std::uint16_t>(Key::W))), InputState::Repeated);
-    key(Key::W, State::Pressed);
+    auto right = KeyBinding(Key::D);
+    auto left = KeyBinding(Key::A);
+    left.negate = true;
+    auto move = MoveAction();
+    move.bindings.push_back(right);
+    move.bindings.push_back(left);
+    ASSERT_TRUE(controller->addAction(move));
+    controller->initialize();
+
+    key(Key::W, NX::InputState::Pressed);
+    key(Key::D, NX::InputState::Pressed);
     frame();
+    EXPECT_EQ(controller->getValue<glm::vec2>("Move"_atom), glm::vec2(1.f, 1.f));
+
+    key(Key::S, NX::InputState::Pressed);
+    key(Key::D, NX::InputState::Released);
+    frame();
+    EXPECT_EQ(controller->getValue<glm::vec2>("Move"_atom), glm::vec2(0.f, 0.f));
+    EXPECT_FALSE(controller->isActive("Move"_atom));
+
+    key(Key::W, NX::InputState::Released);
+    frame();
+    EXPECT_EQ(controller->getValue<glm::vec2>("Move"_atom), glm::vec2(0.f, -1.f));
+}
+
+TEST_F(InputControllerRuntimeTests, ExactModifiersMustMatchIgnoringLocks)
+{
+    addAction("Save", { NX::InputBinding::Shortcut(Key::S, NX::InputModifier::Control) });
+    controller->initialize();
+
+    key(Key::S, NX::InputState::Pressed, NX::InputModifier::Control | NX::InputModifier::Shift);
+    frame();
+    EXPECT_FALSE(controller->wasTriggered("Save"_atom));
+
+    key(Key::S, NX::InputState::Released);
+    key(Key::S, NX::InputState::Pressed);
+    frame();
+    EXPECT_FALSE(controller->wasTriggered("Save"_atom));
+
+    key(Key::S, NX::InputState::Released);
+    key(Key::S, NX::InputState::Pressed, NX::InputModifier::Control | NX::InputModifier::CapsLock);
+    frame();
+    EXPECT_TRUE(controller->wasTriggered("Save"_atom));
+}
+
+TEST_F(InputControllerRuntimeTests, MouseDeltaAccumulatesWithinFrame)
+{
+    NX::InputBinding look;
+    look.source = NX::InputSource::MouseDelta;
+    addAction("Look", { look });
+    controller->initialize();
+
+    NX::MouseMoveEvent first;
+    first.setDelta({ 1.f, 2.f });
+    NX::MouseMoveEvent second;
+    second.setDelta({ 3.f, 4.f });
+    NX::GetInputSystem().queueEvent(first);
+    NX::GetInputSystem().queueEvent(second);
+    frame();
+    EXPECT_EQ(controller->getValue<glm::vec2>("Look"_atom), glm::vec2(4.f, 6.f));
+
+    frame();
+    EXPECT_EQ(controller->getValue<glm::vec2>("Look"_atom), glm::vec2(0.f, 0.f));
+}
+
+TEST_F(InputControllerRuntimeTests, GamepadTriggerAxisIsNormalizedFromRest)
+{
+    NX::InputBinding throttle;
+    throttle.source = NX::InputSource::GamepadAxis;
+    throttle.code = GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER;
+    NX::InputBinding steer;
+    steer.source = NX::InputSource::GamepadAxis;
+    steer.code = GLFW_GAMEPAD_AXIS_LEFT_X;
+    addAction("Throttle", { throttle });
+    addAction("Steer", { steer });
+    controller->initialize();
+
+    NX::GamepadAxisEvent trigger(1);
+    trigger.setAxis(GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER);
+    trigger.setValue(0.f);
+    NX::GamepadAxisEvent stick(1);
+    stick.setAxis(GLFW_GAMEPAD_AXIS_LEFT_X);
+    stick.setValue(-0.5f);
+    NX::GetInputSystem().queueEvent(trigger);
+    NX::GetInputSystem().queueEvent(stick);
+    frame();
+    EXPECT_FLOAT_EQ(controller->getValue<float>("Throttle"_atom), 0.5f);
+    EXPECT_FLOAT_EQ(controller->getValue<float>("Steer"_atom), -0.5f);
+
+    trigger.setValue(-1.f);
+    NX::GetInputSystem().queueEvent(trigger);
+    frame();
+    EXPECT_FALSE(controller->isActive("Throttle"_atom));
+    EXPECT_FLOAT_EQ(controller->getValue<float>("Steer"_atom), -0.5f);
+}
+
+TEST_F(InputControllerRuntimeTests, UnknownActionReturnsDefaults)
+{
+    controller->initialize();
+    frame();
+    EXPECT_FALSE(controller->isActive("Missing"_atom));
+    EXPECT_FALSE(controller->wasTriggered("Missing"_atom));
+    EXPECT_EQ(controller->getValue<glm::vec2>("Missing"_atom), glm::vec2(0.f));
+}
+
+TEST_F(InputControllerRuntimeTests, DisabledControllerKeepsTrackingReleases)
+{
+    addAction("Fire", { KeyBinding(Key::Space, NX::InputTrigger::Down) });
+    controller->initialize();
+
+    key(Key::Space, NX::InputState::Pressed);
+    frame();
+    ASSERT_TRUE(controller->isActive("Fire"_atom));
+
     controller->disable();
-    key(Key::W, State::Released);
+    EXPECT_FALSE(controller->isActive("Fire"_atom));
+    key(Key::Space, NX::InputState::Released);
     frame();
-    EXPECT_FALSE(controller->isActionPressed("Move"_atom));
+
     controller->enable();
-    key(Key::W, State::Pressed);
+    EXPECT_FALSE(controller->isActive("Fire"_atom));
+}
+
+TEST_F(InputControllerRuntimeTests, BindingWithoutModifiersIgnoresHeldModifiers)
+{
+    addAction("Fire", { KeyBinding(Key::Space, NX::InputTrigger::Down) });
+    controller->initialize();
+
+    key(Key::Space, NX::InputState::Pressed, NX::InputModifier::Shift);
     frame();
-    EXPECT_TRUE(controller->isActionPressed("Move"_atom));
-    GetInputSystem().resetInput();
-    EXPECT_FALSE(controller->isActionPressed("Move"_atom));
+    EXPECT_TRUE(controller->isActive("Fire"_atom));
 }
 
-TEST_F(InputControllerTests, BindingSerializationPreservesChordAndTrigger)
+TEST_F(InputControllerRuntimeTests, DeinitializeClearsActionStates)
 {
-    const InputController::Binding binding{ .action = "Save"_atom,
-                                            .chord = KeyChord{ .triggerKey = InputButton(static_cast<std::uint16_t>(Key::S)),
-                                                               .requiredKeys = { InputButton(static_cast<std::uint16_t>(Key::Left_Control)) } },
-                                            .trigger = InputState::Released };
-    const nlohmann::json json = binding;
-    const auto restored = json.get<InputController::Binding>();
-    EXPECT_EQ(restored.action, binding.action);
-    EXPECT_EQ(restored.chord.triggerKey, InputButton(static_cast<std::uint16_t>(Key::S)));
-    EXPECT_EQ(restored.chord.requiredKeys, binding.chord.requiredKeys);
-    EXPECT_EQ(restored.trigger, binding.trigger);
-    auto controller = InputController::Create("Game"_atom, InputContext::Gameplay);
-    controller->setBindings({ restored });
-    EXPECT_TRUE(controller->getTags() & Tag_InputController);
-    EXPECT_EQ(TagHelper::ToTag("InputController"), Tag_InputController);
-    EXPECT_EQ(controller->serialize()["_bindings"][0], json);
+    NX::InputBinding scroll;
+    scroll.source = NX::InputSource::MouseScroll;
+    addAction("Scroll", { scroll });
+    controller->initialize();
+
+    NX::MouseScrollEvent event;
+    event.setOffset({ 0.f, 1.f });
+    NX::GetInputSystem().queueEvent(event);
+    frame();
+    ASSERT_TRUE(controller->isActive("Scroll"_atom));
+
+    controller->deinitialize();
+    EXPECT_FALSE(controller->isActive("Scroll"_atom));
+    EXPECT_FALSE(NX::GetInputSystem().isRegistered(controller.get()));
 }
 
-TEST_F(InputControllerTests, CallbackCanDestroyAnotherRegisteredController)
+TEST_F(InputControllerRuntimeTests, RemovingActionKeepsOtherActionsHeld)
 {
-    auto first = InputController::Create("First"_atom, InputContext::Gameplay);
-    auto second = InputController::Create("Second"_atom, InputContext::Gameplay);
+    addAction("Fire", { KeyBinding(Key::Space, NX::InputTrigger::Down) });
+    addAction("Jump", { KeyBinding(Key::W, NX::InputTrigger::Down) });
+    controller->initialize();
+
+    key(Key::Space, NX::InputState::Pressed);
+    frame();
+    ASSERT_TRUE(controller->isActive("Fire"_atom));
+
+    ASSERT_TRUE(controller->removeAction("Jump"_atom));
+    addAction("Crouch", { KeyBinding(Key::C, NX::InputTrigger::Down) });
+    frame();
+    EXPECT_TRUE(controller->isActive("Fire"_atom));
+}
+
+TEST_F(InputControllerRuntimeTests, AddActionFromNameAndBindings)
+{
+    using Key = Platform::Keyboard::Key;
+    ASSERT_TRUE(controller->addAction("Save"_atom,
+                                      { NX::InputBinding::Key(Key::S).withControl().onPressed() }));
+    EXPECT_FALSE(controller->addAction("Save"_atom, { NX::InputBinding::Key(Key::S) }));
+    controller->initialize();
+
+    key(Key::S, NX::InputState::Pressed, NX::InputModifier::Control);
+    frame();
+    EXPECT_TRUE(controller->wasTriggered("Save"_atom));
+}
+
+// tag::input_controller_callback[]
+TEST_F(InputControllerRuntimeTests, TriggeredCallbackRunsOncePerPress)
+{
     int calls = 0;
-    first->bind("Delete"_atom, KeyChord::Exact(InputButton(static_cast<std::uint16_t>(Key::W))),
-                [&](const InputActionEvent&) { second = nullptr; });
-    second->bind("Move"_atom, KeyChord::Exact(InputButton(static_cast<std::uint16_t>(Key::W))), [&](const InputActionEvent&) { ++calls; });
-    key(Key::W, State::Pressed);
+    ASSERT_TRUE(controller->addAction("Fire"_atom, { NX::InputBinding::Key(Key::Space) },
+                                      [&] { ++calls; }));
+    controller->initialize();
+
+    key(Key::Space, NX::InputState::Pressed);
+    frame();
+    EXPECT_EQ(calls, 1);
+
+    frame();
+    EXPECT_EQ(calls, 1);
+
+    key(Key::Space, NX::InputState::Released);
+    key(Key::Space, NX::InputState::Pressed);
+    frame();
+    EXPECT_EQ(calls, 2);
+}
+// end::input_controller_callback[]
+
+TEST_F(InputControllerRuntimeTests, CallbacksCanBeAttachedBeforeActionExists)
+{
+    int calls = 0;
+    controller->onTriggered("Save"_atom, [&] { ++calls; });
+    controller->onTriggered("Save"_atom, [&] { calls += 10; });
+    ASSERT_TRUE(controller->addAction("Save"_atom,
+                                      { NX::InputBinding::Key(Key::S).withControl().onPressed() }));
+    controller->initialize();
+
+    key(Key::S, NX::InputState::Pressed, NX::InputModifier::Control);
+    frame();
+    EXPECT_EQ(calls, 11);
+
+    controller->clearCallbacks("Save"_atom);
+    key(Key::S, NX::InputState::Released);
+    key(Key::S, NX::InputState::Pressed, NX::InputModifier::Control);
+    frame();
+    EXPECT_EQ(calls, 11);
+}
+
+TEST_F(InputControllerRuntimeTests, DisabledControllerDoesNotRunCallbacks)
+{
+    int calls = 0;
+    ASSERT_TRUE(controller->addAction("Fire"_atom, { NX::InputBinding::Key(Key::Space) },
+                                      [&] { ++calls; }));
+    controller->initialize();
+    controller->disable();
+
+    key(Key::Space, NX::InputState::Pressed);
     frame();
     EXPECT_EQ(calls, 0);
 }
 
-TEST_F(InputControllerTests, EditingBindingsPreservesCallbacksAndResetsHeldState)
+TEST_F(InputControllerRuntimeTests, CallbackMayDestroyItsController)
 {
-    auto controller = InputController::Create("Game"_atom, InputContext::Gameplay);
     int calls = 0;
-    controller->bind(
-        "Move"_atom, KeyChord::Exact(InputButton(static_cast<std::uint16_t>(Key::W))), [&](const InputActionEvent&) { ++calls; },
-        InputState::Repeated);
-    key(Key::W, State::Pressed);
+    ASSERT_TRUE(controller->addAction("Close"_atom, { NX::InputBinding::Key(Key::Escape) },
+                                      [&]
+                                      {
+                                          ++calls;
+                                          controller = nullptr;
+                                      }));
+    controller->initialize();
+
+    key(Key::Escape, NX::InputState::Pressed);
     frame();
     EXPECT_EQ(calls, 1);
-    controller->setBindings(controller->getBindings());
-    EXPECT_FALSE(controller->isActionPressed("Move"_atom));
-    ASSERT_EQ(controller->getBindings().size(), 1);
-    key(Key::W, State::Released);
-    key(Key::W, State::Pressed);
+    EXPECT_EQ(controller.get(), nullptr);
+
     frame();
-    EXPECT_EQ(calls, 2);
 }
 
-TEST_F(InputControllerTests, CloneHasIndependentRuntimeStateAndRegistersOnInitialize)
+TEST_F(InputControllerRuntimeTests, DestroyingAnEarlierControllerDoesNotSkipTheNextOnesCallbacks)
 {
-    auto original = InputController::Create("Original"_atom, InputContext::Gameplay);
-    original->bind("Move"_atom, KeyChord::Exact(InputButton(static_cast<std::uint16_t>(Key::W))), InputState::Repeated);
-    key(Key::W, State::Pressed);
+    auto second = NX::InputController::Create();
+    int firstCalls = 0;
+    int secondCalls = 0;
+    ASSERT_TRUE(controller->addAction("First"_atom, { NX::InputBinding::Shortcut(Key::Escape) },
+                                      [&]
+                                      {
+                                          ++firstCalls;
+                                          controller = nullptr;
+                                      }));
+    ASSERT_TRUE(second->addAction("Second"_atom, { NX::InputBinding::Shortcut(Key::Escape) },
+                                  [&] { ++secondCalls; }));
+    controller->initialize();
+    second->initialize();
+
+    key(Key::Escape, NX::InputState::Pressed);
     frame();
-    auto clonedBase = original->clone();
-    auto* clone = dynamic_cast<InputController*>(clonedBase.get());
-    ASSERT_NE(clone, nullptr);
-    EXPECT_FALSE(clone->isActionPressed("Move"_atom));
-    EXPECT_NE(clone->onAction.get(), original->onAction.get());
-    clone->initialize();
-    key(Key::W, State::Released);
-    key(Key::W, State::Pressed);
-    frame();
-    EXPECT_TRUE(clone->isActionPressed("Move"_atom));
+
+    EXPECT_EQ(firstCalls, 1);
+    // A Pressed trigger lasts one frame, so a skipped controller would never see it.
+    EXPECT_EQ(secondCalls, 1);
 }
 
-TEST_F(InputControllerTests, DeserializedComponentReceivesInput)
+TEST_F(InputControllerRuntimeTests, CallbackDestroyingALaterControllerStopsItsCallbacks)
 {
-    InputController original;
-    original.bind("Move"_atom, KeyChord::Exact(InputButton(static_cast<std::uint16_t>(Key::W))), InputState::Repeated);
-    RResourceStream<RJsonResourceStream> stream(original.serialize());
-    auto restored = InputController::Create();
-    restored->deserialize(stream);
-    key(Key::W, State::Pressed);
+    auto second = NX::InputController::Create();
+    int secondCalls = 0;
+    ASSERT_TRUE(controller->addAction("First"_atom, { NX::InputBinding::Shortcut(Key::Escape) },
+                                      [&] { second = nullptr; }));
+    ASSERT_TRUE(second->addAction("Second"_atom, { NX::InputBinding::Shortcut(Key::Escape) },
+                                  [&] { ++secondCalls; }));
+    controller->initialize();
+    second->initialize();
+
+    key(Key::Escape, NX::InputState::Pressed);
     frame();
-    EXPECT_TRUE(restored->isActionPressed("Move"_atom));
-    restored->deserialize(stream);
-    EXPECT_FALSE(restored->isActionPressed("Move"_atom));
+
+    EXPECT_EQ(second.get(), nullptr);
+    EXPECT_EQ(secondCalls, 0);
 }
 
-TEST_F(InputControllerTests, FocusLossClearsHeldAndQueuedInputEvenIfFocusReturnsBeforeNextFrame)
+TEST_F(InputControllerRuntimeTests, CallbackMayInitializeANewControllerWithoutRunningItThisFrame)
 {
-    auto controller = InputController::Create("Game"_atom, InputContext::Gameplay);
-    controller->bind("Move"_atom, KeyChord::Exact(InputButton(static_cast<std::uint16_t>(Key::W))), InputState::Repeated);
-    controller->bind("Queued"_atom, KeyChord::Exact(InputButton(static_cast<std::uint16_t>(Key::S))));
-    key(Key::W, State::Pressed);
+    auto late = NX::InputController::Create();
+    int lateCalls = 0;
+    ASSERT_TRUE(late->addAction("Late"_atom, { NX::InputBinding::Shortcut(Key::Escape) },
+                                [&] { ++lateCalls; }));
+    ASSERT_TRUE(controller->addAction("First"_atom, { NX::InputBinding::Shortcut(Key::Escape) },
+                                      [&] { late->initialize(); }));
+    controller->initialize();
+
+    key(Key::Escape, NX::InputState::Pressed);
     frame();
-    ASSERT_TRUE(controller->isActionPressed("Move"_atom));
-    key(Key::S, State::Pressed);
-    Platform::GetWindow().onFocusChanged->trigger(false);
-    EXPECT_FALSE(controller->isActionPressed("Move"_atom));
-    Platform::GetWindow().onFocusChanged->trigger(true);
+    EXPECT_EQ(lateCalls, 0);
+
+    key(Key::Escape, NX::InputState::Released);
+    key(Key::Escape, NX::InputState::Pressed);
     frame();
-    EXPECT_FALSE(controller->isActionPressed("Queued"_atom));
-    key(Key::W, State::Pressed);
-    frame();
-    EXPECT_TRUE(controller->isActionPressed("Move"_atom));
+    EXPECT_EQ(lateCalls, 1);
 }
 
-TEST_F(InputControllerTests, ReleasingRequiredKeyEndsHeldChord)
+TEST_F(InputControllerRuntimeTests, AxisDriftInsideBindingDeadzoneDoesNotActivateTheAction)
 {
-    auto controller = InputController::Create("Game"_atom, InputContext::Gameplay);
-    controller->bind("Move"_atom, KeyChord{ .triggerKey = InputButton(static_cast<std::uint16_t>(Key::W)),
-                                          .requiredKeys = { InputButton(static_cast<std::uint16_t>(Key::Left_Control)) } },
-                     InputState::Repeated);
-    key(Key::Left_Control, State::Pressed);
-    key(Key::W, State::Pressed);
-    frame();
-    EXPECT_TRUE(controller->isActionPressed("Move"_atom));
-    key(Key::Left_Control, State::Released);
-    frame();
-    EXPECT_FALSE(controller->isActionPressed("Move"_atom));
+    constexpr auto axis = Platform::Joystick::GamepadAxis::LeftX;
+    addAction("Move", { NX::InputBinding::GamepadAxis(axis).withDeadzone(0.15f) });
+    controller->initialize();
+
+    const auto moveStick = [](float value)
+    {
+        NX::GamepadAxisEvent event(1);
+        event.setAxis(static_cast<std::uint16_t>(axis));
+        event.setValue(value);
+        NX::GetInputSystem().queueEvent(event);
+        frame();
+    };
+
+    moveStick(0.05f);
+    EXPECT_FALSE(controller->isActive("Move"_atom));
+    EXPECT_FALSE(controller->wasTriggered("Move"_atom));
+
+    moveStick(0.6f);
+    EXPECT_TRUE(controller->isActive("Move"_atom));
+    EXPECT_TRUE(controller->wasTriggered("Move"_atom));
+    EXPECT_FLOAT_EQ(controller->getValue<float>("Move"_atom), 0.6f);
+
+    // Returning to a drift value inside the deadzone ends the action.
+    moveStick(0.08f);
+    EXPECT_FALSE(controller->isActive("Move"_atom));
 }
-#endif
+
+TEST_F(InputControllerRuntimeTests, DeadzoneAppliesToTriggersAfterNormalization)
+{
+    constexpr auto trigger = Platform::Joystick::GamepadAxis::RightTrigger;
+    addAction("Zoom", { NX::InputBinding::GamepadAxis(trigger).withDeadzone(0.2f) });
+    controller->initialize();
+
+    NX::GamepadAxisEvent event(1);
+    event.setAxis(static_cast<std::uint16_t>(trigger));
+    event.setValue(-0.8f); // raw -1..1 trigger value, normalized to 0.1
+    NX::GetInputSystem().queueEvent(event);
+    frame();
+    EXPECT_FALSE(controller->isActive("Zoom"_atom));
+
+    event.setValue(0.f); // normalized to 0.5
+    NX::GetInputSystem().queueEvent(event);
+    frame();
+    EXPECT_TRUE(controller->isActive("Zoom"_atom));
+}

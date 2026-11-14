@@ -17,6 +17,7 @@ class Player : public NX::SceneObj::RectangleAnimated
     ECS_DECL(Player, NX::SceneObj::RectangleAnimated);
 
 protected:
+    void onInitialize() override;
     void onTick(float delta) override;
 
 private:

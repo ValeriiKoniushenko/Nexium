@@ -13,7 +13,6 @@
 #include "ECSAdapters/BaseComponentAdapter.h"
 #include "ECSAdapters/EditorActorAdapter.h"
 #include "ECSAdapters/EditorInterleavedGraphicsDataAdapter.h"
-#include "ECSAdapters/Input/ECSEditorInputControllerAdapter.h"
 #ifdef NEXIUM_ENABLE_3D_MODULE
     #include "ECSAdapters/EditorStaticMeshBundleAdapter.h"
 #endif
@@ -148,7 +147,6 @@ namespace NX
 #endif
         addUniqueTypeChildComponent<ECSEditorInterleavedGraphicsDataAdapter>();
         addUniqueTypeChildComponent<ECSEditorFrameByFrameAnimationAdapter>();
-        // addUniqueTypeChildComponent<ECSEditorInputControllerAdapter>();
 
         setEnablePreview(true);
         setEnableTree(true);
@@ -166,11 +164,13 @@ namespace NX
         _assetType->input->setReadOnly(true);
 
         // -+- -+- -+- -+- -+- -+- -+- -+- -+- -+- -+-
-        auto deleteKey
-            = _keyboardManager.getOrCreate("Delete selected component", Keyboard::Key::Delete);
-        deleteKey->setIsRepeatable(false);
-        _subscriptionPool << deleteKey->onPress->subscribeAndGetID(
-            [&](auto) { removeCurrentComponent(_targetComponent.get()); });
+        _inputController = InputController::Create();
+        _inputController->initialize();
+        _inputController->setPriority(InputPriority::FocusedEditorWindow);
+        _inputController->addAction("Delete selected component"_atom,
+                                    { InputBinding::Shortcut(Platform::Keyboard::Key::Delete) },
+                                    [this] { removeCurrentComponent(_targetComponent.get()); });
+        _inputController->disable();
     }
 
     void NxECSBasedEditorEWC::onDrawProperties()
@@ -331,7 +331,12 @@ namespace NX
     {
         NxEditorBaseEditorEWC::onUpdate();
 
-        _keyboardManager.update();
+        // Delete must reach only the focused editor window (not the scene viewport or another
+        // asset editor) and must not fire while the user is typing into a text field.
+        if (_inputController)
+        {
+            _inputController->setEnabled(isFocused() && !ImGui::GetIO().WantTextInput);
+        }
     }
 
     bool NxECSBasedEditorEWC::onOpenFromPath(const std::filesystem::path& path)
@@ -356,7 +361,7 @@ namespace NX
         _headerLayout.removeAllChildren();
         _logicalPath = nullptr;
         _assetType = nullptr;
-        _keyboardManager.remove("Delete selected component"_atom);
+        _inputController = nullptr;
         _targetComponent = nullptr;
         reset();
     }

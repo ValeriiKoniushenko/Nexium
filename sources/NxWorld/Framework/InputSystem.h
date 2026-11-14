@@ -13,13 +13,9 @@
 
 #include "Core/Delegate.h"
 #include "Core/Singleton.h"
-#include "NxSubsystems/Input/InputTypes.h"
-#include "NxWorld/Framework/InputController.h"
-#include "Platform/Input/Events/GamepadEvents.h"
-#include "Platform/Input/Events/KeyboardEvents.h"
-#include "Platform/Input/Events/MouseEvents.h"
+#include "NxWorld/Framework/Input/InputActionTypes.h"
+#include "Platform/Input/Events/AnyInputEvent.h"
 
-#include <deque>
 #include <vector>
 
 namespace Platform
@@ -29,6 +25,7 @@ namespace Platform
 
 namespace NX
 {
+    class InputController;
 
     class InputSystem final : public Core::Singleton<InputSystem>
     {
@@ -41,55 +38,79 @@ namespace NX
 
         void processEvents();
 
-        // void setActiveContext(InputContext context);
+        [[nodiscard]] std::size_t getPendingEventCount() const noexcept { return _events.size(); }
+        [[nodiscard]] const std::vector<AnyInputEvent>& getPendingEvents() const noexcept
+        {
+            return _events;
+        }
 
+        /// Discards every pending event and resynchronizes with the window's focus and iconified
+        /// state. It does not reset controllers.
         void resetInput();
 
-        // void registerController(InputController* controller);
-        // void unregisterController(InputController* controller);
-
-        NX::InputModifier ConvertModifiers(int mods);
-
-        /// Queue an input event for processing in the next processEvents() call.
-        /// Takes ownership of the event.
-        template<typename T>
-        void queueEvent(T event)
+        /// False while the window is unfocused or minimized: new presses, mouse movement, scroll,
+        /// and gamepad input are then ignored. Releases are still delivered.
+        [[nodiscard]] bool isWindowActive() const noexcept
         {
-            static_assert(std::is_base_of_v<InputEvent, T>, "T must inherit from InputEvent");
-            _events.emplace_back(std::make_unique<T>(std::move(event)));
+            return _isWindowFocused && !_isWindowIconified;
+        }
+
+        void registerController(InputController* controller);
+        void unregisterController(InputController* controller);
+        [[nodiscard]] bool isRegistered(const InputController* controller) const;
+
+        template<InputEventType T>
+        void queueEvent(T&& event)
+        {
+            _events.emplace_back(std::in_place_type<std::remove_cvref_t<T>>,
+                                 std::forward<T>(event));
         }
 
     private:
-        void dispatch(const InputEvent* event);
+        void syncWindowState();
+        void setWindowState(bool focused, bool iconified);
+        void routeButton(InputSource source, std::uint16_t code, InputState state,
+                         InputModifier mods);
 
-        // [[nodiscard]] std::vector<InputController*> selectControllers();
+        /// Offers an event to the controllers from the highest priority down. `deliver` returns
+        /// whether a controller has a binding for the event. If `consumable`, the first enabled,
+        /// consuming controller that does keeps every lower priority from seeing the event;
+        /// controllers of the same priority still all receive it.
+        template<typename Deliver>
+        void route(bool consumable, Deliver&& deliver);
 
-        // [[nodiscard]] std::vector<InputController*>& controllersFor(InputContext context);
+        void handle(const KeyboardEvent& event);
+        void handle(const TextInputEvent& event);
+        void handle(const MouseMoveEvent& event);
+        void handle(const MouseButtonEvent& event);
+        void handle(const MouseScrollEvent& event);
+        void handle(const MouseEnterEvent& event);
+        void handle(const GamepadButtonEvent& event);
+        void handle(const GamepadAxisEvent& event);
+        void handle(const GamepadConnectionEvent& event);
+        void handle(const WindowResizeEvent& event);
+        void handle(const WindowFocusEvent& event);
+        void handle(const WindowIconifyEvent& event);
+        void handle(const WindowCloseEvent& event);
 
-        // void refreshRoutedControllers();
+        /// Events queued for the next processEvents() call.
+        std::vector<AnyInputEvent> _events;
+        /// Events being handled by the current processEvents() call. Swapped with _events so
+        /// both buffers keep their capacity and steady-state frames do not allocate.
+        std::vector<AnyInputEvent> _processing;
 
-        std::deque<std::unique_ptr<InputEvent>> _events;
-
-        template<typename T>
-            requires std::is_base_of_v<InputEvent, T>
-        void pushEvent(T&& event)
-        {
-            _events.emplace_back(std::make_unique<T>(std::forward<T>(event)));
-        }
-
-        // /// Non-owning pointers. Every controller unregisters itself before destruction.
-        // /// Controllers registered for shortcuts that are active while editor UI owns input.
-        // std::vector<InputController*> _editorControllers;
-        // /// Controllers registered for gameplay actions such as player or spectator movement.
-        // std::vector<InputController*> _gameplayControllers;
-        // /// Live snapshot of the active context. Context changes rebuild it immediately; events
-        // /// are dispatched only to these controllers until the context changes again.
-        // std::vector<InputController*> _routedControllers;
-        // InputContext _activeContext = InputContext::Editor;
-
-        std::vector<InputButton> _pressedKeys;
+        std::vector<InputController*> _controllers;
+        /// _controllers by descending priority, rebuilt every processEvents().
+        std::vector<InputController*> _ordered;
+        /// Snapshot of _controllers walked while callbacks run. Kept as a member so it keeps
+        /// its capacity between frames.
+        std::vector<InputController*> _dispatching;
 
         Core::DelegateSubscriberPoolGuard _subscriptions;
+
+        Platform::Window* _window = nullptr;
+        bool _isWindowFocused = true;
+        bool _isWindowIconified = false;
 
         bool _initialized = false;
     };

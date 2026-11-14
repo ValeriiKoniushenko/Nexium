@@ -24,15 +24,16 @@ independent concurrent game instances.
 
 == Each frame
 
-Window events are polled first, then the active input context is set from viewport focus and
-the queued key events are dispatched (see xref:input-system.adoc[Input System]).
+Window events are polled first, then gamepads, and then `InputSystem` routes the input events
+queued by both to the registered `InputController` components and runs their action callbacks
+(see xref:input-system.adoc[Input System]).
 Updates use the previous frame's measured delta; the first delta is zero.
 
 [cols="2,3,3",options="header"]
 |===
 |Operation |GameOnly |Editor
 |Scene tick |Current scene, every frame; then the window viewport is reset to the framebuffer size. |Current scene, only while the viewport is focused.
-|Integration update |`updateInput()`, if an integration is attached. |`tick(delta)`: editor windows and keyboard/mouse actions.
+|Integration update |None. |`tick(delta)`: editor windows; it also enables or disables the editor's shortcut controller.
 |Drawing |Current scene to the window. |`updateSceneInteraction()` (picking/gizmos), `beforeSceneDraw()`, then the current scene to the viewport texture. Without a camera, the texture is cleared once instead of keeping the last frame.
 |GameInstance tick |After scene drawing, if a camera exists. |After scene drawing, if a camera exists.
 |Scene changes |`SceneManager::applyPendingChanges()`. |Same.
@@ -71,7 +72,7 @@ Keep that order because both objects borrow their dependencies.
 See xref:file-io.adoc[File I/O] for persistence and xref:memory.adoc[Ownership] for lifetimes.
 
 The editor hooks Runtime calls are declared in `NxWorld/Framework/ApplicationIntegration.h`:
-`preInitialize`, `initialize`, `readFromCache`, `writeToCache`, `updateInput`, `tick`,
+`preInitialize`, `initialize`, `readFromCache`, `writeToCache`, `tick`,
 `updateSceneInteraction`, `isViewportFocused`, `beforeSceneDraw`, `afterSceneDraw`,
 `clearSceneRenderTarget`, and `getRenderSize`.
 

@@ -7,7 +7,7 @@
 //
 //     http://www.apache.org/licenses/LICENSE-2.0
 
-// Module: Nexium::Subsystem::Input
+// Module: Nexium::Platform::Input
 
 #pragma once
 
@@ -58,15 +58,21 @@ namespace NX
         void setButton(InputButton button) { _button = button; }
         void setState(InputState state) { _state = state; }
         void setMods(InputModifier mods) { _mods = mods; }
+        void setPosition(const glm::vec2& position) { _position = position; }
 
         [[nodiscard]] InputButton getButton() const { return _button; }
         [[nodiscard]] InputState getState() const { return _state; }
         [[nodiscard]] InputModifier getMods() const { return _mods; }
 
+        /// Cursor position (window coordinates) at the moment the button changed state. Use it
+        /// instead of the current cursor position: the mouse may have moved since the click.
+        [[nodiscard]] const glm::vec2& getPosition() const { return _position; }
+
     private:
         InputState _state = InputState::None;
         InputModifier _mods = InputModifier::None;
         InputButton _button = InputButton::InvalidIndex;
+        glm::vec2 _position{ 0.f };
     };
 
     class MouseScrollEvent : public MouseEvent

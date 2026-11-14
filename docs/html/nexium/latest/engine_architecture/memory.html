@@ -6,7 +6,7 @@
     <title>Memory and Ownership :: Nexium Engine</title>
     <link rel="prev" href="threading.html">
     <link rel="next" href="resource-system.html">
-    <meta name="generator" content="Antora 3.1.15">
+    <meta name="generator" content="Antora 3.2.2">
     <link rel="stylesheet" href="../../../_/css/site.css">
   </head>
   <body class="article">
@@ -217,7 +217,7 @@
     <li><a href="memory.html">Memory Model</a></li>
   </ul>
 </nav>
-<div class="edit-this-page"><a href="file:///home/valerii/workspace/Nexium//docs/nexium/modules/engine_architecture/pages/memory.adoc">Edit this Page</a></div>
+<div class="edit-this-page"><a href="file:///home/alex/Desktop/nexium//docs/nexium/modules/engine_architecture/pages/memory.adoc">Edit this Page</a></div>
 </div>
   <div class="content">
 <aside class="toc sidebar" data-title="Contents" data-levels="2">
@@ -288,8 +288,12 @@
 <td class="tableblock halign-left valign-top"><p class="tableblock">Strong ECSAsset references and <code>AssetRef</code> entries.</p></td>
 </tr>
 <tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">InputSystem → queued events</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Owned by value in two reused buffers.</p></td>
+</tr>
+<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">InputSystem → controllers</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Non-owning pointers; each <code>InputController</code> unregisters itself in its destructor.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Non-owning pointers; each <code>InputController</code> unregisters itself on deinitialize and in its destructor.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">GameEditor → windows</p></td>

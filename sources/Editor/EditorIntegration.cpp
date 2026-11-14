@@ -69,11 +69,6 @@ namespace NX
             Foundation::Config::Path::imGuiWindowsIni.generic_string().c_str());
     }
 
-    void EditorIntegration::updateInput()
-    {
-        _editor.keyboardInput.update();
-    }
-
     void EditorIntegration::tick(float delta)
     {
         _editor.tick(delta);
@@ -88,6 +83,12 @@ namespace NX
     {
         const auto* viewport = _editor.getWindow<GameViewportEWC>();
         return viewport && viewport->isFocused();
+    }
+
+    bool EditorIntegration::isViewportHovered() const
+    {
+        const auto* viewport = _editor.getWindow<GameViewportEWC>();
+        return viewport && viewport->isHovered();
     }
 
     void EditorIntegration::beforeSceneDraw()

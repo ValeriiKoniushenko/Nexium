@@ -11,9 +11,8 @@
 
 #pragma once
 
-#include "NxSubsystems/Input/InputManager.h"
 #include "NxWorld/Entities/Actor.h"
-#include "NxWorld/Framework/InputController.h"
+#include "NxWorld/Framework/Input/InputController.h"
 
 namespace NX
 {
@@ -31,22 +30,31 @@ namespace NX
         FIELD();
         float mouseSensitivity = 0.5f;
 
-        KeyboardInputManger keyboardInput;
-        MouseInputManger mouseInput;
+        FIELD();
+        float gamepadDeadzone = 0.15f;
 
     public:
         [[nodiscard]] Core::StringAtom getCacheHash() const override;
 
     protected:
-        void onTick(float delta) override;
-        Core::DelegateSubscriberPoolGuard _subscriptionPool;
-
         void onInitialize() override;
 
         // Input is listened to only while the owning scene is current.
         void onSceneActivated() final;
         void onSceneDeactivated() final;
-        virtual void subscribeToInput() {}
+        virtual void setupInputActions(InputController& input) {}
+
+        /// True while a drag action that started over the viewport is held. The cursor may leave
+        /// the viewport during the drag, but a drag that started over another panel never moves
+        /// the camera, and a button that was already down is ignored until it is pressed again.
+        [[nodiscard]] bool isDragAllowed(const InputController& input,
+                                         const Core::StringAtom& action);
+
+    private:
+        void updateInputControllerState();
+
+        bool _isSceneActive = false;
+        bool _isDragAllowed = false;
     };
 
     CLASS();
@@ -64,9 +72,17 @@ namespace NX
         float minZoom = 0.15f;
         FIELD();
         float maxZoom = 5.f;
+        FIELD();
+        float gamepadZoomSpeed = 30.f;
 
     protected:
-        void subscribeToInput() override;
+        void setupInputActions(InputController& input) override;
+        void onTick(float delta) override;
+
+    private:
+        void applyScroll(glm::vec2 offset, bool boost, bool zoom);
+        void applyGamepad(const InputController& input, bool boost);
+        bool applyZoom(float scrollStep);
     };
 
     CLASS();
@@ -82,13 +98,12 @@ namespace NX
         float leftShiftMlt = 8.f;
         FIELD();
         float leftCtrlMlt = 0.4f;
+        FIELD();
+        float gamepadLookSpeed = 300.f;
 
     protected:
-        void onInitialize() override;
-        void subscribeToInput() override;
+        void setupInputActions(InputController& input) override;
         void onTick(float delta) override;
-
-        // InputController::Ptr _inputController;
     };
 
 } // namespace NX

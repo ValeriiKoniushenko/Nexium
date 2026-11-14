@@ -67,12 +67,18 @@ namespace NX
         {
             NX_LATENCY_POINT("loop - start");
             clock.start();
+            // tag::input_frame_poll[]
             Platform::Window::pollEvent();
-            Platform::Joystick::poll();
-            // GetInputSystem().setActiveContext(_gameInstance.isApplicationViewportFocused()
-            //                                       ? InputContext::Gameplay
-            //                                       : InputContext::Editor);
+            // A gamepad is polled, not delivered by a window callback, so it has to be told to
+            // stand still while the window is unfocused or minimized.
+            if (GetInputSystem().isWindowActive())
+            {
+                Platform::Joystick::poll();
+            }
+            // end::input_frame_poll[]
+            // tag::input_frame_process[]
             GetInputSystem().processEvents();
+            // end::input_frame_process[]
 
             if (!_gameInstance.isEditorMode())
             {
@@ -80,11 +86,6 @@ namespace NX
                 _gameInstance.window->updateViewport();
 
                 glClear(clearBits);
-
-                if (auto* integration = _gameInstance.getApplicationIntegration())
-                {
-                    integration->updateInput();
-                }
 
                 if (_gameInstance.world.currentCamera)
                 {

@@ -27,7 +27,8 @@ namespace Platform
         static constexpr int MaxJoysticks = GLFW_JOYSTICK_LAST + 1;
         static constexpr int MaxButtons = GLFW_GAMEPAD_BUTTON_LAST + 1;
         static constexpr int MaxAxes = GLFW_GAMEPAD_AXIS_LAST + 1;
-        static constexpr float DefaultDeadzone = 0.15f;
+
+        static constexpr float DefaultAxisChangeThreshold = 0.01f;
 
         Joystick() = delete;
 
@@ -37,18 +38,20 @@ namespace Platform
         /// Check if a gamepad is connected at the given joystick index.
         [[nodiscard]] static bool isConnected(int jid);
 
-        /// Get current button state (for immediate queries, not event-driven).
+        /// Get current button state.
         [[nodiscard]] static bool isButtonPressed(int jid, int button);
 
-        /// Get current axis value with deadzone applied.
+        /// Get current raw axis value.
         [[nodiscard]] static float getAxis(int jid, int axis);
 
-        /// Set deadzone for axis change detection (default 0.15f).
-        static void setDeadzone(float deadzone);
+        /// Set minimum axis value difference required to generate an event.
+        static void setAxisChangeThreshold(float threshold);
 
-        [[nodiscard]] static float getDeadzone();
+        [[nodiscard]] static float getAxisChangeThreshold();
 
-        // GLFW gamepad button/axis constants for convenience
+        [[nodiscard]] static float getAxisRestValue(int axis) noexcept;
+
+        // GLFW gamepad button/axis constants for convenience.
         enum class GamepadButton : uint16_t
         {
             A = GLFW_GAMEPAD_BUTTON_A,
@@ -79,5 +82,9 @@ namespace Platform
             RightTrigger = GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER,
             Last = GLFW_GAMEPAD_AXIS_LAST
         };
+
+    private:
+        static void resetState(int jid);
+        static void disconnect(int jid);
     };
 } // namespace Platform

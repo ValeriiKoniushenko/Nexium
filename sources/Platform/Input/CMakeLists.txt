@@ -4,6 +4,7 @@ target_sources(Nexium_Platform_Input
 	PRIVATE
 		Window.cpp
 		Events/InputEvent.h
+		Events/AnyInputEvent.h
 		Events/MouseEvents.h
 		Events/WindowEvents.h
 		Events/GamepadEvents.h
@@ -15,6 +16,7 @@ target_sources(Nexium_Platform_Input
 nexium_add_public_headers(
 	Nexium_Platform_Input
 	Platform/Input/Glfw.h
+	Platform/Input/CursorDeltaTracker.h
 	Platform/Input/Window.h
 	Platform/Input/Window.generated.h
 	Platform/Input/InputDevices/Mouse.h

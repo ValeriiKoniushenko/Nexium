@@ -7,24 +7,25 @@
 //
 //     http://www.apache.org/licenses/LICENSE-2.0
 
-// Module: Nexium::Subsystem::Input
+// Module: Nexium::Platform::Input
 
 #pragma once
 
 #include "Core/String.h"
-#include "GLFW/glfw3.h"
 #include "JustReflectMe/Adapter.h"
 
 namespace NX
 {
 
+    /// Platform-independent button state. Backends convert their native values explicitly
+    /// (see Platform::ToInputState for GLFW); never cast native constants to this enum.
     ENUM_CLASS();
     enum class InputState : uint8_t
     {
         None = 0,
-        Pressed = GLFW_PRESS,
-        Released = GLFW_RELEASE,
-        Repeated = GLFW_REPEAT
+        Pressed,
+        Released,
+        Repeated
     };
 
     ENUM_CLASS();
@@ -82,24 +83,21 @@ namespace NX
     enum class InputDeviceType : uint8_t
     {
         None,
-        Keyboard,
+        Touch,
         Mouse,
         Gamepad,
-        Touch
+        Keyboard,
     };
 
     using InputDeviceId = uint32_t;
     constexpr InputDeviceId InvalidInputDeviceId = 0;
 
+    /// Common data of every input event. Events are small value types stored by value (see
+    /// AnyInputEvent), so this base is intentionally non-polymorphic: there is no virtual
+    /// destructor, and copying/destruction through a base reference is not allowed.
     class InputEvent
     {
     public:
-        virtual ~InputEvent() = default;
-        InputEvent(const InputEvent&) = default;
-        InputEvent(InputEvent&&) = default;
-        InputEvent& operator=(const InputEvent&) = default;
-        InputEvent& operator=(InputEvent&&) = default;
-
         [[nodiscard]] EventType getEventType() const { return _eventType; }
 
         [[nodiscard]] InputDeviceType getDeviceType() const { return _deviceType; }
@@ -107,6 +105,12 @@ namespace NX
         [[nodiscard]] InputDeviceId getDeviceId() const { return _deviceId; }
 
     protected:
+        ~InputEvent() = default;
+        InputEvent(const InputEvent&) = default;
+        InputEvent(InputEvent&&) = default;
+        InputEvent& operator=(const InputEvent&) = default;
+        InputEvent& operator=(InputEvent&&) = default;
+
         explicit InputEvent(EventType eventType, InputDeviceType deviceType,
                             InputDeviceId deviceId = InvalidInputDeviceId)
             : _eventType(eventType),
