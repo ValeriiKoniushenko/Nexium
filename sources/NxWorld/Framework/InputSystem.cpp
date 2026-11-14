@@ -175,15 +175,13 @@ namespace NX
             return;
         }
 
-        route(isPress,
-              [&](InputController& controller)
+        route(isPress, [&](InputController& controller)
               { return controller.onButton(source, code, state, mods); });
     }
 
     void InputSystem::handle(const KeyboardEvent& event)
     {
-        routeButton(InputSource::Key, event.getKey().getIndex(), event.getState(),
-                    event.getMods());
+        routeButton(InputSource::Key, event.getKey().getIndex(), event.getState(), event.getMods());
     }
 
     void InputSystem::handle(const TextInputEvent&)
@@ -197,8 +195,7 @@ namespace NX
             return;
         }
 
-        route(true,
-              [&](InputController& controller)
+        route(true, [&](InputController& controller)
               { return controller.onVector(InputSource::MouseDelta, event.getDelta()); });
     }
 
@@ -215,8 +212,7 @@ namespace NX
             return;
         }
 
-        route(true,
-              [&](InputController& controller)
+        route(true, [&](InputController& controller)
               { return controller.onVector(InputSource::MouseScroll, event.getOffset()); });
     }
 
@@ -237,8 +233,7 @@ namespace NX
             return;
         }
 
-        route(true,
-              [&](InputController& controller)
+        route(true, [&](InputController& controller)
               { return controller.onAxis(event.getAxis(), event.getValue()); });
     }
 

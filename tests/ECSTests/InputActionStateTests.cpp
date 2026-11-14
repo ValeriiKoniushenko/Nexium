@@ -307,8 +307,8 @@ TEST(InputBindingTests, ToStringDescribesBinding)
 
 TEST(InputBindingTests, AxisDeadzoneZeroesSmallValuesOnly)
 {
-    auto axis = NX::InputBinding::GamepadAxis(Platform::Joystick::GamepadAxis::LeftX)
-                    .withDeadzone(0.15f);
+    auto axis
+        = NX::InputBinding::GamepadAxis(Platform::Joystick::GamepadAxis::LeftX).withDeadzone(0.15f);
     EXPECT_FLOAT_EQ(axis.deadzone, 0.15f);
 
     axis.handleAxis(0.1f);
@@ -335,8 +335,8 @@ TEST(InputBindingTests, DefaultAxisDeadzoneIsZeroSoOldBehaviourIsKept)
 
 TEST(InputBindingTests, DeadzoneSurvivesSerializationAndIsOptionalInOldData)
 {
-    const auto axis = NX::InputBinding::GamepadAxis(Platform::Joystick::GamepadAxis::RightX)
-                          .withDeadzone(0.2f);
+    const auto axis
+        = NX::InputBinding::GamepadAxis(Platform::Joystick::GamepadAxis::RightX).withDeadzone(0.2f);
     nlohmann::json json = axis;
     EXPECT_FLOAT_EQ(json.get<NX::InputBinding>().deadzone, 0.2f);
 

@@ -155,8 +155,8 @@ TEST_F(InputRoutingTests, AnEventTheHigherControllerDoesNotBindPassesThrough)
 
 TEST_F(InputRoutingTests, OnlyAcceptedModifiersConsume)
 {
-    auto high = makeProbe(
-        "Save", { NX::InputBinding::Shortcut(Key::S, NX::InputModifier::Control) }, 10);
+    auto high
+        = makeProbe("Save", { NX::InputBinding::Shortcut(Key::S, NX::InputModifier::Control) }, 10);
     auto low = makeProbe("Plain", { NX::InputBinding::Shortcut(Key::S) }, 0);
 
     // Plain S is not Ctrl+S, so the higher controller does not match and does not consume.
