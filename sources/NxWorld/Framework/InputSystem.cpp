@@ -84,12 +84,19 @@ namespace NX
             controller->endInputFrame();
         }
 
-        // A callback may add or destroy controllers, so iterate by index over the live list.
-        // NOLINTNEXTLINE(modernize-loop-convert): a range-for would be invalidated by erase.
-        for (std::size_t i = 0; i < _controllers.size(); ++i)
+        // A callback may add or destroy controllers, including ones not visited yet. Walk a
+        // snapshot so removing an entry cannot shift a neighbour out of the loop (its one-frame
+        // triggers would be lost), and skip controllers that were destroyed meanwhile.
+        // Controllers added by a callback are not in the snapshot and start with the next frame.
+        _dispatching = _controllers;
+        for (auto* controller : _dispatching)
         {
-            _controllers[i]->dispatchTriggeredCallbacks();
+            if (isRegistered(controller))
+            {
+                controller->dispatchTriggeredCallbacks();
+            }
         }
+        _dispatching.clear();
 
         _processing.clear();
     }

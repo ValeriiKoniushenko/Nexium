@@ -6,7 +6,7 @@
     <title>Input System :: Nexium Engine</title>
     <link rel="prev" href="ecs-overview.html">
     <link rel="next" href="editor.html">
-    <meta name="generator" content="Antora 3.2.2">
+    <meta name="generator" content="Antora 3.1.15">
     <link rel="stylesheet" href="../../../_/css/site.css">
   </head>
   <body class="article">
@@ -217,7 +217,7 @@
     <li><a href="input-system.html">Input System</a></li>
   </ul>
 </nav>
-<div class="edit-this-page"><a href="file:///home/alex/Desktop/nexium//docs/nexium/modules/engine_architecture/pages/input-system.adoc">Edit this Page</a></div>
+<div class="edit-this-page"><a href="file:///home/valerii/workspace/Nexium//docs/nexium/modules/engine_architecture/pages/input-system.adoc">Edit this Page</a></div>
 </div>
   <div class="content">
 <aside class="toc sidebar" data-title="Contents" data-levels="2">
@@ -658,12 +658,19 @@ GetInputSystem().processEvents();</code></pre>
         controller-&gt;endInputFrame();
     }
 
-    // A callback may add or destroy controllers, so iterate by index over the live list.
-    // NOLINTNEXTLINE(modernize-loop-convert): a range-for would be invalidated by erase.
-    for (std::size_t i = 0; i &lt; _controllers.size(); ++i)
+    // A callback may add or destroy controllers, including ones not visited yet. Walk a
+    // snapshot so removing an entry cannot shift a neighbour out of the loop (its one-frame
+    // triggers would be lost), and skip controllers that were destroyed meanwhile.
+    // Controllers added by a callback are not in the snapshot and start with the next frame.
+    _dispatching = _controllers;
+    for (auto* controller : _dispatching)
     {
-        _controllers[i]-&gt;dispatchTriggeredCallbacks();
+        if (isRegistered(controller))
+        {
+            controller-&gt;dispatchTriggeredCallbacks();
+        }
     }
+    _dispatching.clear();
 
     _processing.clear();
 }</code></pre>
@@ -692,7 +699,9 @@ accumulated mouse delta and scroll.</p>
 </div>
 <div class="paragraph">
 <p>Callbacks run last and outside the routing loops, so a callback may add or remove actions,
-or destroy controllers — including its own.</p>
+or destroy controllers — including its own. They run over a snapshot of the registered
+controllers: a controller destroyed by an earlier callback is skipped, every other controller
+still runs its callbacks, and a controller initialized by a callback starts with the next frame.</p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
@@ -1282,6 +1291,12 @@ component is safe.</p>
 <div class="paragraph">
 <p><code>game-example/Player</code> has not been ported: it reads W/A/S/D and the arrow keys through
 <code>Platform::Keyboard::IsKeyPressed()</code>.</p>
+</div>
+<div class="paragraph">
+<p>Polled queries such as <code>Platform::Mouse::GetPosition()</code> and <code>Platform::Keyboard::IsKeyPressed()</code>
+remain for reading the current state at an arbitrary moment, for example the editor&#8217;s object
+picker. Reactions to a press, a release, or a value changing should be actions, so they are
+routed, gated, and testable.</p>
 </div>
 <div class="paragraph">
 <p>Implementation: <code>Platform/Input/Events/<strong>.h</code>, <code>Platform/Input/{Window,Glfw,CursorDeltaTracker}.</strong></code>,

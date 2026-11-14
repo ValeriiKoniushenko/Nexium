@@ -178,7 +178,9 @@ controller starts the next:
 . *Callbacks.* Each enabled controller runs the callbacks of the actions triggered this frame.
 
 Callbacks run last and outside the routing loops, so a callback may add or remove actions,
-or destroy controllers — including its own.
+or destroy controllers — including its own. They run over a snapshot of the registered
+controllers: a controller destroyed by an earlier callback is skipped, every other controller
+still runs its callbacks, and a controller initialized by a callback starts with the next frame.
 
 [cols="3,4",options="header"]
 |===
@@ -405,6 +407,11 @@ component is safe.
 
 `game-example/Player` has not been ported: it reads W/A/S/D and the arrow keys through
 `Platform::Keyboard::IsKeyPressed()`.
+
+Polled queries such as `Platform::Mouse::GetPosition()` and `Platform::Keyboard::IsKeyPressed()`
+remain for reading the current state at an arbitrary moment, for example the editor's object
+picker. Reactions to a press, a release, or a value changing should be actions, so they are
+routed, gated, and testable.
 
 Implementation: `Platform/Input/Events/*.h`, `Platform/Input/{Window,Glfw,CursorDeltaTracker}.*`,
 `Platform/Input/InputDevices/{Keyboard,Mouse,Joystick}.{h,cpp}`,

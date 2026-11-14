@@ -490,3 +490,65 @@ TEST_F(InputControllerRuntimeTests, CallbackMayDestroyItsController)
 
     frame();
 }
+
+TEST_F(InputControllerRuntimeTests, DestroyingAnEarlierControllerDoesNotSkipTheNextOnesCallbacks)
+{
+    auto second = NX::InputController::Create();
+    int firstCalls = 0;
+    int secondCalls = 0;
+    ASSERT_TRUE(controller->addAction("First"_atom, { NX::InputBinding::Shortcut(Key::Escape) },
+                                      [&]
+                                      {
+                                          ++firstCalls;
+                                          controller = nullptr;
+                                      }));
+    ASSERT_TRUE(second->addAction("Second"_atom, { NX::InputBinding::Shortcut(Key::Escape) },
+                                  [&] { ++secondCalls; }));
+    controller->initialize();
+    second->initialize();
+
+    key(Key::Escape, NX::InputState::Pressed);
+    frame();
+
+    EXPECT_EQ(firstCalls, 1);
+    // A Pressed trigger lasts one frame, so a skipped controller would never see it.
+    EXPECT_EQ(secondCalls, 1);
+}
+
+TEST_F(InputControllerRuntimeTests, CallbackDestroyingALaterControllerStopsItsCallbacks)
+{
+    auto second = NX::InputController::Create();
+    int secondCalls = 0;
+    ASSERT_TRUE(controller->addAction("First"_atom, { NX::InputBinding::Shortcut(Key::Escape) },
+                                      [&] { second = nullptr; }));
+    ASSERT_TRUE(second->addAction("Second"_atom, { NX::InputBinding::Shortcut(Key::Escape) },
+                                  [&] { ++secondCalls; }));
+    controller->initialize();
+    second->initialize();
+
+    key(Key::Escape, NX::InputState::Pressed);
+    frame();
+
+    EXPECT_EQ(second.get(), nullptr);
+    EXPECT_EQ(secondCalls, 0);
+}
+
+TEST_F(InputControllerRuntimeTests, CallbackMayInitializeANewControllerWithoutRunningItThisFrame)
+{
+    auto late = NX::InputController::Create();
+    int lateCalls = 0;
+    ASSERT_TRUE(late->addAction("Late"_atom, { NX::InputBinding::Shortcut(Key::Escape) },
+                                [&] { ++lateCalls; }));
+    ASSERT_TRUE(controller->addAction("First"_atom, { NX::InputBinding::Shortcut(Key::Escape) },
+                                      [&] { late->initialize(); }));
+    controller->initialize();
+
+    key(Key::Escape, NX::InputState::Pressed);
+    frame();
+    EXPECT_EQ(lateCalls, 0);
+
+    key(Key::Escape, NX::InputState::Released);
+    key(Key::Escape, NX::InputState::Pressed);
+    frame();
+    EXPECT_EQ(lateCalls, 1);
+}

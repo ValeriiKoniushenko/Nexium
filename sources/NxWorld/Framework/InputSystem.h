@@ -78,6 +78,9 @@ namespace NX
         std::vector<AnyInputEvent> _processing;
 
         std::vector<InputController*> _controllers;
+        /// Snapshot of _controllers walked while callbacks run. Kept as a member so it keeps
+        /// its capacity between frames.
+        std::vector<InputController*> _dispatching;
 
         Core::DelegateSubscriberPoolGuard _subscriptions;
 
