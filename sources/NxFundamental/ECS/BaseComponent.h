@@ -14,6 +14,7 @@
 #include "Core/IntrusivePtr.h"
 #include "Foundation/BaseLog.h"
 #include "NxFundamental/ITagHolder.h"
+#include "NxFundamental/Reflection/TypeDescriptor.h"
 #include "NxFundamental/ResourceManagement/ComponentJsonAdapter.h"
 
 #include <queue>
@@ -83,6 +84,21 @@ public:
 
 // ---------------------------------------------------------
 
+// Runtime reflection of the most-derived reflected type (see AbstractComponent::reflect).
+// Only non-template components get it: class templates are not reflected by JRM, so they keep
+// the descriptor of their nearest reflected base.
+#define _ECS_REFLECT_DECL                                                                          \
+protected:                                                                                         \
+    [[nodiscard]] NX::Reflection::ObjectRef onReflect() override;
+
+#define _ECS_REFLECT_IMPL(ClassName)                                                               \
+    NX::Reflection::ObjectRef ClassName::onReflect()                                               \
+    {                                                                                              \
+        return NX::Reflection::ObjectRef(*this);                                                   \
+    }
+
+// ---------------------------------------------------------
+
 #define BRACKETS(...) __VA_ARGS__
 
 // ===============================================================
@@ -134,32 +150,38 @@ public:
 /// GlobalComponentFactory, you can create necessary type known only name of your type.
 #define ECS_DECL(ClassName, BaseComponentClass, ...)                                               \
     R_FRIEND_DECL(ClassName, BaseComponentClass);                                                  \
+    _ECS_REFLECT_DECL                                                                              \
     _ECS_COMPONENT_DECL(ClassName, ClassName, BaseComponentClass)                                  \
     _ECS_DEFAULT_PUBLIC_CONSTRUCTOR(ClassName, BaseComponentClass)                                 \
     static_assert(true, "")
 
 #define ECS_DECL_NO_SER(ClassName, BaseComponentClass, ...)                                        \
     R_FRIEND(ClassName, BaseComponentClass);                                                       \
+    _ECS_REFLECT_DECL                                                                              \
     _ECS_COMPONENT_DECL(ClassName, ClassName, BaseComponentClass)                                  \
     _ECS_DEFAULT_PUBLIC_CONSTRUCTOR(ClassName, BaseComponentClass)                                 \
     static_assert(true, "")
 
 #define ECS_DECL_NO_CNSTR(ClassName, BaseComponentClass)                                           \
     R_FRIEND_DECL(ClassName, BaseComponentClass);                                                  \
+    _ECS_REFLECT_DECL                                                                              \
     _ECS_COMPONENT_DECL(ClassName, ClassName, BaseComponentClass)                                  \
     static_assert(true, "")
 
 #define ECS_DECL_NO_SER_NO_CNSTR(ClassName, BaseComponentClass, ...)                               \
     R_FRIEND(ClassName, BaseComponentClass);                                                       \
+    _ECS_REFLECT_DECL                                                                              \
     _ECS_COMPONENT_DECL(ClassName, ClassName, BaseComponentClass)                                  \
     static_assert(true, "")
 
 #define ECS_IMPL(ClassName)                                                                        \
     R_FRIEND_IMPL(ClassName);                                                                      \
+    _ECS_REFLECT_IMPL(ClassName)                                                                   \
     _ECS_COMPONENT_IMPL(ClassName, ;, R<ClassName>::FullName(), false)                             \
     static_assert(true, "")
 
 #define ECS_IMPL_NO_SER(ClassName)                                                                 \
+    _ECS_REFLECT_IMPL(ClassName)                                                                   \
     _ECS_COMPONENT_IMPL(ClassName, ;, R<ClassName>::FullName(), false)                             \
     static_assert(true, "")
 
@@ -468,8 +490,29 @@ namespace NX
         virtual void onPostSerialize(const AbstractComponent* obj,
                                      const RLogsCollector& logs) const;
 
+        // ========================== REFLECTION ==========================
+        /// Descriptor and address of this object's most-derived reflected type. Walk the whole
+        /// class chain with `reflect().forEachProperty(...)`.
+        [[nodiscard]] Reflection::ObjectRef reflect() { return onReflect(); }
+        [[nodiscard]] Reflection::ConstObjectRef reflect() const
+        {
+            // onReflect only computes a descriptor and an address; it does not modify the object.
+            return const_cast<AbstractComponent*>(this)->onReflect();
+        }
+
+        /// Descriptor of this object's most-derived reflected type.
+        [[nodiscard]] const Reflection::ClassDesc& getClassDesc() const { return *reflect().desc; }
+
+        /// Called after a field was edited through `Reflection::PropertyDesc::set` (an editor),
+        /// on the class that declares the field; the call dispatches to the most-derived
+        /// override. Use it to invalidate caches that a setter would otherwise update.
+        virtual void onFieldEdited(const Reflection::PropertyDesc& property) {}
+
     protected:
         AbstractComponent() = default;
+
+        /// Overridden by `ECS_DECL*` / `ECS_IMPL*` for every reflected component.
+        [[nodiscard]] virtual Reflection::ObjectRef onReflect();
         /// This method will be called automatically. Don't call it directly.
         virtual void onTick(float delta) {}
 
@@ -618,6 +661,10 @@ namespace NX
 
         [[nodiscard]] virtual Ptr clone() const { return nullptr; }
 
+    protected:
+        [[nodiscard]] Reflection::ObjectRef onReflect() override;
+
+    public:
         template<IsComponent T>
         [[nodiscard]] bool isTypeOf() const
         {
