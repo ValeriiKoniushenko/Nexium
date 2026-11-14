@@ -631,7 +631,12 @@ event into the queue with <code>queueEvent()</code>. <code>queueEvent()</code> i
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-cpp hljs" data-lang="cpp">Platform::Window::pollEvent();
-Platform::Joystick::poll();
+// A gamepad is polled, not delivered by a window callback, so it has to be told to
+// stand still while the window is unfocused or minimized.
+if (GetInputSystem().isWindowActive())
+{
+    Platform::Joystick::poll();
+}
 GetInputSystem().processEvents();</code></pre>
 </div>
 </div>
@@ -642,6 +647,9 @@ GetInputSystem().processEvents();</code></pre>
     // Handlers may queue new events; they go to _events and are processed next frame.
     _processing.clear();
     std::swap(_events, _processing);
+
+    _ordered = _controllers;
+    std::ranges::stable_sort(_ordered, std::greater&lt;&gt;{}, &amp;InputController::getPriority);
 
     for (auto* controller : _controllers)
     {
@@ -687,7 +695,8 @@ controller starts the next:</p>
 accumulated mouse delta and scroll.</p>
 </li>
 <li>
-<p><strong>Route.</strong> Each queued event goes to every controller, in arrival order.</p>
+<p><strong>Route.</strong> Each queued event is offered to the controllers in arrival order, from the highest
+<a href="#priority">priority</a> down.</p>
 </li>
 <li>
 <p><strong>End.</strong> Each controller combines its bindings into action values.</p>
@@ -799,9 +808,9 @@ focus callback, and they are queued after the presses they belong to.</p>
 </div>
 <div class="paragraph">
 <p><code>InputSystem</code> holds non-owning controller pointers. A controller registers in
-<code>onInitialize()</code> and unregisters in <code>onDeinitialize()</code> and in its destructor. There is no
-priority between controllers and no event consumption: every controller sees every event.
-Routing is not filtered by focus or by a context either — see <a href="#gating">Enabling and gating</a>.</p>
+<code>onInitialize()</code> and unregisters in <code>onDeinitialize()</code> and in its destructor. Routing is
+decided by priority and consumption (<a href="#priority">Priority and consumption</a>), by the controller&#8217;s enabled state
+(<a href="#gating">Enabling and gating</a>), and by whether the window is active (<a href="#window-active">When the window is not active</a>).</p>
 </div>
 </div>
 </div>
@@ -1100,11 +1109,154 @@ spectators do, so a deserialized controller is reused instead of duplicated.</p>
 </div>
 </div>
 <div class="sect1">
+<h2 id="priority"><a class="anchor" href="#priority"></a>Priority and consumption</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Controllers compete for input the way contexts do in an editor such as VS Code: the one that
+is most relevant right now gets the first offer, and if it uses an event nobody else sees it.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>InputController::setPriority(int)</code> — a higher number is offered an event first. The
+default is <code>0</code>. <code>InputPriority</code> names the values the engine uses.</p>
+</li>
+<li>
+<p>Controllers with the <strong>same</strong> priority all receive the event, so peers do not interfere.</p>
+</li>
+<li>
+<p>An event is <strong>consumed</strong> when an enabled controller that consumes input has a binding that
+accepts it. Every controller of a lower priority then never sees that event. Other
+events of the same frame are unaffected.</p>
+</li>
+<li>
+<p><code>setConsumesInput(false)</code> makes a controller a pure observer: it receives events but never
+blocks lower priorities.</p>
+</li>
+<li>
+<p>A disabled controller never consumes, so disabling a controller is how its context ends.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>What "accepts" means:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 28.5714%;">
+<col style="width: 71.4286%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Event</th>
+<th class="tableblock halign-left valign-top">Consumed when</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Key, mouse button, gamepad button press</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A binding has that source and code <strong>and</strong> accepts the held modifiers. Ctrl+S is not taken from a plain S binding.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Mouse movement, scroll</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A binding on that source exists.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Gamepad axis</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A binding on that axis exists.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Release</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Never. Releases always reach every controller, otherwise a button could stay held in a controller that never saw its release.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>Priority changes take effect on the next <code>processEvents()</code> call.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top"><code>InputPriority</code></th>
+<th class="tableblock halign-left valign-top">Value</th>
+<th class="tableblock halign-left valign-top">Used for</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>FocusedEditorWindow</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">200</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">A controller owned by a focused editor window, such as the component editor&#8217;s Delete.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Editor</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">100</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>GameEditor</code> shortcuts while the game viewport is <strong>not</strong> focused.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Gameplay</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">0</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Spectators, the player, and game code.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>EditorBehindGameplay</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">-100</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>GameEditor</code> shortcuts while the game viewport <strong>is</strong> focused.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><code>GameEditor</code> switches between <code>Editor</code> and <code>EditorBehindGameplay</code> every frame. With the game
+viewport focused the game is offered every event first, so a game that binds the left mouse
+button keeps its clicks and "Select object" only sees clicks the game does not bind. Anywhere
+else in the editor, its shortcuts come first.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="window-active"><a class="anchor" href="#window-active"></a>When the window is not active</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><code>InputSystem</code> tracks the window&#8217;s focus and iconified state from <code>WindowFocusEvent</code> and
+<code>WindowIconifyEvent</code>. While the window is unfocused <strong>or</strong> minimized:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>New presses, mouse movement, scroll, and gamepad axes are ignored, so neither the game nor
+the editor shortcuts can be controlled.</p>
+</li>
+<li>
+<p>Releases are still delivered, so a button released late is not left held.</p>
+</li>
+<li>
+<p><code>Platform::Joystick::poll()</code> is not called, so a gamepad cannot act either. When the window
+is active again the next poll reports the current state as a change.</p>
+</li>
+<li>
+<p>The moment the window becomes inactive, every controller releases what it held: buttons and
+gamepad axes return to rest. Edges and values already collected in the same frame are kept.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Focus and minimizing are independent. Regaining focus while still minimized does not make the
+window active. <code>resetInput()</code> discards pending events and re-reads the state from the window; a
+window that was never created counts as active.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
 <h2 id="gating"><a class="anchor" href="#gating"></a>Enabling and gating</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p><code>InputSystem</code> routes every event to every registered controller, so the owner decides when
-its controller counts. The switch is the component&#8217;s enabled state:</p>
+<p>Priority orders the controllers; the owner still decides when its controller counts. The
+switch is the component&#8217;s enabled state:</p>
 </div>
 <div class="ulist">
 <ul>
@@ -1135,11 +1287,11 @@ nothing is stuck when it is enabled again.</p>
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>GameEditor</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Enabled unless ImGui wants text input, so shortcuts do not fire while typing.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Enabled unless ImGui wants text input, so shortcuts do not fire while typing. Priority follows game viewport focus (<a href="#priority">Priority and consumption</a>).</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>NxECSBasedEditor</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Enabled only while its window is focused and ImGui does not want text input.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Enabled only while its window is focused and ImGui does not want text input. Priority <code>FocusedEditorWindow</code>.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Spectators</p></td>

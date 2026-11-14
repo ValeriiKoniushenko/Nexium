@@ -12,6 +12,8 @@
 #include "Platform/Input/Events/InputEvent.h"
 #include "Platform/Input/Window.h"
 
+#include <algorithm>
+#include <functional>
 #include <ranges>
 
 namespace NX
@@ -31,17 +33,51 @@ namespace NX
         _subscriptions << window.onKeyPressed->subscribeAndGetID(registerEvent);
         _subscriptions << window.onMouseWheel->subscribeAndGetID(registerEvent);
         _subscriptions << window.onFocusChanged->subscribeAndGetID(registerEvent);
+        _subscriptions << window.onIconifyChanged->subscribeAndGetID(registerEvent);
         _subscriptions << window.onMouseKeyPressed->subscribeAndGetID(registerEvent);
         _subscriptions << window.onJoystickConnected->subscribeAndGetID(registerEvent);
         _subscriptions << window.onJoystickAxisChanged->subscribeAndGetID(registerEvent);
         _subscriptions << window.onJoystickButtonPressed->subscribeAndGetID(registerEvent);
 
+        _window = &window;
+        syncWindowState();
         _initialized = true;
     }
 
     void InputSystem::resetInput()
     {
         _events.clear();
+        syncWindowState();
+    }
+
+    void InputSystem::syncWindowState()
+    {
+        // A window that was never created has no state, and counts as active.
+        if (_window && _window->getRawWindow())
+        {
+            setWindowState(_window->isFocused(), _window->isIconified());
+        }
+        else
+        {
+            setWindowState(true, false);
+        }
+    }
+
+    void InputSystem::setWindowState(bool focused, bool iconified)
+    {
+        const bool wasActive = isWindowActive();
+        _isWindowFocused = focused;
+        _isWindowIconified = iconified;
+
+        if (wasActive && !isWindowActive())
+        {
+            // Nothing held can be trusted any more: the matching releases may never arrive, and
+            // a stick held at that moment is no longer reported.
+            for (auto* controller : _controllers)
+            {
+                controller->releaseHeldInput();
+            }
+        }
     }
 
     void InputSystem::registerController(InputController* controller)
@@ -68,6 +104,9 @@ namespace NX
         // Handlers may queue new events; they go to _events and are processed next frame.
         _processing.clear();
         std::swap(_events, _processing);
+
+        _ordered = _controllers;
+        std::ranges::stable_sort(_ordered, std::greater<>{}, &InputController::getPriority);
 
         for (auto* controller : _controllers)
         {
@@ -102,13 +141,49 @@ namespace NX
     }
     // end::input_process_events[]
 
+    template<typename Deliver>
+    void InputSystem::route(bool consumable, Deliver&& deliver)
+    {
+        bool consumed = false;
+        int consumedPriority = 0;
+        for (auto* controller : _ordered)
+        {
+            if (consumed && controller->getPriority() < consumedPriority)
+            {
+                break;
+            }
+
+            const bool accepted = deliver(*controller);
+            if (consumable && !consumed && accepted && controller->isEnabled()
+                && controller->doesConsumeInput())
+            {
+                consumed = true;
+                consumedPriority = controller->getPriority();
+            }
+        }
+    }
+
+    void InputSystem::routeButton(InputSource source, std::uint16_t code, InputState state,
+                                  InputModifier mods)
+    {
+        // Only a press can start something, so only a press is ignored while the window is
+        // inactive or consumed by a higher priority. A release always reaches everyone, otherwise
+        // a button could stay held in a controller that never saw its release.
+        const bool isPress = state == InputState::Pressed;
+        if (isPress && !isWindowActive())
+        {
+            return;
+        }
+
+        route(isPress,
+              [&](InputController& controller)
+              { return controller.onButton(source, code, state, mods); });
+    }
+
     void InputSystem::handle(const KeyboardEvent& event)
     {
-        for (auto* controller : _controllers)
-        {
-            controller->onButton(InputSource::Key, event.getKey().getIndex(), event.getState(),
-                                 event.getMods());
-        }
+        routeButton(InputSource::Key, event.getKey().getIndex(), event.getState(),
+                    event.getMods());
     }
 
     void InputSystem::handle(const TextInputEvent&)
@@ -117,27 +192,32 @@ namespace NX
 
     void InputSystem::handle(const MouseMoveEvent& event)
     {
-        for (auto* controller : _controllers)
+        if (!isWindowActive())
         {
-            controller->onVector(InputSource::MouseDelta, event.getDelta());
+            return;
         }
+
+        route(true,
+              [&](InputController& controller)
+              { return controller.onVector(InputSource::MouseDelta, event.getDelta()); });
     }
 
     void InputSystem::handle(const MouseButtonEvent& event)
     {
-        for (auto* controller : _controllers)
-        {
-            controller->onButton(InputSource::MouseButton, event.getButton().getIndex(),
-                                 event.getState(), event.getMods());
-        }
+        routeButton(InputSource::MouseButton, event.getButton().getIndex(), event.getState(),
+                    event.getMods());
     }
 
     void InputSystem::handle(const MouseScrollEvent& event)
     {
-        for (auto* controller : _controllers)
+        if (!isWindowActive())
         {
-            controller->onVector(InputSource::MouseScroll, event.getOffset());
+            return;
         }
+
+        route(true,
+              [&](InputController& controller)
+              { return controller.onVector(InputSource::MouseScroll, event.getOffset()); });
     }
 
     void InputSystem::handle(const MouseEnterEvent&)
@@ -146,19 +226,20 @@ namespace NX
 
     void InputSystem::handle(const GamepadButtonEvent& event)
     {
-        for (auto* controller : _controllers)
-        {
-            controller->onButton(InputSource::GamepadButton, event.getButton().getIndex(),
-                                 event.getState(), InputModifier::None);
-        }
+        routeButton(InputSource::GamepadButton, event.getButton().getIndex(), event.getState(),
+                    InputModifier::None);
     }
 
     void InputSystem::handle(const GamepadAxisEvent& event)
     {
-        for (auto* controller : _controllers)
+        if (!isWindowActive())
         {
-            controller->onAxis(event.getAxis(), event.getValue());
+            return;
         }
+
+        route(true,
+              [&](InputController& controller)
+              { return controller.onAxis(event.getAxis(), event.getValue()); });
     }
 
     void InputSystem::handle(const GamepadConnectionEvent&)
@@ -169,12 +250,14 @@ namespace NX
     {
     }
 
-    void InputSystem::handle(const WindowFocusEvent&)
+    void InputSystem::handle(const WindowFocusEvent& event)
     {
+        setWindowState(event.isFocused(), _isWindowIconified);
     }
 
-    void InputSystem::handle(const WindowIconifyEvent&)
+    void InputSystem::handle(const WindowIconifyEvent& event)
     {
+        setWindowState(_isWindowFocused, event.isIconified());
     }
 
     void InputSystem::handle(const WindowCloseEvent&)

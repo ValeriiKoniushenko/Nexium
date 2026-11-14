@@ -13,6 +13,7 @@
 
 #include "Core/Delegate.h"
 #include "Core/Singleton.h"
+#include "NxWorld/Framework/Input/InputActionTypes.h"
 #include "Platform/Input/Events/AnyInputEvent.h"
 
 #include <vector>
@@ -43,7 +44,16 @@ namespace NX
             return _events;
         }
 
+        /// Discards every pending event and resynchronizes with the window's focus and iconified
+        /// state. It does not reset controllers.
         void resetInput();
+
+        /// False while the window is unfocused or minimized: new presses, mouse movement, scroll,
+        /// and gamepad input are then ignored. Releases are still delivered.
+        [[nodiscard]] bool isWindowActive() const noexcept
+        {
+            return _isWindowFocused && !_isWindowIconified;
+        }
 
         void registerController(InputController* controller);
         void unregisterController(InputController* controller);
@@ -57,6 +67,18 @@ namespace NX
         }
 
     private:
+        void syncWindowState();
+        void setWindowState(bool focused, bool iconified);
+        void routeButton(InputSource source, std::uint16_t code, InputState state,
+                         InputModifier mods);
+
+        /// Offers an event to the controllers from the highest priority down. `deliver` returns
+        /// whether a controller has a binding for the event. If `consumable`, the first enabled,
+        /// consuming controller that does keeps every lower priority from seeing the event;
+        /// controllers of the same priority still all receive it.
+        template<typename Deliver>
+        void route(bool consumable, Deliver&& deliver);
+
         void handle(const KeyboardEvent& event);
         void handle(const TextInputEvent& event);
         void handle(const MouseMoveEvent& event);
@@ -78,11 +100,17 @@ namespace NX
         std::vector<AnyInputEvent> _processing;
 
         std::vector<InputController*> _controllers;
+        /// _controllers by descending priority, rebuilt every processEvents().
+        std::vector<InputController*> _ordered;
         /// Snapshot of _controllers walked while callbacks run. Kept as a member so it keeps
         /// its capacity between frames.
         std::vector<InputController*> _dispatching;
 
         Core::DelegateSubscriberPoolGuard _subscriptions;
+
+        Platform::Window* _window = nullptr;
+        bool _isWindowFocused = true;
+        bool _isWindowIconified = false;
 
         bool _initialized = false;
     };

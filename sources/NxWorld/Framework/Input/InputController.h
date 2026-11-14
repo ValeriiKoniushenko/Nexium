@@ -26,6 +26,22 @@ namespace NX
 {
     class InputSystem;
 
+    /// Well-known InputController priorities. A higher number is offered an event first.
+    namespace InputPriority
+    {
+        /// Gameplay controllers, such as spectators and the player.
+        constexpr int Gameplay = 0;
+        /// Editor controllers that should win while the editor, not the game, has the user's
+        /// attention.
+        constexpr int Editor = 100;
+        /// A controller owned by a focused editor window, such as an asset editor. It wins over
+        /// the editor-wide shortcuts.
+        constexpr int FocusedEditorWindow = 200;
+        /// Editor controllers that only get what the game does not bind, while the game
+        /// viewport has the user's attention.
+        constexpr int EditorBehindGameplay = -100;
+    } // namespace InputPriority
+
     CLASS();
     class InputController : public NX::BaseComponent
     {
@@ -75,6 +91,16 @@ namespace NX
             }
         }
 
+        /// Controllers with a higher priority are offered an event first. Equal priorities all
+        /// receive it. Takes effect on the next processEvents().
+        [[nodiscard]] int getPriority() const noexcept { return _priority; }
+        void setPriority(int priority) noexcept { _priority = priority; }
+
+        /// When true (the default), an enabled controller that has a binding for an event keeps
+        /// every lower-priority controller from seeing it. When false it only observes.
+        [[nodiscard]] bool doesConsumeInput() const noexcept { return _consumesInput; }
+        void setConsumesInput(bool consumes) noexcept { _consumesInput = consumes; }
+
         [[nodiscard]] spdlog::logger* getLogger() const override;
 
     protected:
@@ -85,10 +111,14 @@ namespace NX
         friend class NX::InputSystem;
 
         void beginInputFrame();
-        void onButton(InputSource source, std::uint16_t code, InputState state, InputModifier mods);
-        void onVector(InputSource source, glm::vec2 value);
-        void onAxis(std::uint16_t axis, float value);
+        /// The three below return whether this controller has a binding that accepts the event.
+        [[nodiscard]] bool onButton(InputSource source, std::uint16_t code, InputState state,
+                                    InputModifier mods);
+        [[nodiscard]] bool onVector(InputSource source, glm::vec2 value);
+        [[nodiscard]] bool onAxis(std::uint16_t axis, float value);
         void endInputFrame();
+        /// Releases held buttons and axes when the window stops receiving input.
+        void releaseHeldInput();
         void dispatchTriggeredCallbacks();
 
         /// Like findAction(), but logs a warning (once per name) when the action is missing.
@@ -97,6 +127,13 @@ namespace NX
 
         FIELD();
         std::vector<NX::InputAction> _actions;
+
+        FIELD();
+        // The generated code cannot see InputPriority, so this is InputPriority::Gameplay.
+        int _priority = 0;
+
+        FIELD();
+        bool _consumesInput = true;
 
         mutable std::unordered_set<Core::StringAtom> _reportedMissingActions;
         std::unordered_map<Core::StringAtom, std::vector<ActionCallback>> _triggeredCallbacks;

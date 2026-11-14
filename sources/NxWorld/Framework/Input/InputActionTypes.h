@@ -148,6 +148,9 @@ namespace NX
         void handleButton(InputState state, InputModifier mods) noexcept;
         void handleVector(glm::vec2 delta) noexcept;
         void handleAxis(float normalizedValue) noexcept;
+        /// Lets go of a held button and returns an axis to rest, e.g. when the window loses focus.
+        /// Edges and values already collected this frame are kept.
+        void releaseHeld() noexcept;
         /// This binding's share of the action value for the current frame.
         [[nodiscard]] glm::vec2 getContribution() const noexcept;
 
@@ -174,6 +177,8 @@ namespace NX
         void beginFrame() noexcept;
         /// Combines the bindings' contributions into `runtime`.
         void endFrame() noexcept;
+        /// Releases every held button and axis of the action without touching this frame's edges.
+        void releaseHeld() noexcept;
         /// Forgets held buttons and values of the action and all its bindings.
         void resetRuntime() noexcept;
 

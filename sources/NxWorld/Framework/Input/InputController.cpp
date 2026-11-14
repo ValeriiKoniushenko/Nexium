@@ -155,9 +155,10 @@ namespace NX
         }
     }
 
-    void InputController::onButton(InputSource source, std::uint16_t code, InputState state,
+    bool InputController::onButton(InputSource source, std::uint16_t code, InputState state,
                                    InputModifier mods)
     {
+        bool accepted = false;
         for (auto& action : _actions)
         {
             for (auto& binding : action.bindings)
@@ -165,13 +166,16 @@ namespace NX
                 if (binding.matches(source, code))
                 {
                     binding.handleButton(state, mods);
+                    accepted |= state == InputState::Pressed && binding.acceptsModifiers(mods);
                 }
             }
         }
+        return accepted;
     }
 
-    void InputController::onVector(InputSource source, glm::vec2 value)
+    bool InputController::onVector(InputSource source, glm::vec2 value)
     {
+        bool accepted = false;
         for (auto& action : _actions)
         {
             for (auto& binding : action.bindings)
@@ -179,14 +183,17 @@ namespace NX
                 if (binding.matches(source, 0))
                 {
                     binding.handleVector(value);
+                    accepted = true;
                 }
             }
         }
+        return accepted;
     }
 
-    void InputController::onAxis(std::uint16_t axis, float value)
+    bool InputController::onAxis(std::uint16_t axis, float value)
     {
         const float normalized = NormalizeAxis(axis, value);
+        bool accepted = false;
         for (auto& action : _actions)
         {
             for (auto& binding : action.bindings)
@@ -194,8 +201,18 @@ namespace NX
                 if (binding.matches(InputSource::GamepadAxis, axis))
                 {
                     binding.handleAxis(normalized);
+                    accepted = true;
                 }
             }
+        }
+        return accepted;
+    }
+
+    void InputController::releaseHeldInput()
+    {
+        for (auto& action : _actions)
+        {
+            action.releaseHeld();
         }
     }
 

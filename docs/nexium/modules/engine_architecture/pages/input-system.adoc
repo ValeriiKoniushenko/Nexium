@@ -173,7 +173,8 @@ controller starts the next:
 
 . *Begin.* Each controller clears its per-frame state: press/release edges and the
   accumulated mouse delta and scroll.
-. *Route.* Each queued event goes to every controller, in arrival order.
+. *Route.* Each queued event is offered to the controllers in arrival order, from the highest
+  <<priority,priority>> down.
 . *End.* Each controller combines its bindings into action values.
 . *Callbacks.* Each enabled controller runs the callbacks of the actions triggered this frame.
 
@@ -210,9 +211,9 @@ include::example$input-events-tests.cpp[tag=input_queue_order,indent=0]
 ----
 
 `InputSystem` holds non-owning controller pointers. A controller registers in
-`onInitialize()` and unregisters in `onDeinitialize()` and in its destructor. There is no
-priority between controllers and no event consumption: every controller sees every event.
-Routing is not filtered by focus or by a context either — see <<gating>>.
+`onInitialize()` and unregisters in `onDeinitialize()` and in its destructor. Routing is
+decided by priority and consumption (<<priority>>), by the controller's enabled state
+(<<gating>>), and by whether the window is active (<<window-active>>).
 
 == InputController: actions and bindings
 
@@ -335,11 +336,72 @@ held buttons, values, callbacks — is not reflected and is never saved. Code th
 actions in `onInitialize()` should first look for an existing child controller, as the
 spectators do, so a deserialized controller is reused instead of duplicated.
 
+[#priority]
+== Priority and consumption
+
+Controllers compete for input the way contexts do in an editor such as VS Code: the one that
+is most relevant right now gets the first offer, and if it uses an event nobody else sees it.
+
+* `InputController::setPriority(int)` — a higher number is offered an event first. The
+  default is `0`. `InputPriority` names the values the engine uses.
+* Controllers with the *same* priority all receive the event, so peers do not interfere.
+* An event is *consumed* when an enabled controller that consumes input has a binding that
+  accepts it. Every controller of a lower priority then never sees that event. Other
+  events of the same frame are unaffected.
+* `setConsumesInput(false)` makes a controller a pure observer: it receives events but never
+  blocks lower priorities.
+* A disabled controller never consumes, so disabling a controller is how its context ends.
+
+What "accepts" means:
+
+[cols="2,5",options="header"]
+|===
+|Event |Consumed when
+|Key, mouse button, gamepad button press |A binding has that source and code *and* accepts the held modifiers. Ctrl+S is not taken from a plain S binding.
+|Mouse movement, scroll |A binding on that source exists.
+|Gamepad axis |A binding on that axis exists.
+|Release |Never. Releases always reach every controller, otherwise a button could stay held in a controller that never saw its release.
+|===
+
+Priority changes take effect on the next `processEvents()` call.
+
+[cols="2,2,4",options="header"]
+|===
+|`InputPriority` |Value |Used for
+|`FocusedEditorWindow` |200 |A controller owned by a focused editor window, such as the component editor's Delete.
+|`Editor` |100 |`GameEditor` shortcuts while the game viewport is *not* focused.
+|`Gameplay` |0 |Spectators, the player, and game code.
+|`EditorBehindGameplay` |-100 |`GameEditor` shortcuts while the game viewport *is* focused.
+|===
+
+`GameEditor` switches between `Editor` and `EditorBehindGameplay` every frame. With the game
+viewport focused the game is offered every event first, so a game that binds the left mouse
+button keeps its clicks and "Select object" only sees clicks the game does not bind. Anywhere
+else in the editor, its shortcuts come first.
+
+[#window-active]
+== When the window is not active
+
+`InputSystem` tracks the window's focus and iconified state from `WindowFocusEvent` and
+`WindowIconifyEvent`. While the window is unfocused *or* minimized:
+
+* New presses, mouse movement, scroll, and gamepad axes are ignored, so neither the game nor
+  the editor shortcuts can be controlled.
+* Releases are still delivered, so a button released late is not left held.
+* `Platform::Joystick::poll()` is not called, so a gamepad cannot act either. When the window
+  is active again the next poll reports the current state as a change.
+* The moment the window becomes inactive, every controller releases what it held: buttons and
+  gamepad axes return to rest. Edges and values already collected in the same frame are kept.
+
+Focus and minimizing are independent. Regaining focus while still minimized does not make the
+window active. `resetInput()` discards pending events and re-reads the state from the window; a
+window that was never created counts as active.
+
 [#gating]
 == Enabling and gating
 
-`InputSystem` routes every event to every registered controller, so the owner decides when
-its controller counts. The switch is the component's enabled state:
+Priority orders the controllers; the owner still decides when its controller counts. The
+switch is the component's enabled state:
 
 * A disabled controller returns defaults from `isActive()`, `wasTriggered()`, and
   `getValue()`, and its callbacks do not run.
@@ -350,8 +412,8 @@ its controller counts. The switch is the component's enabled state:
 [cols="2,4",options="header"]
 |===
 |Owner |Rule
-|`GameEditor` |Enabled unless ImGui wants text input, so shortcuts do not fire while typing.
-|`NxECSBasedEditor` |Enabled only while its window is focused and ImGui does not want text input.
+|`GameEditor` |Enabled unless ImGui wants text input, so shortcuts do not fire while typing. Priority follows game viewport focus (<<priority>>).
+|`NxECSBasedEditor` |Enabled only while its window is focused and ImGui does not want text input. Priority `FocusedEditorWindow`.
 |Spectators |Enabled only while their scene is the active one.
 |===
 

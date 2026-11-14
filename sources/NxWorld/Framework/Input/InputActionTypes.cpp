@@ -384,6 +384,15 @@ namespace NX
             = glm::vec2{ std::abs(normalizedValue) < deadzone ? 0.f : normalizedValue, 0.f };
     }
 
+    void InputBinding::releaseHeld() noexcept
+    {
+        runtime.isHeld = false;
+        if (source == InputSource::GamepadAxis)
+        {
+            runtime.value = glm::vec2{ 0.f };
+        }
+    }
+
     glm::vec2 InputBinding::getContribution() const noexcept
     {
         if (!isButton())
@@ -427,6 +436,14 @@ namespace NX
         runtime.value = sum;
         runtime.isActive = sum.x != 0.f || sum.y != 0.f;
         runtime.wasTriggered = fired || pressed || (runtime.isActive && !wasActive);
+    }
+
+    void InputAction::releaseHeld() noexcept
+    {
+        for (auto& binding : bindings)
+        {
+            binding.releaseHeld();
+        }
     }
 
     void InputAction::resetRuntime() noexcept

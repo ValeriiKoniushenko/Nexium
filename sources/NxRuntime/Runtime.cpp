@@ -69,7 +69,12 @@ namespace NX
             clock.start();
             // tag::input_frame_poll[]
             Platform::Window::pollEvent();
-            Platform::Joystick::poll();
+            // A gamepad is polled, not delivered by a window callback, so it has to be told to
+            // stand still while the window is unfocused or minimized.
+            if (GetInputSystem().isWindowActive())
+            {
+                Platform::Joystick::poll();
+            }
             // end::input_frame_poll[]
             // tag::input_frame_process[]
             GetInputSystem().processEvents();
