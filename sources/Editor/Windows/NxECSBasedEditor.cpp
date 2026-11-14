@@ -166,6 +166,7 @@ namespace NX
         // -+- -+- -+- -+- -+- -+- -+- -+- -+- -+- -+-
         _inputController = InputController::Create();
         _inputController->initialize();
+        _inputController->setPriority(InputPriority::FocusedEditorWindow);
         _inputController->addAction("Delete selected component"_atom,
                                     { InputBinding::Shortcut(Platform::Keyboard::Key::Delete) },
                                     [this] { removeCurrentComponent(_targetComponent.get()); });

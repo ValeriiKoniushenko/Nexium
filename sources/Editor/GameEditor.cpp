@@ -175,6 +175,13 @@ namespace NX
             if (_inputController)
             {
                 _inputController->setEnabled(!ImGui::GetIO().WantTextInput);
+                // While the game viewport has the user's attention the game gets the first offer
+                // of every event (a game that binds the left mouse button must not lose its
+                // clicks to "Select object"); the editor keeps what the game does not bind.
+                // Anywhere else in the editor, its shortcuts come first.
+                _inputController->setPriority(gGameInstance->isApplicationViewportFocused()
+                                                  ? InputPriority::EditorBehindGameplay
+                                                  : InputPriority::Editor);
             }
         }
     }
