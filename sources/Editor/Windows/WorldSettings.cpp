@@ -99,8 +99,6 @@ namespace NX
 
         // ===================== LIGHTNING =========================
 
-        static const auto fields = R<decltype(GetWorld()->lightning)>::GetFieldsMap();
-
         Assert(!_lightningLayout);
 
         using LigtningGuiT = Gui::ObjectBasedGuiGenerator<decltype(GetWorld()->lightning)>;
@@ -117,27 +115,17 @@ namespace NX
                 "Impossible to create Gui::ObjectBasedGuiGenerator<decltype(GetWorld()->lightning) "
                 "to create GUI");
         }
-
-        for (auto&& f : fields)
-        {
-            _lightningLayout->spawn(f.first.c_str(), GetWorld()->lightning.color, f.second);
-        }
-        // gg.spawn("color", GetWorld()->lightning.color, fields.at("color"));
-        // gg.spawn("specularStrength", GetWorld()->lightning.specularStrength,
-        //          fields.at("specularStrength"));
-        // gg.spawn("minLightStrength", GetWorld()->lightning.minLightStrength,
-        //          fields.at("minLightStrength"));
-        // gg.spawn("ambientStrength", GetWorld()->lightning.ambientStrength,
-        //          fields.at("ambientStrength"));
-        // gg.spawn("specularPow", GetWorld()->lightning.specularPow, fields.at("specularPow"));
-        //  gg.spawn("sunDirection", GetWorld()->lightning.sunDirection, fields.at("sunDirection"));
     }
 
     void WorldSettingsEWC::onClose()
     {
         BaseEWC::onClose();
 
-        _lightningLayout->despawnEverything();
+        if (_lightningLayout)
+        {
+            _lightningLayout->despawnEverything();
+            _lightningLayout.reset();
+        }
 
         _globalLayout.removeAllChildren();
         _cameraInputField = nullptr;

@@ -121,6 +121,7 @@ namespace NX::Gui
 
     void GuiGenerator::despawnEverything()
     {
+        _subscriptionPool.clearAndReleaseAll();
         removeAllChildren();
     }
 
