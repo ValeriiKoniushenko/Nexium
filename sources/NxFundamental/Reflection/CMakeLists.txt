@@ -5,6 +5,7 @@ target_sources(Nexium_Fundamental_Reflection PRIVATE
 )
 nexium_add_public_headers(Nexium_Fundamental_Reflection
     NxFundamental/Reflection/TypeDescriptor.h
+    NxFundamental/Reflection/TypeInfo.h
 )
 target_link_libraries(Nexium_Fundamental_Reflection
     PUBLIC

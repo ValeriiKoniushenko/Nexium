@@ -12,8 +12,12 @@
 #include "NxFundamental/ECS/BaseComponent.h"
 #include "NxFundamental/Reflection/TypeDescriptor.h"
 
+#include <array>
+#include <map>
 #include <memory>
+#include <optional>
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 namespace ReflectionFixtures
@@ -112,6 +116,59 @@ namespace ReflectionFixtures
 
         FIELD();
         int power = 1;
+    };
+
+    ENUM_CLASS();
+    enum class Mode
+    {
+        Off,
+        Low,
+        High = 4
+    };
+
+    CLASS();
+    struct Point
+    {
+        R_FRIEND(Point);
+
+        FIELD();
+        int x = 1;
+
+        FIELD();
+        int y = 2;
+    };
+
+    CLASS();
+    struct Containers
+    {
+        R_FRIEND(Containers);
+
+        FIELD();
+        ReflectionFixtures::Mode mode = ReflectionFixtures::Mode::Low;
+
+        FIELD();
+        std::optional<float> limit;
+
+        FIELD();
+        std::vector<int> values = { 1, 2, 3 };
+
+        FIELD();
+        std::array<int, 2> pair = { 7, 8 };
+
+        FIELD();
+        std::unordered_map<Core::StringAtom, int> named;
+
+        FIELD();
+        std::map<std::string, ReflectionFixtures::Point> points;
+
+        FIELD();
+        ReflectionFixtures::Point origin;
+
+        FIELD();
+        std::string text;
+
+        FIELD();
+        std::map<int, int> byNumber;
     };
 } // namespace ReflectionFixtures
 

@@ -12,6 +12,7 @@
 #pragma once
 
 #include "Core/String.h"
+#include "TypeInfo.h"
 
 #include <JustReflectMe/Adapter.h>
 #include <algorithm>
@@ -47,6 +48,8 @@ namespace NX::Reflection
         const RClassField* field = nullptr;
         /// Field type without cv-qualifiers.
         std::type_index type = typeid(void);
+        /// Structure of `type` and type-erased operations on it. Never null.
+        const TypeInfo* typeInfo = nullptr;
         /// Declared `const`: readable, editable only through a setter.
         bool isConst = false;
         /// Declared `R::Meta(Setter = ...)`: `set` calls that member function.
@@ -238,37 +241,6 @@ namespace NX::Reflection
 
     namespace Internal
     {
-        /// `std::is_copy_assignable` reports true for standard containers of move-only elements,
-        /// because their `operator=` is not constrained. This also inspects element types.
-        template<class T>
-        struct IsCopyAssignableDeep : std::is_copy_assignable<T>
-        {
-        };
-
-        template<class T>
-            requires requires {
-                typename T::value_type;
-                typename T::iterator;
-            } && (!requires { typename T::mapped_type; })
-        struct IsCopyAssignableDeep<T>
-            : std::bool_constant<std::is_copy_assignable_v<T>
-                                 && IsCopyAssignableDeep<typename T::value_type>::value>
-        {
-        };
-
-        // Maps hold pair<const Key, Mapped>, which is never assignable; check the parts instead.
-        template<class T>
-            requires requires {
-                typename T::key_type;
-                typename T::mapped_type;
-            }
-        struct IsCopyAssignableDeep<T>
-            : std::bool_constant<std::is_copy_assignable_v<T>
-                                 && IsCopyAssignableDeep<typename T::key_type>::value
-                                 && IsCopyAssignableDeep<typename T::mapped_type>::value>
-        {
-        };
-
         template<class T, class Setter, auto Member>
         [[nodiscard]] PropertyDesc MakePropertyDesc(const RClassField& field)
         {
@@ -280,6 +252,7 @@ namespace NX::Reflection
             out.name = Core::StringAtom::Intern(field.name);
             out.field = &field;
             out.type = typeid(Value);
+            out.typeInfo = &TypeInfoOf<Value>();
             out.isConst = std::is_const_v<Declared>;
             out.hasSetter = hasSetter;
             out.address = [](void* owner) -> void*
