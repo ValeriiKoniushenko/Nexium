@@ -552,3 +552,51 @@ TEST_F(InputControllerRuntimeTests, CallbackMayInitializeANewControllerWithoutRu
     frame();
     EXPECT_EQ(lateCalls, 1);
 }
+
+TEST_F(InputControllerRuntimeTests, AxisDriftInsideBindingDeadzoneDoesNotActivateTheAction)
+{
+    constexpr auto axis = Platform::Joystick::GamepadAxis::LeftX;
+    addAction("Move", { NX::InputBinding::GamepadAxis(axis).withDeadzone(0.15f) });
+    controller->initialize();
+
+    const auto moveStick = [](float value)
+    {
+        NX::GamepadAxisEvent event(1);
+        event.setAxis(static_cast<std::uint16_t>(axis));
+        event.setValue(value);
+        NX::GetInputSystem().queueEvent(event);
+        frame();
+    };
+
+    moveStick(0.05f);
+    EXPECT_FALSE(controller->isActive("Move"_atom));
+    EXPECT_FALSE(controller->wasTriggered("Move"_atom));
+
+    moveStick(0.6f);
+    EXPECT_TRUE(controller->isActive("Move"_atom));
+    EXPECT_TRUE(controller->wasTriggered("Move"_atom));
+    EXPECT_FLOAT_EQ(controller->getValue<float>("Move"_atom), 0.6f);
+
+    // Returning to a drift value inside the deadzone ends the action.
+    moveStick(0.08f);
+    EXPECT_FALSE(controller->isActive("Move"_atom));
+}
+
+TEST_F(InputControllerRuntimeTests, DeadzoneAppliesToTriggersAfterNormalization)
+{
+    constexpr auto trigger = Platform::Joystick::GamepadAxis::RightTrigger;
+    addAction("Zoom", { NX::InputBinding::GamepadAxis(trigger).withDeadzone(0.2f) });
+    controller->initialize();
+
+    NX::GamepadAxisEvent event(1);
+    event.setAxis(static_cast<std::uint16_t>(trigger));
+    event.setValue(-0.8f); // raw -1..1 trigger value, normalized to 0.1
+    NX::GetInputSystem().queueEvent(event);
+    frame();
+    EXPECT_FALSE(controller->isActive("Zoom"_atom));
+
+    event.setValue(0.f); // normalized to 0.5
+    NX::GetInputSystem().queueEvent(event);
+    frame();
+    EXPECT_TRUE(controller->isActive("Zoom"_atom));
+}

@@ -9,6 +9,7 @@
 
 #include "NxWorld/Framework/Input/InputActionTypes.h"
 
+#include <cmath>
 #include <string_view>
 
 namespace
@@ -226,6 +227,13 @@ namespace NX
         return copy;
     }
 
+    InputBinding InputBinding::withDeadzone(float value) const noexcept
+    {
+        auto copy = *this;
+        copy.deadzone = value;
+        return copy;
+    }
+
     InputModifier InputBinding::getModifiers() const noexcept
     {
         auto result = InputModifier::None;
@@ -372,7 +380,8 @@ namespace NX
 
     void InputBinding::handleAxis(float normalizedValue) noexcept
     {
-        runtime.value = glm::vec2{ normalizedValue, 0.f };
+        runtime.value
+            = glm::vec2{ std::abs(normalizedValue) < deadzone ? 0.f : normalizedValue, 0.f };
     }
 
     glm::vec2 InputBinding::getContribution() const noexcept

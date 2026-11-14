@@ -104,6 +104,10 @@ namespace NX
         bool negate = false;
         FIELD();
         bool swizzleYX = false;
+        /// Gamepad axes only: a normalized value with a smaller magnitude counts as zero.
+        /// It is a threshold, not a rescale. 0 keeps every value.
+        FIELD();
+        float deadzone = 0.f;
 
         [[nodiscard]] static InputBinding Key(Platform::Keyboard::Key key) noexcept;
         /// Editor-style shortcut: exact modifiers, fires once on press.
@@ -128,6 +132,7 @@ namespace NX
         [[nodiscard]] InputBinding onReleased() const noexcept;
         [[nodiscard]] InputBinding negated() const noexcept;
         [[nodiscard]] InputBinding swizzled() const noexcept;
+        [[nodiscard]] InputBinding withDeadzone(float value) const noexcept;
 
         [[nodiscard]] InputModifier getModifiers() const noexcept;
         [[nodiscard]] bool isButton() const noexcept;

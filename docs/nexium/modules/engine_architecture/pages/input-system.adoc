@@ -235,6 +235,7 @@ A binding names one physical input and how to read it. All of these fields are r
 |`shift`, `control`, `alt`, `super` |Modifiers the binding requires.
 |`modifierMatch` |`AtLeast`: required modifiers must be held, extra ones are fine. `Exact`: exactly the required modifiers.
 |`negate`, `swizzleYX` |Value modifiers: flip the sign, then swap X and Y.
+|`deadzone` |Gamepad axes only: a normalized value with a smaller magnitude counts as zero. `0` (the default, and the value for data saved before the field existed) keeps every value.
 |===
 
 Build bindings with the factories and chain the copies they return, rather than setting
@@ -251,6 +252,7 @@ fields by hand:
 |`withShift()`, `withControl()`, `withAlt()`, `withSuper()`, `withExactModifiers()` |Add a required modifier, or switch to `Exact`.
 |`onDown()`, `onPressed()`, `onReleased()` |Change the trigger.
 |`negated()`, `swizzled()` |Set a value modifier.
+|`withDeadzone(value)` |Set the axis deadzone.
 |===
 
 Modifiers follow two rules. Caps Lock and Num Lock are never compared. And modifiers are
@@ -284,8 +286,11 @@ swizzled binding feeds the Y axis:
 include::example$spectator.cpp[tag=input_spectator2d_actions,indent=0]
 ----
 
-Deadzones are not part of the binding. A consumer applies its own, as the spectators do
-with a radial deadzone on the stick vector.
+A binding's `deadzone` is a per-axis threshold applied after normalization, so a trigger is
+compared on its `0` to `1` range. It is not a rescale: a value outside the deadzone passes
+through unchanged, and a value inside it is zero, so stick drift neither activates the action
+nor triggers its callbacks. A consumer that needs a radial deadzone on the whole stick vector
+still applies its own, as the spectators do.
 
 === Reading actions
 

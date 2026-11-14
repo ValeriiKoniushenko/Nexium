@@ -856,6 +856,10 @@ duplicate name.</p>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>negate</code>, <code>swizzleYX</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Value modifiers: flip the sign, then swap X and Y.</p></td>
 </tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>deadzone</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Gamepad axes only: a normalized value with a smaller magnitude counts as zero. <code>0</code> (the default, and the value for data saved before the field existed) keeps every value.</p></td>
+</tr>
 </tbody>
 </table>
 <div class="paragraph">
@@ -905,6 +909,10 @@ fields by hand:</p>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>negated()</code>, <code>swizzled()</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Set a value modifier.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>withDeadzone(value)</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Set the axis deadzone.</p></td>
 </tr>
 </tbody>
 </table>
@@ -973,8 +981,11 @@ swizzled binding feeds the Y axis:</p>
 </div>
 </div>
 <div class="paragraph">
-<p>Deadzones are not part of the binding. A consumer applies its own, as the spectators do
-with a radial deadzone on the stick vector.</p>
+<p>A binding&#8217;s <code>deadzone</code> is a per-axis threshold applied after normalization, so a trigger is
+compared on its <code>0</code> to <code>1</code> range. It is not a rescale: a value outside the deadzone passes
+through unchanged, and a value inside it is zero, so stick drift neither activates the action
+nor triggers its callbacks. A consumer that needs a radial deadzone on the whole stick vector
+still applies its own, as the spectators do.</p>
 </div>
 </div>
 <div class="sect2">

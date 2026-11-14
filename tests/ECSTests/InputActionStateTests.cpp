@@ -304,3 +304,53 @@ TEST(InputBindingTests, ToStringDescribesBinding)
               "Gamepad RightTrigger");
     EXPECT_EQ(InputBinding::Key(Key::Space).onReleased().toString(), "Space (release)");
 }
+
+TEST(InputBindingTests, AxisDeadzoneZeroesSmallValuesOnly)
+{
+    auto axis = NX::InputBinding::GamepadAxis(Platform::Joystick::GamepadAxis::LeftX)
+                    .withDeadzone(0.15f);
+    EXPECT_FLOAT_EQ(axis.deadzone, 0.15f);
+
+    axis.handleAxis(0.1f);
+    EXPECT_EQ(axis.getContribution(), glm::vec2(0.f));
+    axis.handleAxis(-0.1f);
+    EXPECT_EQ(axis.getContribution(), glm::vec2(0.f));
+
+    // The deadzone is a threshold, not a rescale: values outside it pass through unchanged.
+    axis.handleAxis(0.5f);
+    EXPECT_EQ(axis.getContribution(), glm::vec2(0.5f, 0.f));
+    axis.handleAxis(-0.5f);
+    EXPECT_EQ(axis.getContribution(), glm::vec2(-0.5f, 0.f));
+    axis.handleAxis(0.15f);
+    EXPECT_EQ(axis.getContribution(), glm::vec2(0.15f, 0.f));
+}
+
+TEST(InputBindingTests, DefaultAxisDeadzoneIsZeroSoOldBehaviourIsKept)
+{
+    auto axis = NX::InputBinding::GamepadAxis(Platform::Joystick::GamepadAxis::LeftX);
+    EXPECT_FLOAT_EQ(axis.deadzone, 0.f);
+    axis.handleAxis(0.01f);
+    EXPECT_EQ(axis.getContribution(), glm::vec2(0.01f, 0.f));
+}
+
+TEST(InputBindingTests, DeadzoneSurvivesSerializationAndIsOptionalInOldData)
+{
+    const auto axis = NX::InputBinding::GamepadAxis(Platform::Joystick::GamepadAxis::RightX)
+                          .withDeadzone(0.2f);
+    nlohmann::json json = axis;
+    EXPECT_FLOAT_EQ(json.get<NX::InputBinding>().deadzone, 0.2f);
+
+    // Data saved before the field existed must still load, with no deadzone.
+    json.erase("deadzone");
+    EXPECT_FLOAT_EQ(json.get<NX::InputBinding>().deadzone, 0.f);
+}
+
+TEST(InputBindingTests, DeadzoneKeepsOtherFieldsWhenChained)
+{
+    const auto copy = NX::InputBinding::GamepadAxis(Platform::Joystick::GamepadAxis::LeftY)
+                          .negated()
+                          .withDeadzone(0.3f);
+    EXPECT_TRUE(copy.negate);
+    EXPECT_FLOAT_EQ(copy.deadzone, 0.3f);
+    EXPECT_FLOAT_EQ(NX::InputBinding::Key(Platform::Keyboard::Key::W).deadzone, 0.f);
+}
