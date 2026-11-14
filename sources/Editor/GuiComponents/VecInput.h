@@ -14,6 +14,7 @@
 #include "Foundation/Configs.h"
 #include "HorizontalLayout.h"
 #include "Input.h"
+#include "InspectorStyle.h"
 #include "Label.h"
 #include "Widget.h"
 
@@ -117,12 +118,7 @@ namespace NX::Gui
         {
             HorizontalLayout::onInitialize();
 
-            const std::vector<std::pair<Color4, StringAtom>> defaults = {
-                { Foundation::Config::ColorRed, "X:"_atom },
-                { Foundation::Config::ColorGreen, "Y:"_atom },
-                { Foundation::Config::ColorBlue, "Z:"_atom },
-                { Foundation::Config::ColorYellow, "W:"_atom },
-            };
+            const InspectorStyle& inspector = InspectorStyle::Default();
 
             _children.clear();
 
@@ -132,8 +128,9 @@ namespace NX::Gui
             {
                 auto* hLayout = addChildComponent<HorizontalLayout>();
                 labels[i] = hLayout->template addChildComponent<Label>();
-                labels[i]->setTextColor(defaults[i].first);
-                labels[i]->setText(defaults[i].second);
+                labels[i]->setTextColor(inspector.axisColors[i]);
+                const std::array<char, 2> axis = { inspector.axisNames[i], ':' };
+                labels[i]->setText(StringAtom(std::string_view(axis.data(), axis.size())));
                 labels[i]->setTruncateLongText(false);
                 labels[i]->setWidth(10.f);
                 hLayout->setHorizontalAlign(Align::SpaceBetween);

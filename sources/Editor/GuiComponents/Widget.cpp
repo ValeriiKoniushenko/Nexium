@@ -39,11 +39,45 @@ namespace NX::Gui
             drawOutline();
         }
 
-        ImGui::PushID(_id);
+        pushImGuiId();
         preDraw();
         onDraw();
         postDraw();
         ImGui::PopID();
+    }
+
+    bool Widget::hasStableIdScope() const noexcept
+    {
+        for (const Widget* widget = this; widget;)
+        {
+            if (widget->_stableId || widget->_stableChildIds)
+            {
+                return true;
+            }
+            widget = widget->getParentAs<Widget>();
+        }
+        return false;
+    }
+
+    void Widget::pushImGuiId() const
+    {
+        if (_stableId)
+        {
+            ImGui::PushID(_stableId->c_str());
+            return;
+        }
+
+        const auto* parent = getParentAs<Widget>();
+        if (parent && parent->hasStableIdScope())
+        {
+            const auto& siblings = parent->getChildren();
+            const auto it = std::ranges::find_if(siblings, [this](const auto& sibling)
+                                                 { return sibling.get() == this; });
+            ImGui::PushID(static_cast<int>(std::distance(siblings.begin(), it)));
+            return;
+        }
+
+        ImGui::PushID(_id);
     }
 
     Widget::Bounds Widget::getBounds() const noexcept

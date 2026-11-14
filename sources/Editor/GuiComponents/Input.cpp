@@ -16,6 +16,8 @@ namespace NX::Gui
     ECS_IMPL(BaseInput);
     ECS_IMPL(TextInput);
     ECS_IMPL(Color3Input);
+    ECS_IMPL(Color4Input);
+    ECS_IMPL(PathInput);
 
     void BaseInput::setTextColor(const Color4& value)
     {
@@ -134,6 +136,7 @@ namespace NX::Gui
                                InputTextCallback, &cb_user_data))
         {
             onInput->trigger(_buffer.c_str());
+            onTextEdited();
         }
 
         _needSelectAll = false;
@@ -186,4 +189,45 @@ namespace NX::Gui
         ImGui::PopStyleColor(pushedStyles);
     }
 
+    void Color4Input::setInputtedData(const Color4& data)
+    {
+        _buffer = data.toNorm();
+        _stringBuffer = "{} {} {} {}"_f << data.r << data.g << data.b << data.a;
+    }
+
+    void Color4Input::onDraw()
+    {
+        const glm::vec4 color = _buffer.toGlm();
+        const glm::vec4 opaque(glm::vec3(color), 1.f);
+
+        int pushedStyles = 3;
+        _textColor = NormColor4(glm::vec4(glm::vec3(1.f) - glm::vec3(color), 1.f)).toColor();
+        pushedStyles += ImGui::OptPushStyleColor(ImGuiCol_Text, _textColor);
+        ImGui::PushStyleColor(ImGuiCol_Button, opaque);
+        ImGui::PushStyleColor(ImGuiCol_ButtonHovered, opaque);
+        ImGui::PushStyleColor(ImGuiCol_ButtonActive, opaque);
+
+        if (ImGui::Button(_stringBuffer.c_str(), _size))
+        {
+            ImGui::OpenPopup("ColorPickerPopup");
+        }
+
+        if (ImGui::BeginPopup("ColorPickerPopup"))
+        {
+            glm::vec4 input = color;
+            ImGui::ColorPicker4("##picker", &input.x,
+                                ImGuiColorEditFlags_NoLabel | ImGuiColorEditFlags_NoSidePreview
+                                    | ImGuiColorEditFlags_AlphaBar);
+
+            if (input != color)
+            {
+                setInputtedData(NormColor4(input));
+                onInput->trigger(_buffer.toColor());
+            }
+
+            ImGui::EndPopup();
+        }
+
+        ImGui::PopStyleColor(pushedStyles);
+    }
 } // namespace NX::Gui

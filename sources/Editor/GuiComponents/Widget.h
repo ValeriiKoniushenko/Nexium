@@ -102,6 +102,23 @@ namespace NX::Gui
         void disableWidget(bool value) noexcept { _isDisabledWidget = value; }
         [[nodiscard]] bool isDisabledWidget() const noexcept { return _isDisabledWidget; }
 
+        /// Derive this widget's ImGui id from `id` instead of the creation counter. Its
+        /// descendants then use their index among siblings, so a subtree rebuilt in the same
+        /// shape gets the same ids, and ImGui keeps focus, drag and open/closed state.
+        void setStableId(Core::StringAtom id) { _stableId = std::move(id); }
+        void resetStableId() noexcept { _stableId.reset(); }
+        [[nodiscard]] const std::optional<Core::StringAtom>& getStableId() const noexcept
+        {
+            return _stableId;
+        }
+
+        /// Give children sibling-index ids without naming this widget. For containers that
+        /// rebuild their rows (array/map editors).
+        void setStableChildIds(bool value) noexcept { _stableChildIds = value; }
+
+        /// True when this widget or an ancestor has a stable id or stable child ids.
+        [[nodiscard]] bool hasStableIdScope() const noexcept;
+
         /// Don't use this function to draw your component.
         /// That's for internal usage.
         /// If you want to draw your component - call the function BaseComponent::tick
@@ -123,9 +140,14 @@ namespace NX::Gui
 
         [[nodiscard]] ImGuiStyle& style() const { return ImGui::GetStyle(); }
 
+    private:
+        void pushImGuiId() const;
+
     protected:
         inline static int idGen = 0;
-        int _id = 0; // internal id for ImGui
+        int _id = 0; // internal id for ImGui, used outside a stable-id scope
+        std::optional<Core::StringAtom> _stableId;
+        bool _stableChildIds = false;
 
         FIELD();
         glm::vec2 _pos = glm::vec2{ 0.f, 0.f };

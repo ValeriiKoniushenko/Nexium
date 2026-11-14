@@ -12,13 +12,51 @@
 #pragma once
 
 #include "Core/Delegate.h"
+#include "Editor/ForwardDeclarations.h"
 #include "Utils/Concepts.h"
 #include "Widget.h"
 
+#include <cstdint>
+#include <filesystem>
 #include <limits>
 
 namespace NX::Gui
 {
+    /// The ImGui data type that stores a `T` without conversion.
+    template<IsScalarNumber T>
+    [[nodiscard]] consteval ImGuiDataType ImGuiDataTypeOf() noexcept
+    {
+        if constexpr (std::is_same_v<T, float>)
+        {
+            return ImGuiDataType_Float;
+        }
+        else if constexpr (std::is_same_v<T, double>)
+        {
+            return ImGuiDataType_Double;
+        }
+        else
+        {
+            static_assert(std::is_integral_v<T> && sizeof(T) <= 8);
+            constexpr bool isSigned = std::is_signed_v<T>;
+            if constexpr (sizeof(T) == 1)
+            {
+                return isSigned ? ImGuiDataType_S8 : ImGuiDataType_U8;
+            }
+            else if constexpr (sizeof(T) == 2)
+            {
+                return isSigned ? ImGuiDataType_S16 : ImGuiDataType_U16;
+            }
+            else if constexpr (sizeof(T) == 4)
+            {
+                return isSigned ? ImGuiDataType_S32 : ImGuiDataType_U32;
+            }
+            else
+            {
+                return isSigned ? ImGuiDataType_S64 : ImGuiDataType_U64;
+            }
+        }
+    }
+
     CLASS();
     class BaseInput : public Widget
     {
@@ -87,6 +125,9 @@ namespace NX::Gui
 
         void onDraw() override;
 
+        /// Called after the user changed the text, right after `onInput`.
+        virtual void onTextEdited() {}
+
     protected:
         FIELD();
         std::string _buffer;
@@ -100,7 +141,9 @@ namespace NX::Gui
         bool _needSelectAll = false;
     };
 
-    template<Utils::IsArithmetic Type>
+    /// A drag box for any number type. The value is edited in its own type: no conversion
+    /// through `int` or `float`, so `std::size_t` or `int64_t` values are never truncated.
+    template<IsScalarNumber Type>
     class NumInput : public BaseInput
     {
         ECS_TEMPLATE_COMPONENT_DECL(NumInput, BaseInput, Type)
@@ -132,15 +175,10 @@ namespace NX::Gui
             ImGui::PushItemWidth(_size.x);
 
             const auto old = _buffer;
-            if constexpr (std::is_same_v<float, Type>)
-            {
-                ImGui::DragFloat("", &_buffer, _step, _min, _max, _precisionStr.c_str(),
-                                 ImGuiInputTextFlags_None);
-            }
-            else if constexpr (std::is_same_v<int, Type>)
-            {
-                ImGui::DragInt("", &_buffer, _step, _min, _max, "%d", ImGuiInputTextFlags_None);
-            }
+            // Integers use ImGui's default format for their data type ("%d", "%llu", ...).
+            const char* format = std::is_floating_point_v<Type> ? _precisionStr.c_str() : nullptr;
+            ImGui::DragScalar("", ImGuiDataTypeOf<Type>(), &_buffer, _step, &_min, &_max, format,
+                              ImGuiSliderFlags_None);
 
             if (old != _buffer)
             {
@@ -158,7 +196,7 @@ namespace NX::Gui
         Type _max = std::numeric_limits<Type>::max();
     };
 
-    ECS_TEMPLATE_COMPONENT_IMPL(BRACKETS(NumInput<Type>), BRACKETS(Utils::IsArithmetic Type))
+    ECS_TEMPLATE_COMPONENT_IMPL(BRACKETS(NumInput<Type>), BRACKETS(IsScalarNumber Type))
 
     CLASS();
     class Color3Input : public BaseInput
@@ -183,6 +221,49 @@ namespace NX::Gui
         FIELD();
         Core::StringAtom _stringBuffer = "0 0 0";
         int _flags = ImGuiInputTextFlags_None;
+    };
+
+    CLASS();
+    class Color4Input : public BaseInput
+    {
+        ECS_DECL(Color4Input, NX::Gui::BaseInput);
+
+    public:
+        void setInputtedData(const Color4& data);
+        void setInputtedData(const NormColor4& data) { setInputtedData(data.toColor()); }
+        [[nodiscard]] Color4 getInputtedData() const noexcept { return _buffer.toColor(); }
+
+    public: // Delegates
+        Delegate<void(const Color4&)>::Ptr onInput = Delegate<void(const Color4&)>::Create();
+
+    protected:
+        void onDraw() override;
+
+    protected:
+        FIELD();
+        Core::NormColor4 _buffer = Core::NormColor4(0.f, 0.f, 0.f, 1.f);
+
+        FIELD();
+        Core::StringAtom _stringBuffer = "0 0 0 255";
+    };
+
+    /// A text row for `std::filesystem::path`. Shows and stores the generic form ('/'
+    /// separators) so the text does not depend on the platform.
+    CLASS();
+    class PathInput : public TextInput
+    {
+        ECS_DECL(PathInput, NX::Gui::TextInput);
+
+    public:
+        void setPath(const std::filesystem::path& path) { setInputtedData(path.generic_string()); }
+        [[nodiscard]] std::filesystem::path getPath() const { return { getInputtedData() }; }
+
+    public: // Delegates
+        Delegate<void(const std::filesystem::path&)>::Ptr onPathInput
+            = Delegate<void(const std::filesystem::path&)>::Create();
+
+    protected:
+        void onTextEdited() override { onPathInput->trigger(getPath()); }
     };
 
     using DoubleInput = NumInput<double>;

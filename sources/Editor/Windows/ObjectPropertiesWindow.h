@@ -14,6 +14,7 @@
 #include "BaseWindow.h"
 #include "Editor/ForwardDeclarations.h"
 #include "Editor/GuiComponents/HorizontalLayout.h"
+#include "Editor/GuiComponents/InspectorStyle.h"
 #include "Editor/GuiComponents/VerticalLayout.h"
 #include "NxSubsystems/Graphics/GraphicsComponents.h"
 
@@ -55,8 +56,8 @@ namespace NX
     public:
         explicit ObjectPropertiesWindowEWC(const StringAtom& name = ""_atom);
 
-        static constexpr float defaultLabelWidth = 100.0f;
-        static constexpr float defaultLabelWidthBig = 150.0f;
+        static constexpr float defaultLabelWidth = Gui::InspectorStyle{}.labelWidth;
+        static constexpr float defaultLabelWidthBig = Gui::InspectorStyle{}.wideLabelWidth;
 
     public:
         void setTargetObject(NX::AbstractComponent* actor);

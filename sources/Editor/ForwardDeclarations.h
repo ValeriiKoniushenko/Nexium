@@ -15,6 +15,7 @@
 #include "Utils/Concepts.h"
 
 #include <cstddef>
+#include <type_traits>
 
 namespace NX::Gui
 {
@@ -50,7 +51,13 @@ namespace NX::Gui
     template<class T, class ArrayCellViewerFunc, class ViewFetchFunc>
     class BaseArray;
 
-    template<Utils::IsArithmetic T>
+    /// Number types an ImGui drag/slider can edit: every arithmetic type except `bool`
+    /// (a checkbox) and `long double` (no ImGui data type).
+    template<class T>
+    concept IsScalarNumber = Utils::IsArithmetic<T> && !std::is_same_v<std::remove_cv_t<T>, bool>
+                             && !std::is_same_v<std::remove_cv_t<T>, long double>;
+
+    template<IsScalarNumber T>
     class NumInput;
 
     template<std::size_t Size, Utils::IsArithmetic Type>
