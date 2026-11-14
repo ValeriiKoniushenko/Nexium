@@ -14,7 +14,8 @@
 #include "BaseWindow.h"
 #include "Core/Delegate.h"
 #include "Editor/ForwardDeclarations.h"
-#include "Editor/GuiComponents/GuiGenerator.h"
+#include "Editor/GuiComponents/PropertyGrid.h"
+#include "Editor/GuiComponents/VerticalLayout.h"
 
 #include <JustReflectMe/Number.h>
 
@@ -45,7 +46,8 @@ namespace NX
         Gui::Button* _showCameraButton = nullptr;
         Gui::Button* _resetCameraButton = nullptr;
 
-        std::unique_ptr<Gui::GuiGenerator> _lightningLayout;
+        // Lighting: generated from LightningProps' FIELD()s.
+        Gui::PropertyGrid::Ptr _lightningGrid;
     };
 } // namespace NX
 

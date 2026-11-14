@@ -28,6 +28,9 @@ namespace NX
     {
         R_FRIEND(LightningProps);
 
+        FIELD(R::Meta(DisplayName = "Light color"));
+        Core::NormColor3 color = Core::NormColor3(1.f);
+
         FIELD(R::Min = 0.0, R::Max = 10.0, R::Step = 0.05);
         float ambientStrength = 1.f;
 
@@ -40,11 +43,9 @@ namespace NX
         FIELD(R::Min = 0.01, R::Max = 4096.0, R::Step = 2.0);
         float specularPow = 32.f;
 
-        FIELD(R::Min = -1.0, R::Max = 1.0, R::Step = 0.01, R::SuppressLimits);
+        FIELD(R::Min = -1.0, R::Max = 1.0, R::Step = 0.01, R::SuppressLimits,
+              R::Meta(DisplayName = "Sun light direction"));
         glm::vec3 sunDirection = glm::vec3(0.5f);
-
-        FIELD();
-        Core::NormColor3 color = Core::NormColor3(1.f);
 
         [[nodiscard]] std::filesystem::path getCacheDir() const override;
         [[nodiscard]] Core::StringAtom getCacheHash() const override;

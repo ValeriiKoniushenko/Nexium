@@ -13,7 +13,8 @@
 #include "Editor/EditorIntegration.h"
 #include "Editor/ForwardDeclarations.h"
 #include "Editor/GuiComponents/Button.h"
-#include "Editor/GuiComponents/GuiGenerator.h"
+#include "Editor/GuiComponents/InspectorStyle.h"
+#include "Editor/GuiComponents/PropertyGrid.h"
 #include "Editor/GuiComponents/HorizontalLayout.h"
 #include "Editor/GuiComponents/Input.h"
 #include "Editor/GuiComponents/Label.h"
@@ -27,8 +28,6 @@
 #include "NxWorld/Framework/World.h"
 #include "Scenes/SceneTreeWindow.h"
 
-#include <JustReflectMe/Adapter.h>
-#include <memory>
 
 using namespace NX;
 
@@ -59,12 +58,12 @@ namespace NX
     {
         BaseFloatEWC::onOpen();
 
-        constexpr float defaultWidth = 120.f;
+        const float labelWidth = Gui::InspectorStyle::Default().wideLabelWidth;
         // ===================== GLOBAL =========================
         {
             auto* h = _globalLayout.addChildComponent<Gui::LabelRow<Gui::HorizontalLayout>>();
             h->label->setText("Camera");
-            h->label->setWidth(defaultWidth);
+            h->label->setWidth(labelWidth);
 
             _cameraInputField = h->input->addChildComponent<Gui::TextInput>();
             _cameraInputField->setReadOnly(true);
@@ -98,34 +97,24 @@ namespace NX
         }
 
         // ===================== LIGHTNING =========================
-
-        Assert(!_lightningLayout);
-
-        using LigtningGuiT = Gui::ObjectBasedGuiGenerator<decltype(GetWorld()->lightning)>;
-        _lightningLayout = std::make_unique<LigtningGuiT>();
-
-        if (auto* l = dynamic_cast<LigtningGuiT*>(_lightningLayout.get()))
-        {
-            l->setObjectGetter([]() { return &GetWorld()->lightning; });
-            l->generateGui();
-        }
-        else
-        {
-            errorLogAndAssert(
-                "Impossible to create Gui::ObjectBasedGuiGenerator<decltype(GetWorld()->lightning) "
-                "to create GUI");
-        }
+        Assert(!_lightningGrid);
+        _lightningGrid = Gui::PropertyGrid::Create();
+        _lightningGrid->setStableId("Lightning"_atom);
+        _lightningGrid->setSections(Gui::PropertySections::Flat);
+        _lightningGrid->setLabelWidth(labelWidth);
+        _lightningGrid->setTarget(
+            []
+            {
+                auto* world = GetWorld();
+                return world ? Reflection::ObjectRef(world->lightning) : Reflection::ObjectRef{};
+            });
     }
 
     void WorldSettingsEWC::onClose()
     {
         BaseEWC::onClose();
 
-        if (_lightningLayout)
-        {
-            _lightningLayout->despawnEverything();
-            _lightningLayout.reset();
-        }
+        _lightningGrid = nullptr;
 
         _globalLayout.removeAllChildren();
         _cameraInputField = nullptr;
@@ -165,7 +154,10 @@ namespace NX
 
         if (Gui::CollapsingHeader("Lightning", ImGuiTreeNodeFlags_DefaultOpen))
         {
-            _lightningLayout->tick(GetWorld()->getTimeDelta());
+            if (_lightningGrid)
+            {
+                _lightningGrid->tick(GetWorld()->getTimeDelta());
+            }
         }
     }
 
