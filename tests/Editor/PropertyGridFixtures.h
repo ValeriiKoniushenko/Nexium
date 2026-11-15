@@ -10,6 +10,8 @@
 #pragma once
 
 #include "Core/Color.h"
+#include "Core/Position.h"
+#include "Core/Size.h"
 #include "NxFundamental/ECS/BaseComponent.h"
 #include "NxFundamental/Reflection/TypeDescriptor.h"
 
@@ -101,6 +103,68 @@ namespace GridFixtures
 
         FIELD();
         int value = 9;
+    };
+
+    // ===================== Customization =====================
+
+    CLASS();
+    struct CustomBase
+    {
+        R_FRIEND(CustomBase);
+
+        FIELD();
+        int baseValue = 1;
+
+        FIELD(R::Meta(Category = "Extra"));
+        int extra = 2;
+    };
+
+    CLASS();
+    class Customized : public GridFixtures::CustomBase
+    {
+        R_FRIEND(Customized, GridFixtures::CustomBase);
+
+    public:
+        void onFieldEdited(const NX::Reflection::PropertyDesc& property)
+        {
+            edited.push_back(property.name);
+        }
+
+        std::vector<Core::StringAtom> edited;
+        int counter = 0;
+
+        FIELD();
+        int alpha = 1;
+
+        FIELD();
+        int beta = 2;
+
+        FIELD();
+        bool enabled = false;
+
+        FIELD(R::Meta(EnabledIf = enabled));
+        float gated = 0.f;
+
+        FIELD(R::Meta(Editor = AssetRef, AssetType = TestAtlas));
+        Core::StringAtom atlas = "a"_atom;
+
+        FIELD(R::Meta(Editor = AssetRef, AssetType = TestFrame, DependsOn = atlas));
+        Core::StringAtom frame = "a1"_atom;
+    };
+
+    CLASS();
+    struct Wrappers
+    {
+        R_FRIEND(Wrappers);
+
+        FIELD();
+        Core::GlobalPosition3F position = Core::GlobalPosition3F(1.f, 2.f, 3.f);
+
+        FIELD();
+        Core::FSize2 size = Core::FSize2(4.f, 5.f);
+
+        FIELD();
+        Core::IntrusivePtr<NX::BaseComponent> link;
     };
 
     CLASS();

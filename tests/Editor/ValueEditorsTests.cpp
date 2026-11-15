@@ -9,6 +9,7 @@
 
 #include "Editor/GuiComponents/EnumInputs.h"
 #include "Editor/GuiComponents/Input.h"
+#include "Editor/GuiComponents/InspectorStyle.h"
 #include "ImGuiFrameFixture.h"
 
 #include "gmock/gmock.h"
@@ -200,6 +201,65 @@ namespace
         flags.setValue(0);
 
         EXPECT_EQ(flags.getPreviewText(), "None");
+    }
+
+    // ===================== ChoiceCombo =====================
+
+    class TestChoiceCombo : public ChoiceCombo
+    {
+    public:
+        void draw() { onDraw(); }
+        using ChoiceCombo::select;
+    };
+
+    TEST_F(ValueEditorsTests, ChoiceComboPreviewsTheValueEvenWhenItIsNotAnOption)
+    {
+        ChoiceCombo combo;
+        combo.setValue("custom.png"_atom);
+        EXPECT_EQ(combo.getPreviewText(), "custom.png");
+
+        combo.setValue({});
+        EXPECT_EQ(combo.getPreviewText(), InspectorStyle::Default().emptyValueText);
+    }
+
+    TEST_F(ValueEditorsTests, ChoiceComboAsksForOptionsOnlyWhenNeeded)
+    {
+        TestChoiceCombo combo;
+        combo.initialize();
+        int calls = 0;
+        combo.setOptionsProvider(
+            [&calls]
+            {
+                ++calls;
+                return std::vector<Core::StringAtom>{ "a"_atom, "b"_atom };
+            });
+
+        // An unlabelled item needs an id scope below the window root.
+        ImGui::PushID("Choice");
+        combo.draw();
+        EXPECT_EQ(calls, 0) << "closed popup";
+
+        ImGui::OpenPopup("##ComboPopup");
+        combo.draw();
+        ImGui::PopID();
+        EXPECT_EQ(calls, 1);
+        EXPECT_EQ(combo.getOptions().size(), 2u);
+    }
+
+    TEST_F(ValueEditorsTests, ChoiceComboSelectionNotifies)
+    {
+        TestChoiceCombo combo;
+        combo.setOptionsProvider([] { return std::vector<Core::StringAtom>{ "a"_atom, "b"_atom }; });
+        combo.refreshOptions();
+        std::vector<std::string> selected;
+        auto subscription = combo.onSelect->subscribeAndGetID(
+            [&](const Core::StringAtom& value) { selected.push_back(value.toStdString()); });
+
+        combo.select(1);
+
+        EXPECT_EQ(combo.getValue(), "b");
+        EXPECT_THAT(selected, ElementsAre("b"));
+        combo.onSelect->unsubscribe(subscription);
     }
 
     // ===================== PathInput =====================

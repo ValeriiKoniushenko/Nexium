@@ -75,12 +75,37 @@ namespace NX::Gui
         setStableChildIds(true);
 
         _header = addChildComponent<HorizontalLayout>("Header"_atom);
+        _expand = _header->addChildComponent<Button>(ICON_FA_CHEVRON_DOWN);
         _summary = _header->addChildComponent<Label>("Summary"_atom);
         _add = _header->addChildComponent<Button>(ICON_FA_PLUS);
         _headerSubscriptions << _add->onClick->subscribeAndGetID(
             [this] { request({ .kind = PendingEdit::Kind::Add }); });
+        // Local UI state, not an edit: applied right away, rows follow on the next draw.
+        _headerSubscriptions << _expand->onClick->subscribeAndGetID(
+            [this] { setExpanded(!isExpanded()); });
 
-        updateSummary();
+        updateSummary(0);
+    }
+
+    void ArrayEditor::setExpanded(bool value)
+    {
+        _isExpanded = value;
+        _expand->setText(value ? ICON_FA_CHEVRON_DOWN : ICON_FA_CHEVRON_RIGHT);
+    }
+
+    std::size_t ArrayEditor::currentSize() const
+    {
+        return _sizeProvider ? _sizeProvider() : 0;
+    }
+
+    void ArrayEditor::removeRows()
+    {
+        for (const auto& row : _rows)
+        {
+            removeChild(row.row);
+        }
+        _rows.clear();
+        _rowSubscriptions.clearAndReleaseAll();
     }
 
     void ArrayEditor::setFixedSize(bool value)
@@ -91,14 +116,21 @@ namespace NX::Gui
 
     void ArrayEditor::rebuild()
     {
-        for (const auto& row : _rows)
-        {
-            removeChild(row.row);
-        }
-        _rows.clear();
-        _rowSubscriptions.clearAndReleaseAll();
+        removeRows();
 
-        const std::size_t size = _sizeProvider ? _sizeProvider() : 0;
+        const std::size_t size = currentSize();
+        if (!_isExpanded)
+        {
+            setExpanded(size <= InspectorStyle::Default().arrayAutoExpandLimit);
+        }
+        _isBuilt = true;
+        updateSummary(size);
+        applyFixedSize();
+        if (!*_isExpanded)
+        {
+            return;
+        }
+
         _rows.reserve(size);
         for (std::size_t i = 0; i < size; ++i)
         {
@@ -128,18 +160,20 @@ namespace NX::Gui
             _rowSubscriptions << element.remove->onClick->subscribeAndGetID(
                 [this, i] { request({ .kind = Kind::Remove, .index = i }); });
         }
-
-        _isBuilt = true;
-        updateSummary();
         applyFixedSize();
     }
 
     void ArrayEditor::onDraw()
     {
-        const std::size_t size = _sizeProvider ? _sizeProvider() : 0;
-        if (!_isBuilt || size != _rows.size())
+        const std::size_t size = currentSize();
+        const bool expanded = isExpanded();
+        if (!_isBuilt || (expanded && size != _rows.size()) || (!expanded && !_rows.empty()))
         {
             rebuild();
+        }
+        else
+        {
+            updateSummary(size);
         }
 
         VerticalLayout::onDraw();
@@ -183,9 +217,13 @@ namespace NX::Gui
         }
     }
 
-    void ArrayEditor::updateSummary()
+    void ArrayEditor::updateSummary(std::size_t size)
     {
-        const std::size_t size = _rows.size();
+        if (_summarySize == size)
+        {
+            return;
+        }
+        _summarySize = size;
         _summary->setText(MakeText(std::format("{} {}", size, size == 1 ? "element" : "elements")));
     }
 

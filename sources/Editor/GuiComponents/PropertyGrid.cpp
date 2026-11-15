@@ -14,10 +14,14 @@
 #include "EnumInputs.h"
 #include "Input.h"
 #include "InspectorStyle.h"
+#include "PropertyCustomization.h"
 
 #include <cctype>
 #include <spdlog/spdlog.h>
 #include <format>
+#include <iterator>
+#include <optional>
+#include <string>
 #include <tuple>
 #include <unordered_set>
 #include <utility>
@@ -118,7 +122,7 @@ namespace NX::Gui
                         text += std::format(" #{}", id->toStdStringView());
                     }
                     text += std::format(" {}", row->getEditorName().toStdStringView());
-                    if (row->isDisabledWidget())
+                    if (row->isReadOnly())
                     {
                         text += " readonly";
                     }
@@ -398,10 +402,23 @@ namespace NX::Gui
                                                .factory = std::move(factory) });
     }
 
+    void PropertyEditors::addNamed(Core::StringAtom name, Factory factory)
+    {
+        Core::StringAtom key = name;
+        _named.insert_or_assign(std::move(key),
+                                Entry{ .name = std::move(name), .factory = std::move(factory) });
+    }
+
     const PropertyEditors::Entry* PropertyEditors::find(std::type_index type) const
     {
         const auto it = _entries.find(type);
         return it != _entries.end() ? &it->second : nullptr;
+    }
+
+    const PropertyEditors::Entry* PropertyEditors::findNamed(const Core::StringAtom& name) const
+    {
+        const auto it = _named.find(name);
+        return it != _named.end() ? &it->second : nullptr;
     }
 
     // ===================== PropertyRow =====================
@@ -424,12 +441,27 @@ namespace NX::Gui
         }
     }
 
+    void PropertyRow::setReadOnly(bool value) noexcept
+    {
+        _isReadOnly = value;
+        disableWidget(value);
+    }
+
     void PropertyRow::pull() const
     {
         if (_pull)
         {
             _pull();
         }
+    }
+
+    void PropertyRow::preDraw()
+    {
+        // Decided before Widget::preDraw opens the disabled scope that postDraw closes.
+        const bool enabled = std::ranges::all_of(_enabledIf, [](const auto& condition)
+                                                 { return condition(); });
+        disableWidget(_isReadOnly || !enabled);
+        HorizontalLayout::preDraw();
     }
 
     void PropertyRow::onDraw()
@@ -440,9 +472,24 @@ namespace NX::Gui
 
     // ===================== PropertyGrid =====================
 
+    struct PropertyGrid::RowPlan
+    {
+        std::size_t classIndex = 0;
+        /// A field, or else a customization's virtual row.
+        const PropertyDesc* property = nullptr;
+        const ClassCustomization::VirtualRow* virtualRow = nullptr;
+        const ClassCustomization::RowRules* rules = nullptr;
+        Core::StringAtom id{};
+        Core::StringAtom label{};
+        std::optional<Core::StringAtom> category{};
+        bool readOnly = false;
+    };
+
     PropertyGrid::PropertyGrid(const StringAtom& name)
         : VerticalLayout(componentType, name.isEmpty() ? "PropertyGrid"_atom : name),
           _editors(&PropertyEditors::Builtin()),
+          _customizations(&PropertyCustomizations::Global()),
+          _choices(&PropertyChoices::Global()),
           _labelWidth(InspectorStyle::Default().labelWidth)
     {
         setFlex(Flex::FlexWidth);
@@ -488,6 +535,18 @@ namespace NX::Gui
     void PropertyGrid::setEditors(const PropertyEditors& editors)
     {
         _editors = &editors;
+        requestRebuildIfBuilt();
+    }
+
+    void PropertyGrid::setCustomizations(const PropertyCustomizations& customizations)
+    {
+        _customizations = &customizations;
+        requestRebuildIfBuilt();
+    }
+
+    void PropertyGrid::setChoices(const PropertyChoices& choices)
+    {
+        _choices = &choices;
         requestRebuildIfBuilt();
     }
 
@@ -549,6 +608,8 @@ namespace NX::Gui
     {
         removeAllChildren();
         _builtFor = nullptr;
+        _chain.clear();
+        _chainCustomizations.clear();
         _owners.clear();
         _ownersFrame = -1;
         _isRebuildRequested = false;
@@ -558,42 +619,228 @@ namespace NX::Gui
     {
         clearRows();
         _builtFor = &desc;
+        desc.forEachInChain(nullptr,
+                            [this](const ClassDesc& cls, void*)
+                            {
+                                _chain.push_back(&cls);
+                                _chainCustomizations.push_back(_customizations->find(cls.type));
+                            });
 
-        std::vector<const ClassDesc*> chain;
-        desc.forEachInChain(nullptr, [&chain](const ClassDesc& cls, void*)
-                            { chain.push_back(&cls); });
-
-        for (std::size_t classIndex = 0; classIndex < chain.size(); ++classIndex)
+        struct SectionPlan
         {
-            const ClassDesc& cls = *chain[classIndex];
-            const bool hasVisible = std::ranges::any_of(
-                cls.properties, [](const PropertyDesc& property) { return !IsHidden(property); });
-            if (!hasVisible)
+            Core::StringAtom title{};
+            std::vector<RowPlan> rows{};
+        };
+        const auto sectionNamed = [](std::vector<SectionPlan>& sections,
+                                     const Core::StringAtom& title) -> SectionPlan&
+        {
+            const auto it = std::ranges::find(sections, title, &SectionPlan::title);
+            return it != sections.end() ? *it : sections.emplace_back(SectionPlan{ .title = title });
+        };
+
+        // Class sections in chain order (equal titles merge), then categories in the order they
+        // first appear; a category named like a class section joins it.
+        std::vector<SectionPlan> sections;
+        std::vector<SectionPlan> categories;
+        for (std::size_t classIndex = 0; classIndex < _chain.size(); ++classIndex)
+        {
+            const auto* custom = _chainCustomizations[classIndex];
+            const Core::StringAtom title = custom && custom->sectionTitle()
+                                               ? *custom->sectionTitle()
+                                               : LabelFromFieldName(_chain[classIndex]->shortName);
+            for (auto& plan : planClassRows(classIndex))
+            {
+                auto& section = plan.category ? sectionNamed(categories, *plan.category)
+                                              : sectionNamed(sections, title);
+                section.rows.push_back(std::move(plan));
+            }
+        }
+        for (auto& category : categories)
+        {
+            auto& section = sectionNamed(sections, category.title);
+            std::ranges::move(category.rows, std::back_inserter(section.rows));
+        }
+
+        std::vector<PropertyScope> scopes;
+        scopes.reserve(_chain.size());
+        for (std::size_t classIndex = 0; classIndex < _chain.size(); ++classIndex)
+        {
+            scopes.push_back(topScope(classIndex));
+        }
+
+        for (const auto& section : sections)
+        {
+            if (section.rows.empty())
             {
                 continue;
             }
-
             VerticalLayout* container = this;
             if (_sections == PropertySections::PerClass)
             {
-                auto* section
-                    = addChildComponent<CollapsingSection>(LabelFromFieldName(cls.shortName));
-                section->setStableId(cls.shortName);
-                section->setHeaderFlags(InspectorStyle::Default().sectionFlags);
-                container = &section->getContent();
+                auto* widget = addChildComponent<CollapsingSection>(section.title);
+                widget->setStableId(section.title);
+                widget->setHeaderFlags(InspectorStyle::Default().sectionFlags);
+                container = &widget->getContent();
             }
-
-            for (const PropertyDesc& property : cls.properties)
+            for (const auto& plan : section.rows)
             {
-                if (IsHidden(property))
-                {
-                    continue;
-                }
-                const bool readOnly
-                    = _isReadOnly || property.field->attributes.hasMeta("ReadOnly");
-                buildProperty(*container, property, topBinding(classIndex, property, readOnly), 0,
-                              readOnly);
+                buildPlannedRow(*container, plan, scopes[plan.classIndex]);
             }
+        }
+    }
+
+    std::vector<PropertyGrid::RowPlan> PropertyGrid::planClassRows(std::size_t classIndex) const
+    {
+        const ClassDesc& cls = *_chain[classIndex];
+        const ClassCustomization* custom = _chainCustomizations[classIndex];
+        const auto rulesOf = [custom](const Core::StringAtom& name)
+        { return custom ? custom->rules(name.toStdStringView()) : nullptr; };
+
+        std::vector<RowPlan> rows;
+        for (const PropertyDesc& property : cls.properties)
+        {
+            const auto* rules = rulesOf(property.name);
+            if (IsHidden(property) || (rules && rules->hidden))
+            {
+                continue;
+            }
+            RowPlan plan{ .classIndex = classIndex,
+                          .property = &property,
+                          .rules = rules,
+                          .id = property.name,
+                          .label = rules && rules->label ? *rules->label : LabelOf(property) };
+            if (rules && rules->category)
+            {
+                plan.category = rules->category;
+            }
+            else if (const auto category = property.field->attributes.getMeta("Category");
+                     category && !category->empty())
+            {
+                plan.category = Core::StringAtom(*category);
+            }
+            plan.readOnly = _isReadOnly || property.field->attributes.hasMeta("ReadOnly")
+                            || (rules && rules->readOnly);
+            rows.push_back(std::move(plan));
+        }
+
+        if (!custom)
+        {
+            return rows;
+        }
+
+        for (const auto& row : custom->virtualRows())
+        {
+            const auto* rules = rulesOf(row->name);
+            if (rules && rules->hidden)
+            {
+                continue;
+            }
+            RowPlan plan{ .classIndex = classIndex,
+                          .virtualRow = row.get(),
+                          .rules = rules,
+                          .id = row->name,
+                          .label = rules && rules->label ? *rules->label : row->label,
+                          .category = rules && rules->category ? rules->category : row->category,
+                          .readOnly = _isReadOnly || row->readOnly || (rules && rules->readOnly) };
+            rows.push_back(std::move(plan));
+        }
+
+        if (!custom->order().empty())
+        {
+            std::vector<RowPlan> ordered;
+            for (const auto& name : custom->order())
+            {
+                if (const auto it = std::ranges::find(rows, name, &RowPlan::id); it != rows.end())
+                {
+                    ordered.push_back(std::move(*it));
+                    rows.erase(it);
+                }
+            }
+            std::ranges::move(rows, std::back_inserter(ordered));
+            rows = std::move(ordered);
+        }
+        return rows;
+    }
+
+    void PropertyGrid::buildPlannedRow(VerticalLayout& container, const RowPlan& plan,
+                                       const PropertyScope& scope)
+    {
+        const std::size_t classIndex = plan.classIndex;
+        PropertyRow* row = nullptr;
+
+        if (plan.property)
+        {
+            row = buildProperty(container, *plan.property, plan.label,
+                                topBinding(classIndex, *plan.property, plan.readOnly), scope, 0,
+                                plan.readOnly);
+        }
+        else
+        {
+            const auto& virtualRow = *plan.virtualRow;
+            row = container.addChildComponent<PropertyRow>(plan.label, _labelWidth);
+            row->setStableId(plan.id);
+
+            if (virtualRow.kind == ClassCustomization::RowKind::Custom)
+            {
+                row->setEditorName("Custom"_atom);
+                CustomRowContext context{
+                    .row = *row,
+                    .owner = [this, classIndex] { return ownerOf(classIndex); },
+                    .edited =
+                        [this, classIndex, &virtualRow]
+                    {
+                        if (void* owner = ownerOf(classIndex))
+                        {
+                            reportEdit(classIndex, virtualRow.desc, owner);
+                        }
+                    },
+                    .readOnly = plan.readOnly,
+                };
+                if (virtualRow.build)
+                {
+                    virtualRow.build(context);
+                }
+                row->setReadOnly(plan.readOnly);
+            }
+            else
+            {
+                PropertyBinding::Resolve resolve = [this, classIndex, &virtualRow, row]() -> void*
+                {
+                    void* owner = ownerOf(classIndex);
+                    if (!owner || !virtualRow.read)
+                    {
+                        return nullptr;
+                    }
+                    virtualRow.read(owner, row->valueCache());
+                    return virtualRow.desc.typeInfo->address(row->valueCache());
+                };
+                PropertyBinding::Write write;
+                if (!plan.readOnly && virtualRow.write)
+                {
+                    write = [this, classIndex, &virtualRow](const void* value)
+                    {
+                        if (void* owner = ownerOf(classIndex))
+                        {
+                            virtualRow.write(owner, value);
+                            reportEdit(classIndex, virtualRow.desc, owner);
+                        }
+                    };
+                }
+                const PropertyBinding binding(*virtualRow.desc.typeInfo, std::move(resolve),
+                                              std::move(write));
+                buildValue(*row, binding, &virtualRow.field, scope, 0, plan.readOnly);
+            }
+            applyEnabledIf(*row, &virtualRow.field, scope);
+        }
+
+        if (row && plan.rules && plan.rules->enabledIf)
+        {
+            row->addEnabledIf(
+                [this, classIndex, condition = plan.rules->enabledIf]
+                {
+                    const void* owner = ownerOf(classIndex);
+                    return owner && condition(owner);
+                });
         }
     }
 
@@ -631,6 +878,15 @@ namespace NX::Gui
             return;
         }
         property.assign(property, owner, value);
+        reportEdit(classIndex, property, owner);
+    }
+
+    void PropertyGrid::reportEdit(std::size_t classIndex, const PropertyDesc& property, void* owner)
+    {
+        if (const auto* custom = _chainCustomizations[classIndex])
+        {
+            custom->runAfterEdit(property.name.toStdStringView(), owner);
+        }
         onEdited->trigger(property);
     }
 
@@ -652,30 +908,71 @@ namespace NX::Gui
         return { *property.typeInfo, std::move(resolve), std::move(write) };
     }
 
-    void PropertyGrid::buildProperty(VerticalLayout& container, const PropertyDesc& property,
-                                     const PropertyBinding& binding, int depth, bool readOnly)
+    PropertyScope PropertyGrid::topScope(std::size_t classIndex)
+    {
+        PropertyScope scope;
+        scope.owner = [this, classIndex] { return ownerOf(classIndex); };
+        // The most-derived declaration wins, as in ObjectRef::findProperty.
+        scope.sibling = [this](const Core::StringAtom& name) -> std::optional<PropertyBinding>
+        {
+            for (std::size_t i = _chain.size(); i-- > 0;)
+            {
+                if (const auto* property = _chain[i]->findOwnProperty(name))
+                {
+                    return topBinding(i, *property, true);
+                }
+            }
+            return std::nullopt;
+        };
+        return scope;
+    }
+
+    PropertyRow* PropertyGrid::buildProperty(VerticalLayout& container, const PropertyDesc& property,
+                                             const Core::StringAtom& label,
+                                             const PropertyBinding& binding,
+                                             const PropertyScope& scope, int depth, bool readOnly)
     {
         const TypeInfo& info = binding.info();
         const bool asSection = info.kind() == TypeKind::Class && depth < MaxDepth
-                               && !_editors->find(info.type());
+                               && !_editors->find(info.type())
+                               && !property.field->attributes.hasMeta("Editor");
         if (asSection)
         {
-            auto* section = container.addChildComponent<CollapsingSection>(LabelOf(property));
+            auto* section = container.addChildComponent<CollapsingSection>(label);
             section->setStableId(property.name);
             section->setHeaderFlags(InspectorStyle::Default().sectionFlags);
             buildClassRows(section->getContent(), binding, *info.classDesc(), depth + 1,
                            readOnly || !binding.isEditable());
-            return;
+            return nullptr;
         }
 
-        auto* row = container.addChildComponent<PropertyRow>(LabelOf(property), _labelWidth);
+        auto* row = container.addChildComponent<PropertyRow>(label, _labelWidth);
         row->setStableId(property.name);
-        buildValue(*row, binding, property.field, depth, readOnly);
+        buildValue(*row, binding, property.field, scope, depth, readOnly);
+        applyEnabledIf(*row, property.field, scope);
+        return row;
     }
 
     void PropertyGrid::buildClassRows(VerticalLayout& container, const PropertyBinding& binding,
                                       const ClassDesc& desc, int depth, bool readOnly)
     {
+        // Fields of a nested value: its own object is their owner and holds their siblings.
+        PropertyScope scope;
+        scope.owner = [binding] { return binding.resolve(); };
+        scope.sibling = [binding, &desc](const Core::StringAtom& name) -> std::optional<PropertyBinding>
+        {
+            std::optional<PropertyBinding> found;
+            desc.forEachInChain(nullptr,
+                                [&](const ClassDesc& owner, void*)
+                                {
+                                    if (const auto* property = owner.findOwnProperty(name))
+                                    {
+                                        found = binding.field(desc, owner, *property);
+                                    }
+                                });
+            return found;
+        };
+
         desc.forEachInChain(nullptr,
                             [&](const ClassDesc& owner, void*)
                             {
@@ -687,23 +984,43 @@ namespace NX::Gui
                                     }
                                     const bool rowReadOnly
                                         = readOnly || property.field->attributes.hasMeta("ReadOnly");
-                                    buildProperty(container, property,
-                                                  binding.field(desc, owner, property), depth,
-                                                  rowReadOnly);
+                                    buildProperty(container, property, LabelOf(property),
+                                                  binding.field(desc, owner, property), scope,
+                                                  depth, rowReadOnly);
                                 }
                             });
     }
 
     void PropertyGrid::buildValue(PropertyRow& row, const PropertyBinding& binding,
-                                  const RClassField* field, int depth, bool readOnly)
+                                  const RClassField* field, const PropertyScope& scope, int depth,
+                                  bool readOnly)
     {
         readOnly = readOnly || !binding.isEditable();
-        PropertyEditorContext context{
-            .row = row, .binding = binding, .field = field, .readOnly = readOnly
-        };
+        PropertyEditorContext context{ .row = row,
+                                       .binding = binding,
+                                       .field = field,
+                                       .readOnly = readOnly,
+                                       .choices = _choices,
+                                       .scope = &scope };
         const TypeInfo& info = binding.info();
 
-        if (const auto* entry = _editors->find(info.type()))
+        const PropertyEditors::Entry* entry = nullptr;
+        if (const auto name = field ? field->attributes.getMeta("Editor") : std::nullopt;
+            name && !name->empty())
+        {
+            entry = _editors->findNamed(Core::StringAtom(*name));
+            static std::unordered_set<std::string> warned;
+            if (!entry && warned.insert(std::string(*name)).second)
+            {
+                getLogger()->warn("PropertyGrid: no editor named '{}'", *name);
+            }
+        }
+        if (!entry)
+        {
+            entry = _editors->find(info.type());
+        }
+
+        if (entry)
         {
             row.setEditorName(entry->name);
             entry->factory(context);
@@ -734,10 +1051,40 @@ namespace NX::Gui
             readOnly = true;
         }
 
-        if (readOnly)
+        // An editor may have made the row read-only itself (e.g. component links).
+        row.setReadOnly(readOnly || row.isReadOnly());
+    }
+
+    void PropertyGrid::applyEnabledIf(PropertyRow& row, const RClassField* field,
+                                      const PropertyScope& scope) const
+    {
+        const auto name = field ? field->attributes.getMeta("EnabledIf") : std::nullopt;
+        if (!name || name->empty())
         {
-            row.disableWidget(true);
+            return;
         }
+
+        std::optional<PropertyBinding> condition;
+        if (scope.sibling)
+        {
+            condition = scope.sibling(Core::StringAtom::Intern(*name));
+        }
+        if (!condition || condition->info().type() != typeid(bool))
+        {
+            static std::unordered_set<std::string> warned;
+            if (warned.insert(std::string(*name)).second)
+            {
+                getLogger()->warn("PropertyGrid: EnabledIf = {} is not a bool field; ignored",
+                                  *name);
+            }
+            return;
+        }
+        row.addEnabledIf(
+            [binding = *condition]
+            {
+                const bool* value = binding.get<bool>();
+                return !value || *value;
+            });
     }
 
     void PropertyGrid::buildEnum(PropertyEditorContext& context)
@@ -793,7 +1140,8 @@ namespace NX::Gui
         auto* optional = context.row.addChildComponent<OptionalEditor>();
         optional->setFlex(Flex::FlexWidth);
         auto* value = optional->setValueWidget<PropertyRow>();
-        buildValue(*value, context.binding.optionalValue(), nullptr, depth + 1, context.readOnly);
+        buildValue(*value, context.binding.optionalValue(), nullptr, *context.scope, depth + 1,
+                   context.readOnly);
 
         Listen(optional->onEngagedChange,
                [binding = context.binding, &info](bool engaged)
@@ -835,13 +1183,14 @@ namespace NX::Gui
                 const void* sequence = binding.resolve();
                 return sequence ? info.size(sequence) : 0;
             });
+        // Element rows are built later, while the array draws: everything is captured by value.
         array->setElementFactory(
-            [this, binding = context.binding, depth, readOnly = context.readOnly](
-                HorizontalLayout& row, std::size_t index)
+            [this, binding = context.binding, scope = *context.scope, depth,
+             readOnly = context.readOnly](HorizontalLayout& row, std::size_t index)
             {
                 auto* value = row.addChildComponent<PropertyRow>();
                 value->setFlex(Flex::FlexWidth);
-                buildValue(*value, binding.element(index), nullptr, depth + 1, readOnly);
+                buildValue(*value, binding.element(index), nullptr, scope, depth + 1, readOnly);
             });
 
         Listen(array->onAdd, [binding = context.binding, &info]
@@ -868,12 +1217,12 @@ namespace NX::Gui
                 return value ? info.keys(value) : std::vector<Core::StringAtom>{};
             });
         map->setElementFactory(
-            [this, binding = context.binding, depth, readOnly = context.readOnly](
-                HorizontalLayout& row, const Core::StringAtom& key)
+            [this, binding = context.binding, scope = *context.scope, depth,
+             readOnly = context.readOnly](HorizontalLayout& row, const Core::StringAtom& key)
             {
                 auto* value = row.addChildComponent<PropertyRow>();
                 value->setFlex(Flex::FlexWidth);
-                buildValue(*value, binding.mapValue(key), nullptr, depth + 1, readOnly);
+                buildValue(*value, binding.mapValue(key), nullptr, scope, depth + 1, readOnly);
             });
 
         Listen(map->onAdd,

@@ -9,6 +9,8 @@
 
 #include "EnumInputs.h"
 
+#include "InspectorStyle.h"
+
 #include <algorithm>
 #include <bit>
 #include <format>
@@ -18,6 +20,7 @@ namespace NX::Gui
 {
     ECS_IMPL(EnumCombo);
     ECS_IMPL(FlagsEditor);
+    ECS_IMPL(ChoiceCombo);
 
     // ===================== EnumCombo =====================
 
@@ -175,6 +178,77 @@ namespace NX::Gui
             if (ImGui::Checkbox(_flags[i].name.c_str(), &isSet))
             {
                 toggle(i);
+            }
+            ImGui::PopID();
+        }
+    }
+
+    // ===================== ChoiceCombo =====================
+
+    const std::vector<Core::StringAtom>& ChoiceCombo::refreshOptions()
+    {
+        _options = _provider ? _provider() : std::vector<Core::StringAtom>{};
+        return _options;
+    }
+
+    void ChoiceCombo::setValue(Core::StringAtom value)
+    {
+        if (_value != value)
+        {
+            _value = std::move(value);
+        }
+    }
+
+    std::string_view ChoiceCombo::getPreviewText() const noexcept
+    {
+        return _value.isEmpty() ? InspectorStyle::Default().emptyValueText
+                                : _value.toStdStringView();
+    }
+
+    void ChoiceCombo::select(std::size_t index)
+    {
+        if (!Verify(index < _options.size()))
+        {
+            return;
+        }
+        _value = _options[index];
+        onSelect->trigger(_value);
+    }
+
+    void ChoiceCombo::onDraw()
+    {
+        const std::string preview(getPreviewText());
+        ImGui::PushItemWidth(_size.x);
+        if (ImGui::BeginCombo("", preview.c_str()))
+        {
+            if (!_wasOpen)
+            {
+                refreshOptions();
+                _wasOpen = true;
+            }
+            drawPopupContent();
+            ImGui::EndCombo();
+        }
+        else
+        {
+            _wasOpen = false;
+        }
+        ImGui::PopItemWidth();
+    }
+
+    void ChoiceCombo::drawPopupContent()
+    {
+        for (std::size_t i = 0; i < _options.size(); ++i)
+        {
+            const bool isSelected = _options[i] == _value;
+            ImGui::PushID(static_cast<int>(i));
+            if (ImGui::Selectable(_options[i].c_str(), isSelected))
+            {
+                select(i);
+            }
+            if (isSelected)
+            {
+                ImGui::SetItemDefaultFocus();
             }
             ImGui::PopID();
         }

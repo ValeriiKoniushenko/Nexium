@@ -98,9 +98,13 @@ namespace NX::Gui
         Button* remove = nullptr;
     };
 
-    /// An in-place editor for a sequence: a summary row with an add button, then one row per
-    /// element ([index] [element editor] [up] [down] [remove]). Row ids are the element index,
-    /// so a rebuilt row keeps its ImGui state.
+    /// An in-place editor for a sequence: a summary row ([expand] [N elements] [add]), then one
+    /// row per element ([index] [element editor] [up] [down] [remove]). Row ids are the element
+    /// index, so a rebuilt row keeps its ImGui state.
+    ///
+    /// Rows exist only while the editor is expanded. It starts expanded unless the sequence has
+    /// more than `InspectorStyle::arrayAutoExpandLimit` elements; once the user toggles it, that
+    /// choice is kept.
     CLASS();
     class ArrayEditor : public VerticalLayout
     {
@@ -129,12 +133,17 @@ namespace NX::Gui
         /// Rebuilds the element rows now. Drawing does it by itself when the size changes.
         void rebuild();
 
+        void setExpanded(bool value);
+        /// False before the first draw when the rule above has not been applied yet.
+        [[nodiscard]] bool isExpanded() const noexcept { return _isExpanded.value_or(false); }
+
         [[nodiscard]] const std::vector<ArrayElementRow>& getElementRows() const noexcept
         {
             return _rows;
         }
         [[nodiscard]] Label* getSummaryLabel() const noexcept { return _summary; }
         [[nodiscard]] Button* getAddButton() const noexcept { return _add; }
+        [[nodiscard]] Button* getExpandButton() const noexcept { return _expand; }
 
     public: // Delegates
         Delegate<void()>::Ptr onAdd = Delegate<void()>::Create();
@@ -160,17 +169,23 @@ namespace NX::Gui
         void onDraw() override;
         void request(PendingEdit edit);
         void flushPendingEdit();
-        void updateSummary();
+        void removeRows();
+        void updateSummary(std::size_t size);
         void applyFixedSize();
+        [[nodiscard]] std::size_t currentSize() const;
 
     protected:
         SizeProvider _sizeProvider;
         ElementFactory _factory;
         HorizontalLayout* _header = nullptr;
+        Button* _expand = nullptr;
         Label* _summary = nullptr;
         Button* _add = nullptr;
         std::vector<ArrayElementRow> _rows;
         std::optional<PendingEdit> _pending;
+        std::optional<bool> _isExpanded;
+        /// Size the summary text was made for, so the label is rebuilt only on a change.
+        std::optional<std::size_t> _summarySize;
         bool _isBuilt = false;
         bool _isFixedSize = false;
         DelegateSubscriberPoolGuard _headerSubscriptions;

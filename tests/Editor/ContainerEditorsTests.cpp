@@ -15,6 +15,7 @@
 #include "ImGuiFrameFixture.h"
 
 #include "gmock/gmock.h"
+#include <format>
 #include <string>
 #include <utility>
 #include <vector>
@@ -257,6 +258,40 @@ namespace
             EXPECT_FALSE(row.remove->isEnabled());
             EXPECT_TRUE(row.moveUp->isEnabled());
         }
+    }
+
+    TEST_F(ArrayEditorTests, LargeArraysStartCollapsedAndBuildNoRows)
+    {
+        size = InspectorStyle::Default().arrayAutoExpandLimit + 1;
+        editor->unhandledDraw();
+
+        EXPECT_FALSE(editor->isExpanded());
+        EXPECT_TRUE(editor->getElementRows().empty());
+        EXPECT_EQ(factoryCalls, 0);
+        EXPECT_EQ(editor->getSummaryLabel()->getText(),
+                  std::format("{} elements", InspectorStyle::Default().arrayAutoExpandLimit + 1));
+
+        editor->getExpandButton()->onClick->trigger();
+        editor->unhandledDraw();
+
+        EXPECT_TRUE(editor->isExpanded());
+        EXPECT_EQ(editor->getElementRows().size(), size);
+    }
+
+    TEST_F(ArrayEditorTests, CollapsingRemovesTheRowsAndTheChoiceIsKept)
+    {
+        editor->unhandledDraw();
+        ASSERT_TRUE(editor->isExpanded());
+
+        editor->getExpandButton()->onClick->trigger();
+        editor->unhandledDraw();
+        EXPECT_TRUE(editor->getElementRows().empty());
+
+        size = 2;
+        nextFrame();
+        editor->unhandledDraw();
+        EXPECT_FALSE(editor->isExpanded()) << "the user's choice wins over the size rule";
+        EXPECT_EQ(editor->getSummaryLabel()->getText(), "2 elements");
     }
 
     TEST_F(ArrayEditorTests, EmptyArrayHasNoRows)

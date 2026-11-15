@@ -16,6 +16,7 @@
 #include "ImGui/imgui.h"
 
 #include <array>
+#include <cstddef>
 #include <string_view>
 
 namespace NX::Gui
@@ -45,6 +46,9 @@ namespace NX::Gui
 
         /// Shown instead of a value that is not there (empty optional, null pointer).
         std::string_view emptyValueText = "<none>";
+
+        /// Arrays with more elements start collapsed: their rows are built only once expanded.
+        std::size_t arrayAutoExpandLimit = 32;
 
         [[nodiscard]] static const InspectorStyle& Default() noexcept
         {

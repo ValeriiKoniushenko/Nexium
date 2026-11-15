@@ -15,6 +15,8 @@
 #include "Core/Delegate.h"
 
 #include <cstdint>
+#include <functional>
+#include <string_view>
 #include <string>
 #include <type_traits>
 #include <vector>
@@ -135,6 +137,50 @@ namespace NX::Gui
         Core::StringAtom _emptyName = "None"_atom;
         std::uint64_t _value = 0;
         std::string _preview;
+    };
+
+    /// A combo box choosing one string from a list that is fetched when the popup opens (asset
+    /// names, animation names, ...), so the list is always current and costs nothing while
+    /// closed. The current value is shown even when it is not one of the options.
+    CLASS();
+    class ChoiceCombo : public BaseCombo
+    {
+        ECS_DECL(ChoiceCombo, NX::Gui::BaseCombo);
+
+    public:
+        using OptionsProvider = std::function<std::vector<Core::StringAtom>()>;
+
+        void setOptionsProvider(OptionsProvider provider) { _provider = std::move(provider); }
+
+        /// Asks the provider now and keeps the result.
+        const std::vector<Core::StringAtom>& refreshOptions();
+        [[nodiscard]] const std::vector<Core::StringAtom>& getOptions() const noexcept
+        {
+            return _options;
+        }
+
+        /// Pull: shows `value`, does not notify.
+        void setValue(Core::StringAtom value);
+        [[nodiscard]] const Core::StringAtom& getValue() const noexcept { return _value; }
+
+        [[nodiscard]] std::string_view getPreviewText() const noexcept;
+
+    public: // Delegates
+        Delegate<void(const Core::StringAtom&)>::Ptr onSelect
+            = Delegate<void(const Core::StringAtom&)>::Create();
+
+    protected:
+        void onDraw() override;
+        void drawPopupContent() override;
+
+        /// The user picked `getOptions()[index]`.
+        void select(std::size_t index);
+
+    protected:
+        OptionsProvider _provider;
+        std::vector<Core::StringAtom> _options;
+        Core::StringAtom _value;
+        bool _wasOpen = false;
     };
 } // namespace NX::Gui
 
