@@ -14,6 +14,7 @@
 #include "Core/Size.h"
 #include "NxFundamental/ECS/BaseComponent.h"
 #include "NxFundamental/Reflection/TypeDescriptor.h"
+#include "NxSubsystems/Graphics/GraphicsComponents.h"
 
 #include <optional>
 #include <unordered_map>
@@ -165,6 +166,18 @@ namespace GridFixtures
 
         FIELD();
         Core::IntrusivePtr<NX::BaseComponent> link;
+
+        FIELD();
+        std::vector<Core::IntrusivePtr<NX::BaseComponent>> links;
+    };
+
+    CLASS();
+    struct GraphicsSettings
+    {
+        R_FRIEND(GraphicsSettings);
+
+        FIELD();
+        std::vector<NX::BaseGraphicsData::ModifierParam> modifiers = { {} };
     };
 
     CLASS();

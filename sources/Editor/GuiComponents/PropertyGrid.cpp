@@ -396,10 +396,12 @@ namespace NX::Gui
 
     // ===================== PropertyEditors =====================
 
-    void PropertyEditors::add(std::type_index type, Core::StringAtom name, Factory factory)
+    void PropertyEditors::add(std::type_index type, Core::StringAtom name, Factory factory,
+                              bool editsValue)
     {
         _entries.insert_or_assign(type, Entry{ .name = std::move(name),
-                                               .factory = std::move(factory) });
+                                               .factory = std::move(factory),
+                                               .editsValue = editsValue });
     }
 
     void PropertyEditors::addNamed(Core::StringAtom name, Factory factory)
@@ -487,7 +489,7 @@ namespace NX::Gui
 
     PropertyGrid::PropertyGrid(const StringAtom& name)
         : VerticalLayout(componentType, name.isEmpty() ? "PropertyGrid"_atom : name),
-          _editors(&PropertyEditors::Builtin()),
+          _editors(&PropertyEditors::Global()),
           _customizations(&PropertyCustomizations::Global()),
           _choices(&PropertyChoices::Global()),
           _labelWidth(InspectorStyle::Default().labelWidth)
@@ -1087,6 +1089,28 @@ namespace NX::Gui
             });
     }
 
+    bool PropertyGrid::canEdit(const TypeInfo& info, int depth) const
+    {
+        if (const auto* entry = _editors->find(info.type()))
+        {
+            return entry->editsValue;
+        }
+        switch (info.kind())
+        {
+            case TypeKind::Enum:
+                return !info.enumEntries().empty();
+            case TypeKind::Optional:
+            case TypeKind::Sequence:
+            case TypeKind::Map:
+                return info.isCopyable() && canEdit(*info.element(), depth + 1);
+            case TypeKind::Class:
+                return depth < MaxDepth && info.isCopyable();
+            case TypeKind::Value:
+                return false;
+        }
+        return false;
+    }
+
     void PropertyGrid::buildEnum(PropertyEditorContext& context)
     {
         const TypeInfo& info = context.binding.info();
@@ -1136,6 +1160,11 @@ namespace NX::Gui
     {
         const TypeInfo& info = context.binding.info();
         context.row.setEditorName("Optional"_atom);
+        if (!canEdit(*info.element(), depth + 1))
+        {
+            context.readOnly = true;
+            context.row.setReadOnly(true);
+        }
 
         auto* optional = context.row.addChildComponent<OptionalEditor>();
         optional->setFlex(Flex::FlexWidth);
@@ -1173,6 +1202,11 @@ namespace NX::Gui
     {
         const TypeInfo& info = context.binding.info();
         context.row.setEditorName("Array"_atom);
+        if (!canEdit(*info.element(), depth + 1))
+        {
+            context.readOnly = true;
+            context.row.setReadOnly(true);
+        }
 
         auto* array = context.row.addChildComponent<ArrayEditor>();
         array->setFlex(Flex::FlexWidth);
@@ -1207,6 +1241,11 @@ namespace NX::Gui
     {
         const TypeInfo& info = context.binding.info();
         context.row.setEditorName("Map"_atom);
+        if (!canEdit(*info.element(), depth + 1))
+        {
+            context.readOnly = true;
+            context.row.setReadOnly(true);
+        }
 
         auto* map = context.row.addChildComponent<MapEditor>();
         map->setFlex(Flex::FlexWidth);

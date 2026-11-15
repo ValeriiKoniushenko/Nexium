@@ -10,39 +10,35 @@
 #include "ObjectPropertiesWindow.h"
 
 #include "Editor/EditorIntegration.h"
-#include "Editor/GuiComponents/Array.h"
-#include "Editor/GuiComponents/CheckBox.h"
-#include "Editor/GuiComponents/Combo.h"
-#include "Editor/GuiComponents/HorizontalLayout.h"
-#include "Editor/GuiComponents/Input.h"
-#include "Editor/GuiComponents/Label.h"
-#include "Editor/GuiComponents/Misc.h"
-#include "Editor/GuiComponents/VecInput.h"
-#include "NxFundamental/Transformable.h"
-#include "NxFundamental/Utils/Stringifier.h"
-#include "NxWorld/Animations/FrameByFrame/FrameByFrameAnimator.h"
-#include "NxWorld/Entities/Camera/Camera.h"
+#include "Editor/EditorPropertyCustomizations.h"
+#include "Editor/GuiComponents/PropertyGrid.h"
+#include "Editor/IconsFontAwesome.h"
+#include "Editor/ObjectSelectorManager.h"
+#include "NxFundamental/ECS/BaseComponent.h"
+#include "NxWorld/Framework/GameInstanceAccess.h"
+#include "NxWorld/Framework/World.h"
+
 #ifdef NEXIUM_ENABLE_3D_MODULE
+    #include "Editor/GuiComponents/CheckBox.h"
+    #include "Editor/GuiComponents/HorizontalLayout.h"
+    #include "Editor/GuiComponents/Input.h"
+    #include "Editor/GuiComponents/Label.h"
+    #include "Editor/GuiComponents/Misc.h"
+    #include "NxFundamental/Utils/Stringifier.h"
     #include "NxWorld/Entities/Mesh/StaticMesh.h"
     #include "NxWorld/Entities/Mesh/StaticMeshBundle.h"
 #endif
-#include "NxSubsystems/AssetsManager/AssetsManager.h"
-#include "NxWorld/Framework/GameInstanceAccess.h"
-#include "NxWorld/Framework/World.h"
-#include "NxWorld/Scene/SceneObjects/Rectangle/Rectangle.h"
-#include "NxWorld/Scene/SceneObjects/Rectangle/RectangleAnimated.h"
 
 using namespace Core;
 using namespace NX;
 using namespace NX::Gui;
 
+#ifdef NEXIUM_ENABLE_3D_MODULE
 namespace
 {
     using HLayout = Gui::HorizontalLayout;
 
-    // =========================================================
-    //                 GUI STANDARD TEMPLATES
-    // ====================================================s=====
+    // Row helpers of the hand-written 3D sections.
 
     HLayout::Ptr CreateHLayoutAndLabel(const char* label, bool isReadOnly,
                                        float size = ObjectPropertiesWindowEWC::defaultLabelWidthBig)
@@ -83,8 +79,6 @@ namespace
     HLayout::Ptr Create(const char* label, bool isReadOnly,
                         float size = ObjectPropertiesWindowEWC::defaultLabelWidthBig)
     {
-        using namespace Core;
-
         if (!Verify(label))
         {
             return nullptr;
@@ -97,27 +91,8 @@ namespace
 
         return row;
     }
-
-    template<IsComponent T>
-    HLayout::Ptr CreateEx(const char* label, bool isReadOnly,
-                          float size = ObjectPropertiesWindowEWC::defaultLabelWidthBig)
-    {
-        using namespace Core;
-
-        if (!Verify(label))
-        {
-            return nullptr;
-        }
-
-        auto row = CreateHLayoutAndLabel(label, isReadOnly, size);
-
-        auto* comp = row->addChildComponent<T>("{}: {}"_f << T::componentType << label);
-
-        return row;
-    }
-
-    // =========================================================
 } // namespace
+#endif
 
 namespace NX
 {
@@ -132,132 +107,31 @@ namespace NX
 
     ECS_IMPL(ObjectPropertiesWindowEWC);
 
-    Gui::HorizontalLayout::Ptr _GraphicsModifiersArray_ArrayCellViewerFunc::operator()(
-        BaseGraphicsData::ModifierParam& data) const
-    {
-        auto l = Gui::HorizontalLayout::Create();
-
-        {
-            static const auto& modifiers = []()
-            {
-                const auto& m = R<BaseGraphicsData::Modifier>::ToArrayN();
-
-                std::vector<std::string> out(m.begin(), m.end());
-                std::ranges::sort(out);
-                auto r = std::ranges::remove(out, Stringify::gcDefaultNoneString.data());
-                out.erase(r.begin(), r.end());
-                return out;
-            }();
-
-            auto* comboModifier = l->addChildComponent<Gui::ComboModelBased>();
-            comboModifier->setDataProvider(
-                [](std::size_t i, StringAtom& out) -> const void*
-                {
-                    out = modifiers.at(i);
-                    return &modifiers.at(i);
-                });
-            comboModifier->setSizeProvider([] { return modifiers.size(); });
-            comboModifier->setFlex(Gui::Flex::FlexWidth);
-            comboModifier->setCurrentIndex(static_cast<int>(data.modifier) - 1);
-        }
-
-        {
-            static const auto& values = []()
-            {
-                const auto& m = R<BaseGraphicsData::ModifiedValue>::ToArrayN();
-
-                std::vector<std::string> out(m.begin(), m.end());
-                std::ranges::sort(out);
-                auto r = std::ranges::remove(out, Stringify::gcDefaultNoneString.data());
-                out.erase(r.begin(), r.end());
-                return out;
-            }();
-
-            auto* comboValues = l->addChildComponent<Gui::ComboModelBased>();
-            comboValues->setDataProvider(
-                [](std::size_t i, StringAtom& out) -> const void*
-                {
-                    out = values.at(i);
-                    return &values.at(i);
-                });
-            comboValues->setSizeProvider([] { return values.size(); });
-            comboValues->setFlex(Gui::Flex::FlexWidth);
-
-            auto it = std::ranges::find(values, R<decltype(data.value)>::ToString(data.value));
-            if (it != values.end())
-            {
-                comboValues->setCurrentIndex(std::distance(values.begin(), it));
-            }
-        }
-
-        return l;
-    }
-
-    BaseGraphicsData::ModifierParam _GraphicsModifiersArray_ViewFetchFunc::operator()(
-        Gui::HorizontalLayout* layout) const
-    {
-        BaseGraphicsData::ModifierParam out;
-
-        {
-            static const auto& modifiers = []()
-            {
-                const auto& m = R<BaseGraphicsData::Modifier>::ToArrayN();
-
-                std::vector<std::string> out(m.begin(), m.end());
-                std::ranges::sort(out);
-                auto r = std::ranges::remove(out, Stringify::gcDefaultNoneString.data());
-                out.erase(r.begin(), r.end());
-                return out;
-            }();
-
-            if (auto modifier = layout->getFirstChildAs<Gui::ComboModelBased>(); modifier)
-            {
-                const auto str = modifiers[modifier->getCurrentIndex()];
-                out.modifier = R<BaseGraphicsData::Modifier>::FromString(str.c_str()).value();
-            }
-            else
-            {
-                Assert(false);
-            }
-        }
-
-        {
-            static const auto& values = []()
-            {
-                const auto& m = R<BaseGraphicsData::ModifiedValue>::ToArrayN();
-
-                std::vector<std::string> out(m.begin(), m.end());
-                std::ranges::sort(out);
-                auto r = std::ranges::remove(out, Stringify::gcDefaultNoneString.data());
-                out.erase(r.begin(), r.end());
-                return out;
-            }();
-
-            if (auto value = layout->getLastChildAs<Gui::ComboModelBased>(); value)
-            {
-                const auto str = values[value->getCurrentIndex()];
-                out.value = R<BaseGraphicsData::ModifiedValue>::FromString(str).value_or(
-                    BaseGraphicsData::ModifiedValue::None);
-            }
-            else
-            {
-                Assert(false);
-            }
-        }
-
-        return out;
-    }
-
     void ObjectPropertiesWindowEWC::setTargetObject(AbstractComponent* actor)
     {
         _target = actor;
-        setChildListData(_target);
-        setGraphicsModifiers(_target);
+        if (!_grid)
+        {
+            return;
+        }
+        if (auto* component = dynamic_cast<BaseComponent*>(actor))
+        {
+            // Held weakly: deleting the selected object empties the panel.
+            _grid->setTarget(*component);
+        }
+        else
+        {
+            _grid->clearTarget();
+        }
     }
 
     void ObjectPropertiesWindowEWC::resetTargetObject()
     {
         _target = nullptr;
+        if (_grid)
+        {
+            _grid->clearTarget();
+        }
     }
 
     const char* ObjectPropertiesWindowEWC::getIcon()
@@ -274,8 +148,11 @@ namespace NX
     {
         BaseFloatEWC::onOpen();
 
-        createGui();
-        registerGuiEvents();
+        EnsureEditorPropertyCustomizations();
+        _grid = PropertyGrid::Create();
+        _grid->setStableId("Properties"_atom);
+        _grid->setSections(PropertySections::PerClass);
+        createGui3D();
 
         _subscriptionPool << GetObjectSelectorManager()->onChange->subscribeAndGetID(
             [this](BaseComponent* comp, bool newValue)
@@ -295,54 +172,26 @@ namespace NX
     {
         BaseFloatEWC::onClose();
 
-        _generalInfoLayout.removeAllChildren();
+        _grid = nullptr;
         _staticMeshBundleLayout.removeAllChildren();
-        _baseComponentExtraLayout.removeAllChildren();
-        _graphicsComponentLayout.removeAllChildren();
-        _perspectiveCameraLayout.removeAllChildren();
-        _orthoCameraLayout.removeAllChildren();
-        _baseCameraLayout.removeAllChildren();
         _staticMeshLayout.removeAllChildren();
-        _transformableLayout.removeAllChildren();
-        _rectLayout.removeAllChildren();
-        _baseRectLayout.removeAllChildren();
-
-        _objectName = _objectType = _parentName = _graphicsShader = _outlineShader = nullptr;
-        _objectIsEnabled = _ignoreMouseSelectBundle = _isInited = _disabledTicks = nullptr;
-        _rectBlending = _activateAnimation = nullptr;
         _renderMeshesCount = _renderBundlesCount = _activeTrianglesCount = nullptr;
-        _childrenCount = _graphicsTriangles = _graphicsVBO = _graphicsVAO = nullptr;
-        _graphicsEBO = _graphicsTexture = nullptr;
-        _childrenList = nullptr;
-        _graphicsModifiers = nullptr;
-        _cameraFov = _cameraFar = _cameraNear = _rectAnimationFPS = nullptr;
-        _cameraFrame = _cameraOutput = _orthoCameraLeftTop = _orthoCameraRightBottom = nullptr;
-        _transformPosition = _transformRotation = _transformScale = _transformOrigin = nullptr;
-        _rectComboAtlas = _rectComboRect = _rectComboAnimation = nullptr;
-        _rectAnimationRow = _rectAnimationFPSRow = nullptr;
+        _ignoreMouseSelectBundle = nullptr;
+        _outlineShader = nullptr;
         _target = nullptr;
     }
 
     void ObjectPropertiesWindowEWC::onDraw()
     {
-        auto* asBaseComponent = dynamic_cast<BaseComponent*>(_target);
-        auto* asTransformable = dynamic_cast<Transformable*>(_target);
-        auto* asInterleavedGraphicsData = dynamic_cast<InterleavedGraphicsData*>(_target);
-        auto* asBaseCamera = dynamic_cast<BaseCamera*>(_target);
-        auto* asRectangleComponent = dynamic_cast<SceneObj::Rectangle*>(_target);
-        auto* asRectangleAnimatedComponent = dynamic_cast<SceneObj::RectangleAnimated*>(_target);
+        if (_grid)
+        {
+            _grid->tick(GetWorld()->getTimeDelta());
+        }
 
-        tryDrawBaseComponent(asBaseComponent);
-        tryDrawTransformable(asTransformable, asBaseComponent);
 #ifdef NEXIUM_ENABLE_3D_MODULE
         tryDrawStaticMeshBundle(dynamic_cast<StaticMeshBundle*>(_target));
         tryDrawStaticMesh(dynamic_cast<StaticMesh*>(_target));
 #endif
-        tryDrawInterleavedGraphicsData(asInterleavedGraphicsData);
-        tryDrawBaseCamera(asBaseCamera);
-        tryDrawRectangleComponent(asRectangleAnimatedComponent);
-        tryDrawRectangleComponent(asRectangleComponent);
-        tryDrawBaseComponentExtra(asBaseComponent);
     }
 
     void ObjectPropertiesWindowEWC::onUpdate()
@@ -350,22 +199,9 @@ namespace NX
         BaseFloatEWC::onUpdate();
     }
 
-    void ObjectPropertiesWindowEWC::createGui()
+    void ObjectPropertiesWindowEWC::createGui3D()
     {
-        // ================= General ====================
-        {
-            auto& out = _generalInfoLayout;
-
-            out.attachChild(::Create<TextInput>("Name", true, defaultLabelWidth));
-            _objectName = out.getLastChildAs<HLayout>()->getLastChildAs<TextInput>().get();
-
-            out.attachChild(::Create<TextInput>("Type", true, defaultLabelWidth));
-            _objectType = out.getLastChildAs<HLayout>()->getLastChildAs<TextInput>().get();
-
-            out.attachChild(::Create<CheckBox>("Enabled", false, defaultLabelWidth));
-            _objectIsEnabled = out.getLastChildAs<HLayout>()->getLastChildAs<CheckBox>().get();
-        }
-
+#ifdef NEXIUM_ENABLE_3D_MODULE
         // ================= StaticMeshBundle ====================
         {
             auto& out = _staticMeshBundleLayout;
@@ -384,28 +220,6 @@ namespace NX
                 = out.getLastChildAs<HLayout>()->getLastChildAs<CheckBox>().get();
         }
 
-        // ================= BaseComponent-extra ====================
-        {
-            auto& out = _baseComponentExtraLayout;
-
-            out.attachChild(::Create<TextInput>("Parent", true));
-            _parentName = out.getLastChildAs<HLayout>()->getLastChildAs<TextInput>().get();
-
-            out.attachChild(::Create<IntInput>("Children count", true));
-            _childrenCount = out.getLastChildAs<HLayout>()->getLastChildAs<IntInput>().get();
-
-            out.attachChild(::Create<CheckBox>("Is initialized", true));
-            _isInited = out.getLastChildAs<HLayout>()->getLastChildAs<CheckBox>().get();
-
-            out.attachChild(::Create<CheckBox>("Disabled ticks", false));
-            _disabledTicks = out.getLastChildAs<HLayout>()->getLastChildAs<CheckBox>().get();
-
-            out.attachChild(::CreateEx<StringArray>("Children", true));
-            out.getLastChildAs<HLayout>()->setVerticalAlign(Align::Top);
-            _childrenList = out.getLastChildAs<HLayout>()->getLastChildAs<StringArray>().get();
-            _childrenList->setReadOnly(true);
-        }
-
         // ================= StaticMesh ====================
         {
             auto& out = _staticMeshLayout;
@@ -413,649 +227,7 @@ namespace NX
             out.attachChild(::Create<TextInput>("Outline shader name", true));
             _outlineShader = out.getLastChildAs<HLayout>()->getLastChildAs<TextInput>().get();
         }
-
-        // ================= GraphicsComponent ====================
-        {
-            auto& out = _graphicsComponentLayout;
-            out.attachChild(::Create<IntInput>("Triangles", true));
-            _graphicsTriangles = out.getLastChildAs<HLayout>()->getLastChildAs<IntInput>().get();
-
-            out.attachChild(::Create<TextInput>("Shader name", true));
-            _graphicsShader = out.getLastChildAs<HLayout>()->getLastChildAs<TextInput>().get();
-
-            out.attachChild(::Create<IntInput>("VBO ID", true));
-            _graphicsVBO = out.getLastChildAs<HLayout>()->getLastChildAs<IntInput>().get();
-
-            out.attachChild(::Create<IntInput>("VAO ID", true));
-            _graphicsVAO = out.getLastChildAs<HLayout>()->getLastChildAs<IntInput>().get();
-
-            out.attachChild(::Create<IntInput>("EBO ID", true));
-            _graphicsEBO = out.getLastChildAs<HLayout>()->getLastChildAs<IntInput>().get();
-
-            out.attachChild(::Create<IntInput>("Texture ID", true));
-            _graphicsTexture = out.getLastChildAs<HLayout>()->getLastChildAs<IntInput>().get();
-
-            out.attachChild(::CreateEx<GraphicsModifiersArray>("Graphic modifier", false));
-            out.getLastChildAs<HLayout>()->setVerticalAlign(Align::Top);
-            _graphicsModifiers
-                = out.getLastChildAs<HLayout>()->getLastChildAs<GraphicsModifiersArray>().get();
-        }
-
-        // ================= BaseCamera ====================
-        {
-            auto& out = _baseCameraLayout;
-
-            out.attachChild(::Create<FloatInput>("Far plane", false));
-            _cameraFar = out.getLastChildAs<HLayout>()->getLastChildAs<FloatInput>().get();
-            _cameraFar->setMin(100.f);
-            _cameraFar->setMax(1'000'000.f);
-            _cameraFar->setStep(100.f);
-
-            out.attachChild(::Create<FloatInput>("Near plane", false));
-            _cameraNear = out.getLastChildAs<HLayout>()->getLastChildAs<FloatInput>().get();
-            _cameraNear->setMin(0.1f);
-            _cameraNear->setMax(1000.f);
-            _cameraNear->setStep(0.1f);
-        }
-
-        // ================= PerspectiveCamera ====================
-        {
-            auto& out = _orthoCameraLayout;
-
-            out.attachChild(CreateHLayoutAndLabel("Top left", false));
-            _orthoCameraLeftTop = out.getLastChildAs<HLayout>()->addChildComponent<Float2Input>();
-            _orthoCameraLeftTop->setLabelText({ 'L', 'T' });
-
-            out.attachChild(CreateHLayoutAndLabel("Bottom right", false));
-            _orthoCameraRightBottom
-                = out.getLastChildAs<HLayout>()->addChildComponent<Float2Input>();
-            _orthoCameraRightBottom->setLabelText({ 'R', 'B' });
-        }
-
-        // ================= PerspectiveCamera ====================
-        {
-            auto& out = _perspectiveCameraLayout;
-
-            out.attachChild(::Create<FloatInput>("FOV", false));
-            _cameraFov = out.getLastChildAs<HLayout>()->getLastChildAs<FloatInput>().get();
-            _cameraFov->setMin(PerspectiveCamera::minFov);
-            _cameraFov->setMax(PerspectiveCamera::maxFov);
-            _cameraFov->setStep(1.f);
-
-            out.attachChild(CreateHLayoutAndLabel("Aspect", false));
-            _cameraFrame = out.getLastChildAs<HLayout>()->addChildComponent<Float2Input>();
-            _cameraFrame->setLabelText({ 'W', 'H' });
-
-            out.attachChild(CreateHLayoutAndLabel("Output size", true));
-            _cameraOutput = out.getLastChildAs<HLayout>()->addChildComponent<Float2Input>();
-            _cameraOutput->setLabelText({ 'W', 'H' });
-            _cameraOutput->setReadOnly(true);
-        }
-
-        // ================= Transform ====================
-        {
-            auto& out = _transformableLayout;
-
-            out.attachChild(CreateHLayoutAndLabel("Position", false, defaultLabelWidth));
-            _transformPosition = out.getLastChildAs<HLayout>()->addChildComponent<Float3Input>();
-
-            out.attachChild(CreateHLayoutAndLabel("Rotation", false, defaultLabelWidth));
-            _transformRotation = out.getLastChildAs<HLayout>()->addChildComponent<Float3Input>();
-
-            out.attachChild(CreateHLayoutAndLabel("Scale", false, defaultLabelWidth));
-            _transformScale = out.getLastChildAs<HLayout>()->addChildComponent<Float3Input>();
-
-            out.attachChild(CreateHLayoutAndLabel("Origin", false, defaultLabelWidth));
-            _transformOrigin = out.getLastChildAs<HLayout>()->addChildComponent<Float3Input>();
-        }
-
-        // ================= SceneObj::Rectangle ====================
-        {
-            auto& out = _baseRectLayout;
-            out.attachChild(CreateHLayoutAndLabel("Atlas", false, defaultLabelWidth));
-            _rectComboAtlas = out.getLastChildAs<HLayout>()->addChildComponent<ComboModelBased>();
-            _rectComboAtlas->setFlex(Gui::Flex::FlexWidth);
-            _rectComboAtlas->setDataProvider(
-                [](std::size_t i, StringAtom& out) -> void*
-                {
-                    out = GetAssetsManager()->getAtlasesAsVector().at(i);
-                    return nullptr;
-                });
-            _rectComboAtlas->setSizeProvider([]()
-                                             { return GetAssetsManager()->getAtlasesCount(); });
-
-            _subscriptionPool << _rectComboAtlas->onSelect->subscribeAndGetID(
-                [t = WeakPtr(this)](const void*)
-                {
-                    if (t)
-                    {
-                        if (auto obj = t.tryLoad())
-                        {
-                            auto* rectangle = dynamic_cast<SceneObj::Rectangle*>(obj->_target);
-                            if (!rectangle)
-                            {
-                                return;
-                            }
-
-                            const auto atlasName
-                                = obj->_rectComboAtlas->tryGetCurrentDataAsString();
-                            rectangle->setAtlas(atlasName);
-
-                            const auto frames
-                                = GetAssetsManager()->getAtlas(atlasName).getRectsAsVector();
-                            if (!frames.empty())
-                            {
-                                rectangle->setTexture(frames.front());
-                                obj->_rectComboRect->setCurrentIndex(0);
-                            }
-                        }
-                    }
-                });
-
-            out.attachChild(CreateHLayoutAndLabel("Frame", false, defaultLabelWidth));
-            _rectComboRect = out.getLastChildAs<HLayout>()->addChildComponent<ComboModelBased>();
-            _rectComboRect->setFlex(Gui::Flex::FlexWidth);
-            _rectComboRect->setDataProvider(
-                [this](std::size_t i, StringAtom& out) -> void*
-                {
-                    const auto* rectangle = dynamic_cast<SceneObj::Rectangle*>(_target);
-                    if (rectangle)
-                    {
-                        out = GetAssetsManager()
-                                  ->getAtlas(rectangle->getAtlasName())
-                                  .getRectsAsVector()
-                                  .at(i);
-                    }
-                    return nullptr;
-                });
-            _rectComboRect->setSizeProvider(
-                [this]()
-                {
-                    const auto* rectangle = dynamic_cast<SceneObj::Rectangle*>(_target);
-                    return rectangle ? GetAssetsManager()
-                                           ->getAtlas(rectangle->getAtlasName())
-                                           .getRectsCount()
-                                     : 0;
-                });
-            _subscriptionPool << _rectComboRect->onSelect->subscribeAndGetID(
-                [t = WeakPtr(this)](const void*)
-                {
-                    if (t)
-                    {
-                        if (auto obj = t.tryLoad())
-                        {
-                            if (auto* rectangle = dynamic_cast<SceneObj::Rectangle*>(obj->_target))
-                            {
-                                rectangle->setTexture(
-                                    obj->_rectComboRect->tryGetCurrentDataAsString());
-                            }
-                        }
-                    }
-                });
-
-            out.attachChild(CreateHLayoutAndLabel("Rendering", false, defaultLabelWidth));
-            auto* renderingRow = out.getLastChildAs<HLayout>().get();
-            renderingRow->addChildComponent<Label>("Blending");
-            _rectBlending = renderingRow->addChildComponent<CheckBox>();
-            _subscriptionPool << _rectBlending->onChange->subscribeAndGetID(
-                [t = WeakPtr(this)](bool enabled)
-                {
-                    if (auto obj = t.tryLoad())
-                    {
-                        if (auto* rectangle = dynamic_cast<SceneObj::Rectangle*>(obj->_target))
-                        {
-                            rectangle->setBlendingEnabled(enabled);
-                        }
-                    }
-                });
-        }
-
-        // ================= SceneObj::RectangleAnimated ====================
-        {
-            auto& out = _rectLayout;
-
-            out.attachChild(CreateHLayoutAndLabel("Animation", false, defaultLabelWidth));
-            _rectAnimationRow = out.getLastChildAs<HLayout>().get();
-            _rectComboAnimation = _rectAnimationRow->addChildComponent<ComboModelBased>();
-            _rectComboAnimation->setFlex(Gui::Flex::FlexWidth);
-            _rectComboAnimation->setDataProvider(
-                [this](std::size_t i, StringAtom& result) -> const void*
-                {
-                    const auto* rectangle = dynamic_cast<SceneObj::RectangleAnimated*>(_target);
-                    const auto* animator
-                        = rectangle ? rectangle->findFirstChildOf<Animation::FrameByFrameAnimator>()
-                                    : nullptr;
-                    if (!animator)
-                    {
-                        return nullptr;
-                    }
-
-                    std::vector<StringAtom> names;
-                    names.reserve(animator->getAnimations().size());
-                    for (const auto& [name, animation] : animator->getAnimations())
-                    {
-                        names.push_back(name);
-                    }
-                    std::ranges::sort(names, [](const auto& lhs, const auto& rhs)
-                                      { return lhs.toStdString() < rhs.toStdString(); });
-                    if (i >= names.size())
-                    {
-                        return nullptr;
-                    }
-                    result = names[i];
-                    return nullptr;
-                });
-            _rectComboAnimation->setSizeProvider(
-                [this]
-                {
-                    const auto* rectangle = dynamic_cast<SceneObj::RectangleAnimated*>(_target);
-                    const auto* animator
-                        = rectangle ? rectangle->findFirstChildOf<Animation::FrameByFrameAnimator>()
-                                    : nullptr;
-                    return animator ? animator->getAnimations().size() : std::size_t{ 0 };
-                });
-            _subscriptionPool << _rectComboAnimation->onSelect->subscribeAndGetID(
-                [t = WeakPtr(this)](const void*)
-                {
-                    if (auto obj = t.tryLoad())
-                    {
-                        auto* rectangle = dynamic_cast<SceneObj::RectangleAnimated*>(obj->_target);
-                        auto* animator
-                            = rectangle
-                                  ? rectangle->findFirstChildOf<Animation::FrameByFrameAnimator>()
-                                  : nullptr;
-                        if (animator)
-                        {
-                            const auto animationName
-                                = obj->_rectComboAnimation->tryGetCurrentDataAsString();
-                            if (auto* animation = animator->getAnimation(animationName))
-                            {
-                                rectangle->setAnimationOverride(animationName, animation->getFPS());
-                            }
-                        }
-                    }
-                });
-
-            out.attachChild(CreateHLayoutAndLabel("Animation FPS", false, defaultLabelWidth));
-            _rectAnimationFPSRow = out.getLastChildAs<HLayout>().get();
-            _rectAnimationFPS = _rectAnimationFPSRow->addChildComponent<FloatInput>();
-            _rectAnimationFPS->setFlex(Gui::Flex::FlexWidth);
-            _rectAnimationFPS->setMin(0.01f);
-            _rectAnimationFPS->setMax(1000.f);
-            _rectAnimationFPS->setStep(0.25f);
-            _subscriptionPool << _rectAnimationFPS->onInput->subscribeAndGetID(
-                [t = WeakPtr(this)](float fps)
-                {
-                    if (auto obj = t.tryLoad())
-                    {
-                        auto* rectangle = dynamic_cast<SceneObj::RectangleAnimated*>(obj->_target);
-                        auto* animator
-                            = rectangle
-                                  ? rectangle->findFirstChildOf<Animation::FrameByFrameAnimator>()
-                                  : nullptr;
-                        if (animator)
-                        {
-                            if (auto* animation
-                                = animator->getAnimation(animator->getActiveAnimationName()))
-                            {
-                                animation->setFPS(fps);
-                                rectangle->setAnimationOverride(animator->getActiveAnimationName(),
-                                                                fps);
-                            }
-                        }
-                    }
-                });
-        }
-    }
-
-    void ObjectPropertiesWindowEWC::registerGuiEvents()
-    {
-        if (_objectIsEnabled)
-        {
-            _subscriptionPool << _objectIsEnabled->onChange->subscribeAndGetID(
-                [this](bool newStatus)
-                {
-                    if (_target)
-                    {
-                        _target->setEnabled(newStatus);
-                    }
-                });
-        }
-
-        if (_disabledTicks)
-        {
-            _subscriptionPool << _disabledTicks->onChange->subscribeAndGetID(
-                [this](bool newStatus)
-                {
-                    if (_target)
-                    {
-                        _target->setNoTick(newStatus);
-                    }
-                });
-        }
-
-        if (_cameraFov)
-        {
-            _subscriptionPool << _cameraFov->onInput->subscribeAndGetID(
-                [this](float newValue)
-                {
-                    if (auto* camera = _target->tryCastTo<PerspectiveCamera>())
-                    {
-                        camera->setFov(newValue);
-                    }
-                });
-        }
-
-        if (_cameraFar)
-        {
-            _subscriptionPool << _cameraFar->onInput->subscribeAndGetID(
-                [this](float newValue)
-                {
-                    if (auto* camera = _target->tryCastTo<BaseCamera>())
-                    {
-                        camera->setFar(newValue);
-                    }
-                });
-        }
-
-        if (_cameraNear)
-        {
-            _subscriptionPool << _cameraNear->onInput->subscribeAndGetID(
-                [this](float newValue)
-                {
-                    if (auto* camera = _target->tryCastTo<BaseCamera>())
-                    {
-                        camera->setNear(newValue);
-                    }
-                });
-        }
-        if (_cameraFrame)
-        {
-            _subscriptionPool << _cameraFrame->onInput->subscribeAndGetID(
-                [this](glm::vec2 newValue)
-                {
-                    if (auto* camera = _target->tryCastTo<PerspectiveCamera>())
-                    {
-                        camera->setAspect(FSize2(newValue));
-                    }
-                });
-        }
-        if (_orthoCameraRightBottom)
-        {
-            _subscriptionPool << _orthoCameraRightBottom->onInput->subscribeAndGetID(
-                [this](auto newValue)
-                {
-                    if (auto* camera = _target->tryCastTo<OrthographicCamera>())
-                    {
-                        // camera->setBottomRight(newValue);
-                    }
-                });
-        }
-        if (_orthoCameraLeftTop)
-        {
-            _subscriptionPool << _orthoCameraLeftTop->onInput->subscribeAndGetID(
-                [this](auto newValue)
-                {
-                    if (auto* camera = _target->tryCastTo<OrthographicCamera>())
-                    {
-                        // camera->setTopLeft(newValue);
-                    }
-                });
-        }
-        if (_transformPosition)
-        {
-            _subscriptionPool << _transformPosition->onInput->subscribeAndGetID(
-                [this](auto newValue)
-                {
-                    if (_target)
-                    {
-                        if (auto* trans = dynamic_cast<Transformable*>(_target))
-                        {
-                            trans->setPosition(GPos3(newValue));
-                        }
-                    }
-                });
-        }
-        if (_transformRotation)
-        {
-            _subscriptionPool << _transformRotation->onInput->subscribeAndGetID(
-                [this](auto newValue)
-                {
-                    if (_target)
-                    {
-                        if (auto* trans = dynamic_cast<Transformable*>(_target))
-                        {
-                            trans->setRotation(newValue);
-                        }
-                    }
-                });
-        }
-        if (_transformScale)
-        {
-            _subscriptionPool << _transformScale->onInput->subscribeAndGetID(
-                [this](auto newValue)
-                {
-                    if (_target)
-                    {
-                        if (auto* trans = dynamic_cast<Transformable*>(_target))
-                        {
-                            trans->setScale(newValue);
-                        }
-                    }
-                });
-        }
-        if (_transformOrigin)
-        {
-            _subscriptionPool << _transformOrigin->onInput->subscribeAndGetID(
-                [this](auto newValue)
-                {
-                    if (_target)
-                    {
-                        if (auto* trans = dynamic_cast<Transformable*>(_target))
-                        {
-                            trans->setOrigin(newValue);
-                        }
-                    }
-                });
-        }
-        if (_graphicsModifiers)
-        {
-            _subscriptionPool << _graphicsModifiers->onSave->subscribeAndGetID(
-                [this](const auto& data)
-                {
-                    if (!_target)
-                    {
-                        return;
-                    }
-                    if (auto* graph = dynamic_cast<InterleavedGraphicsData*>(_target))
-                    {
-                        graph->setDrawModifiers(data);
-                    }
-                });
-            _subscriptionPool << _graphicsModifiers->onReset->subscribeAndGetID(
-                [this](auto& out)
-                {
-                    if (!_target)
-                    {
-                        return;
-                    }
-                    if (auto* graph = dynamic_cast<InterleavedGraphicsData*>(_target))
-                    {
-                        out = graph->getDrawModifiers();
-                    }
-                });
-        }
-    }
-
-    void ObjectPropertiesWindowEWC::tryDrawTransformable(Transformable* comp, BaseComponent* base)
-    {
-        if (comp && Gui::CollapsingHeader("Transform", ImGuiTreeNodeFlags_DefaultOpen))
-        {
-            const float dt = GetWorld()->getTimeDelta();
-
-            if (_transformPosition)
-            {
-                _transformPosition->setInputtedData(comp->getPosition());
-            }
-
-            if (_transformRotation)
-            {
-                _transformRotation->setInputtedData(comp->getRotation());
-            }
-
-            if (_transformScale)
-            {
-                _transformScale->setInputtedData(comp->getScale());
-            }
-
-            if (_transformOrigin)
-            {
-                _transformOrigin->setInputtedData(comp->getOrigin());
-            }
-
-            _transformableLayout.tick(dt);
-        }
-    }
-
-    void ObjectPropertiesWindowEWC::tryDrawBaseComponent(BaseComponent* comp)
-    {
-        if (comp && Gui::CollapsingHeader("General", ImGuiTreeNodeFlags_DefaultOpen))
-        {
-            const float dt = GetWorld()->getTimeDelta();
-
-            if (_objectName)
-            {
-                _objectName->setInputtedData(comp->getComponentName().toStdString());
-            }
-
-            if (_objectType)
-            {
-                _objectType->setInputtedData(comp->getComponentType().toStdString());
-            }
-
-            if (_objectIsEnabled)
-            {
-                _objectIsEnabled->setValue(comp->isEnabled());
-            }
-
-            _generalInfoLayout.tick(dt);
-        }
-    }
-
-    void ObjectPropertiesWindowEWC::tryDrawInterleavedGraphicsData(InterleavedGraphicsData* comp)
-    {
-        if (comp && Gui::CollapsingHeader("Graphics", ImGuiTreeNodeFlags_DefaultOpen))
-        {
-            const float dt = GetWorld()->getTimeDelta();
-
-            if (_graphicsTriangles)
-            {
-                _graphicsTriangles->setInputtedData(comp->getTriangleCount());
-            }
-
-            if (_graphicsShader)
-            {
-                _graphicsShader->setInputtedData(comp->getShader()->getName().toStdString());
-            }
-
-            if (_graphicsVBO)
-            {
-                _graphicsVBO->setInputtedData(comp->getVboId());
-            }
-
-            if (_graphicsVAO)
-            {
-                _graphicsVAO->setInputtedData(comp->getVboId());
-            }
-
-            if (_graphicsEBO)
-            {
-                _graphicsEBO->setInputtedData(comp->getEboId());
-            }
-
-            if (_graphicsTexture)
-            {
-                _graphicsTexture->setInputtedData(comp->getTextureId());
-            }
-
-            _graphicsComponentLayout.tick(dt);
-        }
-    }
-
-    void ObjectPropertiesWindowEWC::tryDrawBaseCamera(BaseCamera* comp)
-    {
-        if (comp && Gui::CollapsingHeader("Camera", ImGuiTreeNodeFlags_DefaultOpen))
-        {
-            const float dt = GetWorld()->getTimeDelta();
-
-            if (_cameraFar)
-            {
-                _cameraFar->setInputtedData(comp->getFar());
-            }
-            if (_cameraNear)
-            {
-                _cameraNear->setInputtedData(comp->getNear());
-            }
-
-            _baseCameraLayout.tick(dt);
-
-            if (auto* camera = dynamic_cast<PerspectiveCamera*>(comp))
-            {
-                if (_cameraFov)
-                {
-                    _cameraFov->setInputtedData(camera->getFov());
-                }
-                if (_cameraFrame)
-                {
-                    _cameraFrame->setInputtedData(camera->getAspect().toGlm());
-                }
-                if (_cameraOutput)
-                {
-                    _cameraOutput->setInputtedData(camera->getOutputFrameSize().toGlm());
-                }
-
-                _perspectiveCameraLayout.tick(dt);
-            }
-
-            if (auto* camera = dynamic_cast<OrthographicCamera*>(comp))
-            {
-            }
-        }
-    }
-
-    void ObjectPropertiesWindowEWC::tryDrawBaseComponentExtra(BaseComponent* comp)
-    {
-        if (comp && Gui::CollapsingHeader("Component data", ImGuiTreeNodeFlags_DefaultOpen))
-        {
-            const float dt = GetWorld()->getTimeDelta();
-
-            if (_childrenCount)
-            {
-                _childrenCount->setInputtedData(static_cast<int>(comp->getChildrenCount()));
-            }
-            if (_isInited)
-            {
-                _isInited->setValue(comp->isInitialized());
-            }
-            if (_disabledTicks)
-            {
-                _disabledTicks->setValue(comp->getNoTick());
-            }
-            if (_parentName)
-            {
-                std::string str = Stringify::gcDefaultNoneString.data();
-                if (comp->hasParent())
-                {
-                    str = comp->getParent()->getComponentName().toStdString();
-                    str += " (";
-                    str += comp->getParent()->getComponentType().toStdString();
-                    str += ")";
-                }
-                _parentName->setInputtedData(std::move(str));
-            }
-
-            _baseComponentExtraLayout.tick(dt);
-        }
+#endif
     }
 
 #ifdef NEXIUM_ENABLE_3D_MODULE
@@ -1077,146 +249,7 @@ namespace NX
             _staticMeshLayout.tick(dt);
         }
     }
-#endif
 
-    void ObjectPropertiesWindowEWC::tryDrawRectangleComponent(NX::SceneObj::Rectangle* comp)
-    {
-        if (comp && Gui::CollapsingHeader("Texture", ImGuiTreeNodeFlags_DefaultOpen))
-        {
-            const float dt = GetWorld()->getTimeDelta();
-
-            if (_rectComboAtlas)
-            {
-                const auto atlases = GetAssetsManager()->getAtlasesAsVector();
-                if (auto it = std::ranges::find(atlases, comp->getAtlasName()); it != atlases.end())
-                {
-                    _rectComboAtlas->setCurrentIndex(it - atlases.begin());
-                }
-
-                if (_rectComboRect)
-                {
-                    // TODO: super slow, fix it.
-                    auto textures
-                        = GetAssetsManager()->getAtlas(comp->getAtlasName()).getRectsAsVector();
-                    if (auto it = std::ranges::find(textures, comp->getTextureName());
-                        it != textures.end())
-                    {
-                        const auto ind = it - textures.begin();
-                        _rectComboRect->setCurrentIndex(ind);
-                    }
-                }
-            }
-            _baseRectLayout.tick(dt);
-        }
-    }
-
-    void ObjectPropertiesWindowEWC::tryDrawRectangleComponent(SceneObj::RectangleAnimated* comp)
-    {
-        if (comp && Gui::CollapsingHeader("Rectangle", ImGuiTreeNodeFlags_DefaultOpen))
-        {
-            const float dt = GetWorld()->getTimeDelta();
-
-            if (_rectBlending)
-            {
-                _rectBlending->setValue(comp->isBlendingEnabled());
-            }
-
-            auto* animator = comp->findFirstChildOf<Animation::FrameByFrameAnimator>();
-            const bool hasAnimations = animator && !animator->getAnimations().empty();
-            const bool animationEnabled = hasAnimations && comp->isAnimationEnabled();
-            if (_activateAnimation)
-            {
-                // _activateAnimation->disableWidget(!hasAnimations);
-                _activateAnimation->setValue(animationEnabled);
-            }
-            if (_rectComboAtlas)
-            {
-                //  _rectComboAtlas->disableWidget(animationEnabled);
-            }
-            if (_rectComboRect)
-            {
-                // _rectComboRect->disableWidget(animationEnabled);
-            }
-            if (_rectComboAnimation)
-            {
-                //_rectComboAnimation->disableWidget(!animationEnabled);
-            }
-            if (_rectAnimationFPS)
-            {
-                //_rectAnimationFPS->disableWidget(!animationEnabled
-                //                               || !animator->getActiveAnimation());
-            }
-            if (animationEnabled && _rectComboAnimation && animator->getActiveAnimation())
-            {
-                std::vector<StringAtom> animationNames;
-                animationNames.reserve(animator->getAnimations().size());
-                for (const auto& [name, animation] : animator->getAnimations())
-                {
-                    animationNames.push_back(name);
-                }
-                std::ranges::sort(animationNames, [](const auto& lhs, const auto& rhs)
-                                  { return lhs.toStdString() < rhs.toStdString(); });
-                if (const auto it
-                    = std::ranges::find(animationNames, animator->getActiveAnimationName());
-                    it != animationNames.end())
-                {
-                    _rectComboAnimation->setCurrentIndex(it - animationNames.begin());
-                }
-                if (_rectAnimationFPS)
-                {
-                    if (const auto* animation = animator->getActiveAnimation())
-                    {
-                        _rectAnimationFPS->setInputtedData(animation->getFPS());
-                    }
-                }
-            }
-
-            _rectLayout.tick(dt);
-        }
-    }
-
-    void ObjectPropertiesWindowEWC::setChildListData(AbstractComponent* abstComp)
-    {
-        if (!_childrenList || !abstComp)
-        {
-            return;
-        }
-
-        if (auto* comp = dynamic_cast<BaseComponent*>(abstComp))
-        {
-            std::vector<StringAtom> childrenStrs;
-            childrenStrs.reserve(comp->getChildrenCount());
-            for (auto&& child : comp->getChildren())
-            {
-                StringAtom str = child->getComponentName();
-                str += " (";
-                str += child->getComponentType();
-                str += ")";
-                childrenStrs.push_back(std::move(str));
-            }
-
-            _childrenList->setData(std::move(childrenStrs));
-        }
-    }
-
-    void ObjectPropertiesWindowEWC::setGraphicsModifiers(AbstractComponent* abstComp)
-    {
-        if (!_graphicsModifiers || !abstComp)
-        {
-            return;
-        }
-
-        if (auto* comp = dynamic_cast<InterleavedGraphicsData*>(abstComp))
-        {
-            _graphicsModifiers->setData(comp->getDrawModifiers());
-        }
-        else
-        {
-            _graphicsModifiers->setData({});
-        }
-    }
-
-#ifdef NEXIUM_ENABLE_3D_MODULE
     void ObjectPropertiesWindowEWC::tryDrawStaticMeshBundle(StaticMeshBundle* comp)
     {
         if (comp && Gui::CollapsingHeader("Static mesh bundle", ImGuiTreeNodeFlags_DefaultOpen))

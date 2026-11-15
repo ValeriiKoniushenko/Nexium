@@ -8,6 +8,7 @@
 //     http://www.apache.org/licenses/LICENSE-2.0
 
 #include "Editor/GuiComponents/Button.h"
+#include "Editor/GuiComponents/ContainerEditors.h"
 #include "Editor/GuiComponents/EnumInputs.h"
 #include "Editor/GuiComponents/Input.h"
 #include "Editor/GuiComponents/InspectorStyle.h"
@@ -366,7 +367,17 @@ Section "Extra" #Extra
         EXPECT_EQ(grid->dump(), R"(Row "Position" #position Vec3
 Row "Size" #size Size2
 Row "Link" #link Component readonly
+Row "Links" #links Array readonly
 )");
+    }
+
+    TEST_F(WrapperEditorsTests, ContainersOfValuesThatCannotBeEditedAreReadOnly)
+    {
+        // Adding an element would insert a null link: nothing can edit it afterwards.
+        const auto* links = grid->findRow("links"_atom)->findFirstChildOf<ArrayEditor>();
+
+        EXPECT_TRUE(links->isFixedSize());
+        EXPECT_FALSE(links->getAddButton()->isEnabled());
     }
 
     TEST_F(WrapperEditorsTests, PositionEditsWriteTheWrapperType)

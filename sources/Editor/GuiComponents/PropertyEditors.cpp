@@ -487,7 +487,7 @@ namespace NX::Gui
             editors.add<Core::ISize2>("Size2"_atom, &WrappedVectorEditor<Core::ISize2>);
 
             editors.add<Core::IntrusivePtr<NX::BaseComponent>>("Component"_atom,
-                                                               &ComponentLinkEditor);
+                                                               &ComponentLinkEditor, false);
             editors.addNamed("AssetRef"_atom, &AssetRefEditor);
             return editors;
         }
@@ -496,6 +496,12 @@ namespace NX::Gui
     const PropertyEditors& PropertyEditors::Builtin()
     {
         static const PropertyEditors editors = MakeBuiltin();
+        return editors;
+    }
+
+    PropertyEditors& PropertyEditors::Global()
+    {
+        static PropertyEditors editors = Builtin();
         return editors;
     }
 } // namespace NX::Gui

@@ -12,6 +12,7 @@
 #pragma once
 
 #include "Editor/ForwardDeclarations.h"
+#include "Editor/GuiComponents/PropertyGrid.h"
 #include "Editor/GuiComponents/VerticalLayout.h"
 #include "Editors/NxEditorBaseEditor.h"
 #include "NxFundamental/Assets/ECSAsset.h"
@@ -94,6 +95,9 @@ namespace NX
         Gui::VerticalLayout _headerLayout;
         Gui::LabelRow<Gui::TextInput>* _logicalPath = nullptr;
         Gui::LabelRow<Gui::TextInput>* _assetType = nullptr;
+
+        /// Every FIELD() of the selected component, generated; edits mark the asset dirty.
+        Gui::PropertyGrid::Ptr _propertyGrid;
 
         NXECSAsset _targetAsset;
         BaseComponent::Ptr _targetComponent = nullptr;

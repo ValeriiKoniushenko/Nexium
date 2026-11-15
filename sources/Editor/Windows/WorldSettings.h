@@ -12,16 +12,13 @@
 #pragma once
 
 #include "BaseWindow.h"
-#include "Core/Delegate.h"
 #include "Editor/ForwardDeclarations.h"
 #include "Editor/GuiComponents/PropertyGrid.h"
-#include "Editor/GuiComponents/VerticalLayout.h"
-
-#include <JustReflectMe/Number.h>
 
 namespace NX
 {
-
+    /// The world's settings, generated from the FIELD()s of `World` (section "Global", with the
+    /// current camera as a custom row) and of its `LightningProps` (section "Lightning").
     CLASS();
     class WorldSettingsEWC : public BaseFloatEWC
     {
@@ -39,14 +36,7 @@ namespace NX
         void onDraw() override;
 
     protected:
-        // Global
-        Gui::VerticalLayout _globalLayout;
-        Gui::TextInput* _cameraInputField = nullptr;
-        Gui::Button* _changeCameraButton = nullptr;
-        Gui::Button* _showCameraButton = nullptr;
-        Gui::Button* _resetCameraButton = nullptr;
-
-        // Lighting: generated from LightningProps' FIELD()s.
+        Gui::PropertyGrid::Ptr _worldGrid;
         Gui::PropertyGrid::Ptr _lightningGrid;
     };
 } // namespace NX

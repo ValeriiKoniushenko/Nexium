@@ -54,7 +54,7 @@ namespace NX::Gui
         /// The object that owns the edited value (the field's class), or null.
         const void* owner = nullptr;
         /// Current text of the field named by R::Meta(DependsOn = ...); empty without one.
-        Core::StringAtom dependency;
+        Core::StringAtom dependency{};
     };
 
     /// Lists of strings by kind, for rows edited with R::Meta(Editor = AssetRef, AssetType = kind).

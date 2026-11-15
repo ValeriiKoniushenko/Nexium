@@ -158,19 +158,27 @@ namespace NX::Gui
             /// Shown in PropertyGrid::dump.
             Core::StringAtom name;
             Factory factory;
+            /// False for editors that only display the value (component links). A container
+            /// of such values is shown read-only: an added element could not be edited.
+            bool editsValue = true;
         };
 
         /// The editors for engine types (numbers, bool, strings, paths, glm vectors, colours).
         [[nodiscard]] static const PropertyEditors& Builtin();
 
+        /// The registry property grids use unless told otherwise: the built-in editors plus
+        /// whatever modules add (the editor adds editors for engine types it knows).
+        [[nodiscard]] static PropertyEditors& Global();
+
         template<class T>
-        void add(Core::StringAtom name, Factory factory)
+        void add(Core::StringAtom name, Factory factory, bool editsValue = true)
         {
-            add(typeid(T), std::move(name), std::move(factory));
+            add(typeid(T), std::move(name), std::move(factory), editsValue);
         }
 
         /// Adds or replaces the editor of `type`.
-        void add(std::type_index type, Core::StringAtom name, Factory factory);
+        void add(std::type_index type, Core::StringAtom name, Factory factory,
+                 bool editsValue = true);
 
         /// Adds or replaces an editor chosen by R::Meta(Editor = name) instead of by type.
         void addNamed(Core::StringAtom name, Factory factory);
@@ -275,7 +283,7 @@ namespace NX::Gui
         void setReadOnly(bool value);
         [[nodiscard]] bool isReadOnly() const noexcept { return _isReadOnly; }
 
-        /// `editors` must outlive the grid. Default: PropertyEditors::Builtin().
+        /// `editors` must outlive the grid. Default: PropertyEditors::Global().
         void setEditors(const PropertyEditors& editors);
 
         /// `customizations` must outlive the grid. Default: PropertyCustomizations::Global().
@@ -342,6 +350,8 @@ namespace NX::Gui
                         bool readOnly);
         void applyEnabledIf(PropertyRow& row, const RClassField* field,
                             const PropertyScope& scope) const;
+        /// Whether a value of `info` gets an editor that can change it.
+        [[nodiscard]] bool canEdit(const Reflection::TypeInfo& info, int depth) const;
         void buildEnum(PropertyEditorContext& context);
         void buildOptional(PropertyEditorContext& context, int depth);
         void buildSequence(PropertyEditorContext& context, int depth);
