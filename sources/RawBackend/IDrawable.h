@@ -59,7 +59,7 @@ namespace RawBackend
         IDrawable() = default;
 
     private:
-        FIELD();
+        FIELD(R::Meta(DisplayName = "Post draw", Setter = setIsPostDraw));
         bool _isPostDraw = false;
     };
 } // namespace RawBackend

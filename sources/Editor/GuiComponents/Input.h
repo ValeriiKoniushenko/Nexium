@@ -133,7 +133,8 @@ namespace NX::Gui
         std::string _buffer;
         FIELD();
         Core::StringAtom _placeholder;
-        FIELD();
+        // ImGui flags: an implementation detail, not editable as a number.
+        FIELD(R::Meta(Hidden));
         int _flags = ImGuiInputTextFlags_None;
         FIELD();
         bool _needFocus = false;

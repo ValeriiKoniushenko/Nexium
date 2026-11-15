@@ -58,10 +58,13 @@ namespace NX::SceneObj
         void onDraw(BaseCamera& camera) override;
 
     protected:
-        FIELD();
+        // setTexture rebuilds the UVs. The frame is chosen among the frames of `_atlasName`.
+        FIELD(R::Meta(DisplayName = "Frame", Setter = setTexture, Editor = AssetRef,
+                      AssetType = AtlasFrame, DependsOn = _atlasName));
         Core::StringAtom _textureName = "red.png"_atom;
 
-        FIELD();
+        FIELD(R::Meta(DisplayName = "Atlas", Setter = setAtlas, Editor = AssetRef,
+                      AssetType = Atlas));
         Core::StringAtom _atlasName = "default"_atom;
 
         glm::vec2 _textureUVOffset{ 0.f, 0.f };

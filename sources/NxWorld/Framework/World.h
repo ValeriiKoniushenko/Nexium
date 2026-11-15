@@ -61,7 +61,7 @@ namespace NX
         Core::StringAtom worldName = "Default";
 
         // Scene the game starts with; empty or unknown means the first scene by file name.
-        FIELD();
+        FIELD(R::Meta(Editor = AssetRef, AssetType = Scene));
         Core::StringAtom startScene;
 
         LightningProps lightning;

@@ -69,9 +69,12 @@ namespace NX
         glm::vec3 _worldRotation = glm::vec3(0.f);
         glm::vec3 _worldPos = glm::vec3(0.f);
 
-        FIELD();
+        // The limits only guide the editor (SuppressLimits): loading keeps any stored value.
+        FIELD(R::Min = 100.0, R::Max = 1000000.0, R::Step = 100.0, R::SuppressLimits,
+              R::Meta(DisplayName = "Far plane", Setter = setFar));
         float _far = 10'000.f;
-        FIELD();
+        FIELD(R::Min = 0.1, R::Max = 1000.0, R::Step = 0.1, R::SuppressLimits,
+              R::Meta(DisplayName = "Near plane", Setter = setNear));
         float _near = 0.1f;
 
         bool _isDirtyProjMatrix = true;
@@ -109,7 +112,8 @@ namespace NX
         void applyTypeSpecificSceneData(const nlohmann::json& data) override;
 
     protected:
-        FIELD();
+        FIELD(R::Min = 0.001, R::Max = 10000.0, R::Step = 0.01, R::SuppressLimits,
+              R::Meta(Setter = setZoom));
         float _zoom = 1.f;
     };
 
@@ -147,9 +151,10 @@ namespace NX
         }
 
     protected:
-        FIELD();
+        FIELD(R::Meta(Setter = setAspect));
         Core::FSize2 _aspect = Core::FSize2{ 1.f, 1.f };
-        FIELD();
+        FIELD(R::Min = 5.0, R::Max = 175.0, R::Step = 1.0, R::SuppressLimits,
+              R::Meta(DisplayName = "FOV", Setter = setFov));
         float _fov = 75.f;
     };
 

@@ -388,7 +388,9 @@ Row "Weights" #weights Map
         {
             titles.push_back(child->castTo<CollapsingSection>()->getTitle().toStdString());
         }
-        EXPECT_THAT(titles, ElementsAre("Abstract component", "Base component", "Grid component"));
+        // `_noTick` and `_children` are annotated with Category = "Component data".
+        EXPECT_THAT(titles, ElementsAre("Abstract component", "Base component", "Grid component",
+                                        "Component data"));
 
         widgetOf<NumInput<float>>("speed")->onInput->trigger(4.f);
         EXPECT_FLOAT_EQ(component->speed, 4.f);

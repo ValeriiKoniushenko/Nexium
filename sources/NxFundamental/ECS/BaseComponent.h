@@ -516,11 +516,12 @@ namespace NX
         /// This method will be called automatically. Don't call it directly.
         virtual void onTick(float delta) {}
 
-        FIELD();
+        FIELD(R::Meta(DisplayName = "Enabled", Setter = setEnabled));
         bool _isEnabled = true;
 
         // if put 'true' means that the function 'tick' will not be called.
-        FIELD();
+        FIELD(R::Meta(DisplayName = "Disabled ticks", Category = "Component data",
+                      Setter = setNoTick));
         bool _noTick = false;
     };
 
@@ -918,13 +919,14 @@ namespace NX
                                                                   const Core::StringAtom& name);
 
     protected:
-        FIELD();
+        // Structure and identity: shown, but changed only through the component API.
+        FIELD(R::Meta(ReadOnly, Category = "Component data"));
         std::vector<Core::IntrusivePtr<NX::BaseComponent>> _children;
 
-        FIELD();
+        FIELD(R::Meta(Setter = setComponentName));
         Core::StringAtom _name;
 
-        FIELD();
+        FIELD(R::Meta(ReadOnly));
         Core::StringAtom _type;
 
         BaseComponent* _parent = nullptr;
