@@ -5,27 +5,6 @@
             "_isEnabled": true,
             "_name": "",
             "_noTick": false,
-            "_type": "NX::ECSBaseComponentAdapter"
-        },
-        {
-            "_children": null,
-            "_isEnabled": false,
-            "_name": "",
-            "_noTick": false,
-            "_type": "NX::ECSEditorActorAdapter"
-        },
-        {
-            "_children": null,
-            "_isEnabled": false,
-            "_name": "",
-            "_noTick": false,
-            "_type": "NX::ECSEditorInterleavedGraphicsDataAdapter"
-        },
-        {
-            "_children": null,
-            "_isEnabled": true,
-            "_name": "",
-            "_noTick": false,
             "_type": "NX::ECSEditorFrameByFrameAnimationAdapter"
         }
     ],

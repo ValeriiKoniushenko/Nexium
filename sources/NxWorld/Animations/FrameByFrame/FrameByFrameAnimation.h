@@ -90,9 +90,10 @@ namespace NX::Animation
         FIELD();
         std::vector<NX::Animation::Frame> _frames;
 
-        FIELD();
+        // Playback state.
+        FIELD(R::Meta(ReadOnly));
         std::size_t _currentFrame = 0;
-        FIELD();
+        FIELD(R::Meta(Hidden));
         float _frameTimeAccumulator = 0.f;
         FIELD();
         float _fps = 10.f;

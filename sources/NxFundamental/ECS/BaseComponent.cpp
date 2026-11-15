@@ -57,7 +57,17 @@ namespace NX
     {
     }
 
+    Reflection::ObjectRef AbstractComponent::onReflect()
+    {
+        return Reflection::ObjectRef(*this);
+    }
+
     const StringAtom BaseComponent::componentType = "BaseComponent"_atom;
+
+    Reflection::ObjectRef BaseComponent::onReflect()
+    {
+        return Reflection::ObjectRef(*this);
+    }
 
     GlobalComponentFactory::~GlobalComponentFactory()
     {

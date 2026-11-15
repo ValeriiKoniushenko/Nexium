@@ -13,10 +13,12 @@
 
 #include "BaseWindow.h"
 #include "Editor/ForwardDeclarations.h"
-#include "Editor/GuiComponents/VerticalLayout.h"
+#include "Editor/GuiComponents/PropertyGrid.h"
 
 namespace NX
 {
+    /// The world's settings, generated from the FIELD()s of `World` (section "Global", with the
+    /// current camera as a custom row) and of its `LightningProps` (section "Lightning").
     CLASS();
     class WorldSettingsEWC : public BaseFloatEWC
     {
@@ -33,25 +35,9 @@ namespace NX
         void onClose() override;
         void onDraw() override;
 
-    private:
-        void createExtraGui();
-
     protected:
-        // Global
-        Gui::VerticalLayout _globalLayout;
-        Gui::TextInput* _cameraInputField = nullptr;
-        Gui::Button* _changeCameraButton = nullptr;
-        Gui::Button* _showCameraButton = nullptr;
-        Gui::Button* _resetCameraButton = nullptr;
-
-        // Lightning
-        Gui::VerticalLayout _lightningLayout;
-        Gui::Color3Input* _color3Input = nullptr;
-        Gui::FloatInput* _ambientStrength = nullptr;
-        Gui::FloatInput* _minLightStrength = nullptr;
-        Gui::FloatInput* _specularStrength = nullptr;
-        Gui::FloatInput* _specularPow = nullptr;
-        Gui::Float3Input* _sunDirection = nullptr;
+        Gui::PropertyGrid::Ptr _worldGrid;
+        Gui::PropertyGrid::Ptr _lightningGrid;
     };
 } // namespace NX
 

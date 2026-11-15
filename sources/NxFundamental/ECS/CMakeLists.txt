@@ -10,6 +10,7 @@ target_link_libraries(Nexium_Fundamental_ECS
     PUBLIC
     Nexium::Foundation::Base
     Nexium::Fundamental::Base
+    Nexium::Fundamental::Reflection
     Nexium::Fundamental::ResourceManagement
     Utils::Core
     PRIVATE

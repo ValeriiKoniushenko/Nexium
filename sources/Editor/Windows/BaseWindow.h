@@ -130,13 +130,14 @@ namespace NX
     protected:
         FIELD();
         Core::FSize2 _minWindowSize = Core::FSize2(200.f, 200.f);
-        FIELD();
+        // Window geometry written by ImGui every frame and cached between runs.
+        FIELD(R::Meta(ReadOnly));
         Core::FSize2 _size;
-        FIELD();
+        FIELD(R::Meta(ReadOnly));
         Core::FSize2 _innerSize;
-        FIELD();
+        FIELD(R::Meta(ReadOnly));
         Core::FSize2 _oldSize = Core::FSize2{ -1, -1 };
-        FIELD();
+        FIELD(R::Meta(ReadOnly));
         glm::vec2 _position = glm::vec2{};
         FIELD();
         glm::vec2 _innerPosition = glm::vec2{};

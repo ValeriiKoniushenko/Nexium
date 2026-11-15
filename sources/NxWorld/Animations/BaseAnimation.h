@@ -80,11 +80,12 @@ namespace NX::Animation
     protected:
         FIELD();
         bool _isLooping = false;
-        FIELD();
+        // Playback state: shown, changed through play/pause/stop.
+        FIELD(R::Meta(ReadOnly));
         bool _isStopped = true;
-        FIELD();
+        FIELD(R::Meta(ReadOnly));
         bool _isPaused = false;
-        FIELD();
+        FIELD(R::Meta(ReadOnly));
         bool _isFinished = false;
     };
 } // namespace NX::Animation

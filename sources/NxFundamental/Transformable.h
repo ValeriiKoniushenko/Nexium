@@ -123,17 +123,19 @@ namespace NX
     protected:
         glm::mat4 _cachedModelMatrix = glm::mat4(1.f);
 
-        FIELD();
-        glm::vec3 _scale = glm::vec3(1.f);
-
-        FIELD();
-        glm::vec3 _origin = glm::vec3(0.f);
-
-        FIELD();
+        // Edited through the setters: they mark the model matrix dirty. Declared in the order
+        // property panels show them.
+        FIELD(R::Meta(Setter = setPosition));
         GPos3 _position = NX::GPos3(0.f);
 
-        FIELD();
+        FIELD(R::Meta(Setter = setRotation));
         glm::vec3 _rotation = glm::vec3(0.f);
+
+        FIELD(R::Meta(Setter = setScale));
+        glm::vec3 _scale = glm::vec3(1.f);
+
+        FIELD(R::Meta(Setter = setOrigin));
+        glm::vec3 _origin = glm::vec3(0.f);
 
         bool _isDirtyModelMatrix = true;
     };

@@ -41,6 +41,7 @@ nexium_configure_target(Nexium_Fundamental_Base)
 add_dependencies(Nexium_Fundamental_Base CodeGenerator)
 
 add_subdirectory(ResourceManagement)  # Nexium::Fundamental::ResourceManagement
+add_subdirectory(Reflection)          # Nexium::Fundamental::Reflection
 add_subdirectory(ECS)                 # Nexium::Fundamental::ECS
 add_subdirectory(Assets)              # Nexium::Fundamental::Assets
 add_subdirectory(TextureAtlas)        # Nexium::Fundamental::TextureAtlas

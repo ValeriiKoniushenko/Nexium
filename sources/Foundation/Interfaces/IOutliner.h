@@ -44,7 +44,8 @@ namespace Foundation
         virtual void onOutlineStatusChange(bool newStatus) = 0;
 
     private:
-        FIELD();
+        // Selection state the editor sets; not a property of the object.
+        FIELD(R::Meta(Hidden));
         bool _isDrawOutline = false;
     };
 } // namespace Foundation
